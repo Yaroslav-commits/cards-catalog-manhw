@@ -3,125 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ManhwCard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Каталог Карт</title>
+    <!-- Подключаем Telegram API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { 
+            background: #0f0f13; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 15px; 
+        }
+        .header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        
+        .controls-row { display: flex; gap: 10px; }
+        .controls-row > * { flex: 1; }
+
+        input, select { 
+            padding: 12px; border-radius: 10px; border: 1px solid #333; 
+            background: #1c1c1e; color: #fff; outline: none; font-size: 14px;
+        }
+        .cards-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; 
+        }
+        .card { 
+            background: #1c1c1e; border-radius: 15px; padding: 10px; text-align: center; 
+            border: 2px solid #2c2c2e; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .card img { 
+            width: 100%; height: 180px; object-fit: cover; border-radius: 10px; background: #2c2c2e;
+        }
+        .card h3 { font-size: 15px; margin: 12px 0 5px; }
+        .rarity { font-size: 12px; padding: 3px 8px; background: #2c2c2e; border-radius: 8px; display: inline-block; margin-bottom: 8px;}
+        .stats { display: flex; justify-content: space-around; font-size: 13px; color: #aaa; }
+        .stats span { display: flex; flex-direction: column; align-items: center; }
+        .stats b { color: #fff; font-size: 14px; }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <button id="back-btn" style="display:none;" onclick="nav('home')">⬅️</button>
-        <div class="user-profile" id="user-profile-header">
-            <div class="avatar-circle"></div>
-            <span id="user-name">Игрок</span>
-        </div>
-        <div class="balance">
-            💎 <span id="bal-diamonds">0</span>
-        </div>
-    </header>
 
-    <main id="view-home" class="view active">
-        <div class="menu-grid">
-            <div class="menu-card" onclick="nav('profile')">
-                <div class="menu-icon">👤</div>
-                <h3>Профиль</h3>
-            </div>
-            <div class="menu-card" onclick="nav('collection')">
-                <div class="menu-icon">📚</div>
-                <h3>Коллекция</h3>
-            </div>
-            <div class="menu-card" onclick="nav('battlepass')">
-                <div class="menu-icon">🎟</div>
-                <h3>Battle Pass</h3>
-            </div>
-            <div class="menu-card" onclick="nav('admin')">
-                <div class="menu-icon">⚙️</div>
-                <h3>Админ-панель</h3>
-            </div>
-        </div>
-    </main>
+    <div class="header">
+        <!-- Поиск -->
+        <input type="text" id="searchInput" placeholder="Поиск по имени..." oninput="updateCards()">
+        
+        <div class="controls-row">
+            <!-- Фильтр по редкости -->
+            <select id="rarityFilter" onchange="updateCards()">
+                <option value="all">Все редкости</option>
+                <option value="Обычная">Обычная</option>
+                <option value="Редкая">Редкая</option>
+                <option value="Эпическая">Эпическая</option>
+                <option value="Легендарная">Легендарная</option>
+                <option value="Мифическая">Мифическая</option>
+            </select>
 
-    <main id="view-profile" class="view">
-        <div class="profile-header">
-            <h2>Ваш профиль</h2>
-        </div>
-        <div class="showcase">
-            <h3>Витрина любимых карт</h3>
-            <div class="cards-grid" id="favorite-cards">
-                <!-- Заполняется JS -->
-            </div>
-        </div>
-        <div class="profile-actions">
-            <button class="btn disabled" onclick="alert('В разработке')">Банда</button>
-            <button class="btn disabled" onclick="alert('В разработке')">Магазин</button>
-            <button class="btn" onclick="alert('Достижения:\nСбор вселенной 0/1 (Награда 50 💎)')">🏆 Достижения</button>
-        </div>
-    </main>
-
-    <main id="view-collection" class="view">
-        <h2>Manhwa Titles</h2>
-        <div id="universes-list" class="list-container">
-            <!-- JS -->
-        </div>
-    </main>
-    
-    <main id="view-cards" class="view">
-        <h2 id="current-universe-title">Карты</h2>
-        <div id="cards-grid" class="cards-grid">
-            <!-- JS -->
-        </div>
-    </main>
-    
-    <main id="view-battlepass" class="view">
-        <h2>Battle Pass</h2>
-        <div class="bp-container">
-            <div class="bp-col free">
-                <h3 class="bp-title">Free Pass</h3>
-                <div class="bp-days" id="free-days"></div>
-            </div>
-            <div class="bp-col pro">
-                <h3 class="bp-title">Pro Pass <br><span class="price">449 ⭐️</span></h3>
-                <button class="btn btn-buy" onclick="buyPass()">Купить Pro</button>
-                <div class="bp-days" id="pro-days"></div>
-            </div>
-        </div>
-    </main>
-
-    <main id="view-admin" class="view">
-        <h2>Управление</h2>
-        <div class="admin-actions">
-            <button class="btn btn-admin" onclick="alert('Форма добавления тайтла')">+ Добавить Тайтл</button>
-            <button class="btn btn-admin" onclick="alert('Форма добавления карты')">+ Добавить Карту</button>
-        </div>
-        <h3 style="margin-top:20px">Все карты</h3>
-        <select class="admin-filter" id="admin-filter" onchange="renderAdminCards()">
-            <option value="all">Все редкости</option>
-            <option value="Божественная ⚫️">Божественная</option>
-            <option value="Мифическая 🔴">Мифическая</option>
-            <option value="Легендарная 🔵">Легендарная</option>
-            <option value="Эпическая 🟢">Эпическая</option>
-            <option value="Редкая 🟡">Редкая</option>
-            <option value="Обычная ⚪️">Обычная</option>
-        </select>
-        <div id="admin-cards" class="list-container" style="margin-top:10px"></div>
-    </main>
-
-    <!-- Modal -->
-    <div id="card-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modal-rarity-border" class="modal-border">
-                <img id="modal-img" src="" alt="card">
-            </div>
-            <h2 id="modal-name"></h2>
-            <p class="modal-rarity" id="modal-rarity"></p>
-            <div class="stats">
-                <div>Скорость: <span id="m-spd"></span></div>
-                <div>Сила: <span id="m-str"></span></div>
-                <div>Интеллект: <span id="m-int"></span></div>
-            </div>
+            <!-- Сортировка -->
+            <select id="sortSelect" onchange="updateCards()">
+                <option value="default">Без сортировки</option>
+                <option value="strength">По Силе 💪</option>
+                <option value="speed">По Скорости ⚡️</option>
+                <option value="intellect">По Интеллекту 🧠</option>
+            </select>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <div class="cards-grid" id="cardsContainer"></div>
+
+    <script>
+        // Сообщаем Telegram, что мы готовы
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        let allCards = [];
+        // Загружаем данные из cards.json
+        fetch('cards.json')
+            .then(response => response.json())
+            .then(data => {
+                allCards = data;
+                updateCards(); // Рисуем карты сразу после загрузки
+            });
+
+        // Функция отрисовки карточек на экране
+        function renderCards(cards) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            cards.forEach(card => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <img src="images/${card.file}" alt="${card.name}" onerror="this.src='https://placehold.co/150x200/2a2a2a/ffffff?text=Нет+фото'">
+                    <h3>${card.name}</h3>
+                    <div class="rarity">${card.rarity}</div>
+                    <div class="stats">
+                        <span>💪 <b>${card.strength}</b></span>
+                        <span>⚡️ <b>${card.speed}</b></span>
+                        <span>🧠 <b>${card.intellect}</b></span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Главная функция: фильтрует и сортирует
+        function updateCards() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const rarity = document.getElementById('rarityFilter').value;
+            const sortType = document.getElementById('sortSelect').value;
+
+            // 1. Сначала фильтруем
+            let filtered = allCards.filter(card => {
+                const matchName = card.name.toLowerCase().includes(searchText);
+                const matchRarity = rarity === 'all' || card.rarity.includes(rarity);
+                return matchName && matchRarity;
+            });
+
+            // 2. Затем сортируем по убыванию (от сильных к слабым)
+            if (sortType === 'strength') {
+                filtered.sort((a, b) => b.strength - a.strength);
+            } else if (sortType === 'speed') {
+                filtered.sort((a, b) => b.speed - a.speed);
+            } else if (sortType === 'intellect') {
+                filtered.sort((a, b) => b.intellect - a.intellect);
+            }
+
+            // 3. Выводим на экран
+            renderCards(filtered);
+        }
+    </script>
 </body>
 </html>
