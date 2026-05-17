@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Каталог Карт</title>
+    <!-- Подключаем Telegram API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { 
+            background: #0f0f13; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 15px; 
+        }
+        .header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        
+        .controls-row { display: flex; gap: 10px; }
+        .controls-row > * { flex: 1; }
+
+        input, select { 
+            padding: 12px; border-radius: 10px; border: 1px solid #333; 
+            background: #1c1c1e; color: #fff; outline: none; font-size: 14px;
+        }
+        .cards-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; 
+        }
+        .card { 
+            background: #1c1c1e; border-radius: 15px; padding: 10px; text-align: center; 
+            border: 2px solid #2c2c2e; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .card img { 
+            width: 100%; height: 180px; object-fit: cover; border-radius: 10px; background: #2c2c2e;
+        }
+        .card h3 { font-size: 15px; margin: 12px 0 5px; }
+        .rarity { font-size: 12px; padding: 3px 8px; background: #2c2c2e; border-radius: 8px; display: inline-block; margin-bottom: 8px;}
+        .stats { display: flex; justify-content: space-around; font-size: 13px; color: #aaa; }
+        .stats span { display: flex; flex-direction: column; align-items: center; }
+        .stats b { color: #fff; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <!-- Поиск -->
+        <input type="text" id="searchInput" placeholder="Поиск по имени..." oninput="updateCards()">
+        
+        <div class="controls-row">
+            <!-- Фильтр по редкости -->
+            <select id="rarityFilter" onchange="updateCards()">
+                <option value="all">Все редкости</option>
+                <option value="Обычная">Обычная</option>
+                <option value="Редкая">Редкая</option>
+                <option value="Эпическая">Эпическая</option>
+                <option value="Легендарная">Легендарная</option>
+                <option value="Мифическая">Мифическая</option>
+            </select>
+
+            <!-- Сортировка -->
+            <select id="sortSelect" onchange="updateCards()">
+                <option value="default">Без сортировки</option>
+                <option value="strength">По Силе 💪</option>
+                <option value="speed">По Скорости ⚡️</option>
+                <option value="intellect">По Интеллекту 🧠</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="cards-grid" id="cardsContainer"></div>
+
+    <script>
+        // Сообщаем Telegram, что мы готовы
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        let allCards = [];
+        // Загружаем данные из cards.json
+        fetch('cards.json')
+            .then(response => response.json())
+            .then(data => {
+                allCards = data;
+                updateCards(); // Рисуем карты сразу после загрузки
+            });
+
+        // Функция отрисовки карточек на экране
+        function renderCards(cards) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            cards.forEach(card => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <img src="images/${card.file}" alt="${card.name}" onerror="this.src='https://placehold.co/150x200/2a2a2a/ffffff?text=Нет+фото'">
+                    <h3>${card.name}</h3>
+                    <div class="rarity">${card.rarity}</div>
+                    <div class="stats">
+                        <span>💪 <b>${card.strength}</b></span>
+                        <span>⚡️ <b>${card.speed}</b></span>
+                        <span>🧠 <b>${card.intellect}</b></span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Главная функция: фильтрует и сортирует
+        function updateCards() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const rarity = document.getElementById('rarityFilter').value;
+            const sortType = document.getElementById('sortSelect').value;
+
+            // 1. Сначала фильтруем
+            let filtered = allCards.filter(card => {
+                const matchName = card.name.toLowerCase().includes(searchText);
+                const matchRarity = rarity === 'all' || card.rarity.includes(rarity);
+                return matchName && matchRarity;
+            });
+
+            // 2. Затем сортируем по убыванию (от сильных к слабым)
+            if (sortType === 'strength') {
+                filtered.sort((a, b) => b.strength - a.strength);
+            } else if (sortType === 'speed') {
+                filtered.sort((a, b) => b.speed - a.speed);
+            } else if (sortType === 'intellect') {
+                filtered.sort((a, b) => b.intellect - a.intellect);
+            }
+
+            // 3. Выводим на экран
+            renderCards(filtered);
+        }
+    </script>
+</body>
+</html>
