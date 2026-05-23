@@ -3,60 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Каталог Карт</title>
-    <!-- Подключаем Telegram API -->
+    <title>ManhwCard — Каталог Карт</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { 
-            background: #0f0f13; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; padding: 15px; 
+        :root {
+            --bg: #090910;
+            --surface: #111118;
+            --surface2: #18181f;
+            --border: #2a2a38;
+            --accent: #7c5cfc;
+            --accent2: #a855f7;
+            --text: #f0f0ff;
+            --muted: #888899;
         }
-        .header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 0 0 30px;
+        }
+
+        /* ── ШАПКА ── */
+        .site-header {
+            background: linear-gradient(135deg, #0d0d18 0%, #1a0a2e 50%, #0d0d18 100%);
+            padding: 22px 16px 16px;
+            text-align: center;
+            border-bottom: 1px solid #2a1a4a;
+            position: relative;
+            overflow: hidden;
+        }
+        .site-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,92,252,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .logo-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #a78bfa, #ec4899, #a78bfa);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+            position: relative;
+            z-index: 1;
+        }
+        .logo-sub {
+            font-size: 11px;
+            letter-spacing: 5px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-top: 2px;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* ── КОНТРОЛЫ ── */
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px 14px 0;
+        }
         .controls-row { display: flex; gap: 10px; }
         .controls-row > * { flex: 1; }
 
-        input, select { 
-            padding: 12px; border-radius: 10px; border: 1px solid #333; 
-            background: #1c1c1e; color: #fff; outline: none; font-size: 14px;
+        input, select {
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            outline: none;
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.2s;
         }
-        .cards-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; 
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124,92,252,0.15);
         }
-        .card { 
-            background: #1c1c1e; border-radius: 15px; padding: 10px; text-align: center; 
-            border: 2px solid #2c2c2e; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        input::placeholder { color: var(--muted); }
+
+        /* ── СЧЁТЧИК ── */
+        .cards-count {
+            padding: 8px 14px 0;
+            font-size: 12px;
+            color: var(--muted);
         }
-        .card img { 
-            width: 100%; height: 180px; object-fit: cover; border-radius: 10px; background: #2c2c2e;
+        .cards-count b { color: var(--accent2); }
+
+        /* ── СЕТКА ── */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+            gap: 14px;
+            padding: 14px;
         }
-        .card h3 { font-size: 15px; margin: 12px 0 5px; }
-        .rarity { font-size: 12px; padding: 3px 8px; background: #2c2c2e; border-radius: 8px; display: inline-block; margin-bottom: 8px;}
-        .stats { display: flex; justify-content: space-around; font-size: 13px; color: #aaa; }
-        .stats span { display: flex; flex-direction: column; align-items: center; }
-        .stats b { color: #fff; font-size: 14px; }
+
+        /* ── КАРТОЧКА ── */
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 10px;
+            text-align: center;
+            border: 1.5px solid var(--border);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:active {
+            transform: scale(0.96);
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        /* Подсветка рамки по редкости */
+        .card[data-rarity="Обычная"]       { border-color: #555566; }
+        .card[data-rarity="Редкая"]         { border-color: #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.25); }
+        .card[data-rarity="Эпическая"]      { border-color: #a855f7; box-shadow: 0 4px 20px rgba(168,85,247,0.3); }
+        .card[data-rarity="Легендарная"]    { border-color: #f59e0b; box-shadow: 0 4px 24px rgba(245,158,11,0.35); }
+        .card[data-rarity="Мифическая"]     { border-color: #ef4444; box-shadow: 0 4px 24px rgba(239,68,68,0.35); }
+        .card[data-rarity="Божественная"]   {
+            border-color: #222;
+            box-shadow: 0 0 0 1px #444, 0 6px 30px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.03);
+            background: linear-gradient(145deg, #0d0d0d, #1a1a1a, #0d0d0d);
+        }
+        .card[data-rarity="Божественная"]::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #333, #111, #444, #111, #333);
+            background-size: 300% 300%;
+            animation: divineShimmer 4s linear infinite;
+            z-index: 0;
+            opacity: 0.6;
+        }
+        .card[data-rarity="Божественная"] > * { position: relative; z-index: 1; }
+        @keyframes divineShimmer {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card img {
+            width: 100%;
+            height: 175px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: var(--surface2);
+        }
+        .card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 10px 0 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── БЕЙДЖ РЕДКОСТИ ── */
+        .rarity {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 9px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .rarity-Обычная    { background: #2a2a35; color: #aaa; }
+        .rarity-Редкая      { background: rgba(59,130,246,0.18); color: #60a5fa; border: 1px solid rgba(59,130,246,0.35); }
+        .rarity-Эпическая   { background: rgba(168,85,247,0.18); color: #c084fc; border: 1px solid rgba(168,85,247,0.35); }
+        .rarity-Легендарная { background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35); }
+        .rarity-Мифическая  { background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid rgba(239,68,68,0.35); }
+        .rarity-Божественная {
+            background: linear-gradient(90deg, #111, #222, #111);
+            color: #ccc;
+            border: 1px solid #444;
+            text-shadow: 0 0 8px rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+        }
+
+        /* ── СТАТЫ ── */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            font-size: 12px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+        }
+        .stats span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .stats b { color: var(--text); font-size: 13px; font-weight: 600; }
+
+        /* ── ПУСТО ── */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--muted);
+        }
+        .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+        .empty-state p { font-size: 14px; }
     </style>
 </head>
 <body>
 
+    <div class="site-header">
+        <div class="logo-text">ManhwCard</div>
+        <div class="logo-sub">Card Catalogue</div>
+    </div>
+
     <div class="header">
-        <!-- Поиск -->
-        <input type="text" id="searchInput" placeholder="Поиск по имени..." oninput="updateCards()">
-        
+        <input type="text" id="searchInput" placeholder="🔍  Поиск по имени..." oninput="updateCards()">
         <div class="controls-row">
-            <!-- Фильтр по редкости -->
             <select id="rarityFilter" onchange="updateCards()">
                 <option value="all">Все редкости</option>
-                <option value="Обычная">Обычная</option>
-                <option value="Редкая">Редкая</option>
-                <option value="Эпическая">Эпическая</option>
-                <option value="Легендарная">Легендарная</option>
-                <option value="Мифическая">Мифическая</option>
+                <option value="Обычная">⚪ Обычная</option>
+                <option value="Редкая">🔵 Редкая</option>
+                <option value="Эпическая">🟣 Эпическая</option>
+                <option value="Легендарная">🟡 Легендарная</option>
+                <option value="Мифическая">🔴 Мифическая</option>
+                <option value="Божественная">⚫ Божественная</option>
             </select>
-
-            <!-- Сортировка -->
             <select id="sortSelect" onchange="updateCards()">
-                <option value="default">Без сортировки</option>
+                <option value="default">Сортировка</option>
                 <option value="strength">По Силе 💪</option>
                 <option value="speed">По Скорости ⚡️</option>
                 <option value="intellect">По Интеллекту 🧠</option>
@@ -64,35 +263,46 @@
         </div>
     </div>
 
+    <div class="cards-count" id="cardsCount"></div>
     <div class="cards-grid" id="cardsContainer"></div>
 
     <script>
-        // Сообщаем Telegram, что мы готовы
         let tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
         let allCards = [];
-        // Загружаем данные из cards.json
+
         fetch('cards.json')
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 allCards = data;
-                updateCards(); // Рисуем карты сразу после загрузки
+                updateCards();
             });
 
-        // Функция отрисовки карточек на экране
         function renderCards(cards) {
             const container = document.getElementById('cardsContainer');
+            const counter   = document.getElementById('cardsCount');
             container.innerHTML = '';
-            
+
+            counter.innerHTML = cards.length
+                ? `Показано карт: <b>${cards.length}</b>`
+                : '';
+
+            if (!cards.length) {
+                container.innerHTML = `<div class="empty-state"><div class="icon">🃏</div><p>Ничего не найдено</p></div>`;
+                return;
+            }
+
             cards.forEach(card => {
+                const rarityClass = 'rarity-' + card.rarity.replace(/\s+/g, '');
                 const div = document.createElement('div');
                 div.className = 'card';
+                div.dataset.rarity = card.rarity;
                 div.innerHTML = `
-                    <img src="images/${card.file}" alt="${card.name}" onerror="this.src='https://placehold.co/150x200/2a2a2a/ffffff?text=Нет+фото'">
+                    <img src="images/${card.file}" alt="${card.name}" onerror="this.src='https://placehold.co/150x200/111118/555577?text=No+Image'">
                     <h3>${card.name}</h3>
-                    <div class="rarity">${card.rarity}</div>
+                    <div class="rarity ${rarityClass}">${card.rarity}</div>
                     <div class="stats">
                         <span>💪 <b>${card.strength}</b></span>
                         <span>⚡️ <b>${card.speed}</b></span>
@@ -103,29 +313,21 @@
             });
         }
 
-        // Главная функция: фильтрует и сортирует
         function updateCards() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            const rarity = document.getElementById('rarityFilter').value;
+            const search   = document.getElementById('searchInput').value.toLowerCase();
+            const rarity   = document.getElementById('rarityFilter').value;
             const sortType = document.getElementById('sortSelect').value;
 
-            // 1. Сначала фильтруем
             let filtered = allCards.filter(card => {
-                const matchName = card.name.toLowerCase().includes(searchText);
-                const matchRarity = rarity === 'all' || card.rarity.includes(rarity);
+                const matchName   = card.name.toLowerCase().includes(search);
+                const matchRarity = rarity === 'all' || card.rarity === rarity;
                 return matchName && matchRarity;
             });
 
-            // 2. Затем сортируем по убыванию (от сильных к слабым)
-            if (sortType === 'strength') {
-                filtered.sort((a, b) => b.strength - a.strength);
-            } else if (sortType === 'speed') {
-                filtered.sort((a, b) => b.speed - a.speed);
-            } else if (sortType === 'intellect') {
-                filtered.sort((a, b) => b.intellect - a.intellect);
-            }
+            if (sortType === 'strength')  filtered.sort((a, b) => b.strength  - a.strength);
+            if (sortType === 'speed')     filtered.sort((a, b) => b.speed     - a.speed);
+            if (sortType === 'intellect') filtered.sort((a, b) => b.intellect - a.intellect);
 
-            // 3. Выводим на экран
             renderCards(filtered);
         }
     </script>
