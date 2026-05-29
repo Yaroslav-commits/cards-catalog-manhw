@@ -75,6 +75,39 @@
             100% { background-position: 200% 50%; }
         }
 
+        /* ── ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ── */
+        .profile-box {
+            display: none;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .profile-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .owned-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #10b981;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
         /* ── КОНТРОЛЫ ── */
         .header {
             display: flex;
@@ -133,17 +166,8 @@
         .card:active {
             transform: scale(0.96);
         }
-        .card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-        }
 
-        /* Подсветка рамки по редкости */
+        /* Подсветка рамки по редкости (Без эмодзи) */
         .card[data-rarity="Обычная"]       { border-color: #555566; }
         .card[data-rarity="Редкая"]         { border-color: #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.25); }
         .card[data-rarity="Эпическая"]      { border-color: #a855f7; box-shadow: 0 4px 20px rgba(168,85,247,0.3); }
@@ -166,11 +190,6 @@
             opacity: 0.6;
         }
         .card[data-rarity="Божественная"] > * { position: relative; z-index: 1; }
-        @keyframes divineShimmer {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
 
         .card img {
             width: 100%;
@@ -188,7 +207,7 @@
             text-overflow: ellipsis;
         }
 
-        /* ── БЕЙДЖ РЕДКОСТИ ── */
+        /* ── БЕЙДЖ РЕДКОСТИ (Без эмодзи) ── */
         .rarity {
             font-size: 11px;
             font-weight: 600;
@@ -242,15 +261,21 @@
         <div class="logo-sub">Card Catalogue</div>
     </div>
 
+    <div class="profile-box" id="profileBox">
+        <div class="profile-stat">💎 <span id="valDiamond">0</span></div>
+        <div class="profile-stat">💴 <span id="valKrw">0</span></div>
+        <div class="profile-stat">🪙 <span id="valBc">0</span></div>
+    </div>
+
     <div class="header">
         <input type="text" id="searchInput" placeholder="🔍  Поиск по имени..." oninput="updateCards()">
         <div class="controls-row">
             <select id="rarityFilter" onchange="updateCards()">
                 <option value="all">Все редкости</option>
                 <option value="Обычная">⚪ Обычная</option>
-                <option value="Редкая">🔵 Редкая</option>
-                <option value="Эпическая">🟣 Эпическая</option>
-                <option value="Легендарная">🟡 Легендарная</option>
+                <option value="Редкая">🟡 Редкая</option>
+                <option value="Эпическая">🟢 Эпическая</option>
+                <option value="Легендарная">🔵 Легендарная</option>
                 <option value="Мифическая">🔴 Мифическая</option>
                 <option value="Божественная">⚫ Божественная</option>
             </select>
@@ -271,13 +296,38 @@
         tg.expand();
         tg.ready();
 
+        let userId = tg.initDataUnsafe?.user?.id;
+        
         let allCards = [];
+        let userOwnedCards = [];
+
+        async function fetchProfile() {
+            if (!userId) return; 
+            try {
+                let res = await fetch(`https://manhwcard.bothost.tech/api/profile/${userId}`);
+                
+                if (res.ok) {
+                    let data = await res.json();
+                    
+                    document.getElementById('profileBox').style.display = 'flex';
+                    document.getElementById('valDiamond').innerText = data.diamond;
+                    document.getElementById('valKrw').innerText = data.krw;
+                    document.getElementById('valBc').innerText = data.battlecoin;
+
+                    userOwnedCards = data.owned_cards;
+                }
+                updateCards();
+            } catch (e) {
+                console.error("Ошибка загрузки профиля:", e);
+            }
+        }
 
         fetch('cards.json')
             .then(r => r.json())
             .then(data => {
                 allCards = data;
                 updateCards();
+                fetchProfile(); 
             });
 
         function renderCards(cards) {
@@ -295,11 +345,25 @@
             }
 
             cards.forEach(card => {
-                const rarityClass = 'rarity-' + card.rarity.replace(/\s+/g, '');
+                // Отрезаем всё после первого пробела. "Обычная ⚪️" -> "Обычная"
+                const cleanRarity = card.rarity.split(' ')[0];
+                
+                const rarityClass = 'rarity-' + cleanRarity;
+                const isOwned = userOwnedCards.includes(card.id);
+                const ownedHtml = isOwned ? `<div class="owned-badge">В наличии ✓</div>` : '';
+
                 const div = document.createElement('div');
                 div.className = 'card';
-                div.dataset.rarity = card.rarity;
+                // В data-rarity тоже пишем чистую редкость
+                div.dataset.rarity = cleanRarity;
+                
+                if (!isOwned && userOwnedCards.length > 0) {
+                    div.style.opacity = "0.6";
+                    div.style.filter = "grayscale(40%)"; 
+                }
+
                 div.innerHTML = `
+                    ${ownedHtml}
                     <img src="images/${card.file}" alt="${card.name}" onerror="this.src='https://placehold.co/150x200/111118/555577?text=No+Image'">
                     <h3>${card.name}</h3>
                     <div class="rarity ${rarityClass}">${card.rarity}</div>
@@ -319,8 +383,10 @@
             const sortType = document.getElementById('sortSelect').value;
 
             let filtered = allCards.filter(card => {
+                const cleanRarity = card.rarity.split(' ')[0];
                 const matchName   = card.name.toLowerCase().includes(search);
-                const matchRarity = rarity === 'all' || card.rarity === rarity;
+                // Фильтруем по чистой редкости
+                const matchRarity = rarity === 'all' || cleanRarity === rarity;
                 return matchName && matchRarity;
             });
 
