@@ -364,7 +364,7 @@
 
                 div.innerHTML = `
                     ${ownedHtml}
-                    <img src="images/${card.file}" alt="${card.name}" onerror="this.src='https://placehold.co/150x200/111118/555577?text=No+Image'">
+                    <img src="images/${card.file}" alt="${card.name}" loading="lazy" onerror="this.src='https://placehold.co/150x200/111118/555577?text=No+Image'">
                     <h3>${card.name}</h3>
                     <div class="rarity ${rarityClass}">${card.rarity}</div>
                     <div class="stats">
