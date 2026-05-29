@@ -3,171 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ManhwCard — Каталог Карт</title>
+    <title>ManhwCard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg: #090910;
-            --surface: #111118;
-            --surface2: #18181f;
-            --border: #2a2a38;
-            --accent: #7c5cfc;
-            --accent2: #a855f7;
-            --text: #f0f0ff;
-            --muted: #888899;
+            --surface: #13131c;
+            --surface-light: #1c1c28;
+            --accent: #6b46c1;
+            --accent-light: #9f7aea;
+            --text-main: #ffffff;
+            --text-muted: #8f90a6;
+            --mythic: #e53e3e;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            min-height: 100vh;
-            padding: 0 0 30px;
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 90px; /* Отступ для нижнего меню */
+            overflow-x: hidden;
         }
 
-        /* ── ШАПКА ── */
-        .site-header {
-            background: linear-gradient(135deg, #0d0d18 0%, #1a0a2e 50%, #0d0d18 100%);
-            padding: 22px 16px 16px;
-            text-align: center;
-            border-bottom: 1px solid #2a1a4a;
-            position: relative;
-            overflow: hidden;
-        }
-        .site-header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,92,252,0.18) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        .logo-text {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 34px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            background: linear-gradient(90deg, #a78bfa, #ec4899, #a78bfa);
-            background-size: 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 3s linear infinite;
-            position: relative;
-            z-index: 1;
-        }
-        .logo-sub {
-            font-size: 11px;
-            letter-spacing: 5px;
-            color: var(--muted);
-            text-transform: uppercase;
-            margin-top: 2px;
-            position: relative;
-            z-index: 1;
-        }
-        @keyframes shimmer {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
+        /* ── Вкладки (Tabs) ── */
+        .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ── ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ── */
-        .profile-box {
-            display: none;
-            justify-content: center;
-            gap: 15px;
-            padding: 15px;
-            background: var(--surface2);
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .profile-stat {
+        /* ================= ПРОФИЛЬ (ГЛАВНАЯ) ================= */
+        .profile-header {
             display: flex;
             align-items: center;
-            gap: 5px;
-            background: var(--surface);
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
+            gap: 15px;
+            margin-bottom: 20px;
+            margin-top: 10px;
         }
-        .owned-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #10b981;
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 6px;
-            z-index: 2;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        .profile-avatar {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            object-fit: cover;
+            background-color: var(--surface-light);
         }
-
-        /* ── КОНТРОЛЫ ── */
-        .header {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 16px 14px 0;
-        }
-        .controls-row { display: flex; gap: 10px; }
-        .controls-row > * { flex: 1; }
-
-        input, select {
-            padding: 11px 14px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text);
-            outline: none;
-            font-size: 13px;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(124,92,252,0.15);
-        }
-        input::placeholder { color: var(--muted); }
-
-        /* ── СЧЁТЧИК ── */
-        .cards-count {
-            padding: 8px 14px 0;
-            font-size: 12px;
-            color: var(--muted);
-        }
-        .cards-count b { color: var(--accent2); }
-
-        /* ── СЕТКА ── */
-        .cards-grid {
+        .profile-name { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .profile-name span#userStatusEmoji { font-size: 20px; }
+        
+        /* Плашки баланса */
+        .balance-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-            gap: 14px;
-            padding: 14px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .balance-item {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 12px 5px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex; gap: 5px; justify-content: center; align-items: center;
         }
 
-        /* ── КАРТОЧКА ── */
-        .card {
+        /* Карточки модулей (Пасс, Банда и тд) */
+        .module-card {
             background: var(--surface);
             border-radius: 16px;
-            padding: 10px;
-            text-align: center;
-            border: 1.5px solid var(--border);
-            box-shadow: 0 4px 18px rgba(0,0,0,0.4);
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .module-card h4 { font-size: 16px; margin-bottom: 4px; }
+        .module-card p { font-size: 12px; color: var(--text-muted); }
+        .arrow-icon { color: var(--text-muted); font-size: 18px; }
+
+        .pass-card { display: flex; align-items: center; gap: 15px; }
+        .pass-badge { background: #fff; color: #000; font-weight: 800; padding: 4px 10px; border-radius: 6px; font-size: 12px; }
+        .pass-progress { flex: 1; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between;}
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        /* Баннер магазина */
+        .shop-banner {
+            background: linear-gradient(135deg, rgba(107,70,193,0.5) 0%, rgba(19,19,28,1) 100%), url('https://i.pinimg.com/736x/88/ed/aa/88edaac2bde5dddf69a68bc050e8f7a6.jpg') center/cover;
+            border-radius: 20px;
+            padding: 25px 20px;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(107,70,193,0.3);
+            margin-bottom: 20px;
         }
-        .card:active {
-            transform: scale(0.96);
+        .shop-banner h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase;}
+        .shop-banner p { font-size: 13px; color: #ccc; margin-bottom: 15px; max-width: 60%; line-height: 1.4;}
+        .shop-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
         }
 
-        /* Подсветка рамки по редкости (Без эмодзи) */
+        /* ================= КАТАЛОГ (КАРТЫ) ================= */
+        .header-search { display: flex; gap: 10px; margin-bottom: 15px; }
+        .header-search input, .header-search select {
+            flex: 1; padding: 12px 15px; border-radius: 12px; border: none;
+            background: var(--surface); color: var(--text-main); font-size: 14px; outline: none;
+        }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .card {
+            background: var(--surface); border-radius: 16px; padding: 10px; text-align: center;
+            border: 1.5px solid var(--border); box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+            position: relative; overflow: hidden; transition: transform 0.18s ease;
+        }
+        .card:active { transform: scale(0.96); }
+
+        /* Подсветка рамки по редкости */
         .card[data-rarity="Обычная"]       { border-color: #555566; }
         .card[data-rarity="Редкая"]         { border-color: #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.25); }
         .card[data-rarity="Эпическая"]      { border-color: #a855f7; box-shadow: 0 4px 20px rgba(168,85,247,0.3); }
@@ -178,166 +137,288 @@
             box-shadow: 0 0 0 1px #444, 0 6px 30px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.03);
             background: linear-gradient(145deg, #0d0d0d, #1a1a1a, #0d0d0d);
         }
-        .card[data-rarity="Божественная"]::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 17px;
-            background: linear-gradient(135deg, #333, #111, #444, #111, #333);
-            background-size: 300% 300%;
-            animation: divineShimmer 4s linear infinite;
-            z-index: 0;
-            opacity: 0.6;
-        }
-        .card[data-rarity="Божественная"] > * { position: relative; z-index: 1; }
 
-        .card img {
-            width: 100%;
-            height: 175px;
-            object-fit: cover;
-            border-radius: 10px;
-            background: var(--surface2);
-        }
-        .card h3 {
-            font-size: 14px;
-            font-weight: 600;
-            margin: 10px 0 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 8px;}
+        .card h3 { font-size: 14px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;}
+        .rarity-badge { font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-block; background: rgba(255,255,255,0.1); margin-bottom: 8px; font-weight: 600;}
 
-        /* ── БЕЙДЖ РЕДКОСТИ (Без эмодзи) ── */
-        .rarity {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 9px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 9px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+        /* ================= МОДАЛКА КАРТЫ (Детали) ================= */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+            opacity: 0; transition: opacity 0.3s ease;
         }
-        .rarity-Обычная    { background: #2a2a35; color: #aaa; }
-        .rarity-Редкая      { background: rgba(59,130,246,0.18); color: #60a5fa; border: 1px solid rgba(59,130,246,0.35); }
-        .rarity-Эпическая   { background: rgba(168,85,247,0.18); color: #c084fc; border: 1px solid rgba(168,85,247,0.35); }
-        .rarity-Легендарная { background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35); }
-        .rarity-Мифическая  { background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid rgba(239,68,68,0.35); }
-        .rarity-Божественная {
-            background: linear-gradient(90deg, #111, #222, #111);
-            color: #ccc;
-            border: 1px solid #444;
-            text-shadow: 0 0 8px rgba(255,255,255,0.3);
-            letter-spacing: 1px;
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal-content {
+            background: #111116; border-radius: 24px; width: 100%; max-width: 400px;
+            border: 1px solid rgba(255,255,255,0.05); position: relative;
+            transform: scale(0.95); transition: transform 0.3s ease;
+            max-height: 90vh; overflow-y: auto; padding-bottom: 20px;
         }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+        
+        .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; z-index: 10; display: flex; align-items: center; justify-content: center; }
+        .modal-img { width: 100%; height: 350px; object-fit: cover; border-top-left-radius: 24px; border-top-right-radius: 24px; }
+        
+        .modal-info { padding: 20px; }
+        .modal-title { font-size: 26px; font-weight: 800; margin-bottom: 15px; }
+        
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; align-items: center;}
+        .stat-label { color: var(--text-muted); display: flex; align-items: center; gap: 8px;}
+        .stat-val { font-weight: 600; text-align: right; max-width: 60%;}
+        .stat-val.mythic { color: var(--mythic); text-shadow: 0 0 10px rgba(229, 62, 62, 0.5); }
+        
+        .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0; }
+        
+        .bot-count-box {
+            background: var(--surface); border-radius: 16px; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .bot-count-box .icon { background: rgba(107,70,193,0.2); color: var(--accent-light); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;}
 
-        /* ── СТАТЫ ── */
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            font-size: 12px;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
-            padding-top: 8px;
+        /* ================= НИЖНЯЯ НАВИГАЦИЯ ================= */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(15, 15, 22, 0.95); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 10px 0 25px 0;
+            border-top: 1px solid rgba(255,255,255,0.05); z-index: 500;
         }
-        .stats span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-        .stats b { color: var(--text); font-size: 13px; font-weight: 600; }
+        .nav-btn {
+            background: none; border: none; color: var(--text-muted);
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: 500; width: 33%;
+        }
+        .nav-btn svg { width: 24px; height: 24px; fill: currentColor; transition: 0.3s; }
+        .nav-btn.active { color: var(--accent-light); }
+        .nav-btn.active svg { fill: var(--accent-light); filter: drop-shadow(0 0 8px rgba(159, 122, 234, 0.5)); transform: translateY(-2px); }
+        .logo-m { width: 30px !important; height: 30px !important; }
 
-        /* ── ПУСТО ── */
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--muted);
-        }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--muted); }
         .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
-        .empty-state p { font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="site-header">
-        <div class="logo-text">ManhwCard</div>
-        <div class="logo-sub">Card Catalogue</div>
-    </div>
-
-    <div class="profile-box" id="profileBox">
-        <div class="profile-stat">💎 <span id="valDiamond">0</span></div>
-        <div class="profile-stat">💴 <span id="valKrw">0</span></div>
-        <div class="profile-stat">🪙 <span id="valBc">0</span></div>
-    </div>
-
-    <div class="header">
-        <input type="text" id="searchInput" placeholder="🔍  Поиск по имени..." oninput="updateCards()">
-        <div class="controls-row">
+    <div id="tab-catalog" class="tab-content">
+        <div class="header-search">
+            <input type="text" id="searchInput" placeholder="Поиск по имени..." oninput="updateCards()">
             <select id="rarityFilter" onchange="updateCards()">
                 <option value="all">Все редкости</option>
-                <option value="Обычная">⚪ Обычная</option>
-                <option value="Редкая">🟡 Редкая</option>
-                <option value="Эпическая">🟢 Эпическая</option>
-                <option value="Легендарная">🔵 Легендарная</option>
-                <option value="Мифическая">🔴 Мифическая</option>
                 <option value="Божественная">⚫ Божественная</option>
+                <option value="Мифическая">🔴 Мифическая</option>
+                <option value="Легендарная">🔵 Легендарная</option>
+                <option value="Эпическая">🟢 Эпическая</option>
+                <option value="Редкая">🟡 Редкая</option>
+                <option value="Обычная">⚪️ Обычная</option>
             </select>
-            <select id="sortSelect" onchange="updateCards()">
-                <option value="default">Сортировка</option>
-                <option value="strength">По Силе 💪</option>
-                <option value="speed">По Скорости ⚡️</option>
-                <option value="intellect">По Интеллекту 🧠</option>
-            </select>
+        </div>
+        <div class="cards-grid" id="cardsContainer"></div>
+    </div>
+
+
+    <div id="tab-profile" class="tab-content active">
+        
+        <div class="profile-header">
+            <img src="https://placehold.co/150x150/111118/6b46c1?text=U" id="userAvatar" class="profile-avatar">
+            <div class="profile-name">
+                <span id="userName">Загрузка...</span> 
+                <span id="userStatusEmoji">🧩</span>
+            </div>
+        </div>
+
+        <div class="balance-grid">
+            <div class="balance-item">💴 <span id="valKrw">0</span></div>
+            <div class="balance-item">💎 <span id="valDiamond">0</span></div>
+            <div class="balance-item">Ⓑ <span id="valBc">0</span></div>
+            <div class="balance-item">📚 <span id="valCards">0</span></div>
+        </div>
+
+        <div class="module-card pass-card">
+            <div class="pass-badge">PASS</div>
+            <div class="pass-progress">
+                <span>Уровень 1/14</span>
+                <span style="color: var(--text-muted);">Прогресс 10% &nbsp; ›</span>
+            </div>
+        </div>
+
+        <div class="module-card">
+            <div>
+                <h4>Банда</h4>
+                <p>Только для своих.</p>
+            </div>
+            <div class="arrow-icon">›</div>
+        </div>
+
+        <div class="grid-2">
+            <div class="module-card" style="margin:0;">
+                <div>
+                    <h4>Достижения</h4>
+                    <p>0/53</p>
+                </div>
+            </div>
+            <div class="module-card" style="margin:0;">
+                <div>
+                    <h4>Ежедневный бонус</h4>
+                    <p style="color: #48bb78;">✓ 1/30</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="shop-banner">
+            <h2>МАГАЗИН</h2>
+            <p>Покупай карты, наборы и другие уникальные предметы.</p>
+            <button class="shop-btn">Перейти в магазин</button>
         </div>
     </div>
 
-    <div class="cards-count" id="cardsCount"></div>
-    <div class="cards-grid" id="cardsContainer"></div>
+
+    <div id="tab-tops" class="tab-content">
+        <h2 style="text-align:center; margin-top:50px; color:var(--text-muted)">Топы в разработке 🏆</h2>
+    </div>
+
+
+    <div class="modal-overlay" id="cardModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✖</button>
+            <img src="" id="modalImg" class="modal-img">
+            
+            <div class="modal-info">
+                <h2 class="modal-title" id="modalName">Имя персонажа</h2>
+                
+                <div class="stat-row">
+                    <span class="stat-label">🔮 Редкость:</span>
+                    <span class="stat-val" id="modalRarity">Мифическая 🔴</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">👊 Стиль боя:</span>
+                    <span class="stat-val" id="modalStyle">Тхэквондо</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🪐 Вселенная:</span>
+                    <span class="stat-val" id="modalSeries">Борьба в прямом эфире</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="stat-row">
+                    <span class="stat-label">⚡ Скорость:</span>
+                    <span class="stat-val mythic" id="modalSpeed">99</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">💪 Сила:</span>
+                    <span class="stat-val mythic" id="modalStrength">99</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🧠 Интеллект:</span>
+                    <span class="stat-val mythic" id="modalIntellect">98</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="bot-count-box">
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <div class="icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="16" height="16" rx="2" ry="2"></rect><path d="M6 2h16v16"></path></svg>
+                        </div>
+                        <span style="font-size:13px; color:var(--text-muted)">Количество карт в боте:</span>
+                    </div>
+                    <span style="font-size:18px; font-weight:800; color:var(--accent-light);" id="modalCount">...</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <nav class="bottom-nav">
+        <button class="nav-btn" onclick="switchTab('catalog', this)">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+            Каталог карт
+        </button>
+        <button class="nav-btn active" onclick="switchTab('profile', this)">
+            <svg class="logo-m" viewBox="0 0 24 24"><path d="M12 3L4 21h4.5l3.5-9 3.5 9H20L12 3z"/></svg>
+            Профиль
+        </button>
+        <button class="nav-btn" onclick="switchTab('tops', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0012 18a5.01 5.01 0 004.61-5.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 10.82C5.84 10.4 5 9.3 5 8V7h2v3.82zM19 8c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+            Топы
+        </button>
+    </nav>
+
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
-        let userId = tg.initDataUnsafe?.user?.id;
+        let userId = tg.initDataUnsafe?.user?.id || 12345;
+        let userName = tg.initDataUnsafe?.user?.first_name || "Игрок";
         
+        // Установка имени
+        document.getElementById('userName').innerText = userName;
+
+        // Загрузка аватарки из Telegram
+        let avatarEl = document.getElementById('userAvatar');
+        if (tg.initDataUnsafe?.user?.photo_url) {
+            avatarEl.src = tg.initDataUnsafe.user.photo_url;
+        } else {
+            // Если фото скрыто, ставим первую букву имени на фиолетовом фоне
+            avatarEl.src = "https://placehold.co/150x150/13131c/6b46c1?text=" + userName.charAt(0);
+        }
+
         let allCards = [];
         let userOwnedCards = [];
 
+        // Переключение вкладок
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // Запрашиваем профиль
         async function fetchProfile() {
-            if (!userId) return; 
             try {
                 let res = await fetch(`https://manhwcard.bothost.tech/api/profile/${userId}`);
-                
                 if (res.ok) {
                     let data = await res.json();
                     
-                    document.getElementById('profileBox').style.display = 'flex';
-                    document.getElementById('valDiamond').innerText = data.diamond;
+                    // Обновляем балансы с новыми иконками
                     document.getElementById('valKrw').innerText = data.krw;
+                    document.getElementById('valDiamond').innerText = data.diamond;
                     document.getElementById('valBc').innerText = data.battlecoin;
+                    
+                    // Сохраняем карты юзера и выводим их количество
+                    userOwnedCards = data.owned_cards || [];
+                    document.getElementById('valCards').innerText = userOwnedCards.length;
 
-                    userOwnedCards = data.owned_cards;
+                    // Логика кастомных статусов (Корона или Пазл)
+                    const statusEmojiEl = document.getElementById('userStatusEmoji');
+                    if (data.is_premium) {
+                        statusEmojiEl.innerText = "👑"; 
+                        avatarEl.style.borderColor = "var(--accent-light)"; // Свечение для премиума
+                    } else {
+                        statusEmojiEl.innerText = "🧩"; 
+                        avatarEl.style.borderColor = "var(--accent)"; // Обычная рамка
+                    }
                 }
                 updateCards();
-            } catch (e) {
-                console.error("Ошибка загрузки профиля:", e);
-            }
+            } catch (e) { console.error("Ошибка загрузки профиля:", e); }
         }
 
-        fetch('cards.json')
-            .then(r => r.json())
-            .then(data => {
-                allCards = data;
-                updateCards();
-                fetchProfile(); 
-            });
+        // Загрузка каталога
+        fetch('cards.json').then(r => r.json()).then(data => {
+            allCards = data;
+            updateCards();
+            fetchProfile(); 
+        }).catch(e => console.error("Не удалось загрузить cards.json:", e));
 
+        // Отрисовка карточек
         function renderCards(cards) {
             const container = document.getElementById('cardsContainer');
-            const counter   = document.getElementById('cardsCount');
             container.innerHTML = '';
-
-            counter.innerHTML = cards.length
-                ? `Показано карт: <b>${cards.length}</b>`
-                : '';
 
             if (!cards.length) {
                 container.innerHTML = `<div class="empty-state"><div class="icon">🃏</div><p>Ничего не найдено</p></div>`;
@@ -345,56 +426,83 @@
             }
 
             cards.forEach(card => {
-                // Отрезаем всё после первого пробела. "Обычная ⚪️" -> "Обычная"
                 const cleanRarity = card.rarity.split(' ')[0];
-                
-                const rarityClass = 'rarity-' + cleanRarity;
                 const isOwned = userOwnedCards.includes(card.id);
-                const ownedHtml = isOwned ? `<div class="owned-badge">В наличии ✓</div>` : '';
-
+                
                 const div = document.createElement('div');
                 div.className = 'card';
-                // В data-rarity тоже пишем чистую редкость
-                div.dataset.rarity = cleanRarity;
-                
+                div.dataset.rarity = cleanRarity; // Для подсветки рамок
+
+                // Эффект отсутствия карты (чуть прозрачная и серая)
                 if (!isOwned && userOwnedCards.length > 0) {
-                    div.style.opacity = "0.6";
-                    div.style.filter = "grayscale(40%)"; 
+                    div.style.opacity = "0.5";
+                    div.style.filter = "grayscale(50%)";
                 }
 
+                // Клик открывает модалку
+                div.onclick = () => openModal(card);
+
                 div.innerHTML = `
-                    ${ownedHtml}
-                    <img src="images/${card.file}" alt="${card.name}" loading="lazy" onerror="this.src='https://placehold.co/150x200/111118/555577?text=No+Image'">
+                    <img src="images/cards/${card.file}" loading="lazy" onerror="this.src='https://placehold.co/150x200/111118/555577?text=No+Image'">
                     <h3>${card.name}</h3>
-                    <div class="rarity ${rarityClass}">${card.rarity}</div>
-                    <div class="stats">
-                        <span>💪 <b>${card.strength}</b></span>
-                        <span>⚡️ <b>${card.speed}</b></span>
-                        <span>🧠 <b>${card.intellect}</b></span>
-                    </div>
+                    <div class="rarity-badge">${card.rarity}</div>
                 `;
                 container.appendChild(div);
             });
         }
 
+        // Логика фильтров
         function updateCards() {
-            const search   = document.getElementById('searchInput').value.toLowerCase();
-            const rarity   = document.getElementById('rarityFilter').value;
-            const sortType = document.getElementById('sortSelect').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const rarity = document.getElementById('rarityFilter').value;
 
             let filtered = allCards.filter(card => {
+                // Отрезаем эмодзи для сравнения
                 const cleanRarity = card.rarity.split(' ')[0];
-                const matchName   = card.name.toLowerCase().includes(search);
-                // Фильтруем по чистой редкости
+                const matchName = card.name.toLowerCase().includes(search);
                 const matchRarity = rarity === 'all' || cleanRarity === rarity;
                 return matchName && matchRarity;
             });
-
-            if (sortType === 'strength')  filtered.sort((a, b) => b.strength  - a.strength);
-            if (sortType === 'speed')     filtered.sort((a, b) => b.speed     - a.speed);
-            if (sortType === 'intellect') filtered.sort((a, b) => b.intellect - a.intellect);
-
             renderCards(filtered);
+        }
+
+        // ================= ЛОГИКА МОДАЛЬНОГО ОКНА =================
+        async function openModal(card) {
+            document.getElementById('modalImg').src = `images/cards/${card.file}`;
+            document.getElementById('modalName').innerText = card.name;
+            document.getElementById('modalRarity').innerText = card.rarity;
+            document.getElementById('modalStyle').innerText = card.style;
+            document.getElementById('modalSeries').innerText = card.series || 'Неизвестно';
+            document.getElementById('modalSpeed').innerText = card.speed;
+            document.getElementById('modalStrength').innerText = card.strength;
+            document.getElementById('modalIntellect').innerText = card.intellect;
+
+            // Если редкость Божественная или Мифическая, статы становятся красными
+            const statEls = [document.getElementById('modalSpeed'), document.getElementById('modalStrength'), document.getElementById('modalIntellect')];
+            if(card.rarity.includes('Мифическая') || card.rarity.includes('Божественная')) {
+                statEls.forEach(el => el.classList.add('mythic'));
+            } else {
+                statEls.forEach(el => el.classList.remove('mythic'));
+            }
+
+            document.getElementById('modalCount').innerText = "⏳";
+            document.getElementById('cardModal').classList.add('open');
+
+            try {
+                let res = await fetch(`https://manhwcard.bothost.tech/api/card_count/${card.id}`);
+                if(res.ok) {
+                    let data = await res.json();
+                    document.getElementById('modalCount').innerText = data.count;
+                } else {
+                    document.getElementById('modalCount').innerText = "?";
+                }
+            } catch(e) {
+                document.getElementById('modalCount').innerText = "Ошибка";
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('cardModal').classList.remove('open');
         }
     </script>
 </body>
