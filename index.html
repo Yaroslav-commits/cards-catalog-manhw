@@ -36,7 +36,7 @@
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= ПРОФИЛЬ (АТМОСФЕРА СИСТЕМЫ) ================= */
+        /* ================= ПРОФИЛЬ ================= */
         .profile-wrapper {
             background: linear-gradient(180deg, rgba(124, 58, 237, 0.1) 0%, rgba(14, 14, 20, 0.5) 100%);
             border: 1px solid rgba(124, 58, 237, 0.2);
@@ -57,104 +57,63 @@
             opacity: 0.8;
         }
 
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+        .profile-header { display: flex; align-items: center; gap: 18px; }
         .profile-avatar {
-            width: 75px; height: 75px;
-            border-radius: 50%;
-            border: 3px solid var(--accent);
-            object-fit: cover;
-            background-color: var(--surface-light);
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
-            transition: 0.3s;
+            width: 75px; height: 75px; border-radius: 50%; border: 3px solid var(--accent);
+            object-fit: cover; background-color: var(--surface-light);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.4); transition: 0.3s;
         }
         .profile-name { 
-            font-size: 24px; 
-            font-weight: 800; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
+            font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 8px; 
             text-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
         }
         .profile-name span#userStatusEmoji { font-size: 22px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
         
-        /* Плашки баланса */
-        .balance-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+        .balance-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
         .balance-item {
-            background: linear-gradient(145deg, #13131c, #0a0a0f);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 12px 5px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex; gap: 6px; justify-content: center; align-items: center;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #13131c, #0a0a0f); border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px; padding: 12px 5px; text-align: center; font-size: 14px; font-weight: 600;
+            display: flex; gap: 6px; justify-content: center; align-items: center; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
         }
 
-        /* Системные Карточки модулей */
         .module-card {
             background: linear-gradient(90deg, #13131c 0%, #0e0e14 100%);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-left: 3px solid var(--accent-light);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid var(--accent-light);
+            border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex;
+            justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: 0.2s;
         }
         .module-card:active { transform: scale(0.98); }
         .module-card h4 { font-size: 16px; margin-bottom: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
         .module-card p { font-size: 12px; color: var(--text-muted); }
         .arrow-icon { color: var(--text-muted); font-size: 18px; }
 
-        .pass-card { display: flex; align-items: center; gap: 15px; border-left: 3px solid #3b82f6;}
+        .pass-card { border-left: 3px solid #3b82f6; }
         .pass-badge { background: linear-gradient(45deg, #fff, #ddd); color: #000; font-weight: 800; padding: 4px 10px; border-radius: 6px; font-size: 12px; box-shadow: 0 0 10px rgba(255,255,255,0.3);}
         .pass-progress { flex: 1; font-size: 13px; font-weight: 600; display: flex; justify-content: space-between;}
-
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
         
-        /* Баннер магазина */
         .shop-banner {
             background: linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(5,5,8,1) 100%), url('https://i.pinimg.com/736x/88/ed/aa/88edaac2bde5dddf69a68bc050e8f7a6.jpg') center/cover;
-            border-radius: 20px;
-            padding: 25px 20px;
-            position: relative;
-            border: 1px solid rgba(124, 58, 237, 0.3);
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border-radius: 20px; padding: 25px 20px; position: relative; border: 1px solid rgba(124, 58, 237, 0.3);
+            margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
         .shop-banner h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; text-shadow: 0 0 10px rgba(0,0,0,0.8);}
         .shop-banner p { font-size: 13px; color: #ddd; margin-bottom: 15px; max-width: 65%; line-height: 1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
         .shop-btn {
-            background: linear-gradient(90deg, var(--accent), #9f7aea);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            background: linear-gradient(90deg, var(--accent), #9f7aea); color: white; border: none;
+            padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
         }
 
-        /* ================= КАТАЛОГ (КАРТЫ) ================= */
-        .header-search { display: flex; gap: 10px; margin-bottom: 15px; }
-        .header-search input, .header-search select {
-            flex: 1; padding: 12px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
-            background: var(--surface); color: var(--text-main); font-size: 14px; outline: none; transition: 0.2s;
+        /* ================= КАТАЛОГ И ФИЛЬТРЫ ================= */
+        .filters-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .filters-row { display: flex; gap: 10px; }
+        .filters-row > * {
+            flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
+            background: var(--surface); color: var(--text-main); font-size: 13px; outline: none; transition: 0.2s;
         }
-        .header-search input:focus, .header-search select:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(124,58,237,0.2); }
+        .filters-row > *:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(124,58,237,0.2); }
+        optgroup { background: var(--bg); color: var(--accent-light); font-weight: 800; }
+        option { background: var(--surface); color: var(--text-main); }
         
         .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .card {
@@ -170,36 +129,72 @@
         .card[data-rarity="Легендарная"]    { border-color: #f59e0b; box-shadow: 0 4px 24px rgba(245,158,11,0.35); }
         .card[data-rarity="Мифическая"]     { border-color: #ef4444; box-shadow: 0 4px 24px rgba(239,68,68,0.35); }
         .card[data-rarity="Божественная"]   {
-            border-color: #222;
+            border-color: #444;
             box-shadow: 0 0 0 1px #444, 0 6px 30px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.03);
             background: linear-gradient(145deg, #0d0d0d, #1a1a1a, #0d0d0d);
         }
 
-        .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 8px;}
+        .card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; margin-bottom: 8px;}
         .card h3 { font-size: 14px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
         .rarity-badge { font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-block; background: rgba(255,255,255,0.1); margin-bottom: 8px; font-weight: 600;}
 
-        /* ================= МОДАЛКА КАРТЫ ================= */
+        /* ================= МОДАЛКА КАРТЫ С ПОЛНОЙ КАРТИНКОЙ ================= */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
             z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
             opacity: 0; transition: opacity 0.3s ease;
         }
         .modal-overlay.open { display: flex; opacity: 1; }
         .modal-content {
-            background: #0a0a0f; border-radius: 24px; width: 100%; max-width: 400px;
+            background: #0a0a0f; border-radius: 24px; width: 100%; max-width: 380px;
             border: 1px solid rgba(255,255,255,0.1); position: relative;
             transform: scale(0.95); transition: transform 0.3s ease;
-            max-height: 90vh; overflow-y: auto; padding-bottom: 20px;
+            max-height: 95vh; overflow-y: auto; padding-bottom: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
         .modal-overlay.open .modal-content { transform: scale(1); }
         
-        .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; z-index: 10; display: flex; align-items: center; justify-content: center; }
-        .modal-img { width: 100%; height: 350px; object-fit: cover; border-top-left-radius: 24px; border-top-right-radius: 24px; border-bottom: 1px solid rgba(255,255,255,0.1);}
+        .modal-close { 
+            position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); 
+            border: 1px solid rgba(255,255,255,0.2); color: white; width: 34px; height: 34px; 
+            border-radius: 50%; font-size: 18px; z-index: 20; display: flex; align-items: center; justify-content: center; 
+        }
+
+        /* КОНТЕЙНЕР ДЛЯ ПОЛНОЙ КАРТИНКИ (3:4) */
+        .modal-img-wrapper {
+            width: 100%;
+            padding: 30px 20px 10px 20px; /* Отступы, чтобы свечение не обрезалось краями */
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+
+        .modal-img { 
+            width: 100%; 
+            max-width: 260px; /* Ограничиваем, чтобы картинка не была огромной на планшетах */
+            aspect-ratio: 3/4; /* ИДЕАЛЬНОЕ СОХРАНЕНИЕ ПРОПОРЦИЙ */
+            object-fit: cover; /* Заполняет рамку без искажений */
+            border-radius: 12px; 
+            border: 2px solid transparent; 
+            transition: 0.3s;
+        }
+
+        /* ЭФФЕКТЫ СВЕЧЕНИЯ КАРТИНКИ ПО РЕДКОСТИ */
+        .glow-Обычная { border-color: #555566; box-shadow: 0 0 20px rgba(85,85,102,0.5); }
+        .glow-Редкая { border-color: #3b82f6; box-shadow: 0 0 25px rgba(59,130,246,0.5); }
+        .glow-Эпическая { border-color: #a855f7; box-shadow: 0 0 30px rgba(168,85,247,0.5); }
+        .glow-Легендарная { border-color: #f59e0b; box-shadow: 0 0 35px rgba(245,158,11,0.6); }
+        .glow-Мифическая { border-color: #ef4444; box-shadow: 0 0 40px rgba(239,68,68,0.7); }
+        .glow-Божественная { 
+            border-color: #444; 
+            box-shadow: 0 0 40px rgba(255,255,255,0.4), inset 0 0 20px rgba(255,255,255,0.2); 
+        }
+
         
-        .modal-info { padding: 20px; }
-        .modal-title { font-size: 26px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; }
+        .modal-info { padding: 0 20px; }
+        .modal-title { font-size: 26px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; text-align: center; }
         
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; align-items: center;}
         .stat-label { color: var(--text-muted); display: flex; align-items: center; gap: 8px;}
@@ -238,18 +233,45 @@
 <body>
 
     <div id="tab-catalog" class="tab-content">
-        <div class="header-search">
-            <input type="text" id="searchInput" placeholder="Поиск по имени..." oninput="updateCards()">
-            <select id="rarityFilter" onchange="updateCards()">
-                <option value="all">Все редкости</option>
-                <option value="Божественная">⚫ Божественная</option>
-                <option value="Мифическая">🔴 Мифическая</option>
-                <option value="Легендарная">🔵 Легендарная</option>
-                <option value="Эпическая">🟢 Эпическая</option>
-                <option value="Редкая">🟡 Редкая</option>
-                <option value="Обычная">⚪️ Обычная</option>
-            </select>
+        
+        <div class="filters-wrapper">
+            <div class="filters-row">
+                <input type="text" id="searchInput" placeholder="Поиск по имени..." oninput="updateCards()">
+            </div>
+            <div class="filters-row">
+                <select id="rarityFilter" onchange="updateCards()">
+                    <option value="all">Все редкости</option>
+                    <option value="Божественная">⚫ Божественная</option>
+                    <option value="Мифическая">🔴 Мифическая</option>
+                    <option value="Легендарная">🔵 Легендарная</option>
+                    <option value="Эпическая">🟢 Эпическая</option>
+                    <option value="Редкая">🟡 Редкая</option>
+                    <option value="Обычная">⚪️ Обычная</option>
+                </select>
+                
+                <select id="seriesFilter" onchange="updateCards()">
+                    <option value="all">Все вселенные</option>
+                    </select>
+            </div>
+            <div class="filters-row">
+                <select id="sortFilter" onchange="updateCards()">
+                    <option value="default">Сортировка: По умолчанию</option>
+                    <optgroup label="Сила 💪">
+                        <option value="str_desc">От сильных к слабым</option>
+                        <option value="str_asc">От слабых к сильным</option>
+                    </optgroup>
+                    <optgroup label="Скорость ⚡️">
+                        <option value="spd_desc">От быстрых к медленным</option>
+                        <option value="spd_asc">От медленных к быстрым</option>
+                    </optgroup>
+                    <optgroup label="Интеллект 🧠">
+                        <option value="int_desc">От умных к глупым</option>
+                        <option value="int_asc">От глупых к умным</option>
+                    </optgroup>
+                </select>
+            </div>
         </div>
+
         <div class="cards-grid" id="cardsContainer"></div>
     </div>
 
@@ -321,7 +343,10 @@
     <div class="modal-overlay" id="cardModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">✖</button>
-            <img src="" id="modalImg" class="modal-img">
+            
+            <div class="modal-img-wrapper">
+                <img src="" id="modalImg" class="modal-img">
+            </div>
             
             <div class="modal-info">
                 <h2 class="modal-title" id="modalName">Имя персонажа</h2>
@@ -429,15 +454,14 @@
 
                     const statusEmojiEl = document.getElementById('userStatusEmoji');
                     
-                    // 👇 СВЕЧЕНИЕ ДЛЯ ПРЕМИУМ ИГРОКОВ (АТМОСФЕРА СИСТЕМЫ)
                     if (data.is_premium) {
                         statusEmojiEl.innerText = "👑"; 
                         avatarEl.style.borderColor = "var(--premium-gold)"; 
-                        avatarEl.style.boxShadow = "0 0 25px rgba(245, 158, 11, 0.5)"; // Золотое свечение
+                        avatarEl.style.boxShadow = "0 0 25px rgba(245, 158, 11, 0.5)"; 
                     } else {
                         statusEmojiEl.innerText = "🧩"; 
                         avatarEl.style.borderColor = "var(--accent)"; 
-                        avatarEl.style.boxShadow = "0 0 20px rgba(124, 58, 237, 0.4)"; // Фиолетовое свечение
+                        avatarEl.style.boxShadow = "0 0 20px rgba(124, 58, 237, 0.4)"; 
                     }
                 }
                 updateCards();
@@ -446,6 +470,20 @@
 
         fetch('cards.json').then(r => r.json()).then(data => {
             allCards = data;
+
+            // АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ ВСЕЛЕННЫХ В ФИЛЬТР
+            const seriesSet = new Set();
+            allCards.forEach(c => {
+                if (c.series) seriesSet.add(c.series);
+            });
+            const seriesSelect = document.getElementById('seriesFilter');
+            seriesSet.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.innerText = s;
+                seriesSelect.appendChild(opt);
+            });
+
             updateCards();
             fetchProfile(); 
         }).catch(e => console.error("Не удалось загрузить cards.json:", e));
@@ -474,7 +512,6 @@
 
                 div.onclick = () => openModal(card);
 
-                // ИСПРАВЛЕН ПУТЬ К КАРТИНКАМ НА images/
                 div.innerHTML = `
                     <img src="images/${card.file}" loading="lazy" onerror="this.src='https://placehold.co/150x200/13131c/333344?text=X'">
                     <h3>${card.name}</h3>
@@ -484,22 +521,41 @@
             });
         }
 
+        // ОБНОВЛЕННАЯ ЛОГИКА ФИЛЬТРАЦИИ И СОРТИРОВКИ
         function updateCards() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const rarity = document.getElementById('rarityFilter').value;
+            const series = document.getElementById('seriesFilter').value;
+            const sortType = document.getElementById('sortFilter').value;
 
             let filtered = allCards.filter(card => {
                 const cleanRarity = card.rarity.split(' ')[0];
                 const matchName = card.name.toLowerCase().includes(search);
                 const matchRarity = rarity === 'all' || cleanRarity === rarity;
-                return matchName && matchRarity;
+                const matchSeries = series === 'all' || card.series === series;
+                
+                return matchName && matchRarity && matchSeries;
             });
+
+            // Логика сортировки
+            if (sortType === 'str_desc') filtered.sort((a, b) => b.strength - a.strength);
+            else if (sortType === 'str_asc') filtered.sort((a, b) => a.strength - b.strength);
+            else if (sortType === 'spd_desc') filtered.sort((a, b) => b.speed - a.speed);
+            else if (sortType === 'spd_asc') filtered.sort((a, b) => a.speed - b.speed);
+            else if (sortType === 'int_desc') filtered.sort((a, b) => b.intellect - a.intellect);
+            else if (sortType === 'int_asc') filtered.sort((a, b) => a.intellect - b.intellect);
+
             renderCards(filtered);
         }
 
         async function openModal(card) {
-            // 👇 ИСПРАВЛЕН ПУТЬ В МОДАЛКЕ НА images/
-            document.getElementById('modalImg').src = `images/${card.file}`;
+            const cleanRarity = card.rarity.split(' ')[0];
+            
+            // Настройка картинки и неоновой рамки
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = `images/${card.file}`;
+            modalImg.className = `modal-img glow-${cleanRarity}`; // Динамически ставим класс свечения
+
             document.getElementById('modalName').innerText = card.name;
             document.getElementById('modalRarity').innerText = card.rarity;
             document.getElementById('modalStyle').innerText = card.style;
