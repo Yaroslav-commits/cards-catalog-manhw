@@ -10,15 +10,16 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg: #050508;
-            --surface: #0e0e14;
-            --surface-light: #161622;
+            --bg: #05050a;
+            --surface: #101016;
+            --surface-light: #1a1a24;
             --accent: #7c3aed;
             --accent-light: #a78bfa;
             --text-main: #ffffff;
-            --text-muted: #8f90a6;
+            --text-muted: #6b6b80;
             --mythic: #e53e3e;
             --premium-gold: #fbbf24;
+            --border-color: rgba(255, 255, 255, 0.04);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -28,207 +29,233 @@
             color: var(--text-main);
             padding-bottom: 90px;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 50%);
         }
 
         /* ── Вкладки ── */
-        .tab-content { display: none; padding: 15px; animation: fadeIn 0.4s ease; }
+        .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= ПРОФИЛЬ ================= */
-        .profile-wrapper {
-            background: linear-gradient(180deg, rgba(124, 58, 237, 0.1) 0%, rgba(14, 14, 20, 0.5) 100%);
-            border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 20px; padding: 20px;
-            margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 2px 20px rgba(124, 58, 237, 0.05);
-            position: relative; overflow: hidden;
-        }
+        /* ================= ПРОФИЛЬ (ТОЧЬ В ТОЧЬ КАК НА СКРИНЕ) ================= */
         
-        .system-label { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-light); margin-bottom: 15px; opacity: 0.8;}
-        .profile-header { display: flex; align-items: center; gap: 18px; }
+        /* Шапка профиля */
+        .profile-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 5px 20px 5px;
+        }
+        .profile-user-info { display: flex; align-items: center; gap: 15px; }
         .profile-avatar {
-            width: 75px; height: 75px; border-radius: 50%; border: 3px solid var(--accent);
-            object-fit: cover; background-color: var(--surface-light); box-shadow: 0 0 20px rgba(124, 58, 237, 0.4); transition: 0.3s;
+            width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+            background-color: var(--surface-light); border: 2px solid transparent; transition: 0.3s;
         }
-        .profile-name { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 15px rgba(124, 58, 237, 0.5);}
-        .profile-name span#userStatusEmoji { font-size: 22px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
-        
-        .balance-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .profile-name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .profile-name span#userStatusEmoji { font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .arrow-right { color: var(--text-muted); font-size: 18px; font-weight: 300;}
+
+        /* Балансы */
+        .balance-grid { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; 
+        }
         .balance-item {
-            background: linear-gradient(145deg, #13131c, #0a0a0f); border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px; padding: 12px 5px; text-align: center; font-size: 14px; font-weight: 600;
-            display: flex; gap: 6px; justify-content: center; align-items: center; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            background: var(--surface); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 600;
+            display: flex; gap: 6px; justify-content: center; align-items: center;
         }
 
+        /* Модули (Список) */
+        .module-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
         .module-card {
-            background: linear-gradient(90deg, #13131c 0%, #0e0e14 100%);
-            border: 1px solid rgba(255, 255, 255, 0.03); border-left: 3px solid var(--accent-light);
-            border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; cursor: pointer;
-            justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: 0.2s;
+            background: var(--surface); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 16px 18px; display: flex; cursor: pointer;
+            justify-content: space-between; align-items: center; transition: 0.15s;
         }
-        .module-card:active { transform: scale(0.98); }
-        .module-card h4 { font-size: 16px; margin-bottom: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
-        .module-card p { font-size: 12px; color: var(--text-muted); }
-        .arrow-icon { color: var(--text-muted); font-size: 18px; }
-
-        .pass-card { border-left: 3px solid #3b82f6; }
-        .pass-badge { background: linear-gradient(45deg, #fff, #ddd); color: #000; font-weight: 800; padding: 4px 10px; border-radius: 6px; font-size: 12px; box-shadow: 0 0 10px rgba(255,255,255,0.3);}
-        .pass-progress { flex: 1; font-size: 13px; font-weight: 600; display: flex; justify-content: space-between;}
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .module-card:active { transform: scale(0.98); background: var(--surface-light); }
         
+        .module-left { display: flex; align-items: center; gap: 12px; }
+        .module-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; 
+            font-size: 16px; color: var(--text-muted);
+        }
+        .module-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .module-sub { font-size: 12px; color: var(--text-muted); }
+        .module-right { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500;}
+        .module-right .val { color: var(--text-muted); }
+
+        /* Плашка PASS */
+        .pass-text { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; margin-right: 10px;}
+        .pass-level { font-size: 13px; color: var(--text-muted); font-weight: 500;}
+
+        /* Сетка для достижений и бонуса */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .grid-2 .module-card { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; margin: 0; }
+        .grid-2 .module-title { font-size: 14px; }
+        .grid-2 .module-sub { display: flex; align-items: center; gap: 4px; }
+        
+        /* Баннер магазина (С картинкой из папки) */
         .shop-banner {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(5,5,8,1) 100%), url('https://i.pinimg.com/736x/88/ed/aa/88edaac2bde5dddf69a68bc050e8f7a6.jpg') center/cover;
-            border-radius: 20px; padding: 25px 20px; position: relative; border: 1px solid rgba(124, 58, 237, 0.3);
-            margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            position: relative; border-radius: 20px; overflow: hidden; padding: 30px 20px;
+            min-height: 170px; border: 1px solid var(--border-color); margin-bottom: 20px;
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
         }
-        .shop-banner h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; text-shadow: 0 0 10px rgba(0,0,0,0.8);}
-        .shop-banner p { font-size: 13px; color: #ddd; margin-bottom: 15px; max-width: 65%; line-height: 1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
+        .shop-banner-bg {
+            position: absolute; inset: 0; background-image: url('images/shop.jpeg');
+            background-size: cover; background-position: right center; z-index: 1;
+        }
+        .shop-banner-overlay {
+            position: absolute; inset: 0; z-index: 2;
+            background: linear-gradient(90deg, rgba(8,8,12,1) 0%, rgba(8,8,12,0.85) 45%, rgba(8,8,12,0) 100%);
+        }
+        .shop-banner-content { position: relative; z-index: 3; max-width: 60%; }
+        .shop-banner h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
+        .shop-banner p { font-size: 12px; color: #aaa; margin-bottom: 15px; line-height: 1.4; }
         .shop-btn {
-            background: linear-gradient(90deg, var(--accent), #9f7aea); color: white; border: none;
-            padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            background: rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.5);
+            color: var(--accent-light); padding: 8px 16px; border-radius: 10px;
+            font-weight: 600; font-size: 13px; transition: 0.2s;
         }
+        .shop-btn:active { background: var(--accent); color: #fff; }
 
         /* ================= КАТАЛОГ И ИДЕАЛЬНЫЕ ФИЛЬТРЫ ================= */
         .filters-wrapper {
             background: var(--surface); padding: 12px; border-radius: 16px; margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.03); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
         }
         .filters-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .filter-full { grid-column: 1 / -1; }
         
         .filters-grid input, .filters-grid select {
-            width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);
+            width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-color);
             background: var(--surface-light); color: var(--text-main); font-size: 13px; outline: none; transition: 0.2s;
         }
-        .filters-grid input:focus, .filters-grid select:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(124,58,237,0.2); }
+        .filters-grid input:focus, .filters-grid select:focus { border-color: var(--accent); }
         optgroup { background: var(--bg); color: var(--accent-light); font-weight: 800; }
         option { background: var(--surface); color: var(--text-main); }
         
         .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .card {
             background: var(--surface); border-radius: 16px; padding: 10px; text-align: center;
-            border: 1.5px solid var(--surface-light); box-shadow: 0 4px 18px rgba(0,0,0,0.4);
-            position: relative; overflow: hidden; transition: transform 0.18s ease, border-color 0.3s;
+            border: 1.5px solid var(--surface-light); position: relative; overflow: hidden; transition: transform 0.18s ease;
         }
         .card:active { transform: scale(0.96); }
 
-        .card[data-rarity="Обычная"]       { border-color: #555566; }
-        .card[data-rarity="Редкая"]         { border-color: #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.25); }
-        .card[data-rarity="Эпическая"]      { border-color: #a855f7; box-shadow: 0 4px 20px rgba(168,85,247,0.3); }
-        .card[data-rarity="Легендарная"]    { border-color: #f59e0b; box-shadow: 0 4px 24px rgba(245,158,11,0.35); }
-        .card[data-rarity="Мифическая"]     { border-color: #ef4444; box-shadow: 0 4px 24px rgba(239,68,68,0.35); }
-        .card[data-rarity="Божественная"]   { border-color: #444; box-shadow: 0 0 0 1px #444, 0 6px 30px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.03); background: linear-gradient(145deg, #0d0d0d, #1a1a1a, #0d0d0d); }
+        .card[data-rarity="Обычная"]       { border-color: #333; }
+        .card[data-rarity="Редкая"]         { border-color: rgba(59,130,246,0.5); }
+        .card[data-rarity="Эпическая"]      { border-color: rgba(168,85,247,0.5); }
+        .card[data-rarity="Легендарная"]    { border-color: rgba(245,158,11,0.5); }
+        .card[data-rarity="Мифическая"]     { border-color: rgba(239,68,68,0.5); }
+        .card[data-rarity="Божественная"]   { border-color: #555; background: linear-gradient(145deg, #0d0d0d, #1a1a1a); }
 
         .card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; margin-bottom: 8px;}
         .card h3 { font-size: 14px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
-        .rarity-badge { font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-block; background: rgba(255,255,255,0.1); margin-bottom: 8px; font-weight: 600;}
+        .rarity-badge { font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-block; background: rgba(255,255,255,0.05); margin-bottom: 8px; font-weight: 600;}
 
         /* ================= МОДАЛКИ (ОБЩЕЕ) ================= */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
             z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
-            opacity: 0; transition: opacity 0.3s ease;
+            opacity: 0; transition: opacity 0.2s ease;
         }
         .modal-overlay.open { display: flex; opacity: 1; }
         .modal-content {
-            background: #0a0a0f; border-radius: 24px; width: 100%; max-width: 380px;
-            border: 1px solid rgba(255,255,255,0.1); position: relative;
-            transform: scale(0.95); transition: transform 0.3s ease;
-            max-height: 95vh; overflow-y: auto; padding-bottom: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            background: #0d0d12; border-radius: 24px; width: 100%; max-width: 380px;
+            border: 1px solid var(--border-color); position: relative;
+            transform: scale(0.95); transition: transform 0.2s ease;
+            max-height: 90vh; overflow-y: auto; padding-bottom: 20px;
         }
         .modal-overlay.open .modal-content { transform: scale(1); }
-        .modal-close { 
-            position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); 
-            border: 1px solid rgba(255,255,255,0.2); color: white; width: 34px; height: 34px; 
-            border-radius: 50%; font-size: 18px; z-index: 20; display: flex; align-items: center; justify-content: center; 
+        
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px 10px; border-bottom: 1px solid var(--border-color);
+        }
+        .modal-header h2 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .modal-header .close-btn { 
+            background: none; border: none; color: var(--text-muted); font-size: 24px; line-height: 1; padding: 0;
         }
 
         /* ── МОДАЛКА КАРТЫ ── */
         .modal-img-wrapper {
-            width: 100%; padding: 30px 20px 10px 20px; display: flex; justify-content: center;
-            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-            border-top-left-radius: 24px; border-top-right-radius: 24px;
+            width: 100%; padding: 25px 20px 10px 20px; display: flex; justify-content: center;
         }
         .modal-img { 
             width: 100%; max-width: 260px; aspect-ratio: 3/4; object-fit: cover; 
             border-radius: 12px; border: 2px solid transparent; transition: 0.3s;
         }
-        .glow-Обычная { border-color: #555566; box-shadow: 0 0 20px rgba(85,85,102,0.5); }
-        .glow-Редкая { border-color: #3b82f6; box-shadow: 0 0 25px rgba(59,130,246,0.5); }
-        .glow-Эпическая { border-color: #a855f7; box-shadow: 0 0 30px rgba(168,85,247,0.5); }
-        .glow-Легендарная { border-color: #f59e0b; box-shadow: 0 0 35px rgba(245,158,11,0.6); }
-        .glow-Мифическая { border-color: #ef4444; box-shadow: 0 0 40px rgba(239,68,68,0.7); }
-        .glow-Божественная { border-color: #444; box-shadow: 0 0 40px rgba(255,255,255,0.4), inset 0 0 20px rgba(255,255,255,0.2); }
+        .glow-Обычная { border-color: #555566; box-shadow: 0 0 20px rgba(85,85,102,0.3); }
+        .glow-Редкая { border-color: #3b82f6; box-shadow: 0 0 25px rgba(59,130,246,0.3); }
+        .glow-Эпическая { border-color: #a855f7; box-shadow: 0 0 30px rgba(168,85,247,0.3); }
+        .glow-Легендарная { border-color: #f59e0b; box-shadow: 0 0 35px rgba(245,158,11,0.3); }
+        .glow-Мифическая { border-color: #ef4444; box-shadow: 0 0 40px rgba(239,68,68,0.4); }
+        .glow-Божественная { border-color: #444; box-shadow: 0 0 40px rgba(255,255,255,0.2); }
 
         .modal-info { padding: 0 20px; }
-        .modal-title { font-size: 26px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; text-align: center; }
+        .modal-title { font-size: 24px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; text-align: center; }
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; align-items: center;}
         .stat-label { color: var(--text-muted); display: flex; align-items: center; gap: 8px;}
         .stat-val { font-weight: 600; text-align: right; max-width: 60%;}
         .stat-val.mythic { color: var(--mythic); text-shadow: 0 0 10px rgba(229, 62, 62, 0.5); }
-        .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin: 20px 0; }
-        .bot-count-box {
-            background: var(--surface-light); border-radius: 16px; padding: 15px 20px;
-            display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .bot-count-box .icon { background: rgba(124, 58, 237, 0.15); color: var(--accent-light); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;}
-
-        /* ── МОДАЛКА ЕЖЕДНЕВНЫХ НАГРАД ── */
-        .daily-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-height: 45vh; 
-            overflow-y: auto; padding: 5px; margin-bottom: 15px;
-        }
-        .daily-grid::-webkit-scrollbar { width: 4px; }
-        .daily-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .divider { height: 1px; background: var(--border-color); margin: 15px 0; }
         
+        .bot-count-box {
+            background: var(--surface); border-radius: 14px; padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-color);
+        }
+
+        /* ── МОДАЛКА ЕЖЕДНЕВНЫХ НАГРАД (5 КОЛОНОК) ── */
+        .daily-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 15px;
+        }
         .daily-item {
-            background: var(--surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-            padding: 10px 5px; text-align: center; position: relative; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; min-height: 80px;
+            background: #15151e; border: 1px solid transparent; border-radius: 10px;
+            padding: 8px 2px; text-align: center; position: relative; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 65px;
         }
-        .daily-item.claimed { opacity: 0.4; filter: grayscale(100%); }
-        .daily-item.today {
-            border-color: #48bb78; box-shadow: 0 0 10px rgba(72, 187, 120, 0.3);
-            background: linear-gradient(180deg, rgba(72,187,120,0.1) 0%, var(--surface) 100%);
+        
+        /* Стили ячеек бонуса */
+        .daily-item.claimed { opacity: 0.4; }
+        .daily-item.pack-purple { border-color: rgba(124, 58, 237, 0.6); background: rgba(124, 58, 237, 0.08); }
+        .daily-item.pack-gold { border-color: rgba(251, 191, 36, 0.8); background: rgba(251, 191, 36, 0.08); }
+        .daily-item.available { border-color: #48bb78; background: rgba(72,187,120,0.1); box-shadow: 0 0 10px rgba(72,187,120,0.2);}
+        
+        .d-day { font-size: 10px; color: var(--text-muted); margin-bottom: 2px;}
+        .d-icon { font-size: 16px; margin-bottom: 2px; }
+        .d-icon.check { color: #48bb78; font-size: 18px; font-weight: bold; margin-top: 4px;}
+        .d-val { font-size: 9px; font-weight: 600; line-height: 1.2; color: #bbb;}
+
+        .daily-footer-btn {
+            background: var(--surface-light); color: var(--text-muted); border: none;
+            width: calc(100% - 30px); margin: 0 15px 15px; padding: 14px; border-radius: 12px;
+            font-size: 14px; font-weight: 600; transition: 0.2s;
         }
-        .d-day { font-size: 10px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase;}
-        .d-icon { font-size: 20px; margin-bottom: 2px; }
-        .d-text { font-size: 10px; font-weight: 600; line-height: 1.2; }
-        .d-check {
-            position: absolute; top: -5px; right: -5px; background: #48bb78;
-            color: white; border-radius: 50%; width: 18px; height: 18px;
-            font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;
+        .daily-footer-btn.active {
+            background: rgba(124, 58, 237, 0.2); color: var(--accent-light); border: 1px solid rgba(124, 58, 237, 0.5);
         }
 
         /* ================= НИЖНЯЯ НАВИГАЦИЯ ================= */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(15px);
+            background: rgba(8, 8, 12, 0.95); backdrop-filter: blur(10px);
             display: flex; justify-content: space-around; padding: 10px 0 25px 0;
-            border-top: 1px solid rgba(255,255,255,0.05); z-index: 500;
+            border-top: 1px solid var(--border-color); z-index: 500;
         }
         .nav-btn {
             background: none; border: none; color: var(--text-muted);
             display: flex; flex-direction: column; align-items: center; gap: 5px;
             font-size: 11px; font-weight: 600; width: 33%;
         }
-        .nav-btn svg { width: 24px; height: 24px; fill: currentColor; transition: 0.3s; }
-        .nav-btn.active { color: var(--accent-light); }
-        .nav-btn.active svg { fill: var(--accent-light); filter: drop-shadow(0 0 10px rgba(159, 122, 234, 0.6)); transform: translateY(-3px); }
-        .logo-m { width: 30px !important; height: 30px !important; }
-
+        .nav-btn svg { width: 22px; height: 22px; fill: currentColor; transition: 0.2s; }
+        .nav-btn.active { color: var(--text-main); }
+        .nav-btn.active svg { fill: var(--text-main); filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+        
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--text-muted); }
-        .empty-state .icon { font-size: 45px; margin-bottom: 10px; opacity: 0.5;}
     </style>
 </head>
 <body>
 
     <div id="tab-catalog" class="tab-content">
-        
         <div class="filters-wrapper">
             <div class="filters-grid">
-                <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени персонажа..." oninput="updateCards()">
+                <input type="text" id="searchInput" class="filter-full" placeholder="Поиск по имени..." oninput="updateCards()">
                 
                 <select id="rarityFilter" onchange="updateCards()">
                     <option value="all">Все редкости</option>
@@ -242,7 +269,7 @@
                 
                 <select id="seriesFilter" onchange="updateCards()">
                     <option value="all">Все вселенные</option>
-                    </select>
+                </select>
                 
                 <select id="sortFilter" class="filter-full" onchange="updateCards()">
                     <option value="default">Сортировка: По умолчанию</option>
@@ -268,60 +295,78 @@
 
     <div id="tab-profile" class="tab-content active">
         
-        <div class="profile-wrapper">
-            <div class="system-label">>>> Окно статуса игрока</div>
-            <div class="profile-header">
+        <div class="profile-row">
+            <div class="profile-user-info">
                 <img src="https://placehold.co/150x150/13131c/7c3aed?text=U" id="userAvatar" class="profile-avatar">
                 <div class="profile-name">
                     <span id="userName">Загрузка...</span> 
                     <span id="userStatusEmoji">🧩</span>
                 </div>
             </div>
+            <div class="arrow-right">›</div>
         </div>
 
         <div class="balance-grid">
-            <div class="balance-item">💴 <span id="valKrw">0</span></div>
+            <div class="balance-item">🔗 <span id="valKrw">0</span></div>
             <div class="balance-item">💎 <span id="valDiamond">0</span></div>
             <div class="balance-item">Ⓑ <span id="valBc">0</span></div>
             <div class="balance-item">📚 <span id="valCards">0</span></div>
         </div>
 
-        <div class="module-card pass-card">
-            <div class="pass-badge">PASS</div>
-            <div class="pass-progress">
-                <span>Уровень 1/14</span>
-                <span style="color: var(--text-muted);">Прогресс 10% &nbsp; ›</span>
+        <div class="module-list">
+            
+            <div class="module-card">
+                <div class="module-left">
+                    <div class="pass-text">PASS</div>
+                    <div class="pass-level">Уровень 1/14</div>
+                </div>
+                <div class="module-right">
+                    <span class="val">Прогресс 10%</span>
+                    <span class="arrow-right">›</span>
+                </div>
             </div>
-        </div>
 
-        <div class="module-card">
-            <div>
-                <h4>Банда</h4>
-                <p>Только для своих.</p>
+            <div class="module-card">
+                <div class="module-left">
+                    <div class="module-icon">🛡️</div>
+                    <div>
+                        <div class="module-title">Банда</div>
+                        <div class="module-sub">Только для своих.</div>
+                    </div>
+                </div>
+                <div class="module-right">
+                    <span class="arrow-right">›</span>
+                </div>
             </div>
-            <div class="arrow-icon">›</div>
+
         </div>
 
         <div class="grid-2">
-            <div class="module-card" style="margin:0; border-left-color: var(--premium-gold);">
+            <div class="module-card">
+                <div class="module-icon">🎖️</div>
                 <div>
-                    <h4>Достижения</h4>
-                    <p>0/53</p>
+                    <div class="module-title">Достижения</div>
+                    <div class="module-sub">6/53</div>
                 </div>
             </div>
             
-            <div class="module-card" id="dailyBonusCard" style="margin:0; border-left-color: var(--surface-light);" onclick="openDailyModal()">
+            <div class="module-card" onclick="openDailyModal()">
+                <div class="module-icon">🎁</div>
                 <div>
-                    <h4>Награда</h4>
-                    <p id="dailyStatus" style="font-weight: 600;">Загрузка...</p>
+                    <div class="module-title">Ежедневный бонус</div>
+                    <div class="module-sub" id="dailyStatusText"><span style="color:#48bb78">✓</span> 1/30</div>
                 </div>
             </div>
         </div>
 
         <div class="shop-banner">
-            <h2>МАГАЗИН</h2>
-            <p>Покупай карты, наборы и другие уникальные предметы.</p>
-            <button class="shop-btn">Перейти в магазин</button>
+            <div class="shop-banner-bg"></div>
+            <div class="shop-banner-overlay"></div>
+            <div class="shop-banner-content">
+                <h2>МАГАЗИН</h2>
+                <p>Покупай карты, наборы и другие уникальные предметы.</p>
+                <button class="shop-btn">Перейти в магазин</button>
+            </div>
         </div>
     </div>
 
@@ -332,24 +377,26 @@
 
 
     <div class="modal-overlay" id="dailyModal">
-        <div class="modal-content" style="padding-top: 25px;">
-            <button class="modal-close" onclick="closeDailyModal()">✖</button>
-            <div class="modal-info">
-                <h2 class="modal-title" style="font-size: 22px;">Ежедневный бонус</h2>
-                <p style="text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Заходи каждый день и забирай награды!</p>
-                
-                <div class="daily-grid" id="dailyGrid">
-                    </div>
-                
-                <button class="shop-btn" id="claimDailyBtn" style="width: 100%; transition: 0.3s;" onclick="claimDailyBonus()">Уже получено</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎁 Ежедневные награды</h2>
+                <button class="close-btn" onclick="closeDailyModal()">✖</button>
             </div>
+            
+            <div class="daily-grid" id="dailyGrid"></div>
+            
+            <button class="daily-footer-btn" id="claimDailyBtn" onclick="claimDailyBonus()">Возвращайтесь завтра!</button>
         </div>
     </div>
 
 
     <div class="modal-overlay" id="cardModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">✖</button>
+            <div class="modal-header">
+                <h2 id="modalNameTop">ManhwCard</h2>
+                <button class="close-btn" onclick="closeModal()">✖</button>
+            </div>
+
             <div class="modal-img-wrapper">
                 <img src="" id="modalImg" class="modal-img">
             </div>
@@ -388,13 +435,10 @@
                 <div class="divider"></div>
 
                 <div class="bot-count-box">
-                    <div style="display:flex; align-items:center; gap:15px;">
-                        <div class="icon">
-                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="16" height="16" rx="2" ry="2"></rect><path d="M6 2h16v16"></path></svg>
-                        </div>
-                        <span style="font-size:13px; color:var(--text-muted)">Количество карт в боте:</span>
+                    <div style="display:flex; align-items:center; gap:10px; color: var(--text-muted); font-size: 13px;">
+                        <span style="font-size:18px;">📚</span> Количество карт в боте:
                     </div>
-                    <span style="font-size:18px; font-weight:800; color:var(--accent-light);" id="modalCount">...</span>
+                    <span style="font-size:16px; font-weight:700; color:#fff;" id="modalCount">...</span>
                 </div>
 
             </div>
@@ -408,7 +452,7 @@
             Каталог карт
         </button>
         <button class="nav-btn active" onclick="switchTab('profile', this)">
-            <svg class="logo-m" viewBox="0 0 24 24"><path d="M12 3L4 21h4.5l3.5-9 3.5 9H20L12 3z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 3L4 21h4.5l3.5-9 3.5 9H20L12 3z"/></svg>
             Профиль
         </button>
         <button class="nav-btn" onclick="switchTab('tops', this)">
@@ -431,32 +475,29 @@
         if (tg.initDataUnsafe?.user?.photo_url) {
             avatarEl.src = tg.initDataUnsafe.user.photo_url;
         } else {
-            avatarEl.src = "https://placehold.co/150x150/13131c/7c3aed?text=" + userName.charAt(0);
+            avatarEl.src = "https://placehold.co/150x150/1a1a24/7c3aed?text=" + userName.charAt(0);
         }
 
         let allCards = [];
         let userOwnedCards = [];
 
-        // Переменные для Дейлика
+        // Дейлик
         let currentDailyDay = 0;
         let canClaimDaily = false;
         
-        // Список 30 наград (Для отрисовки)
+        // 30 Наград
         const DAILY_REWARDS = [
-            {day:1, krw: 200}, {day:2, krw: 300}, {day:3, krw: 350}, {day:4, krw: 350},
-            {day:5, krw: 400}, {day:6, krw: 400}, {day:7, pack: 'Legendary'}, {day:8, krw: 450},
-            {day:9, krw: 450}, {day:10, krw: 500, dia: 10}, {day:11, krw: 500}, {day:12, krw: 500},
-            {day:13, krw: 550}, {day:14, pack: 'Legendary'}, {day:15, krw: 600}, {day:16, krw: 600},
-            {day:17, krw: 650}, {day:18, krw: 650}, {day:19, krw: 700}, {day:20, krw: 700, dia: 10},
-            {day:21, pack: 'Legendary'}, {day:22, krw: 750}, {day:23, krw: 750}, {day:24, krw: 800},
-            {day:25, krw: 850}, {day:26, krw: 900}, {day:27, krw: 950}, {day:28, pack: 'Legendary'},
-            {day:29, krw: 1000}, {day:30, pack: 'Mythic'}
+            {krw: 200}, {krw: 300}, {krw: 350}, {krw: 350}, {krw: 400}, 
+            {krw: 400}, {pack: 'Pack'}, {krw: 450}, {krw: 450}, {krw: 500, dia: 10}, 
+            {krw: 500}, {krw: 500}, {krw: 550}, {pack: 'Pack'}, {krw: 600}, 
+            {krw: 600}, {krw: 650}, {krw: 650}, {krw: 700}, {krw: 700, dia: 10},
+            {pack: 'Pack'}, {krw: 750}, {krw: 750}, {krw: 800}, {krw: 850}, 
+            {krw: 900}, {krw: 950}, {pack: 'Pack'}, {krw: 1000}, {pack: 'Mythic'}
         ];
 
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            
             document.getElementById('tab-' + tabId).classList.add('active');
             btnElement.classList.add('active');
         }
@@ -478,31 +519,27 @@
                     if (data.is_premium) {
                         statusEmojiEl.innerText = "👑"; 
                         avatarEl.style.borderColor = "var(--premium-gold)"; 
-                        avatarEl.style.boxShadow = "0 0 25px rgba(245, 158, 11, 0.5)"; 
+                        avatarEl.style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.3)"; 
                     } else {
                         statusEmojiEl.innerText = "🧩"; 
-                        avatarEl.style.borderColor = "var(--accent)"; 
-                        avatarEl.style.boxShadow = "0 0 20px rgba(124, 58, 237, 0.4)"; 
+                        avatarEl.style.borderColor = "transparent"; 
+                        avatarEl.style.boxShadow = "none"; 
                     }
 
-                    // ====== ЛОГИКА ЕЖЕДНЕВНОГО БОНУСА ======
+                    // Данные ежедневки
                     currentDailyDay = data.daily_day;
                     canClaimDaily = data.can_claim_daily;
                     
-                    const dailyCardText = document.getElementById('dailyStatus');
-                    const dailyCardWrapper = document.getElementById('dailyBonusCard');
-                    
+                    const dailyText = document.getElementById('dailyStatusText');
                     if (canClaimDaily) {
                         let nextDay = currentDailyDay + 1 > 30 ? 1 : currentDailyDay + 1;
-                        dailyCardText.innerHTML = `<span style="color: #48bb78;">🎁 Забрать день ${nextDay}</span>`;
-                        dailyCardWrapper.style.borderLeftColor = '#48bb78';
+                        dailyText.innerHTML = `<span style="color:var(--accent-light)">🎁 Доступно</span>`;
                     } else {
-                        dailyCardText.innerHTML = `<span style="color: var(--text-muted);">✓ Получено</span>`;
-                        dailyCardWrapper.style.borderLeftColor = 'var(--surface-light)';
+                        dailyText.innerHTML = `<span style="color:#48bb78">✓</span> ${currentDailyDay}/30`;
                     }
                 }
                 updateCards();
-            } catch (e) { console.error("Ошибка загрузки профиля:", e); }
+            } catch (e) { console.error("Ошибка:", e); }
         }
 
         // ====== ОТРИСОВКА СЕТКИ НА 30 ДНЕЙ ======
@@ -510,41 +547,48 @@
             const grid = document.getElementById('dailyGrid');
             grid.innerHTML = '';
             
-            DAILY_REWARDS.forEach(r => {
-                const isPast = r.day <= currentDailyDay;
-                const isToday = r.day === (currentDailyDay >= 30 ? 1 : currentDailyDay + 1) && canClaimDaily;
+            DAILY_REWARDS.forEach((r, index) => {
+                let dayNum = index + 1;
+                const isPast = dayNum <= currentDailyDay;
+                const isToday = dayNum === (currentDailyDay >= 30 ? 1 : currentDailyDay + 1) && canClaimDaily;
 
                 let classes = 'daily-item';
                 if (isPast) classes += ' claimed';
-                if (isToday) classes += ' today';
+                if (isToday) classes += ' available';
 
-                let rewardHtml = '';
-                if (r.pack) {
-                    rewardHtml = `<div class="d-icon">🗃️</div><div class="d-text">${r.pack} Pack</div>`;
-                } else {
-                    let txt = `${r.krw} 💴`;
-                    if (r.dia) txt += `<br>+${r.dia} 💎`;
-                    rewardHtml = `<div class="d-icon">💰</div><div class="d-text">${txt}</div>`;
+                let isPack = r.pack !== undefined;
+                let isMythic = r.pack === 'Mythic';
+
+                if (isPack && !isPast) {
+                    classes += isMythic ? ' pack-gold' : ' pack-purple';
                 }
 
-                grid.innerHTML += `
-                    <div class="${classes}">
-                        <div class="d-day">День ${r.day}</div>
-                        ${rewardHtml}
-                        ${isPast ? '<div class="d-check">✓</div>' : ''}
-                    </div>
-                `;
+                let innerHtml = '';
+                if (isPast) {
+                    innerHtml = `<div class="d-day">${dayNum}</div><div class="d-icon check">✓</div>`;
+                } else {
+                    if (isPack) {
+                        let icon = isMythic ? '👑' : '📦';
+                        innerHtml = `<div class="d-day">${dayNum}</div><div class="d-icon">${icon}</div><div class="d-val">Pack</div>`;
+                    } else {
+                        let valText = r.krw;
+                        if(r.dia) valText += `<br>+${r.dia}💎`;
+                        innerHtml = `<div class="d-day">${dayNum}</div><div class="d-icon">🪙</div><div class="d-val">${valText}</div>`;
+                    }
+                }
+
+                grid.innerHTML += `<div class="${classes}">${innerHtml}</div>`;
             });
 
             const btn = document.getElementById('claimDailyBtn');
             if (canClaimDaily) {
                 btn.disabled = false;
                 btn.innerText = "Забрать награду";
-                btn.style.opacity = "1";
+                btn.className = "daily-footer-btn active";
             } else {
                 btn.disabled = true;
-                btn.innerText = "Уже получено";
-                btn.style.opacity = "0.5";
+                btn.innerText = "Возвращайтесь завтра!";
+                btn.className = "daily-footer-btn";
             }
         }
 
@@ -557,29 +601,22 @@
             document.getElementById('dailyModal').classList.remove('open');
         }
 
-        // ОТПРАВКА ЗАПРОСА НА ПОЛУЧЕНИЕ
         async function claimDailyBonus() {
             try {
                 let res = await fetch(`https://manhwcard.bothost.tech/api/claim_daily/${userId}`, { method: 'POST' });
                 let data = await res.json();
                 
                 if (data.success) {
-                    if (data.new_krw !== undefined) document.getElementById('valKrw').innerText = data.new_krw;
-                    if (data.new_dia !== undefined) document.getElementById('valDiamond').innerText = data.new_dia;
-                    
-                    tg.showAlert("Награда успешно получена!");
-                    
-                    // Обновляем данные интерфейса и перерисовываем
                     fetchProfile();
                     closeDailyModal();
+                    tg.showAlert("Награда получена!");
                 } else {
                     tg.showAlert("Ошибка: " + data.error);
                 }
-            } catch(e) {
-                tg.showAlert("Ошибка соединения с сервером");
-            }
+            } catch(e) { tg.showAlert("Ошибка соединения"); }
         }
 
+        // ====== КАТАЛОГ ======
         fetch('cards.json').then(r => r.json()).then(data => {
             allCards = data;
             const seriesSet = new Set();
@@ -599,7 +636,7 @@
             const container = document.getElementById('cardsContainer');
             container.innerHTML = '';
             if (!cards.length) {
-                container.innerHTML = `<div class="empty-state"><div class="icon">🎴</div><p>Система не нашла данных</p></div>`;
+                container.innerHTML = `<div class="empty-state">Ничего не найдено</div>`;
                 return;
             }
             cards.forEach(card => {
@@ -608,10 +645,10 @@
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.dataset.rarity = cleanRarity; 
-                if (!isOwned && userOwnedCards.length > 0) { div.style.opacity = "0.5"; div.style.filter = "grayscale(60%)"; }
+                if (!isOwned && userOwnedCards.length > 0) { div.style.opacity = "0.3"; div.style.filter = "grayscale(80%)"; }
                 div.onclick = () => openModal(card);
                 div.innerHTML = `
-                    <img src="images/${card.file}" loading="lazy" onerror="this.src='https://placehold.co/150x200/13131c/333344?text=X'">
+                    <img src="images/${card.file}" loading="lazy" onerror="this.src='https://placehold.co/150x200/1a1a24/333344?text=X'">
                     <h3>${card.name}</h3>
                     <div class="rarity-badge">${card.rarity}</div>
                 `;
@@ -649,6 +686,7 @@
             modalImg.src = `images/${card.file}`;
             modalImg.className = `modal-img glow-${cleanRarity}`; 
 
+            document.getElementById('modalNameTop').innerText = card.name;
             document.getElementById('modalName').innerText = card.name;
             document.getElementById('modalRarity').innerText = card.rarity;
             document.getElementById('modalStyle').innerText = card.style;
