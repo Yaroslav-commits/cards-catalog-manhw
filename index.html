@@ -10,18 +10,16 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg: #06060c;
-            --surface: #12121a;
-            --surface-light: #1c1c28;
-            --accent: #8b5cf6;
-            --accent-2: #06b6d4;
-            --accent-light: #c4b5fd;
+            --bg: #05050a;
+            --surface: #101016;
+            --surface-light: #1a1a24;
+            --accent: #7c3aed;
+            --accent-light: #a78bfa;
             --text-main: #ffffff;
-            --text-muted: #8b8b9e;
+            --text-muted: #6b6b80;
             --mythic: #e53e3e;
             --premium-gold: #fbbf24;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --border-color: rgba(255, 255, 255, 0.04);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -29,216 +27,159 @@
         body {
             background-color: var(--bg);
             color: var(--text-main);
-            padding-bottom: 110px;
+            padding-bottom: 90px;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.15), transparent 30%),
-                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.1), transparent 30%);
         }
 
-        .tab-content { display: none; padding: 16px 14px; animation: fadeIn 0.3s ease; }
+        /* ── Вкладки ── */
+        .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= КАТАЛОГ ================= */
-        .section-hero {
-            position: relative; overflow: hidden;
-            border: 1px solid var(--border-color); border-radius: 20px;
-            padding: 16px; margin-bottom: 16px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(18, 18, 26, 0.8));
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
-        }
-        .hero-kicker {
-            color: var(--accent-light); font-size: 10px; font-weight: 800;
-            letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px;
-        }
-        .hero-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-        .hero-subtitle { color: var(--text-muted); font-size: 12px; line-height: 1.4; margin-bottom: 12px;}
-        .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-        .hero-pill {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 10px; border-radius: 12px;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05);
-            font-size: 11px; font-weight: 700; color: #e9e7ff;
-        }
-
-        .filters-wrapper { margin-bottom: 16px; }
-        .filters-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .filter-full { grid-column: 1 / -1; }
-        .filters-grid input, .filters-grid select {
-            width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-color);
-            background: var(--surface); color: var(--text-main); font-size: 13px; outline: none; transition: 0.2s;
-        }
-        .filters-grid input:focus, .filters-grid select:focus { border-color: var(--accent); }
+        /* ================= ПРОФИЛЬ (ТОЧЬ В ТОЧЬ КАК НА СКРИНЕ) ================= */
         
-        .collection-line {
+        /* Шапка профиля */
+        .profile-row {
             display: flex; align-items: center; justify-content: space-between;
-            font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; padding: 0 4px;
+            padding: 10px 5px 20px 5px;
         }
-        .collection-count { color: var(--accent-light); }
-
-        .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .card {
-            background: var(--surface); border-radius: 18px; padding: 8px; text-align: center;
-            border: 1.5px solid var(--surface-light); position: relative; overflow: hidden;
-            box-shadow: var(--shadow-soft); transition: transform 0.15s ease;
-        }
-        .card:active { transform: scale(0.96); }
-
-        .card[data-rarity="Обычная"]       { border-color: rgba(148,163,184,0.3); }
-        .card[data-rarity="Редкая"]         { border-color: rgba(59,130,246,0.4); }
-        .card[data-rarity="Эпическая"]      { border-color: rgba(168,85,247,0.4); }
-        .card[data-rarity="Легендарная"]    { border-color: rgba(245,158,11,0.4); }
-        .card[data-rarity="Мифическая"]     { border-color: rgba(239,68,68,0.4); }
-        .card[data-rarity="Божественная"]   { border-color: #555; background: linear-gradient(145deg, #0a0a0f, #151520); }
-
-        .card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; margin-bottom: 8px; background: #000;}
-        .card h3 { font-size: 13px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
-        .rarity-badge { font-size: 10px; padding: 3px 8px; border-radius: 6px; display: inline-block; background: rgba(255,255,255,0.05); margin-bottom: 6px; font-weight: 600;}
-        
-        .card-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
-        .mini-stat { padding: 4px 0; border-radius: 8px; background: rgba(255,255,255,0.05); color: #d7d2ff; font-size: 10px; font-weight: 700; }
-
-        .owned-badge, .locked-badge {
-            position: absolute; top: 12px; left: 12px; z-index: 3; padding: 4px 8px;
-            border-radius: 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
-            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-        }
-        .owned-badge { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
-        .locked-badge { color: #9ca3af; }
-        .card.is-locked img { filter: grayscale(100%) brightness(0.6); }
-
-        /* ================= ПРОФИЛЬ ================= */
-        .profile-card {
-            border: 1px solid var(--border-color); border-radius: 22px;
-            padding: 18px; margin-bottom: 14px; cursor: pointer;
-            background: linear-gradient(140deg, rgba(139,92,246,0.12), rgba(18,18,26,0.55) 65%);
-            box-shadow: var(--shadow-soft); transition: 0.15s;
-        }
-        .profile-card:active { transform: scale(0.99); }
-        .profile-head { display: flex; align-items: center; gap: 16px; }
+        .profile-user-info { display: flex; align-items: center; gap: 15px; }
         .profile-avatar {
-            width: 66px; height: 66px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
-            border: 2px solid var(--accent); box-shadow: 0 0 18px rgba(139,92,246,0.55);
+            width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+            background-color: var(--surface-light); border: 2px solid transparent; transition: 0.3s;
         }
-        .profile-name {
-            flex: 1; font-size: 26px; font-weight: 800;
-            display: flex; align-items: center; gap: 10px;
+        .profile-name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .profile-name span#userStatusEmoji { font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .arrow-right { color: var(--text-muted); font-size: 18px; font-weight: 300;}
+
+        /* Балансы */
+        .balance-grid { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; 
         }
-        .profile-name .puzzle { font-size: 22px; filter: drop-shadow(0 2px 6px rgba(139,92,246,0.6)); }
-        .profile-chevron { color: var(--text-muted); font-size: 26px; font-weight: 300; }
-
-        .profile-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 16px 0; }
-
-        .balance-row { display: flex; align-items: center; }
-        .balance-cell {
-            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-            font-size: 17px; font-weight: 700; color: #fff;
+        .balance-item {
+            background: var(--surface); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 600;
+            display: flex; gap: 6px; justify-content: center; align-items: center;
         }
-        .balance-cell .b-ico { font-size: 19px; color: #e9e7ff; opacity: 0.95; line-height: 1; }
-        .balance-cell .b-svg { width: 19px; height: 19px; color: #e9e7ff; opacity: 0.95; }
-        .balance-sep { width: 1px; height: 24px; background: rgba(255,255,255,0.09); }
 
-        /* PASS */
-        .pass-bar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 18px; border-radius: 18px; margin-bottom: 14px; cursor: pointer; transition: 0.15s;
-            background: linear-gradient(135deg, rgba(139,92,246,0.32), rgba(76,29,149,0.12));
-            border: 1px solid rgba(139,92,246,0.4);
-        }
-        .pass-bar:active { transform: scale(0.99); }
-        .pass-badge { font-size: 17px; font-weight: 800; letter-spacing: 0.04em; }
-        .pass-mid { color: var(--text-muted); font-size: 14px; }
-        .pass-mid b, .pass-right b { color: #fff; font-weight: 800; }
-        .pass-right { color: var(--text-muted); font-size: 14px; }
-
-        /* Модуль (Банда) */
+        /* Модули (Список) */
+        .module-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
         .module-card {
             background: var(--surface); border: 1px solid var(--border-color);
-            border-radius: 18px; padding: 16px; display: flex; cursor: pointer;
+            border-radius: 16px; padding: 16px 18px; display: flex; cursor: pointer;
             justify-content: space-between; align-items: center; transition: 0.15s;
         }
         .module-card:active { transform: scale(0.98); background: var(--surface-light); }
+        
         .module-left { display: flex; align-items: center; gap: 12px; }
-        .module-icon {
-            width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.04);
-            display: flex; align-items: center; justify-content: center; color: var(--text-muted);
+        .module-icon { 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; 
+            font-size: 16px; color: var(--text-muted);
         }
-        .module-icon svg { width: 22px; height: 22px; }
-        .module-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-        .module-sub { font-size: 13px; color: var(--text-muted); }
-        .chev { color: var(--text-muted); font-size: 24px; font-weight: 300; }
+        .module-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .module-sub { font-size: 12px; color: var(--text-muted); }
+        .module-right { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500;}
+        .module-right .val { color: var(--text-muted); }
 
-        /* Заработок + Бонус */
-        .dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-        .dual-card {
-            background: var(--surface); border: 1px solid var(--border-color);
-            border-radius: 18px; padding: 16px; cursor: pointer; transition: 0.15s; min-height: 96px;
-        }
-        .dual-card:active { transform: scale(0.98); background: var(--surface-light); }
+        /* Плашка PASS */
+        .pass-text { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; margin-right: 10px;}
+        .pass-level { font-size: 13px; color: var(--text-muted); font-weight: 500;}
 
-        .earn-card { display: flex; flex-direction: column; justify-content: space-between; }
-        .earn-ico {
-            width: 34px; height: 34px; border-radius: 10px;
-            background: rgba(139,92,246,0.18); color: var(--accent-light);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .earn-ico svg { width: 18px; height: 18px; }
-        .earn-title { font-size: 15px; font-weight: 700; color: var(--accent-light); }
-        .earn-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-        .bonus-card { display: flex; align-items: center; gap: 12px; }
-        .bonus-ico {
-            width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
-            background: rgba(255,255,255,0.04); color: #d7d2ff;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .bonus-ico svg { width: 22px; height: 22px; }
-        .bonus-title { font-size: 15px; font-weight: 700; }
-        .bonus-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-        /* Магазин */
+        /* Сетка для достижений и бонуса */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .grid-2 .module-card { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; margin: 0; }
+        .grid-2 .module-title { font-size: 14px; }
+        .grid-2 .module-sub { display: flex; align-items: center; gap: 4px; }
+        
+        /* Баннер магазина (С картинкой из папки) */
         .shop-banner {
-            position: relative; border-radius: 22px; overflow: hidden; padding: 28px 22px;
-            min-height: 210px; border: 1px solid var(--border-color); margin-bottom: 20px; cursor: pointer;
+            position: relative; border-radius: 20px; overflow: hidden; padding: 30px 20px;
+            min-height: 170px; border: 1px solid var(--border-color); margin-bottom: 20px;
             display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
         }
-        .shop-banner-bg { position: absolute; inset: 0; background-image: url('images/shop.jpeg'); background-size: cover; background-position: right center; z-index: 1; }
-        .shop-banner-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, rgba(6,6,12,0.97) 0%, rgba(6,6,12,0.75) 45%, transparent 100%); }
-        .shop-banner-content { position: relative; z-index: 3; max-width: 60%; }
-        .shop-banner h2 { font-size: 30px; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
-        .shop-banner p { font-size: 13px; color: #cfcfe0; margin-bottom: 16px; line-height: 1.45; }
-        .shop-btn {
-            background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff; border: none;
-            padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 14px;
+        .shop-banner-bg {
+            position: absolute; inset: 0; background-image: url('images/shop.jpeg');
+            background-size: cover; background-position: right center; z-index: 1;
         }
+        .shop-banner-overlay {
+            position: absolute; inset: 0; z-index: 2;
+            background: linear-gradient(90deg, rgba(8,8,12,1) 0%, rgba(8,8,12,0.85) 45%, rgba(8,8,12,0) 100%);
+        }
+        .shop-banner-content { position: relative; z-index: 3; max-width: 60%; }
+        .shop-banner h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
+        .shop-banner p { font-size: 12px; color: #aaa; margin-bottom: 15px; line-height: 1.4; }
+        .shop-btn {
+            background: rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.5);
+            color: var(--accent-light); padding: 8px 16px; border-radius: 10px;
+            font-weight: 600; font-size: 13px; transition: 0.2s;
+        }
+        .shop-btn:active { background: var(--accent); color: #fff; }
 
-        /* ================= МОДАЛКИ ================= */
+        /* ================= КАТАЛОГ И ИДЕАЛЬНЫЕ ФИЛЬТРЫ ================= */
+        .filters-wrapper {
+            background: var(--surface); padding: 12px; border-radius: 16px; margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .filters-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .filter-full { grid-column: 1 / -1; }
+        
+        .filters-grid input, .filters-grid select {
+            width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-color);
+            background: var(--surface-light); color: var(--text-main); font-size: 13px; outline: none; transition: 0.2s;
+        }
+        .filters-grid input:focus, .filters-grid select:focus { border-color: var(--accent); }
+        optgroup { background: var(--bg); color: var(--accent-light); font-weight: 800; }
+        option { background: var(--surface); color: var(--text-main); }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .card {
+            background: var(--surface); border-radius: 16px; padding: 10px; text-align: center;
+            border: 1.5px solid var(--surface-light); position: relative; overflow: hidden; transition: transform 0.18s ease;
+        }
+        .card:active { transform: scale(0.96); }
+
+        .card[data-rarity="Обычная"]       { border-color: #333; }
+        .card[data-rarity="Редкая"]         { border-color: rgba(59,130,246,0.5); }
+        .card[data-rarity="Эпическая"]      { border-color: rgba(168,85,247,0.5); }
+        .card[data-rarity="Легендарная"]    { border-color: rgba(245,158,11,0.5); }
+        .card[data-rarity="Мифическая"]     { border-color: rgba(239,68,68,0.5); }
+        .card[data-rarity="Божественная"]   { border-color: #555; background: linear-gradient(145deg, #0d0d0d, #1a1a1a); }
+
+        .card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; margin-bottom: 8px;}
+        .card h3 { font-size: 14px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
+        .rarity-badge { font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-block; background: rgba(255,255,255,0.05); margin-bottom: 8px; font-weight: 600;}
+
+        /* ================= МОДАЛКИ (ОБЩЕЕ) ================= */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
-            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 15px;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
+            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
             opacity: 0; transition: opacity 0.2s ease;
         }
         .modal-overlay.open { display: flex; opacity: 1; }
         .modal-content {
-            background: #0d0d14; border-radius: 24px; width: 100%; max-width: 380px;
-            border: 1px solid rgba(255,255,255,0.1); position: relative;
+            background: #0d0d12; border-radius: 24px; width: 100%; max-width: 380px;
+            border: 1px solid var(--border-color); position: relative;
             transform: scale(0.95); transition: transform 0.2s ease;
             max-height: 90vh; overflow-y: auto; padding-bottom: 20px;
         }
         .modal-overlay.open .modal-content { transform: scale(1); }
+        
         .modal-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 20px 10px; border-bottom: 1px solid var(--border-color);
-            position: sticky; top: 0; background: #0d0d14; z-index: 10;
+            padding: 15px 20px 10px; border-bottom: 1px solid var(--border-color);
         }
-        .modal-header h2 { font-size: 18px; font-weight: 700; }
-        .close-btn { background: rgba(255,255,255,0.08); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; }
+        .modal-header h2 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .modal-header .close-btn { 
+            background: none; border: none; color: var(--text-muted); font-size: 24px; line-height: 1; padding: 0;
+        }
 
-        .modal-img-wrapper { width: 100%; padding: 25px 20px 15px; display: flex; justify-content: center; }
+        /* ── МОДАЛКА КАРТЫ ── */
+        .modal-img-wrapper {
+            width: 100%; padding: 25px 20px 10px 20px; display: flex; justify-content: center;
+        }
         .modal-img { 
-            width: 100%; max-width: 250px; aspect-ratio: 3/4; object-fit: cover; 
-            border-radius: 16px; border: 2px solid transparent; 
+            width: 100%; max-width: 260px; aspect-ratio: 3/4; object-fit: cover; 
+            border-radius: 12px; border: 2px solid transparent; transition: 0.3s;
         }
         .glow-Обычная { border-color: #555566; box-shadow: 0 0 20px rgba(85,85,102,0.3); }
         .glow-Редкая { border-color: #3b82f6; box-shadow: 0 0 25px rgba(59,130,246,0.3); }
@@ -248,89 +189,88 @@
         .glow-Божественная { border-color: #444; box-shadow: 0 0 40px rgba(255,255,255,0.2); }
 
         .modal-info { padding: 0 20px; }
-        .modal-title { font-size: 24px; font-weight: 800; margin-bottom: 16px; text-transform: uppercase; text-align: center; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 8px;}
-        .stat-label { color: var(--text-muted); }
-        .stat-val { font-weight: 700; text-align: right; max-width: 60%; }
-        .stat-val.mythic { color: var(--mythic); text-shadow: 0 0 10px rgba(229, 62, 62, 0.4); }
+        .modal-title { font-size: 24px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; text-align: center; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; align-items: center;}
+        .stat-label { color: var(--text-muted); display: flex; align-items: center; gap: 8px;}
+        .stat-val { font-weight: 600; text-align: right; max-width: 60%;}
+        .stat-val.mythic { color: var(--mythic); text-shadow: 0 0 10px rgba(229, 62, 62, 0.5); }
+        .divider { height: 1px; background: var(--border-color); margin: 15px 0; }
         
         .bot-count-box {
-            background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px 16px;
-            display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px;
+            background: var(--surface); border-radius: 14px; padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-color);
         }
 
-        .daily-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 15px; }
-        .daily-item {
-            background: var(--surface-light); border: 1px solid transparent; border-radius: 10px;
-            padding: 8px 2px; text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 65px;
+        /* ── МОДАЛКА ЕЖЕДНЕВНЫХ НАГРАД (5 КОЛОНОК) ── */
+        .daily-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 15px;
         }
+        .daily-item {
+            background: #15151e; border: 1px solid transparent; border-radius: 10px;
+            padding: 8px 2px; text-align: center; position: relative; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 65px;
+        }
+        
+        /* Стили ячеек бонуса */
         .daily-item.claimed { opacity: 0.4; }
-        .daily-item.available { border-color: #48bb78; background: rgba(72,187,120,0.1); }
-        .daily-item.pack-purple { border-color: rgba(124, 58, 237, 0.6); }
-        .daily-item.pack-gold { border-color: rgba(251, 191, 36, 0.8); }
+        .daily-item.pack-purple { border-color: rgba(124, 58, 237, 0.6); background: rgba(124, 58, 237, 0.08); }
+        .daily-item.pack-gold { border-color: rgba(251, 191, 36, 0.8); background: rgba(251, 191, 36, 0.08); }
+        .daily-item.available { border-color: #48bb78; background: rgba(72,187,120,0.1); box-shadow: 0 0 10px rgba(72,187,120,0.2);}
         
         .d-day { font-size: 10px; color: var(--text-muted); margin-bottom: 2px;}
         .d-icon { font-size: 16px; margin-bottom: 2px; }
-        .d-icon.check { color: #48bb78; }
-        .d-val { font-size: 9px; font-weight: 600; color: #bbb;}
+        .d-icon.check { color: #48bb78; font-size: 18px; font-weight: bold; margin-top: 4px;}
+        .d-val { font-size: 9px; font-weight: 600; line-height: 1.2; color: #bbb;}
 
         .daily-footer-btn {
-            background: rgba(255,255,255,0.05); color: var(--text-muted); border: none;
+            background: var(--surface-light); color: var(--text-muted); border: none;
             width: calc(100% - 30px); margin: 0 15px 15px; padding: 14px; border-radius: 12px;
-            font-size: 14px; font-weight: 600;
+            font-size: 14px; font-weight: 600; transition: 0.2s;
         }
-        .daily-footer-btn.active { background: var(--accent); color: #fff; }
+        .daily-footer-btn.active {
+            background: rgba(124, 58, 237, 0.2); color: var(--accent-light); border: 1px solid rgba(124, 58, 237, 0.5);
+        }
 
-        /* ================= ПАРЯЩАЯ НАВИГАЦИЯ ================= */
+        /* ================= НИЖНЯЯ НАВИГАЦИЯ ================= */
         .bottom-nav {
-            position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-            width: calc(100% - 32px); max-width: 420px;
-            background: rgba(18, 18, 26, 0.96); backdrop-filter: blur(12px);
-            display: flex; justify-content: space-around; align-items: center; padding: 12px 14px;
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 26px; z-index: 500;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(8, 8, 12, 0.95); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 10px 0 25px 0;
+            border-top: 1px solid var(--border-color); z-index: 500;
         }
         .nav-btn {
             background: none; border: none; color: var(--text-muted);
-            display: flex; align-items: center; justify-content: center;
-            padding: 10px 26px; border-radius: 16px; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: 600; width: 33%;
         }
-        .nav-btn svg { width: 26px; height: 26px; }
-        .nav-btn.active { color: #fff; background: rgba(139,92,246,0.16); }
-        .nav-btn.active svg { filter: drop-shadow(0 0 8px rgba(196,181,253,0.6)); }
-        .nav-center svg { width: 32px; height: 26px; }
-
-        .empty-state { grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px;}
+        .nav-btn svg { width: 22px; height: 22px; fill: currentColor; transition: 0.2s; }
+        .nav-btn.active { color: var(--text-main); }
+        .nav-btn.active svg { fill: var(--text-main); filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+        
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
     <div id="tab-catalog" class="tab-content">
-        <div class="section-hero">
-            <div class="hero-kicker">ManhwCard Archive</div>
-            <div class="hero-title">Каталог карточек</div>
-            <div class="hero-subtitle">Собирай коллекцию, фильтруй по редкости и вселенным.</div>
-            <div class="hero-pills">
-                <span class="hero-pill">🃏 <span id="catalogTotal">0 карт</span></span>
-                <span class="hero-pill">✨ <span id="catalogOwned">Собрано 0</span></span>
-            </div>
-        </div>
-
         <div class="filters-wrapper">
             <div class="filters-grid">
-                <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени..." oninput="updateCards()">
+                <input type="text" id="searchInput" class="filter-full" placeholder="Поиск по имени..." oninput="updateCards()">
+                
                 <select id="rarityFilter" onchange="updateCards()">
                     <option value="all">Все редкости</option>
                     <option value="Божественная">⚫ Божественная</option>
                     <option value="Мифическая">🔴 Мифическая</option>
                     <option value="Легендарная">🔵 Легендарная</option>
-                    <option value="Эпическая">���� Эпическая</option>
+                    <option value="Эпическая">🟢 Эпическая</option>
                     <option value="Редкая">🟡 Редкая</option>
                     <option value="Обычная">⚪️ Обычная</option>
                 </select>
+                
                 <select id="seriesFilter" onchange="updateCards()">
                     <option value="all">Все вселенные</option>
                 </select>
+                
                 <select id="sortFilter" class="filter-full" onchange="updateCards()">
                     <option value="default">Сортировка: По умолчанию</option>
                     <optgroup label="Сила 💪">
@@ -349,85 +289,77 @@
             </div>
         </div>
 
-        <div class="collection-line">
-            <span id="cardsResultText">Загружаю...</span>
-            <span class="collection-count" id="collectionProgress">0%</span>
-        </div>
-        
         <div class="cards-grid" id="cardsContainer"></div>
     </div>
 
+
     <div id="tab-profile" class="tab-content active">
-
-        <div class="profile-card" onclick="wip('Профиль')">
-            <div class="profile-head">
-                <img src="https://placehold.co/150x150/1c1c28/8b5cf6?text=U" id="userAvatar" class="profile-avatar">
+        
+        <div class="profile-row">
+            <div class="profile-user-info">
+                <img src="https://placehold.co/150x150/13131c/7c3aed?text=U" id="userAvatar" class="profile-avatar">
                 <div class="profile-name">
-                    <span id="userName">Игрок</span>
-                    <span class="puzzle" id="userStatusEmoji">🧩</span>
-                </div>
-                <div class="profile-chevron">›</div>
-            </div>
-            <div class="profile-divider"></div>
-            <div class="balance-row">
-                <div class="balance-cell"><span class="b-ico">₩</span><span id="valKrw">0</span></div>
-                <div class="balance-sep"></div>
-                <div class="balance-cell">
-                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
-                    <span id="valDiamond">0</span>
-                </div>
-                <div class="balance-sep"></div>
-                <div class="balance-cell"><span class="b-ico">Ⓑ</span><span id="valBc">0</span></div>
-                <div class="balance-sep"></div>
-                <div class="balance-cell">
-                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
-                    <span id="valCards">0</span>
+                    <span id="userName">Загрузка...</span> 
+                    <span id="userStatusEmoji">🧩</span>
                 </div>
             </div>
+            <div class="arrow-right">›</div>
         </div>
 
-        <div class="pass-bar" onclick="wip('PASS')">
-            <div class="pass-badge">PASS</div>
-            <div class="pass-mid">Уровень <b>1/14</b></div>
-            <div class="pass-right">Прогресс <b>10%</b> ›</div>
+        <div class="balance-grid">
+            <div class="balance-item">💴 <span id="valKrw">0</span></div>
+            <div class="balance-item">💎 <span id="valDiamond">0</span></div>
+            <div class="balance-item">Ⓑ <span id="valBc">0</span></div>
+            <div class="balance-item">📚 <span id="valCards">0</span></div>
         </div>
 
-        <div class="module-card" onclick="wip('Банда')" style="margin-bottom:14px;">
-            <div class="module-left">
-                <div class="module-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5z"/></svg>
+        <div class="module-list">
+            
+            <div class="module-card">
+                <div class="module-left">
+                    <div class="pass-text">PASS</div>
+                    <div class="pass-level">Уровень 1/14</div>
                 </div>
+                <div class="module-right">
+                    <span class="val">Прогресс 10%</span>
+                    <span class="arrow-right">›</span>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-left">
+                    <div class="module-icon">🛡️</div>
+                    <div>
+                        <div class="module-title">Банда</div>
+                        <div class="module-sub">Только для своих.</div>
+                    </div>
+                </div>
+                <div class="module-right">
+                    <span class="arrow-right">›</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid-2">
+            <div class="module-card">
+                <div class="module-icon">🎖️</div>
                 <div>
-                    <div class="module-title">Банда</div>
-                    <div class="module-sub">Только для своих.</div>
+                    <div class="module-title">Достижения</div>
+                    <div class="module-sub">6/53</div>
                 </div>
             </div>
-            <div class="chev">›</div>
-        </div>
-
-        <div class="dual-grid">
-            <div class="dual-card earn-card" onclick="wip('Заработок')">
-                <div class="earn-ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="9" r="5"/><path d="M14.5 4.2A5 5 0 1 1 16 14.8"/></svg>
-                </div>
+            
+            <div class="module-card" onclick="openDailyModal()">
+                <div class="module-icon">🎁</div>
                 <div>
-                    <div class="earn-title">Заработок</div>
-                    <div class="earn-sub">Игры, задания и рефералы</div>
-                </div>
-            </div>
-
-            <div class="dual-card bonus-card" onclick="openDailyModal()">
-                <div class="bonus-ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 2 7.5 4 12 7 12 7zM12 7s1.5-5 4.5-3S12 7 12 7z"/></svg>
-                </div>
-                <div>
-                    <div class="bonus-title">Ежедневный бонус</div>
-                    <div class="bonus-sub" id="dailyStatusText"><span style="color:#4ade80">✓</span> 1/30</div>
+                    <div class="module-title">Ежедневный бонус</div>
+                    <div class="module-sub" id="dailyStatusText"><span style="color:#48bb78">✓</span> 1/30</div>
                 </div>
             </div>
         </div>
 
-        <div class="shop-banner" onclick="wip('Магазин')">
+        <div class="shop-banner">
             <div class="shop-banner-bg"></div>
             <div class="shop-banner-overlay"></div>
             <div class="shop-banner-content">
@@ -438,9 +370,11 @@
         </div>
     </div>
 
+
     <div id="tab-tops" class="tab-content">
         <h2 style="text-align:center; margin-top:50px; color:var(--text-muted)">Топы в разработке 🏆</h2>
     </div>
+
 
     <div class="modal-overlay" id="dailyModal">
         <div class="modal-content">
@@ -448,10 +382,13 @@
                 <h2>🎁 Ежедневные награды</h2>
                 <button class="close-btn" onclick="closeDailyModal()">✖</button>
             </div>
+            
             <div class="daily-grid" id="dailyGrid"></div>
+            
             <button class="daily-footer-btn" id="claimDailyBtn" onclick="claimDailyBonus()">Возвращайтесь завтра!</button>
         </div>
     </div>
+
 
     <div class="modal-overlay" id="cardModal">
         <div class="modal-content">
@@ -459,9 +396,11 @@
                 <h2 id="modalNameTop">ManhwCard</h2>
                 <button class="close-btn" onclick="closeModal()">✖</button>
             </div>
+
             <div class="modal-img-wrapper">
                 <img src="" id="modalImg" class="modal-img">
             </div>
+            
             <div class="modal-info">
                 <h2 class="modal-title" id="modalName">Имя персонажа</h2>
                 
@@ -470,12 +409,12 @@
                     <span class="stat-val" id="modalRarity">Мифическая 🔴</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">👊 Стиль:</span>
+                    <span class="stat-label">👊 Стиль боя:</span>
                     <span class="stat-val" id="modalStyle">Тхэквондо</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">🪐 Вселенная:</span>
-                    <span class="stat-val" id="modalSeries">Борьба</span>
+                    <span class="stat-val" id="modalSeries">Борьба в прямом эфире</span>
                 </div>
 
                 <div class="divider"></div>
@@ -493,58 +432,61 @@
                     <span class="stat-val mythic" id="modalIntellect">98</span>
                 </div>
 
+                <div class="divider"></div>
+
                 <div class="bot-count-box">
-                    <span style="color: var(--text-muted); font-size: 13px;">📚 В боте:</span>
+                    <div style="display:flex; align-items:center; gap:10px; color: var(--text-muted); font-size: 13px;">
+                        <span style="font-size:18px;">📚</span> Количество карт в боте:
+                    </div>
                     <span style="font-size:16px; font-weight:700; color:#fff;" id="modalCount">...</span>
                 </div>
+
             </div>
         </div>
     </div>
 
+
     <nav class="bottom-nav">
         <button class="nav-btn" onclick="switchTab('catalog', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+            Каталог карт
         </button>
-        <button class="nav-btn nav-center active" onclick="switchTab('profile', this)">
-            <svg viewBox="0 0 32 24" fill="currentColor"><path d="M3 22 7 2l9 12 9-12 4 20h-5L21 11l-5 8-5-8-2 11z"/></svg>
+        <button class="nav-btn active" onclick="switchTab('profile', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 3L4 21h4.5l3.5-9 3.5 9H20L12 3z"/></svg>
+            Профиль
         </button>
         <button class="nav-btn" onclick="switchTab('tops', this)">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0012 18a5.01 5.01 0 004.61-5.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 10.82C5.84 10.4 5 9.3 5 8V7h2v3.82zM19 8c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0012 18a5.01 5.01 0 004.61-5.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 10.82C5.84 10.4 5 9.3 5 8V7h2v3.82zM19 8c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+            Топы
         </button>
     </nav>
 
     <script>
-        var tg = window.Telegram.WebApp;
+        let tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
-        var userId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : 12345;
-        var userName = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.first_name : "Игрок";
+        let userId = tg.initDataUnsafe?.user?.id || 12345;
+        let userName = tg.initDataUnsafe?.user?.first_name || "Игрок";
         
         document.getElementById('userName').innerText = userName;
 
-        var avatarEl = document.getElementById('userAvatar');
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.photo_url) {
+        let avatarEl = document.getElementById('userAvatar');
+        if (tg.initDataUnsafe?.user?.photo_url) {
             avatarEl.src = tg.initDataUnsafe.user.photo_url;
         } else {
-            avatarEl.src = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + userName.charAt(0);
+            avatarEl.src = "https://placehold.co/150x150/1a1a24/7c3aed?text=" + userName.charAt(0);
         }
 
-        // Временная заглушка для нереализованных разделов
-        function wip(name) {
-            if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) {
-                tg.HapticFeedback.notificationOccurred('warning');
-            }
-            tg.showAlert((name || 'Раздел') + ' в разработке 🚧');
-        }
+        let allCards = [];
+        let userOwnedCards = [];
 
-        var allCards = [];
-        var userOwnedCards = [];
-
-        var currentDailyDay = 0;
-        var canClaimDaily = false;
+        // Дейлик
+        let currentDailyDay = 0;
+        let canClaimDaily = false;
         
-        var DAILY_REWARDS = [
+        // 30 Наград
+        const DAILY_REWARDS = [
             {krw: 200}, {krw: 300}, {krw: 350}, {krw: 350}, {krw: 400}, 
             {krw: 400}, {pack: 'Pack'}, {krw: 450}, {krw: 450}, {krw: 500, dia: 10}, 
             {krw: 500}, {krw: 500}, {krw: 550}, {pack: 'Pack'}, {krw: 600}, 
@@ -554,29 +496,17 @@
         ];
 
         function switchTab(tabId, btnElement) {
-            if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) {
-                tg.HapticFeedback.selectionChanged();
-            }
-            document.querySelectorAll('.tab-content').forEach(function(tab) { tab.classList.remove('active'); });
-            document.querySelectorAll('.nav-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             btnElement.classList.add('active');
         }
 
-        function updateCollectionInfo(visibleCount) {
-            var total = allCards.length || 0;
-            var owned = userOwnedCards.length || 0;
-            document.getElementById('catalogTotal').innerText = total + " карт";
-            document.getElementById('catalogOwned').innerText = "Собрано " + owned;
-            document.getElementById('cardsResultText').innerText = total > 0 ? ("Показано " + visibleCount + " из " + total) : "Загрузка...";
-            document.getElementById('collectionProgress').innerText = total > 0 ? (Math.round((owned / total) * 100) + "%") : "0%";
-        }
-
         async function fetchProfile() {
             try {
-                var res = await fetch('https://manhwcard.bothost.tech/api/profile/' + userId);
+                let res = await fetch(`https://manhwcard.bothost.tech/api/profile/${userId}`);
                 if (res.ok) {
-                    var data = await res.json();
+                    let data = await res.json();
                     
                     document.getElementById('valKrw').innerText = data.krw;
                     document.getElementById('valDiamond').innerText = data.diamond;
@@ -585,70 +515,72 @@
                     userOwnedCards = data.owned_cards || [];
                     document.getElementById('valCards').innerText = userOwnedCards.length;
 
-                    var statusEmojiEl = document.getElementById('userStatusEmoji');
+                    const statusEmojiEl = document.getElementById('userStatusEmoji');
                     if (data.is_premium) {
                         statusEmojiEl.innerText = "👑"; 
                         avatarEl.style.borderColor = "var(--premium-gold)"; 
-                        avatarEl.style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.4)"; 
+                        avatarEl.style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.3)"; 
                     } else {
                         statusEmojiEl.innerText = "🧩"; 
-                        avatarEl.style.borderColor = "var(--accent)"; 
-                        avatarEl.style.boxShadow = "0 0 18px rgba(139,92,246,0.55)"; 
+                        avatarEl.style.borderColor = "transparent"; 
+                        avatarEl.style.boxShadow = "none"; 
                     }
 
-                    currentDailyDay = data.daily_day || 0;
-                    canClaimDaily = data.can_claim_daily || false;
+                    // Данные ежедневки
+                    currentDailyDay = data.daily_day;
+                    canClaimDaily = data.can_claim_daily;
                     
-                    var dailyText = document.getElementById('dailyStatusText');
+                    const dailyText = document.getElementById('dailyStatusText');
                     if (canClaimDaily) {
-                        dailyText.innerHTML = '<span style="color:var(--accent-light)">🎁 Доступно</span>';
+                        let nextDay = currentDailyDay + 1 > 30 ? 1 : currentDailyDay + 1;
+                        dailyText.innerHTML = `<span style="color:var(--accent-light)">🎁 Доступно</span>`;
                     } else {
-                        dailyText.innerHTML = '<span style="color:#4ade80">✓</span> ' + currentDailyDay + '/30';
+                        dailyText.innerHTML = `<span style="color:#48bb78">✓</span> ${currentDailyDay}/30`;
                     }
-                    updateCollectionInfo(allCards.length);
                 }
                 updateCards();
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Ошибка:", e); }
         }
 
+        // ====== ОТРИСОВКА СЕТКИ НА 30 ДНЕЙ ======
         function renderDailyGrid() {
-            var grid = document.getElementById('dailyGrid');
+            const grid = document.getElementById('dailyGrid');
             grid.innerHTML = '';
             
-            DAILY_REWARDS.forEach(function(r, index) {
-                var dayNum = index + 1;
-                var isPast = dayNum <= currentDailyDay;
-                var isToday = dayNum === (currentDailyDay >= 30 ? 1 : currentDailyDay + 1) && canClaimDaily;
+            DAILY_REWARDS.forEach((r, index) => {
+                let dayNum = index + 1;
+                const isPast = dayNum <= currentDailyDay;
+                const isToday = dayNum === (currentDailyDay >= 30 ? 1 : currentDailyDay + 1) && canClaimDaily;
 
-                var classes = 'daily-item';
+                let classes = 'daily-item';
                 if (isPast) classes += ' claimed';
                 if (isToday) classes += ' available';
 
-                var isPack = r.pack !== undefined;
-                var isMythic = r.pack === 'Mythic';
+                let isPack = r.pack !== undefined;
+                let isMythic = r.pack === 'Mythic';
 
                 if (isPack && !isPast) {
                     classes += isMythic ? ' pack-gold' : ' pack-purple';
                 }
 
-                var innerHtml = '';
+                let innerHtml = '';
                 if (isPast) {
-                    innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon check">✓</div>';
+                    innerHtml = `<div class="d-day">${dayNum}</div><div class="d-icon check">✓</div>`;
                 } else {
                     if (isPack) {
-                        var icon = isMythic ? '👑' : '📦';
-                        innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon">' + icon + '</div><div class="d-val">Pack</div>';
+                        let icon = isMythic ? '👑' : '📦';
+                        innerHtml = `<div class="d-day">${dayNum}</div><div class="d-icon">${icon}</div><div class="d-val">Pack</div>`;
                     } else {
-                        var valText = r.krw;
-                        if(r.dia) valText += '<br>+' + r.dia + '💎';
-                        innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon">💴</div><div class="d-val">' + valText + '</div>';
+                        let valText = r.krw;
+                        if(r.dia) valText += `<br>+${r.dia}💎`;
+                        innerHtml = `<div class="d-day">${dayNum}</div><div class="d-icon">💴</div><div class="d-val">${valText}</div>`;
                     }
                 }
 
-                grid.innerHTML += '<div class="' + classes + '">' + innerHtml + '</div>';
+                grid.innerHTML += `<div class="${classes}">${innerHtml}</div>`;
             });
 
-            var btn = document.getElementById('claimDailyBtn');
+            const btn = document.getElementById('claimDailyBtn');
             if (canClaimDaily) {
                 btn.disabled = false;
                 btn.innerText = "Забрать награду";
@@ -664,14 +596,16 @@
             renderDailyGrid();
             document.getElementById('dailyModal').classList.add('open');
         }
+
         function closeDailyModal() {
             document.getElementById('dailyModal').classList.remove('open');
         }
 
         async function claimDailyBonus() {
             try {
-                var res = await fetch('https://manhwcard.bothost.tech/api/claim_daily/' + userId, { method: 'POST' });
-                var data = await res.json();
+                let res = await fetch(`https://manhwcard.bothost.tech/api/claim_daily/${userId}`, { method: 'POST' });
+                let data = await res.json();
+                
                 if (data.success) {
                     fetchProfile();
                     closeDailyModal();
@@ -683,114 +617,98 @@
         }
 
         // ====== КАТАЛОГ ======
-        fetch('cards.json').then(function(r) { return r.json(); }).then(function(data) {
+        fetch('cards.json').then(r => r.json()).then(data => {
             allCards = data;
-            var seriesSet = new Set();
-            allCards.forEach(function(c) { if (c.series) seriesSet.add(c.series); });
-            var seriesSelect = document.getElementById('seriesFilter');
-            seriesSet.forEach(function(s) {
-                var opt = document.createElement('option');
+            const seriesSet = new Set();
+            allCards.forEach(c => { if (c.series) seriesSet.add(c.series); });
+            const seriesSelect = document.getElementById('seriesFilter');
+            seriesSet.forEach(s => {
+                const opt = document.createElement('option');
                 opt.value = s;
                 opt.innerText = s;
                 seriesSelect.appendChild(opt);
             });
-            updateCollectionInfo(allCards.length);
             updateCards();
             fetchProfile(); 
         });
 
         function renderCards(cards) {
-            var container = document.getElementById('cardsContainer');
+            const container = document.getElementById('cardsContainer');
             container.innerHTML = '';
-            updateCollectionInfo(cards.length);
             if (!cards.length) {
-                container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px; opacity:0.6;">Измените фильтры</span></div>';
+                container.innerHTML = `<div class="empty-state">Ничего не найдено</div>`;
                 return;
             }
-            cards.forEach(function(card) {
-                var cleanRarity = (card.rarity || '').split(' ')[0];
-                var isOwned = userOwnedCards.includes(card.id);
-                var div = document.createElement('div');
-                div.className = 'card' + (!isOwned && userOwnedCards.length > 0 ? ' is-locked' : '');
-                div.dataset.rarity = cleanRarity;
-                
-                div.onclick = function() { openModal(card); };
-                
-                var badgeHtml = '';
-                if (isOwned) badgeHtml = '<div class="owned-badge">МОЯ</div>';
-                else if (userOwnedCards.length > 0) badgeHtml = '<div class="locked-badge">LOCK</div>';
-
-                div.innerHTML = badgeHtml + 
-                    '<img src="images/' + (card.file || '') + '" loading="lazy">' +
-                    '<h3>' + (card.name || '') + '</h3>' +
-                    '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
-                    '<div class="card-meta">' +
-                        '<div class="mini-stat">⚡ ' + (card.speed || 0) + '</div>' +
-                        '<div class="mini-stat">💪 ' + (card.strength || 0) + '</div>' +
-                        '<div class="mini-stat">🧠 ' + (card.intellect || 0) + '</div>' +
-                    '</div>';
+            cards.forEach(card => {
+                const cleanRarity = card.rarity.split(' ')[0];
+                const isOwned = userOwnedCards.includes(card.id);
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.dataset.rarity = cleanRarity; 
+                if (!isOwned && userOwnedCards.length > 0) { div.style.opacity = "0.3"; div.style.filter = "grayscale(80%)"; }
+                div.onclick = () => openModal(card);
+                div.innerHTML = `
+                    <img src="images/${card.file}" loading="lazy" onerror="this.src='https://placehold.co/150x200/1a1a24/333344?text=X'">
+                    <h3>${card.name}</h3>
+                    <div class="rarity-badge">${card.rarity}</div>
+                `;
                 container.appendChild(div);
             });
         }
 
         function updateCards() {
-            var search = document.getElementById('searchInput').value.toLowerCase();
-            var rarity = document.getElementById('rarityFilter').value;
-            var series = document.getElementById('seriesFilter').value;
-            var sortType = document.getElementById('sortFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const rarity = document.getElementById('rarityFilter').value;
+            const series = document.getElementById('seriesFilter').value;
+            const sortType = document.getElementById('sortFilter').value;
 
-            var filtered = allCards.filter(function(card) {
-                var cleanRarity = (card.rarity || '').split(' ')[0];
-                var matchName = String(card.name || '').toLowerCase().includes(search);
-                var matchRarity = rarity === 'all' || cleanRarity === rarity;
-                var matchSeries = series === 'all' || card.series === series;
+            let filtered = allCards.filter(card => {
+                const cleanRarity = card.rarity.split(' ')[0];
+                const matchName = card.name.toLowerCase().includes(search);
+                const matchRarity = rarity === 'all' || cleanRarity === rarity;
+                const matchSeries = series === 'all' || card.series === series;
                 return matchName && matchRarity && matchSeries;
             });
 
-            if (sortType === 'str_desc') filtered.sort(function(a, b) { return b.strength - a.strength; });
-            else if (sortType === 'str_asc') filtered.sort(function(a, b) { return a.strength - b.strength; });
-            else if (sortType === 'spd_desc') filtered.sort(function(a, b) { return b.speed - a.speed; });
-            else if (sortType === 'spd_asc') filtered.sort(function(a, b) { return a.speed - b.speed; });
-            else if (sortType === 'int_desc') filtered.sort(function(a, b) { return b.intellect - a.intellect; });
-            else if (sortType === 'int_asc') filtered.sort(function(a, b) { return a.intellect - b.intellect; });
+            if (sortType === 'str_desc') filtered.sort((a, b) => b.strength - a.strength);
+            else if (sortType === 'str_asc') filtered.sort((a, b) => a.strength - b.strength);
+            else if (sortType === 'spd_desc') filtered.sort((a, b) => b.speed - a.speed);
+            else if (sortType === 'spd_asc') filtered.sort((a, b) => a.speed - b.speed);
+            else if (sortType === 'int_desc') filtered.sort((a, b) => b.intellect - a.intellect);
+            else if (sortType === 'int_asc') filtered.sort((a, b) => a.intellect - b.intellect);
 
             renderCards(filtered);
         }
 
         async function openModal(card) {
-            var cleanRarity = (card.rarity || '').split(' ')[0];
-            var modalImg = document.getElementById('modalImg');
-            modalImg.src = 'images/' + (card.file || '');
-            modalImg.className = 'modal-img glow-' + cleanRarity; 
+            const cleanRarity = card.rarity.split(' ')[0];
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = `images/${card.file}`;
+            modalImg.className = `modal-img glow-${cleanRarity}`; 
 
-            document.getElementById('modalNameTop').innerText = card.name || '';
-            document.getElementById('modalName').innerText = card.name || '';
-            document.getElementById('modalRarity').innerText = card.rarity || '';
-            document.getElementById('modalStyle').innerText = card.style || '';
+            document.getElementById('modalNameTop').innerText = card.name;
+            document.getElementById('modalName').innerText = card.name;
+            document.getElementById('modalRarity').innerText = card.rarity;
+            document.getElementById('modalStyle').innerText = card.style;
             document.getElementById('modalSeries').innerText = card.series || 'Неизвестно';
-            document.getElementById('modalSpeed').innerText = card.speed || 0;
-            document.getElementById('modalStrength').innerText = card.strength || 0;
-            document.getElementById('modalIntellect').innerText = card.intellect || 0;
+            document.getElementById('modalSpeed').innerText = card.speed;
+            document.getElementById('modalStrength').innerText = card.strength;
+            document.getElementById('modalIntellect').innerText = card.intellect;
 
-            var statEls = [document.getElementById('modalSpeed'), document.getElementById('modalStrength'), document.getElementById('modalIntellect')];
-            if((card.rarity || '').includes('Мифическая') || (card.rarity || '').includes('Божественная')) {
-                statEls.forEach(function(el) { el.classList.add('mythic'); });
+            const statEls = [document.getElementById('modalSpeed'), document.getElementById('modalStrength'), document.getElementById('modalIntellect')];
+            if(card.rarity.includes('Мифическая') || card.rarity.includes('Божественная')) {
+                statEls.forEach(el => el.classList.add('mythic'));
             } else {
-                statEls.forEach(function(el) { el.classList.remove('mythic'); });
+                statEls.forEach(el => el.classList.remove('mythic'));
             }
 
             document.getElementById('modalCount').innerText = "⏳";
-            
-            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
-            
             document.getElementById('cardModal').classList.add('open');
 
             try {
-                var res = await fetch('https://manhwcard.bothost.tech/api/card_count/' + card.id);
+                let res = await fetch(`https://manhwcard.bothost.tech/api/card_count/${card.id}`);
                 if(res.ok) {
-                    var data = await res.json();
+                    let data = await res.json();
                     document.getElementById('modalCount').innerText = data.count;
                 } else {
                     document.getElementById('modalCount').innerText = "?";
@@ -803,12 +721,6 @@
         function closeModal() {
             document.getElementById('cardModal').classList.remove('open');
         }
-
-        document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
-            overlay.addEventListener('click', function(e) {
-                if (e.target === overlay) overlay.classList.remove('open');
-            });
-        });
     </script>
 </body>
 </html>
