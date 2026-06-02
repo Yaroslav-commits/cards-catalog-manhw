@@ -1,5 +1,125 @@
 [
     {
+        "name": "Оуэн",
+        "rarity": "Эпическая 🟢",
+        "style": "Ветряное чувство",
+        "series": "Ветролом",
+        "speed": 80,
+        "strength": 80,
+        "intellect": 80,
+        "file": "ouen.jpeg",
+        "exclusive": false,
+        "id": "ouen"
+    },
+    {
+        "name": "Джахён",
+        "rarity": "Эпическая 🟢",
+        "style": "Анализ траектории",
+        "series": "Ветролом",
+        "speed": 80,
+        "strength": 79,
+        "intellect": 80,
+        "file": "jae_hyen.jpeg",
+        "exclusive": false,
+        "id": "jae_hyen"
+    },
+    {
+        "name": "Юбин",
+        "rarity": "Эпическая 🟢",
+        "style": "Яросная езда",
+        "series": "Ветролом",
+        "speed": 79,
+        "strength": 80,
+        "intellect": 78,
+        "file": "yubin.jpeg",
+        "exclusive": false,
+        "id": "yubin"
+    },
+    {
+        "name": "Ханнам",
+        "rarity": "Эпическая 🟢",
+        "style": "Спринт",
+        "series": "Ветролом",
+        "speed": 77,
+        "strength": 80,
+        "intellect": 74,
+        "file": "hannam.jpeg",
+        "exclusive": false,
+        "id": "hannam"
+    },
+    {
+        "name": "Джокер",
+        "rarity": "Эпическая 🟢",
+        "style": "Безумный спринт",
+        "series": "Ветролом",
+        "speed": 78,
+        "strength": 80,
+        "intellect": 76,
+        "file": "joker.jpeg",
+        "exclusive": false,
+        "id": "joker"
+    },
+    {
+        "name": "Хёк Квон",
+        "rarity": "Эпическая 🟢",
+        "style": "Хладнокровное доминирование",
+        "series": "Ветролом",
+        "speed": 80,
+        "strength": 78,
+        "intellect": 78,
+        "file": "hyek_kwon.jpeg",
+        "exclusive": false,
+        "id": "hyek_kwon"
+    },
+    {
+        "name": "Уин Ю",
+        "rarity": "Эпическая 🟢",
+        "style": "Грязная стратегия",
+        "series": "Ветролом",
+        "speed": 76,
+        "strength": 76,
+        "intellect": 80,
+        "file": "uin_yu.jpeg",
+        "exclusive": false,
+        "id": "uin_yu"
+    },
+    {
+        "name": "Шелли",
+        "rarity": "Эпическая 🟢",
+        "style": "Силовая поддержка",
+        "series": "Ветролом",
+        "speed": 76,
+        "strength": 78,
+        "intellect": 76,
+        "file": "shelly.jpeg",
+        "exclusive": false,
+        "id": "shelly"
+    },
+    {
+        "name": "Канеширо",
+        "rarity": "Эпическая 🟢",
+        "style": "Взрывной дрифт",
+        "series": "Ветролом",
+        "speed": 80,
+        "strength": 80,
+        "intellect": 77,
+        "file": "kaneshiro.jpeg",
+        "exclusive": false,
+        "id": "kaneshiro"
+    },
+    {
+        "name": "Ноа",
+        "rarity": "Эпическая 🟢",
+        "style": "Агрессивная езда",
+        "series": "Ветролом",
+        "speed": 79,
+        "strength": 80,
+        "intellect": 77,
+        "file": "noa.jpeg",
+        "exclusive": false,
+        "id": "noa"
+    },
+    {
         "name": "Ю Хобин",
         "rarity": "Легендарная 🔵",
         "style": "Универсал",
@@ -8,7 +128,7 @@
         "strength": 89,
         "intellect": 90,
         "file": "yu_hobin_pass.jpeg",
-        "exclusive": false,
+        "exclusive": true,
         "id": "yu_hobin_pass"
     },
     {
@@ -19,7 +139,7 @@
         "speed": 99,
         "strength": 99,
         "intellect": 99,
-        "file": "samdak.webp",
+        "file": "samdak.jpeg",
         "exclusive": false,
         "id": "samdak"
     },
@@ -31,7 +151,7 @@
         "speed": 99,
         "strength": 99,
         "intellect": 98,
-        "file": "seong_han_su.webp",
+        "file": "seong_han_su.jpeg",
         "exclusive": false,
         "id": "seong_han_su"
     },
@@ -43,7 +163,7 @@
         "speed": 95,
         "strength": 99,
         "intellect": 96,
-        "file": "logan_gracie.webp",
+        "file": "logan_gracie.jpeg",
         "exclusive": false,
         "id": "logan_gracie"
     },
@@ -55,7 +175,7 @@
         "speed": 97,
         "strength": 96,
         "intellect": 97,
-        "file": "nameless.webp",
+        "file": "nameless.jpeg",
         "exclusive": false,
         "id": "nameless"
     },
@@ -67,7 +187,7 @@
         "speed": 94,
         "strength": 95,
         "intellect": 97,
-        "file": "lee_jin_ho.webp",
+        "file": "lee_jin_ho.jpeg",
         "exclusive": false,
         "id": "lee_jin_ho"
     },
@@ -79,7 +199,7 @@
         "speed": 96,
         "strength": 92,
         "intellect": 96,
-        "file": "baek_seong_jun.webp",
+        "file": "baek_seong_jun.jpeg",
         "exclusive": false,
         "id": "baek_seong_jun"
     },
@@ -91,7 +211,7 @@
         "speed": 93,
         "strength": 93,
         "intellect": 93,
-        "file": "seo_hae_su.webp",
+        "file": "seo_hae_su.jpeg",
         "exclusive": false,
         "id": "seo_hae_su"
     },
@@ -103,7 +223,7 @@
         "speed": 98,
         "strength": 98,
         "intellect": 98,
-        "file": "samdak_military_cqc.webp",
+        "file": "samdak_military_cqc.jpeg",
         "exclusive": false,
         "id": "samdak_military_cqc"
     },
@@ -115,7 +235,7 @@
         "speed": 94,
         "strength": 95,
         "intellect": 94,
-        "file": "lee_jin_ho_dirty_tricks.webp",
+        "file": "lee_jin_ho_dirty_tricks.jpeg",
         "exclusive": false,
         "id": "lee_jin_ho_dirty_tricks"
     },
@@ -127,7 +247,7 @@
         "speed": 88,
         "strength": 88,
         "intellect": 89,
-        "file": "yu_hobin.webp",
+        "file": "yu_hobin.jpeg",
         "exclusive": false,
         "id": "yu_hobin"
     },
@@ -139,7 +259,7 @@
         "speed": 89,
         "strength": 87,
         "intellect": 86,
-        "file": "seong_tae_hun.webp",
+        "file": "seong_tae_hun.jpeg",
         "exclusive": false,
         "id": "seong_tae_hun"
     },
@@ -151,7 +271,7 @@
         "speed": 85,
         "strength": 88,
         "intellect": 85,
-        "file": "kim_mun_seong.webp",
+        "file": "kim_mun_seong.jpeg",
         "exclusive": false,
         "id": "kim_mun_seong"
     },
@@ -163,7 +283,7 @@
         "speed": 84,
         "strength": 87,
         "intellect": 84,
-        "file": "joshua.webp",
+        "file": "joshua.jpeg",
         "exclusive": false,
         "id": "joshua"
     },
@@ -175,7 +295,7 @@
         "speed": 87,
         "strength": 86,
         "intellect": 85,
-        "file": "wi_pyeon_o.webp",
+        "file": "wi_pyeon_o.jpeg",
         "exclusive": false,
         "id": "wi_pyeon_o"
     },
@@ -187,7 +307,7 @@
         "speed": 86,
         "strength": 85,
         "intellect": 86,
-        "file": "oh_dong_seok.webp",
+        "file": "oh_dong_seok.jpeg",
         "exclusive": false,
         "id": "oh_dong_seok"
     },
@@ -199,7 +319,7 @@
         "speed": 85,
         "strength": 86,
         "intellect": 85,
-        "file": "kim_mun_seong1.webp",
+        "file": "kim_mun_seong1.jpeg",
         "exclusive": false,
         "id": "kim_mun_seong1"
     },
@@ -211,7 +331,7 @@
         "speed": 89,
         "strength": 87,
         "intellect": 88,
-        "file": "baek_seong_jun1.webp",
+        "file": "baek_seong_jun1.jpeg",
         "exclusive": false,
         "id": "baek_seong_jun1"
     },
@@ -223,7 +343,7 @@
         "speed": 79,
         "strength": 80,
         "intellect": 79,
-        "file": "han_wanguk.webp",
+        "file": "han_wanguk.jpeg",
         "exclusive": false,
         "id": "han_wanguk"
     },
@@ -235,7 +355,7 @@
         "speed": 75,
         "strength": 79,
         "intellect": 80,
-        "file": "ji_yeonu.webp",
+        "file": "ji_yeonu.jpeg",
         "exclusive": false,
         "id": "ji_yeonu"
     },
@@ -247,7 +367,7 @@
         "speed": 71,
         "strength": 80,
         "intellect": 72,
-        "file": "hwang_man_gi.webp",
+        "file": "hwang_man_gi.jpeg",
         "exclusive": false,
         "id": "hwang_man_gi"
     },
@@ -259,7 +379,7 @@
         "speed": 76,
         "strength": 79,
         "intellect": 75,
-        "file": "baavgai.webp",
+        "file": "baavgai.jpeg",
         "exclusive": false,
         "id": "baavgai"
     },
@@ -271,7 +391,7 @@
         "speed": 74,
         "strength": 78,
         "intellect": 73,
-        "file": "daniel_smith.webp",
+        "file": "daniel_smith.jpeg",
         "exclusive": false,
         "id": "daniel_smith"
     },
@@ -283,7 +403,7 @@
         "speed": 60,
         "strength": 66,
         "intellect": 65,
-        "file": "bae_jin_chan.webp",
+        "file": "bae_jin_chan.jpeg",
         "exclusive": false,
         "id": "bae_jin_chan"
     },
@@ -295,7 +415,7 @@
         "speed": 75,
         "strength": 63,
         "intellect": 74,
-        "file": "ri_man_gil.webp",
+        "file": "ri_man_gil.jpeg",
         "exclusive": false,
         "id": "ri_man_gil"
     },
@@ -307,7 +427,7 @@
         "speed": 78,
         "strength": 74,
         "intellect": 72,
-        "file": "lee_do_un.webp",
+        "file": "lee_do_un.jpeg",
         "exclusive": false,
         "id": "lee_do_un"
     },
@@ -319,7 +439,7 @@
         "speed": 70,
         "strength": 77,
         "intellect": 71,
-        "file": "moon_gang_tae.webp",
+        "file": "moon_gang_tae.jpeg",
         "exclusive": false,
         "id": "moon_gang_tae"
     },
@@ -331,7 +451,7 @@
         "speed": 75,
         "strength": 73,
         "intellect": 62,
-        "file": "lee_hyeon_su.webp",
+        "file": "lee_hyeon_su.jpeg",
         "exclusive": false,
         "id": "lee_hyeon_su"
     },
@@ -343,7 +463,7 @@
         "speed": 65,
         "strength": 75,
         "intellect": 73,
-        "file": "hwang_yong.webp",
+        "file": "hwang_yong.jpeg",
         "exclusive": false,
         "id": "hwang_yong"
     },
@@ -355,7 +475,7 @@
         "speed": 79,
         "strength": 79,
         "intellect": 75,
-        "file": "seong_tae_hun1.webp",
+        "file": "seong_tae_hun1.jpeg",
         "exclusive": false,
         "id": "seong_tae_hun1"
     },
@@ -367,7 +487,7 @@
         "speed": 77,
         "strength": 79,
         "intellect": 75,
-        "file": "han_wanguk1.webp",
+        "file": "han_wanguk1.jpeg",
         "exclusive": false,
         "id": "han_wanguk1"
     },
@@ -379,7 +499,7 @@
         "speed": 50,
         "strength": 59,
         "intellect": 59,
-        "file": "pakgo.webp",
+        "file": "pakgo.jpeg",
         "exclusive": false,
         "id": "pakgo"
     },
@@ -391,7 +511,7 @@
         "speed": 40,
         "strength": 35,
         "intellect": 59,
-        "file": "u_ji_hyeok.webp",
+        "file": "u_ji_hyeok.jpeg",
         "exclusive": false,
         "id": "u_ji_hyeok"
     },
@@ -403,7 +523,7 @@
         "speed": 48,
         "strength": 57,
         "intellect": 40,
-        "file": "chu_hyeok_su.webp",
+        "file": "chu_hyeok_su.jpeg",
         "exclusive": false,
         "id": "chu_hyeok_su"
     },
@@ -415,7 +535,7 @@
         "speed": 45,
         "strength": 57,
         "intellect": 38,
-        "file": "chu_tae_san.webp",
+        "file": "chu_tae_san.jpeg",
         "exclusive": false,
         "id": "chu_tae_san"
     },
@@ -427,7 +547,7 @@
         "speed": 42,
         "strength": 54,
         "intellect": 35,
-        "file": "jeong_il_seop.webp",
+        "file": "jeong_il_seop.jpeg",
         "exclusive": false,
         "id": "jeong_il_seop"
     },
@@ -439,7 +559,7 @@
         "speed": 44,
         "strength": 48,
         "intellect": 39,
-        "file": "kang_jin_seok.webp",
+        "file": "kang_jin_seok.jpeg",
         "exclusive": false,
         "id": "kang_jin_seok"
     },
@@ -451,7 +571,7 @@
         "speed": 35,
         "strength": 40,
         "intellect": 38,
-        "file": "ji_san_tae.webp",
+        "file": "ji_san_tae.jpeg",
         "exclusive": false,
         "id": "ji_san_tae"
     },
@@ -463,7 +583,7 @@
         "speed": 36,
         "strength": 39,
         "intellect": 37,
-        "file": "jo_il_san.webp",
+        "file": "jo_il_san.jpeg",
         "exclusive": false,
         "id": "jo_il_san"
     },
@@ -475,7 +595,7 @@
         "speed": 34,
         "strength": 38,
         "intellect": 35,
-        "file": "choi_jin_hyeon.webp",
+        "file": "choi_jin_hyeon.jpeg",
         "exclusive": false,
         "id": "choi_jin_hyeon"
     },
@@ -487,7 +607,7 @@
         "speed": 38,
         "strength": 42,
         "intellect": 36,
-        "file": "jeong_chan.webp",
+        "file": "jeong_chan.jpeg",
         "exclusive": false,
         "id": "jeong_chan"
     },
@@ -499,7 +619,7 @@
         "speed": 37,
         "strength": 45,
         "intellect": 34,
-        "file": "park_mun_ho.webp",
+        "file": "park_mun_ho.jpeg",
         "exclusive": false,
         "id": "park_mun_ho"
     },
@@ -511,7 +631,7 @@
         "speed": 35,
         "strength": 35,
         "intellect": 40,
-        "file": "kang_eun_u.webp",
+        "file": "kang_eun_u.jpeg",
         "exclusive": false,
         "id": "kang_eun_u"
     },
@@ -523,7 +643,7 @@
         "speed": 40,
         "strength": 45,
         "intellect": 40,
-        "file": "mister_dreg.webp",
+        "file": "mister_dreg.jpeg",
         "exclusive": false,
         "id": "mister_dreg"
     },
@@ -535,7 +655,7 @@
         "speed": 40,
         "strength": 31,
         "intellect": 50,
-        "file": "ga_eul.webp",
+        "file": "ga_eul.jpeg",
         "exclusive": false,
         "id": "ga_eul"
     },
@@ -547,7 +667,7 @@
         "speed": 15,
         "strength": 12,
         "intellect": 10,
-        "file": "minjeong.webp",
+        "file": "minjeong.jpeg",
         "exclusive": false,
         "id": "minjeong"
     },
@@ -559,7 +679,7 @@
         "speed": 14,
         "strength": 14,
         "intellect": 14,
-        "file": "ye_rumi.webp",
+        "file": "ye_rumi.jpeg",
         "exclusive": false,
         "id": "ye_rumi"
     },
@@ -571,7 +691,7 @@
         "speed": 30,
         "strength": 15,
         "intellect": 20,
-        "file": "han_gyeoul.webp",
+        "file": "han_gyeoul.jpeg",
         "exclusive": false,
         "id": "han_gyeoul"
     },
@@ -583,7 +703,7 @@
         "speed": 10,
         "strength": 11,
         "intellect": 10,
-        "file": "park_ji_hyeon.webp",
+        "file": "park_ji_hyeon.jpeg",
         "exclusive": false,
         "id": "park_ji_hyeon"
     },
@@ -595,7 +715,7 @@
         "speed": 13,
         "strength": 12,
         "intellect": 14,
-        "file": "choi_bomi.webp",
+        "file": "choi_bomi.jpeg",
         "exclusive": false,
         "id": "choi_bomi"
     },
@@ -607,7 +727,7 @@
         "speed": 12,
         "strength": 11,
         "intellect": 15,
-        "file": "gyeo_jol.webp",
+        "file": "gyeo_jol.jpeg",
         "exclusive": false,
         "id": "gyeo_jol"
     },
@@ -619,7 +739,7 @@
         "speed": 12,
         "strength": 15,
         "intellect": 13,
-        "file": "dohi.webp",
+        "file": "dohi.jpeg",
         "exclusive": false,
         "id": "dohi"
     },
@@ -631,7 +751,7 @@
         "speed": 30,
         "strength": 30,
         "intellect": 30,
-        "file": "chu_ji_su.webp",
+        "file": "chu_ji_su.jpeg",
         "exclusive": false,
         "id": "chu_ji_su"
     },
@@ -643,7 +763,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 13,
-        "file": "lee_su_ryeong.webp",
+        "file": "lee_su_ryeong.jpeg",
         "exclusive": false,
         "id": "lee_su_ryeong"
     },
@@ -655,7 +775,7 @@
         "speed": 12,
         "strength": 10,
         "intellect": 10,
-        "file": "bomis_mother.webp",
+        "file": "bomis_mother.jpeg",
         "exclusive": false,
         "id": "bomis_mother"
     },
@@ -667,7 +787,7 @@
         "speed": 20,
         "strength": 15,
         "intellect": 28,
-        "file": "yu_hobin1.webp",
+        "file": "yu_hobin1.jpeg",
         "exclusive": false,
         "id": "yu_hobin1"
     },
@@ -679,7 +799,7 @@
         "speed": 20,
         "strength": 15,
         "intellect": 25,
-        "file": "ji_hyeok_u.webp",
+        "file": "ji_hyeok_u.jpeg",
         "exclusive": false,
         "id": "ji_hyeok_u"
     },
@@ -691,7 +811,7 @@
         "speed": 11,
         "strength": 11,
         "intellect": 11,
-        "file": "hye_yeon_hwang.webp",
+        "file": "hye_yeon_hwang.jpeg",
         "exclusive": false,
         "id": "hye_yeon_hwang"
     },
@@ -703,7 +823,7 @@
         "speed": 13,
         "strength": 30,
         "intellect": 16,
-        "file": "daniel_fat.webp",
+        "file": "daniel_fat.png",
         "exclusive": false,
         "id": "daniel_fat"
     },
@@ -715,7 +835,7 @@
         "speed": 97,
         "strength": 100,
         "intellect": 97,
-        "file": "gun.webp",
+        "file": "gun.jpeg",
         "exclusive": false,
         "id": "gun_park"
     },
@@ -727,7 +847,7 @@
         "speed": 11,
         "strength": 11,
         "intellect": 11,
-        "file": "ha.webp",
+        "file": "ha.png",
         "exclusive": false,
         "id": "ha"
     },
@@ -739,7 +859,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 10,
-        "file": "yena.webp",
+        "file": "yena.png",
         "exclusive": false,
         "id": "yena"
     },
@@ -751,7 +871,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 10,
-        "file": "doch.webp",
+        "file": "doch.png",
         "exclusive": false,
         "id": "doch"
     },
@@ -763,7 +883,7 @@
         "speed": 12,
         "strength": 10,
         "intellect": 20,
-        "file": "yujin.webp",
+        "file": "yujin.png",
         "exclusive": false,
         "id": "yujin"
     },
@@ -775,7 +895,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 79,
-        "file": "sosun.webp",
+        "file": "sosun.png",
         "exclusive": false,
         "id": "seo_soneun"
     },
@@ -787,7 +907,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 80,
-        "file": "kimen.webp",
+        "file": "kimen.png",
         "exclusive": false,
         "id": "kim_kimyeon"
     },
@@ -799,7 +919,7 @@
         "speed": 80,
         "strength": 79,
         "intellect": 80,
-        "file": "jichan.webp",
+        "file": "jichan.png",
         "exclusive": false,
         "id": "kwak_jichan"
     },
@@ -811,7 +931,7 @@
         "speed": 79,
         "strength": 80,
         "intellect": 78,
-        "file": "ma.webp",
+        "file": "ma.png",
         "exclusive": false,
         "id": "ma_tesu"
     },
@@ -823,7 +943,7 @@
         "speed": 79,
         "strength": 80,
         "intellect": 78,
-        "file": "gonsop.webp",
+        "file": "gonsop.png",
         "exclusive": false,
         "id": "ji_gonsop"
     },
@@ -835,7 +955,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 76,
-        "file": "jinson.webp",
+        "file": "jinson.png",
         "exclusive": false,
         "id": "lee_jinson"
     },
@@ -847,7 +967,7 @@
         "speed": 93,
         "strength": 91,
         "intellect": 94,
-        "file": "lee_ji_hoon.webp",
+        "file": "lee_ji_hoon.jpeg",
         "exclusive": false,
         "id": "lee_ji_hoon"
     },
@@ -859,7 +979,7 @@
         "speed": 91,
         "strength": 93,
         "intellect": 92,
-        "file": "sofia.webp",
+        "file": "sofia.jpeg",
         "exclusive": false,
         "id": "sofia"
     },
@@ -871,7 +991,7 @@
         "speed": 85,
         "strength": 82,
         "intellect": 83,
-        "file": "hyeonseok_pt.webp",
+        "file": "hyeonseok_pt.jpeg",
         "exclusive": false,
         "id": "hyeonseok_pt"
     },
@@ -883,7 +1003,7 @@
         "speed": 78,
         "strength": 79,
         "intellect": 79,
-        "file": "wang_mugak.webp",
+        "file": "wang_mugak.jpeg",
         "exclusive": false,
         "id": "wang_mugak"
     },
@@ -895,7 +1015,7 @@
         "speed": 78,
         "strength": 78,
         "intellect": 79,
-        "file": "ryu.webp",
+        "file": "ryu.png",
         "exclusive": false,
         "id": "ryu_jaun"
     },
@@ -907,7 +1027,7 @@
         "speed": 79,
         "strength": 79,
         "intellect": 75,
-        "file": "oh.webp",
+        "file": "oh.png",
         "exclusive": false,
         "id": "odalyan"
     },
@@ -919,7 +1039,7 @@
         "speed": 60,
         "strength": 62,
         "intellect": 60,
-        "file": "anson.webp",
+        "file": "anson.png",
         "exclusive": false,
         "id": "an_hyeonson"
     },
@@ -931,7 +1051,7 @@
         "speed": 61,
         "strength": 60,
         "intellect": 61,
-        "file": "jael.webp",
+        "file": "jael.png",
         "exclusive": false,
         "id": "hong_jayeol"
     },
@@ -943,7 +1063,7 @@
         "speed": 98,
         "strength": 100,
         "intellect": 98,
-        "file": "gapryeon.webp",
+        "file": "gapryeon.jpeg",
         "exclusive": false,
         "id": "kim_gapryeon"
     },
@@ -955,7 +1075,7 @@
         "speed": 97,
         "strength": 99,
         "intellect": 95,
-        "file": "shingen_yamazaki.webp",
+        "file": "shingen_yamazaki.jpeg",
         "exclusive": false,
         "id": "shingen_yamazaki"
     },
@@ -967,7 +1087,7 @@
         "speed": 89,
         "strength": 87,
         "intellect": 86,
-        "file": "yohan.webp",
+        "file": "yohan.png",
         "exclusive": false,
         "id": "yohan_son"
     },
@@ -979,7 +1099,7 @@
         "speed": 85,
         "strength": 86,
         "intellect": 88,
-        "file": "jinran.webp",
+        "file": "jinran.png",
         "exclusive": false,
         "id": "jinran"
     },
@@ -991,7 +1111,7 @@
         "speed": 86,
         "strength": 84,
         "intellect": 85,
-        "file": "yuk.webp",
+        "file": "yuk.png",
         "exclusive": false,
         "id": "yuk_sonji"
     },
@@ -1003,7 +1123,7 @@
         "speed": 78,
         "strength": 78,
         "intellect": 78,
-        "file": "beak_san.webp",
+        "file": "beak_san.jpeg",
         "exclusive": false,
         "id": "beak_san"
     },
@@ -1015,7 +1135,7 @@
         "speed": 59,
         "strength": 59,
         "intellect": 59,
-        "file": "kenta.webp",
+        "file": "kenta.png",
         "exclusive": false,
         "id": "magami_kenta"
     },
@@ -1027,7 +1147,7 @@
         "speed": 58,
         "strength": 59,
         "intellect": 59,
-        "file": "minsik.webp",
+        "file": "minsik.png",
         "exclusive": false,
         "id": "choi_minsik"
     },
@@ -1039,7 +1159,7 @@
         "speed": 58,
         "strength": 59,
         "intellect": 58,
-        "file": "kazuma.webp",
+        "file": "kazuma.png",
         "exclusive": false,
         "id": "kazuma_sato"
     },
@@ -1051,7 +1171,7 @@
         "speed": 59,
         "strength": 58,
         "intellect": 50,
-        "file": "akira.webp",
+        "file": "akira.png",
         "exclusive": false,
         "id": "akira"
     },
@@ -1063,7 +1183,7 @@
         "speed": 54,
         "strength": 53,
         "intellect": 58,
-        "file": "hyon.webp",
+        "file": "hyon.png",
         "exclusive": false,
         "id": "hyeon_sejin"
     },
@@ -1075,7 +1195,7 @@
         "speed": 55,
         "strength": 54,
         "intellect": 54,
-        "file": "arim.webp",
+        "file": "arim.png",
         "exclusive": false,
         "id": "shin_arim"
     },
@@ -1087,7 +1207,7 @@
         "speed": 57,
         "strength": 52,
         "intellect": 54,
-        "file": "min.webp",
+        "file": "min.png",
         "exclusive": false,
         "id": "min_jinhun"
     },
@@ -1099,7 +1219,7 @@
         "speed": 55,
         "strength": 51,
         "intellect": 55,
-        "file": "jihan.webp",
+        "file": "jihan.png",
         "exclusive": false,
         "id": "kwak_jihan"
     },
@@ -1111,7 +1231,7 @@
         "speed": 52,
         "strength": 56,
         "intellect": 54,
-        "file": "jibom.webp",
+        "file": "jibom.png",
         "exclusive": false,
         "id": "kwak_jibom"
     },
@@ -1123,7 +1243,7 @@
         "speed": 51,
         "strength": 49,
         "intellect": 52,
-        "file": "koku.webp",
+        "file": "koku.png",
         "exclusive": false,
         "id": "watanabe_kokuin"
     },
@@ -1135,7 +1255,7 @@
         "speed": 48,
         "strength": 47,
         "intellect": 51,
-        "file": "takeshi.webp",
+        "file": "takeshi.png",
         "exclusive": false,
         "id": "takeshi_matsumoto"
     },
@@ -1147,7 +1267,7 @@
         "speed": 37,
         "strength": 38,
         "intellect": 37,
-        "file": "joe.webp",
+        "file": "joe.png",
         "exclusive": false,
         "id": "doctor_cho"
     },
@@ -1159,7 +1279,7 @@
         "speed": 36,
         "strength": 37,
         "intellect": 36,
-        "file": "eul.webp",
+        "file": "eul.png",
         "exclusive": false,
         "id": "haye_ul"
     },
@@ -1171,7 +1291,7 @@
         "speed": 78,
         "strength": 79,
         "intellect": 76,
-        "file": "wang_junsok.webp",
+        "file": "wang_junsok.jpeg",
         "exclusive": false,
         "id": "wang_junsok"
     },
@@ -1183,7 +1303,7 @@
         "speed": 79,
         "strength": 78,
         "intellect": 75,
-        "file": "jang_hyeon.webp",
+        "file": "jang_hyeon.jpeg",
         "exclusive": false,
         "id": "jang_hyeon"
     },
@@ -1195,7 +1315,7 @@
         "speed": 78,
         "strength": 77,
         "intellect": 76,
-        "file": "beak_jin_hyeok.webp",
+        "file": "beak_jin_hyeok.jpeg",
         "exclusive": false,
         "id": "beak_jin_hyeok"
     },
@@ -1207,7 +1327,7 @@
         "speed": 77,
         "strength": 77,
         "intellect": 77,
-        "file": "son_hashik.webp",
+        "file": "son_hashik.jpeg",
         "exclusive": false,
         "id": "son_hashik"
     },
@@ -1219,7 +1339,7 @@
         "speed": 77,
         "strength": 78,
         "intellect": 75,
-        "file": "do_jaewan.webp",
+        "file": "do_jaewan.jpeg",
         "exclusive": false,
         "id": "do_jaewan"
     },
@@ -1231,7 +1351,7 @@
         "speed": 78,
         "strength": 75,
         "intellect": 76,
-        "file": "yuseong.webp",
+        "file": "yuseong.jpeg",
         "exclusive": false,
         "id": "yuseong"
     },
@@ -1243,7 +1363,7 @@
         "speed": 75,
         "strength": 78,
         "intellect": 75,
-        "file": "ban_mandeok.webp",
+        "file": "ban_mandeok.jpeg",
         "exclusive": false,
         "id": "ban_mandeok"
     },
@@ -1255,7 +1375,7 @@
         "speed": 77,
         "strength": 75,
         "intellect": 74,
-        "file": "kuroda_ryuhei.webp",
+        "file": "kuroda_ryuhei.jpeg",
         "exclusive": false,
         "id": "kuroda_ryuhei"
     },
@@ -1267,7 +1387,7 @@
         "speed": 80,
         "strength": 75,
         "intellect": 72,
-        "file": "sinu.webp",
+        "file": "sinu.png",
         "exclusive": false,
         "id": "han_sinu"
     },
@@ -1279,7 +1399,7 @@
         "speed": 73,
         "strength": 79,
         "intellect": 73,
-        "file": "taejin.webp",
+        "file": "taejin.jpeg",
         "exclusive": false,
         "id": "cheon_taejin"
     },
@@ -1291,7 +1411,7 @@
         "speed": 73,
         "strength": 78,
         "intellect": 69,
-        "file": "wang_seokdu.webp",
+        "file": "wang_seokdu.jpeg",
         "exclusive": false,
         "id": "wang_seokdu"
     },
@@ -1303,7 +1423,7 @@
         "speed": 75,
         "strength": 74,
         "intellect": 70,
-        "file": "chae_wonseok.webp",
+        "file": "chae_wonseok.jpeg",
         "exclusive": false,
         "id": "chae_wonseok"
     },
@@ -1315,7 +1435,7 @@
         "speed": 71,
         "strength": 72,
         "intellect": 73,
-        "file": "kwon_jitae.webp",
+        "file": "kwon_jitae.jpeg",
         "exclusive": false,
         "id": "kwon_jitae"
     },
@@ -1327,7 +1447,7 @@
         "speed": 70,
         "strength": 78,
         "intellect": 65,
-        "file": "vasco.webp",
+        "file": "vasco.jpeg",
         "exclusive": false,
         "id": "vasco"
     },
@@ -1339,7 +1459,7 @@
         "speed": 77,
         "strength": 69,
         "intellect": 66,
-        "file": "jin_hobin.webp",
+        "file": "jin_hobin.jpeg",
         "exclusive": false,
         "id": "jin_hobin"
     },
@@ -1351,7 +1471,7 @@
         "speed": 65,
         "strength": 67,
         "intellect": 79,
-        "file": "shigeaki_kojima.webp",
+        "file": "shigeaki_kojima.jpeg",
         "exclusive": false,
         "id": "shigeaki_kojima"
     },
@@ -1363,7 +1483,7 @@
         "speed": 68,
         "strength": 65,
         "intellect": 78,
-        "file": "hiroaki_kojima.webp",
+        "file": "hiroaki_kojima.jpeg",
         "exclusive": false,
         "id": "hiroaki_kojima"
     },
@@ -1375,7 +1495,7 @@
         "speed": 75,
         "strength": 70,
         "intellect": 69,
-        "file": "lineman.webp",
+        "file": "lineman.jpeg",
         "exclusive": false,
         "id": "lineman"
     },
@@ -1387,7 +1507,7 @@
         "speed": 74,
         "strength": 68,
         "intellect": 70,
-        "file": "xiao_long.webp",
+        "file": "xiao_long.jpeg",
         "exclusive": false,
         "id": "xiao_long"
     },
@@ -1399,7 +1519,7 @@
         "speed": 48,
         "strength": 50,
         "intellect": 49,
-        "file": "masashi.webp",
+        "file": "masashi.png",
         "exclusive": false,
         "id": "masashi_takanobu"
     },
@@ -1411,7 +1531,7 @@
         "speed": 11,
         "strength": 12,
         "intellect": 10,
-        "file": "haruto.webp",
+        "file": "haruto.png",
         "exclusive": false,
         "id": "haruto"
     },
@@ -1423,7 +1543,7 @@
         "speed": 12,
         "strength": 11,
         "intellect": 10,
-        "file": "shime.webp",
+        "file": "shime.png",
         "exclusive": false,
         "id": "cheon_shinmyeong"
     },
@@ -1435,7 +1555,7 @@
         "speed": 89,
         "strength": 89,
         "intellect": 90,
-        "file": "park_jinyeong.webp",
+        "file": "park_jinyeong.jpeg",
         "exclusive": false,
         "id": "park_jinyeong"
     },
@@ -1447,7 +1567,7 @@
         "speed": 88,
         "strength": 90,
         "intellect": 86,
-        "file": "lee_dogyu.webp",
+        "file": "lee_dogyu.jpeg",
         "exclusive": false,
         "id": "lee_dogyu"
     },
@@ -1459,7 +1579,7 @@
         "speed": 87,
         "strength": 87,
         "intellect": 89,
-        "file": "manager_kim.webp",
+        "file": "manager_kim.jpeg",
         "exclusive": false,
         "id": "manager_kim"
     },
@@ -1471,7 +1591,7 @@
         "speed": 88,
         "strength": 86,
         "intellect": 88,
-        "file": "na_jaegyeon.webp",
+        "file": "na_jaegyeon.jpeg",
         "exclusive": false,
         "id": "na_jaegyeon"
     },
@@ -1483,7 +1603,7 @@
         "speed": 85,
         "strength": 84,
         "intellect": 87,
-        "file": "yoojae_son.webp",
+        "file": "yoojae_son.jpeg",
         "exclusive": false,
         "id": "yoojae_son"
     },
@@ -1495,7 +1615,7 @@
         "speed": 84,
         "strength": 82,
         "intellect": 89,
-        "file": "jangsu.webp",
+        "file": "jangsu.jpeg",
         "exclusive": false,
         "id": "jangsu"
     },
@@ -1507,7 +1627,7 @@
         "speed": 81,
         "strength": 87,
         "intellect": 81,
-        "file": "number_one.webp",
+        "file": "number_one.jpeg",
         "exclusive": false,
         "id": "number_one"
     },
@@ -1519,7 +1639,7 @@
         "speed": 70,
         "strength": 73,
         "intellect": 65,
-        "file": "joo_hyeokun.webp",
+        "file": "joo_hyeokun.jpeg",
         "exclusive": false,
         "id": "joo_hyeokun"
     },
@@ -1531,7 +1651,7 @@
         "speed": 68,
         "strength": 68,
         "intellect": 67,
-        "file": "bj_shobu.webp",
+        "file": "bj_shobu.jpeg",
         "exclusive": false,
         "id": "bj_shobu"
     },
@@ -1543,7 +1663,7 @@
         "speed": 70,
         "strength": 63,
         "intellect": 70,
-        "file": "jae_minno.webp",
+        "file": "jae_minno.jpeg",
         "exclusive": false,
         "id": "jae_minno"
     },
@@ -1555,7 +1675,7 @@
         "speed": 64,
         "strength": 65,
         "intellect": 62,
-        "file": "yu_gwan.webp",
+        "file": "yu_gwan.jpeg",
         "exclusive": false,
         "id": "yu_gwan"
     },
@@ -1567,7 +1687,7 @@
         "speed": 62,
         "strength": 64,
         "intellect": 60,
-        "file": "leo_belgu.webp",
+        "file": "leo_belgu.jpeg",
         "exclusive": false,
         "id": "leo_belgu"
     },
@@ -1579,7 +1699,7 @@
         "speed": 61,
         "strength": 63,
         "intellect": 60,
-        "file": "no_jaesu.webp",
+        "file": "no_jaesu.jpeg",
         "exclusive": false,
         "id": "no_jaesu"
     },
@@ -1591,7 +1711,7 @@
         "speed": 20,
         "strength": 18,
         "intellect": 19,
-        "file": "bomzh.webp",
+        "file": "bomzh.png",
         "exclusive": false,
         "id": "park_beomjae"
     },
@@ -1603,7 +1723,7 @@
         "speed": 10,
         "strength": 12,
         "intellect": 11,
-        "file": "reporter_kim.webp",
+        "file": "reporter_kim.jpeg",
         "exclusive": false,
         "id": "reporter_kim"
     },
@@ -1615,7 +1735,7 @@
         "speed": 10,
         "strength": 11,
         "intellect": 12,
-        "file": "pek.webp",
+        "file": "pek.png",
         "exclusive": false,
         "id": "baek_hanggyeol"
     },
@@ -1627,7 +1747,7 @@
         "speed": 29,
         "strength": 27,
         "intellect": 28,
-        "file": "park_jiho.webp",
+        "file": "park_jiho.jpeg",
         "exclusive": false,
         "id": "park_jiho"
     },
@@ -1639,7 +1759,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 12,
-        "file": "lim_lua.webp",
+        "file": "lim_lua.jpeg",
         "exclusive": false,
         "id": "lim_lua"
     },
@@ -1651,7 +1771,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 11,
-        "file": "vivi.webp",
+        "file": "vivi.jpeg",
         "exclusive": false,
         "id": "vivi"
     },
@@ -1663,7 +1783,7 @@
         "speed": 57,
         "strength": 56,
         "intellect": 56,
-        "file": "kang_jinchan.webp",
+        "file": "kang_jinchan.jpeg",
         "exclusive": false,
         "id": "kang_jinchan"
     },
@@ -1675,7 +1795,7 @@
         "speed": 55,
         "strength": 59,
         "intellect": 55,
-        "file": "wang_ochun.webp",
+        "file": "wang_ochun.jpeg",
         "exclusive": false,
         "id": "wang_ochun"
     },
@@ -1687,7 +1807,7 @@
         "speed": 100,
         "strength": 95,
         "intellect": 91,
-        "file": "gu_kim.webp",
+        "file": "gu_kim.jpeg",
         "exclusive": false,
         "id": "gu_kim"
     },
@@ -1699,7 +1819,7 @@
         "speed": 99,
         "strength": 99,
         "intellect": 97,
-        "file": "kim_gitae.webp",
+        "file": "kim_gitae.jpeg",
         "exclusive": false,
         "id": "kim_gitae"
     },
@@ -1711,7 +1831,7 @@
         "speed": 99,
         "strength": 96,
         "intellect": 95,
-        "file": "park_hyeonsok_vt.webp",
+        "file": "park_hyeonsok_vt.jpeg",
         "exclusive": false,
         "id": "park_hyeonsok_vt"
     },
@@ -1723,7 +1843,7 @@
         "speed": 98,
         "strength": 93,
         "intellect": 100,
-        "file": "kang_dagyeom.webp",
+        "file": "kang_dagyeom.jpeg",
         "exclusive": false,
         "id": "kang_dagyeom"
     },
@@ -1735,7 +1855,7 @@
         "speed": 96,
         "strength": 97,
         "intellect": 95,
-        "file": "shintaro_yamazaki.webp",
+        "file": "shintaro_yamazaki.jpeg",
         "exclusive": false,
         "id": "shintaro_yamazaki"
     },
@@ -1747,7 +1867,7 @@
         "speed": 92,
         "strength": 98,
         "intellect": 91,
-        "file": "beakcheon.webp",
+        "file": "beakcheon.jpeg",
         "exclusive": false,
         "id": "beakcheon"
     },
@@ -1759,7 +1879,7 @@
         "speed": 91,
         "strength": 91,
         "intellect": 99,
-        "file": "choi_dongsu.webp",
+        "file": "choi_dongsu.jpeg",
         "exclusive": false,
         "id": "choi_dongsu"
     },
@@ -1771,7 +1891,7 @@
         "speed": 51,
         "strength": 53,
         "intellect": 53,
-        "file": "roy_kwon.webp",
+        "file": "roy_kwon.jpeg",
         "exclusive": false,
         "id": "roy_kwon"
     },
@@ -1783,7 +1903,7 @@
         "speed": 52,
         "strength": 52,
         "intellect": 53,
-        "file": "sung_jegal.webp",
+        "file": "sung_jegal.jpeg",
         "exclusive": false,
         "id": "sung_jegal"
     },
@@ -1795,7 +1915,7 @@
         "speed": 58,
         "strength": 42,
         "intellect": 41,
-        "file": "yoon_gyeonghon.webp",
+        "file": "yoon_gyeonghon.jpeg",
         "exclusive": false,
         "id": "yoon_gyeonghon"
     },
@@ -1807,7 +1927,7 @@
         "speed": 50,
         "strength": 59,
         "intellect": 33,
-        "file": "lee_taeseong.webp",
+        "file": "lee_taeseong.jpeg",
         "exclusive": false,
         "id": "lee_taeseong"
     },
@@ -1819,7 +1939,7 @@
         "speed": 47,
         "strength": 48,
         "intellect": 47,
-        "file": "jamal_rahid.webp",
+        "file": "jamal_rahid.jpeg",
         "exclusive": false,
         "id": "jamal_rahid"
     },
@@ -1831,7 +1951,7 @@
         "speed": 46,
         "strength": 47,
         "intellect": 46,
-        "file": "woon_giyom.webp",
+        "file": "woon_giyom.jpeg",
         "exclusive": false,
         "id": "woon_giyom"
     },
@@ -1843,7 +1963,7 @@
         "speed": 22,
         "strength": 20,
         "intellect": 21,
-        "file": "choi_sojun_vt.webp",
+        "file": "choi_sojun_vt.jpeg",
         "exclusive": false,
         "id": "choi_sojun_vt"
     },
@@ -1855,7 +1975,7 @@
         "speed": 21,
         "strength": 19,
         "intellect": 20,
-        "file": "jang_jin_hyeok.webp",
+        "file": "jang_jin_hyeok.jpeg",
         "exclusive": false,
         "id": "jang_jin_hyeok"
     },
@@ -1867,7 +1987,7 @@
         "speed": 19,
         "strength": 17,
         "intellect": 18,
-        "file": "lee_seunghan.webp",
+        "file": "lee_seunghan.jpeg",
         "exclusive": false,
         "id": "lee_seunghan"
     },
@@ -1879,7 +1999,7 @@
         "speed": 18,
         "strength": 16,
         "intellect": 17,
-        "file": "park_himan.webp",
+        "file": "park_himan.jpeg",
         "exclusive": false,
         "id": "park_himan"
     },
@@ -1891,7 +2011,7 @@
         "speed": 17,
         "strength": 15,
         "intellect": 16,
-        "file": "park_soman.webp",
+        "file": "park_soman.jpeg",
         "exclusive": false,
         "id": "park_soman"
     },
@@ -1903,7 +2023,7 @@
         "speed": 16,
         "strength": 14,
         "intellect": 15,
-        "file": "kang_mubae.webp",
+        "file": "kang_mubae.jpeg",
         "exclusive": false,
         "id": "kang_mubae"
     },
@@ -1915,7 +2035,7 @@
         "speed": 15,
         "strength": 13,
         "intellect": 14,
-        "file": "kwon_seungryeon.webp",
+        "file": "kwon_seungryeon.jpeg",
         "exclusive": false,
         "id": "kwon_seungryeon"
     },
@@ -1927,7 +2047,7 @@
         "speed": 14,
         "strength": 12,
         "intellect": 13,
-        "file": "son_non.webp",
+        "file": "son_non.jpeg",
         "exclusive": false,
         "id": "son_non"
     },
@@ -1939,7 +2059,7 @@
         "speed": 13,
         "strength": 11,
         "intellect": 12,
-        "file": "kong_yeonghun.webp",
+        "file": "kong_yeonghun.jpeg",
         "exclusive": false,
         "id": "kong_yeonghun"
     },
@@ -1951,7 +2071,7 @@
         "speed": 12,
         "strength": 10,
         "intellect": 11,
-        "file": "dominic1.webp",
+        "file": "dominic1.jpeg",
         "exclusive": false,
         "id": "dominic1"
     },
@@ -1963,7 +2083,7 @@
         "speed": 10,
         "strength": 13,
         "intellect": 12,
-        "file": "choi_sojun_pt1.webp",
+        "file": "choi_sojun_pt1.jpeg",
         "exclusive": false,
         "id": "choi_sojun_pt1"
     },
@@ -1975,7 +2095,7 @@
         "speed": 12,
         "strength": 10,
         "intellect": 11,
-        "file": "kim_byeong.webp",
+        "file": "kim_byeong.jpeg",
         "exclusive": false,
         "id": "kim_byeong"
     },
@@ -1987,7 +2107,7 @@
         "speed": 11,
         "strength": 13,
         "intellect": 10,
-        "file": "park_somi.webp",
+        "file": "park_somi.jpeg",
         "exclusive": false,
         "id": "park_somi1"
     },
@@ -1999,7 +2119,7 @@
         "speed": 10,
         "strength": 12,
         "intellect": 11,
-        "file": "mitsuki1.webp",
+        "file": "mitsuki1.jpeg",
         "exclusive": false,
         "id": "mitsuki1"
     },
@@ -2011,7 +2131,7 @@
         "speed": 13,
         "strength": 10,
         "intellect": 12,
-        "file": "hun1.webp",
+        "file": "hun1.jpeg",
         "exclusive": false,
         "id": "hun1"
     },
@@ -2023,7 +2143,7 @@
         "speed": 23,
         "strength": 21,
         "intellect": 22,
-        "file": "himin.webp",
+        "file": "himin.jpeg",
         "exclusive": false,
         "id": "zeus_himin"
     },
@@ -2035,7 +2155,7 @@
         "speed": 45,
         "strength": 46,
         "intellect": 45,
-        "file": "jeon_muha.webp",
+        "file": "jeon_muha.jpeg",
         "exclusive": false,
         "id": "jeon_muha"
     },
@@ -2047,7 +2167,7 @@
         "speed": 44,
         "strength": 44,
         "intellect": 45,
-        "file": "jichan_yeong.webp",
+        "file": "jichan_yeong.jpeg",
         "exclusive": false,
         "id": "jichan_yeong"
     },
@@ -2059,7 +2179,7 @@
         "speed": 43,
         "strength": 44,
         "intellect": 43,
-        "file": "han_sanhi.webp",
+        "file": "han_sanhi.jpeg",
         "exclusive": false,
         "id": "han_sanhi"
     },
@@ -2071,7 +2191,7 @@
         "speed": 42,
         "strength": 43,
         "intellect": 42,
-        "file": "kim_yeongcheol.webp",
+        "file": "kim_yeongcheol.jpeg",
         "exclusive": false,
         "id": "kim_yeongcheol"
     },
@@ -2083,7 +2203,7 @@
         "speed": 41,
         "strength": 44,
         "intellect": 39,
-        "file": "ha_hu_son.webp",
+        "file": "ha_hu_son.jpeg",
         "exclusive": false,
         "id": "ha_hu_son"
     },
@@ -2095,7 +2215,7 @@
         "speed": 40,
         "strength": 41,
         "intellect": 40,
-        "file": "hwang_ho.webp",
+        "file": "hwang_ho.jpeg",
         "exclusive": false,
         "id": "hwang_ho"
     },
@@ -2107,7 +2227,7 @@
         "speed": 38,
         "strength": 39,
         "intellect": 38,
-        "file": "noan.webp",
+        "file": "noan.jpeg",
         "exclusive": false,
         "id": "noan"
     },
@@ -2119,7 +2239,7 @@
         "speed": 34,
         "strength": 35,
         "intellect": 34,
-        "file": "kang_sebastian.webp",
+        "file": "kang_sebastian.jpeg",
         "exclusive": false,
         "id": "kang_sebastian"
     },
@@ -2131,7 +2251,7 @@
         "speed": 36,
         "strength": 31,
         "intellect": 33,
-        "file": "kim_miru.webp",
+        "file": "kim_miru.jpeg",
         "exclusive": false,
         "id": "kim_miru"
     },
@@ -2143,7 +2263,7 @@
         "speed": 32,
         "strength": 33,
         "intellect": 32,
-        "file": "cho_isu.webp",
+        "file": "cho_isu.jpeg",
         "exclusive": false,
         "id": "cho_isu"
     },
@@ -2155,7 +2275,7 @@
         "speed": 31,
         "strength": 32,
         "intellect": 31,
-        "file": "lee_kun_u.webp",
+        "file": "lee_kun_u.jpeg",
         "exclusive": false,
         "id": "lee_kun_u"
     },
@@ -2167,7 +2287,7 @@
         "speed": 31,
         "strength": 31,
         "intellect": 30,
-        "file": "jeong_eun_gu_kang_taeng_gu.webp",
+        "file": "jeong_eun_gu_kang_taeng_gu.jpeg",
         "exclusive": false,
         "id": "jeong_eun_gu_kang_taeng_gu"
     },
@@ -2179,7 +2299,7 @@
         "speed": 28,
         "strength": 26,
         "intellect": 27,
-        "file": "hong_dupyo.webp",
+        "file": "hong_dupyo.jpeg",
         "exclusive": false,
         "id": "hong_dupyo"
     },
@@ -2191,7 +2311,7 @@
         "speed": 27,
         "strength": 25,
         "intellect": 26,
-        "file": "lee_dosu.webp",
+        "file": "lee_dosu.jpeg",
         "exclusive": false,
         "id": "lee_dosu"
     },
@@ -2203,7 +2323,7 @@
         "speed": 26,
         "strength": 24,
         "intellect": 25,
-        "file": "jin_sowol.webp",
+        "file": "jin_sowol.jpeg",
         "exclusive": false,
         "id": "jin_sowol"
     },
@@ -2215,7 +2335,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 12,
-        "file": "hwang_jae_won1.webp",
+        "file": "hwang_jae_won1.jpeg",
         "exclusive": false,
         "id": "hwang_jae_won1"
     },
@@ -2227,7 +2347,7 @@
         "speed": 10,
         "strength": 12,
         "intellect": 11,
-        "file": "lee_hyeon_do.webp",
+        "file": "lee_hyeon_do.jpeg",
         "exclusive": false,
         "id": "lee_hyeon_do"
     },
@@ -2239,7 +2359,7 @@
         "speed": 12,
         "strength": 11,
         "intellect": 10,
-        "file": "lee_leon.webp",
+        "file": "lee_leon.jpeg",
         "exclusive": false,
         "id": "lee_leon"
     },
@@ -2251,7 +2371,7 @@
         "speed": 11,
         "strength": 11,
         "intellect": 20,
-        "file": "kouji.webp",
+        "file": "kouji.jpeg",
         "exclusive": false,
         "id": "kouji"
     },
@@ -2263,7 +2383,7 @@
         "speed": 10,
         "strength": 13,
         "intellect": 11,
-        "file": "dok_hwa.webp",
+        "file": "dok_hwa.jpeg",
         "exclusive": false,
         "id": "dok_hwa"
     },
@@ -2275,7 +2395,7 @@
         "speed": 13,
         "strength": 11,
         "intellect": 10,
-        "file": "choi_bongpal.webp",
+        "file": "choi_bongpal.jpeg",
         "exclusive": false,
         "id": "choi_bongpal"
     },
@@ -2287,7 +2407,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 12,
-        "file": "mi_jin.webp",
+        "file": "mi_jin.jpeg",
         "exclusive": false,
         "id": "mi_jin"
     },
@@ -2299,7 +2419,7 @@
         "speed": 12,
         "strength": 11,
         "intellect": 10,
-        "file": "kim_sujin.webp",
+        "file": "kim_sujin.jpeg",
         "exclusive": false,
         "id": "kim_sujin"
     },
@@ -2311,7 +2431,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 12,
-        "file": "shin_sera.webp",
+        "file": "shin_sera.jpeg",
         "exclusive": false,
         "id": "shin_sera"
     },
@@ -2323,7 +2443,7 @@
         "speed": 12,
         "strength": 11,
         "intellect": 10,
-        "file": "choi_gangmi.webp",
+        "file": "choi_gangmi.jpeg",
         "exclusive": false,
         "id": "choi_gangmi"
     },
@@ -2335,7 +2455,7 @@
         "speed": 10,
         "strength": 11,
         "intellect": 12,
-        "file": "yeon_hui.webp",
+        "file": "yeon_hui.jpeg",
         "exclusive": false,
         "id": "yeon_hui"
     },
@@ -2347,7 +2467,7 @@
         "speed": 11,
         "strength": 12,
         "intellect": 10,
-        "file": "park_serim.webp",
+        "file": "park_serim.jpeg",
         "exclusive": false,
         "id": "park_serim"
     },
@@ -2359,7 +2479,7 @@
         "speed": 39,
         "strength": 40,
         "intellect": 39,
-        "file": "vi_tegon.webp",
+        "file": "vi_tegon.jpeg",
         "exclusive": false,
         "id": "vi_tegon"
     },
@@ -2371,7 +2491,7 @@
         "speed": 12,
         "strength": 10,
         "intellect": 11,
-        "file": "kim_hae_yun.webp",
+        "file": "kim_hae_yun.jpeg",
         "exclusive": false,
         "id": "kim_hae_yun"
     },
@@ -2383,7 +2503,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 10,
-        "file": "park_sonhi.webp",
+        "file": "park_sonhi.jpeg",
         "exclusive": false,
         "id": "park_sonhi"
     },
@@ -2395,7 +2515,7 @@
         "speed": 10,
         "strength": 11,
         "intellect": 12,
-        "file": "yui.webp",
+        "file": "yui.jpeg",
         "exclusive": false,
         "id": "yui"
     },
@@ -2407,7 +2527,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 12,
-        "file": "sumi.webp",
+        "file": "sumi.jpeg",
         "exclusive": false,
         "id": "sumi"
     },
@@ -2419,7 +2539,7 @@
         "speed": 78,
         "strength": 77,
         "intellect": 78,
-        "file": "choi_diyav.webp",
+        "file": "choi_diyav.jpeg",
         "exclusive": false,
         "id": "choi_diyav"
     },
@@ -2431,7 +2551,7 @@
         "speed": 96,
         "strength": 95,
         "intellect": 97,
-        "file": "im_jae_hwan.webp",
+        "file": "im_jae_hwan.jpeg",
         "exclusive": false,
         "id": "im_jae_hwan"
     },
@@ -2443,7 +2563,7 @@
         "speed": 22,
         "strength": 23,
         "intellect": 21,
-        "file": "lee_pil_gyu.webp",
+        "file": "lee_pil_gyu.jpeg",
         "exclusive": false,
         "id": "lee_pil_gyu"
     },
@@ -2455,7 +2575,7 @@
         "speed": 88,
         "strength": 89,
         "intellect": 87,
-        "file": "yu_son.webp",
+        "file": "yu_son.jpeg",
         "exclusive": false,
         "id": "yu_son"
     },
@@ -2467,7 +2587,7 @@
         "speed": 58,
         "strength": 56,
         "intellect": 59,
-        "file": "jin_se_rom.webp",
+        "file": "jin_se_rom.jpeg",
         "exclusive": false,
         "id": "jin_se_rom"
     },
@@ -2479,7 +2599,7 @@
         "speed": 24,
         "strength": 25,
         "intellect": 23,
-        "file": "shadow_monkey.webp",
+        "file": "shadow_monkey.jpeg",
         "exclusive": false,
         "id": "shadow_monkey"
     },
@@ -2491,7 +2611,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 12,
-        "file": "jin_seung_gyu.webp",
+        "file": "jin_seung_gyu.jpeg",
         "exclusive": false,
         "id": "jin_seung_gyu"
     },
@@ -2503,7 +2623,7 @@
         "speed": 53,
         "strength": 54,
         "intellect": 52,
-        "file": "yang_do_gyun.webp",
+        "file": "yang_do_gyun.jpeg",
         "exclusive": false,
         "id": "yang_do_gyun"
     },
@@ -2515,7 +2635,7 @@
         "speed": 77,
         "strength": 78,
         "intellect": 76,
-        "file": "kang_jeong_guk.webp",
+        "file": "kang_jeong_guk.jpeg",
         "exclusive": false,
         "id": "kang_jeong_guk"
     },
@@ -2527,7 +2647,7 @@
         "speed": 76,
         "strength": 74,
         "intellect": 78,
-        "file": "alisha_escerm.webp",
+        "file": "alisha_escerm.jpeg",
         "exclusive": false,
         "id": "alisha_escerm"
     },
@@ -2539,7 +2659,7 @@
         "speed": 96,
         "strength": 94,
         "intellect": 98,
-        "file": "eik_escerm.webp",
+        "file": "eik_escerm.jpeg",
         "exclusive": false,
         "id": "eik_escerm"
     },
@@ -2551,7 +2671,7 @@
         "speed": 84,
         "strength": 85,
         "intellect": 84,
-        "file": "kang_gon_ho.webp",
+        "file": "kang_gon_ho.jpeg",
         "exclusive": false,
         "id": "kang_gon_ho"
     },
@@ -2563,7 +2683,7 @@
         "speed": 85,
         "strength": 87,
         "intellect": 86,
-        "file": "arges.webp",
+        "file": "arges.jpeg",
         "exclusive": false,
         "id": "arges"
     },
@@ -2575,7 +2695,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 10,
-        "file": "flying_mantis.webp",
+        "file": "flying_mantis.jpeg",
         "exclusive": false,
         "id": "flying_mantis"
     },
@@ -2587,7 +2707,7 @@
         "speed": 12,
         "strength": 13,
         "intellect": 10,
-        "file": "crasterraptor.webp",
+        "file": "crasterraptor.jpeg",
         "exclusive": false,
         "id": "crasterraptor"
     },
@@ -2599,7 +2719,7 @@
         "speed": 28,
         "strength": 29,
         "intellect": 27,
-        "file": "demokuras.webp",
+        "file": "demokuras.jpeg",
         "exclusive": false,
         "id": "demokuras"
     },
@@ -2611,7 +2731,7 @@
         "speed": 25,
         "strength": 23,
         "intellect": 24,
-        "file": "oh_seung_a.webp",
+        "file": "oh_seung_a.jpeg",
         "exclusive": false,
         "id": "oh_seung_a"
     },
@@ -2623,7 +2743,7 @@
         "speed": 20,
         "strength": 19,
         "intellect": 21,
-        "file": "kim_yeong_mo.webp",
+        "file": "kim_yeong_mo.jpeg",
         "exclusive": false,
         "id": "kim_yeong_mo"
     },
@@ -2635,7 +2755,7 @@
         "speed": 23,
         "strength": 27,
         "intellect": 26,
-        "file": "park_jong_man.webp",
+        "file": "park_jong_man.jpeg",
         "exclusive": false,
         "id": "park_jong_man"
     },
@@ -2647,7 +2767,7 @@
         "speed": 27,
         "strength": 30,
         "intellect": 28,
-        "file": "colossus.webp",
+        "file": "colossus.jpeg",
         "exclusive": false,
         "id": "colossus"
     },
@@ -2659,7 +2779,7 @@
         "speed": 63,
         "strength": 65,
         "intellect": 67,
-        "file": "cho_se_a.webp",
+        "file": "cho_se_a.jpeg",
         "exclusive": false,
         "id": "cho_se_a"
     },
@@ -2671,7 +2791,7 @@
         "speed": 75,
         "strength": 80,
         "intellect": 76,
-        "file": "sol_cheol_gan.webp",
+        "file": "sol_cheol_gan.jpeg",
         "exclusive": false,
         "id": "sol_cheol_gan"
     },
@@ -2683,7 +2803,7 @@
         "speed": 48,
         "strength": 46,
         "intellect": 57,
-        "file": "cha_yeon_a.webp",
+        "file": "cha_yeon_a.jpeg",
         "exclusive": false,
         "id": "cha_yeon_a"
     },
@@ -2695,7 +2815,7 @@
         "speed": 30,
         "strength": 25,
         "intellect": 23,
-        "file": "horned_horror.webp",
+        "file": "horned_horror.jpeg",
         "exclusive": false,
         "id": "horned_horror"
     },
@@ -2707,7 +2827,7 @@
         "speed": 13,
         "strength": 11,
         "intellect": 14,
-        "file": "cho_don_yun.webp",
+        "file": "cho_don_yun.jpeg",
         "exclusive": false,
         "id": "cho_don_yun"
     },
@@ -2719,7 +2839,7 @@
         "speed": 14,
         "strength": 12,
         "intellect": 13,
-        "file": "kim_chan_hyuk.webp",
+        "file": "kim_chan_hyuk.jpeg",
         "exclusive": false,
         "id": "kim_chan_hyuk"
     },
@@ -2731,7 +2851,7 @@
         "speed": 75,
         "strength": 78,
         "intellect": 77,
-        "file": "rex.webp",
+        "file": "rex.jpeg",
         "exclusive": false,
         "id": "rex"
     },
@@ -2743,7 +2863,7 @@
         "speed": 83,
         "strength": 81,
         "intellect": 82,
-        "file": "han_son_u.webp",
+        "file": "han_son_u.jpeg",
         "exclusive": false,
         "id": "han_son_u"
     },
@@ -2755,7 +2875,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 78,
-        "file": "han_ga_yun.webp",
+        "file": "han_ga_yun.jpeg",
         "exclusive": false,
         "id": "han_ga_yun"
     },
@@ -2767,7 +2887,7 @@
         "speed": 84,
         "strength": 83,
         "intellect": 84,
-        "file": "hwaran.webp",
+        "file": "hwaran.jpeg",
         "exclusive": false,
         "id": "hwaran"
     },
@@ -2779,7 +2899,7 @@
         "speed": 82,
         "strength": 84,
         "intellect": 81,
-        "file": "gwe_seok.webp",
+        "file": "gwe_seok.jpeg",
         "exclusive": false,
         "id": "gwe_seok"
     },
@@ -2791,7 +2911,7 @@
         "speed": 80,
         "strength": 79,
         "intellect": 79,
-        "file": "eun_gel.webp",
+        "file": "eun_gel.jpeg",
         "exclusive": false,
         "id": "eun_gel"
     },
@@ -2803,7 +2923,7 @@
         "speed": 46,
         "strength": 48,
         "intellect": 45,
-        "file": "jang_san_yeong.webp",
+        "file": "jang_san_yeong.jpeg",
         "exclusive": false,
         "id": "jang_san_yeong"
     },
@@ -2815,7 +2935,7 @@
         "speed": 85,
         "strength": 85,
         "intellect": 84,
-        "file": "yu_cha_ryeon.webp",
+        "file": "yu_cha_ryeon.jpeg",
         "exclusive": false,
         "id": "yu_cha_ryeon"
     },
@@ -2827,7 +2947,7 @@
         "speed": 99,
         "strength": 99,
         "intellect": 101,
-        "file": "son_jin_woo.webp",
+        "file": "son_jin_woo.png",
         "video": "son_jin_woo.mp4",
         "width": 960,
         "height": 1280,
@@ -2842,7 +2962,7 @@
         "speed": 98,
         "strength": 100,
         "intellect": 98,
-        "file": "antares.webp",
+        "file": "antares.jpeg",
         "exclusive": false,
         "id": "antares"
     },
@@ -2854,7 +2974,7 @@
         "speed": 97,
         "strength": 98,
         "intellect": 100,
-        "file": "ashborn.webp",
+        "file": "ashborn.jpeg",
         "exclusive": false,
         "id": "ashborn"
     },
@@ -2866,7 +2986,7 @@
         "speed": 96,
         "strength": 99,
         "intellect": 97,
-        "file": "absolute_being.webp",
+        "file": "absolute_being.jpeg",
         "exclusive": false,
         "id": "absolute_being"
     },
@@ -2878,7 +2998,7 @@
         "speed": 92,
         "strength": 93,
         "intellect": 91,
-        "file": "tomas_andre.webp",
+        "file": "tomas_andre.jpeg",
         "exclusive": false,
         "id": "tomas_andre"
     },
@@ -2890,7 +3010,7 @@
         "speed": 95,
         "strength": 94,
         "intellect": 93,
-        "file": "baran.webp",
+        "file": "baran.jpeg",
         "exclusive": false,
         "id": "baran"
     },
@@ -2902,7 +3022,7 @@
         "speed": 92,
         "strength": 95,
         "intellect": 93,
-        "file": "legia.webp",
+        "file": "legia.jpeg",
         "exclusive": false,
         "id": "legia"
     },
@@ -2914,7 +3034,7 @@
         "speed": 95,
         "strength": 94,
         "intellect": 96,
-        "file": "tarnak.webp",
+        "file": "tarnak.jpeg",
         "exclusive": false,
         "id": "tarnak"
     },
@@ -2926,7 +3046,7 @@
         "speed": 93,
         "strength": 92,
         "intellect": 94,
-        "file": "yogmund.webp",
+        "file": "yogmund.jpeg",
         "exclusive": false,
         "id": "yogmund"
     },
@@ -2938,7 +3058,7 @@
         "speed": 95,
         "strength": 96,
         "intellect": 94,
-        "file": "rakan.webp",
+        "file": "rakan.jpeg",
         "exclusive": false,
         "id": "rakan"
     },
@@ -2950,7 +3070,7 @@
         "speed": 96,
         "strength": 94,
         "intellect": 97,
-        "file": "hokhan.webp",
+        "file": "hokhan.jpeg",
         "exclusive": false,
         "id": "hokhan"
     },
@@ -2962,7 +3082,7 @@
         "speed": 94,
         "strength": 95,
         "intellect": 96,
-        "file": "kerehsha.webp",
+        "file": "kerehsha.jpeg",
         "exclusive": false,
         "id": "kerehsha"
     },
@@ -2974,7 +3094,7 @@
         "speed": 93,
         "strength": 93,
         "intellect": 94,
-        "file": "architect.webp",
+        "file": "architect.jpeg",
         "exclusive": false,
         "id": "architect"
     },
@@ -2986,7 +3106,7 @@
         "speed": 86,
         "strength": 87,
         "intellect": 86,
-        "file": "liu_zhigang.webp",
+        "file": "liu_zhigang.jpeg",
         "exclusive": false,
         "id": "liu_zhigang"
     },
@@ -2998,7 +3118,7 @@
         "speed": 87,
         "strength": 86,
         "intellect": 87,
-        "file": "tomas_andre1.webp",
+        "file": "tomas_andre1.jpeg",
         "exclusive": false,
         "id": "tomas_andre1"
     },
@@ -3010,7 +3130,7 @@
         "speed": 87,
         "strength": 86,
         "intellect": 85,
-        "file": "igris.webp",
+        "file": "igris.jpeg",
         "exclusive": false,
         "id": "igris"
     },
@@ -3022,7 +3142,7 @@
         "speed": 81,
         "strength": 83,
         "intellect": 82,
-        "file": "baek_yoon_ho.webp",
+        "file": "baek_yoon_ho.jpeg",
         "exclusive": false,
         "id": "baek_yoon_ho"
     },
@@ -3034,7 +3154,7 @@
         "speed": 87,
         "strength": 88,
         "intellect": 86,
-        "file": "bellion.webp",
+        "file": "bellion.jpeg",
         "exclusive": false,
         "id": "bellion"
     },
@@ -3046,7 +3166,7 @@
         "speed": 88,
         "strength": 87,
         "intellect": 85,
-        "file": "ber.webp",
+        "file": "ber.jpeg",
         "exclusive": false,
         "id": "ber"
     },
@@ -3058,7 +3178,7 @@
         "speed": 82,
         "strength": 82,
         "intellect": 81,
-        "file": "atsushi_kumamoto.webp",
+        "file": "atsushi_kumamoto.jpeg",
         "exclusive": false,
         "id": "atsushi_kumamoto"
     },
@@ -3070,7 +3190,7 @@
         "speed": 83,
         "strength": 83,
         "intellect": 82,
-        "file": "goto_ryuji.webp",
+        "file": "goto_ryuji.jpeg",
         "exclusive": false,
         "id": "goto_ryuji"
     },
@@ -3082,7 +3202,7 @@
         "speed": 82,
         "strength": 82,
         "intellect": 81,
-        "file": "lennart_niermann.webp",
+        "file": "lennart_niermann.jpeg",
         "exclusive": false,
         "id": "lennart_niermann"
     },
@@ -3094,7 +3214,7 @@
         "speed": 83,
         "strength": 85,
         "intellect": 85,
-        "file": "go_gun_hee.webp",
+        "file": "go_gun_hee.jpeg",
         "exclusive": false,
         "id": "go_gun_hee"
     },
@@ -3106,7 +3226,7 @@
         "speed": 84,
         "strength": 87,
         "intellect": 86,
-        "file": "kamish.webp",
+        "file": "kamish.jpeg",
         "exclusive": false,
         "id": "kamish"
     },
@@ -3118,7 +3238,7 @@
         "speed": 81,
         "strength": 82,
         "intellect": 81,
-        "file": "tank.webp",
+        "file": "tank.jpeg",
         "exclusive": false,
         "id": "tank"
     },
@@ -3130,7 +3250,7 @@
         "speed": 81,
         "strength": 83,
         "intellect": 84,
-        "file": "tusk.webp",
+        "file": "tusk.jpeg",
         "exclusive": false,
         "id": "tusk"
     },
@@ -3142,7 +3262,7 @@
         "speed": 81,
         "strength": 83,
         "intellect": 81,
-        "file": "man_dong_woon.webp",
+        "file": "man_dong_woon.jpeg",
         "exclusive": false,
         "id": "man_dong_woon"
     },
@@ -3154,7 +3274,7 @@
         "speed": 82,
         "strength": 83,
         "intellect": 85,
-        "file": "yuri_orlov.webp",
+        "file": "yuri_orlov.jpeg",
         "exclusive": false,
         "id": "yuri_orlov"
     },
@@ -3166,7 +3286,7 @@
         "speed": 83,
         "strength": 82,
         "intellect": 81,
-        "file": "lim_tae_gyu.webp",
+        "file": "lim_tae_gyu.jpeg",
         "exclusive": false,
         "id": "lim_tae_gyu"
     },
@@ -3178,7 +3298,7 @@
         "speed": 84,
         "strength": 86,
         "intellect": 86,
-        "file": "christopher_reed.webp",
+        "file": "christopher_reed.jpeg",
         "exclusive": false,
         "id": "christopher_reed"
     },
@@ -3190,7 +3310,7 @@
         "speed": 82,
         "strength": 82,
         "intellect": 81,
-        "file": "hwang_dong_su.webp",
+        "file": "hwang_dong_su.jpeg",
         "exclusive": false,
         "id": "hwang_dong_su"
     },
@@ -3202,7 +3322,7 @@
         "speed": 88,
         "strength": 89,
         "intellect": 87,
-        "file": "song_il_hwan.webp",
+        "file": "song_il_hwan.jpeg",
         "exclusive": false,
         "id": "song_il_hwan"
     },
@@ -3214,7 +3334,7 @@
         "speed": 82,
         "strength": 82,
         "intellect": 81,
-        "file": "kenzo_tanaka.webp",
+        "file": "kenzo_tanaka.jpeg",
         "exclusive": false,
         "id": "kenzo_tanaka"
     },
@@ -3226,7 +3346,7 @@
         "speed": 75,
         "strength": 76,
         "intellect": 72,
-        "file": "grid.webp",
+        "file": "grid.jpeg",
         "exclusive": false,
         "id": "grid"
     },
@@ -3238,7 +3358,7 @@
         "speed": 76,
         "strength": 76,
         "intellect": 74,
-        "file": "baruka.webp",
+        "file": "baruka.jpeg",
         "exclusive": false,
         "id": "baruka"
     },
@@ -3250,7 +3370,7 @@
         "speed": 74,
         "strength": 76,
         "intellect": 73,
-        "file": "iron.webp",
+        "file": "iron.jpeg",
         "exclusive": false,
         "id": "iron"
     },
@@ -3262,7 +3382,7 @@
         "speed": 76,
         "strength": 77,
         "intellect": 74,
-        "file": "baek_yoon_ho1.webp",
+        "file": "baek_yoon_ho1.jpeg",
         "exclusive": false,
         "id": "baek_yoon_ho1"
     },
@@ -3274,7 +3394,7 @@
         "speed": 76,
         "strength": 78,
         "intellect": 80,
-        "file": "choi_jong_in.webp",
+        "file": "choi_jong_in.jpeg",
         "exclusive": false,
         "id": "choi_jong_in"
     },
@@ -3286,7 +3406,7 @@
         "speed": 77,
         "strength": 78,
         "intellect": 76,
-        "file": "tawata_kanae.webp",
+        "file": "tawata_kanae.jpeg",
         "exclusive": false,
         "id": "tawata_kanae"
     },
@@ -3298,7 +3418,7 @@
         "speed": 76,
         "strength": 74,
         "intellect": 77,
-        "file": "akari_shimizu.webp",
+        "file": "akari_shimizu.jpeg",
         "exclusive": false,
         "id": "akari_shimizu"
     },
@@ -3310,7 +3430,7 @@
         "speed": 79,
         "strength": 80,
         "intellect": 78,
-        "file": "red_igris.webp",
+        "file": "red_igris.jpeg",
         "exclusive": false,
         "id": "red_igris"
     },
@@ -3322,7 +3442,7 @@
         "speed": 80,
         "strength": 78,
         "intellect": 80,
-        "file": "cha_hae_in.webp",
+        "file": "cha_hae_in.jpeg",
         "exclusive": false,
         "id": "cha_hae_in"
     },
@@ -3334,7 +3454,7 @@
         "speed": 75,
         "strength": 76,
         "intellect": 74,
-        "file": "minoru_hoshino.webp",
+        "file": "minoru_hoshino.jpeg",
         "exclusive": false,
         "id": "minoru_hoshino"
     },
@@ -3346,7 +3466,7 @@
         "speed": 75,
         "strength": 76,
         "intellect": 73,
-        "file": "mari_ishida.webp",
+        "file": "mari_ishida.jpeg",
         "exclusive": false,
         "id": "mari_ishida"
     },
@@ -3358,7 +3478,7 @@
         "speed": 74,
         "strength": 78,
         "intellect": 79,
-        "file": "kei.webp",
+        "file": "kei.jpeg",
         "exclusive": false,
         "id": "kei"
     },
@@ -3370,7 +3490,7 @@
         "speed": 77,
         "strength": 75,
         "intellect": 76,
-        "file": "ippei_izawa.webp",
+        "file": "ippei_izawa.jpeg",
         "exclusive": false,
         "id": "ippei_izawa"
     },
@@ -3382,7 +3502,7 @@
         "speed": 78,
         "strength": 77,
         "intellect": 79,
-        "file": "min_byung_gu.webp",
+        "file": "min_byung_gu.jpeg",
         "exclusive": false,
         "id": "min_byung_gu"
     },
@@ -3394,7 +3514,7 @@
         "speed": 77,
         "strength": 78,
         "intellect": 76,
-        "file": "kaisel.webp",
+        "file": "kaisel.jpeg",
         "exclusive": false,
         "id": "kaisel"
     },
@@ -3406,7 +3526,7 @@
         "speed": 73,
         "strength": 79,
         "intellect": 74,
-        "file": "statue_of_god.webp",
+        "file": "statue_of_god.jpeg",
         "exclusive": false,
         "id": "statue_of_god"
     },
@@ -3418,7 +3538,7 @@
         "speed": 57,
         "strength": 56,
         "intellect": 59,
-        "file": "park_he_jin.webp",
+        "file": "park_he_jin.jpeg",
         "exclusive": false,
         "id": "park_he_jin"
     },
@@ -3430,7 +3550,7 @@
         "speed": 56,
         "strength": 58,
         "intellect": 55,
-        "file": "kim_chul.webp",
+        "file": "kim_chul.jpeg",
         "exclusive": false,
         "id": "kim_chul"
     },
@@ -3442,7 +3562,7 @@
         "speed": 59,
         "strength": 58,
         "intellect": 59,
-        "file": "esil_radir.webp",
+        "file": "esil_radir.jpeg",
         "exclusive": false,
         "id": "esil_radir"
     },
@@ -3454,7 +3574,7 @@
         "speed": 58,
         "strength": 57,
         "intellect": 55,
-        "file": "kang_tae_sik.webp",
+        "file": "kang_tae_sik.jpeg",
         "exclusive": false,
         "id": "kang_tae_sik"
     },
@@ -3466,7 +3586,7 @@
         "speed": 57,
         "strength": 59,
         "intellect": 58,
-        "file": "woo_jin_chul.webp",
+        "file": "woo_jin_chul.jpeg",
         "exclusive": false,
         "id": "woo_jin_chul"
     },
@@ -3478,7 +3598,7 @@
         "speed": 51,
         "strength": 50,
         "intellect": 53,
-        "file": "lee_bora.webp",
+        "file": "lee_bora.jpeg",
         "exclusive": false,
         "id": "lee_bora"
     },
@@ -3490,7 +3610,7 @@
         "speed": 34,
         "strength": 39,
         "intellect": 43,
-        "file": "adam_white.webp",
+        "file": "adam_white.jpeg",
         "exclusive": false,
         "id": "adam_white"
     },
@@ -3502,7 +3622,7 @@
         "speed": 35,
         "strength": 34,
         "intellect": 51,
-        "file": "norma_selner.webp",
+        "file": "norma_selner.jpeg",
         "exclusive": false,
         "id": "norma_selner"
     },
@@ -3514,7 +3634,7 @@
         "speed": 53,
         "strength": 52,
         "intellect": 54,
-        "file": "yu_su_hyun.webp",
+        "file": "yu_su_hyun.jpeg",
         "exclusive": false,
         "id": "yu_su_hyun"
     },
@@ -3526,7 +3646,7 @@
         "speed": 53,
         "strength": 55,
         "intellect": 57,
-        "file": "jina.webp",
+        "file": "jina.jpeg",
         "exclusive": false,
         "id": "jina"
     },
@@ -3538,7 +3658,7 @@
         "speed": 58,
         "strength": 55,
         "intellect": 56,
-        "file": "hanekawa.webp",
+        "file": "hanekawa.jpeg",
         "exclusive": false,
         "id": "hanekawa"
     },
@@ -3550,7 +3670,7 @@
         "speed": 54,
         "strength": 57,
         "intellect": 55,
-        "file": "park_jong_su.webp",
+        "file": "park_jong_su.jpeg",
         "exclusive": false,
         "id": "park_jong_su"
     },
@@ -3562,7 +3682,7 @@
         "speed": 57,
         "strength": 59,
         "intellect": 56,
-        "file": "song_ki_hoon.webp",
+        "file": "song_ki_hoon.jpeg",
         "exclusive": false,
         "id": "song_ki_hoon"
     },
@@ -3574,7 +3694,7 @@
         "speed": 13,
         "strength": 12,
         "intellect": 16,
-        "file": "matsumoto_shigeo.webp",
+        "file": "matsumoto_shigeo.jpeg",
         "exclusive": false,
         "id": "matsumoto_shigeo"
     },
@@ -3586,7 +3706,7 @@
         "speed": 21,
         "strength": 19,
         "intellect": 23,
-        "file": "laura.webp",
+        "file": "laura.jpeg",
         "exclusive": false,
         "id": "laura"
     },
@@ -3598,7 +3718,7 @@
         "speed": 14,
         "strength": 13,
         "intellect": 16,
-        "file": "ahn_sang_min.webp",
+        "file": "ahn_sang_min.jpeg",
         "exclusive": false,
         "id": "ahn_sang_min"
     },
@@ -3610,7 +3730,7 @@
         "speed": 21,
         "strength": 24,
         "intellect": 23,
-        "file": "park_jin_suk.webp",
+        "file": "park_jin_suk.jpeg",
         "exclusive": false,
         "id": "park_jin_suk"
     },
@@ -3622,7 +3742,7 @@
         "speed": 26,
         "strength": 27,
         "intellect": 30,
-        "file": "song_chi_yul.webp",
+        "file": "song_chi_yul.jpeg",
         "exclusive": false,
         "id": "song_chi_yul"
     },
@@ -3634,7 +3754,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 13,
-        "file": "song_ji_a.webp",
+        "file": "song_ji_a.jpeg",
         "exclusive": false,
         "id": "song_ji_a"
     },
@@ -3646,7 +3766,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 12,
-        "file": "park_hyun_hee.webp",
+        "file": "park_hyun_hee.jpeg",
         "exclusive": false,
         "id": "park_hyun_hee"
     },
@@ -3658,7 +3778,7 @@
         "speed": 20,
         "strength": 16,
         "intellect": 25,
-        "file": "lee_joo_hee.webp",
+        "file": "lee_joo_hee.jpeg",
         "exclusive": false,
         "id": "lee_joo_hee"
     },
@@ -3670,7 +3790,7 @@
         "speed": 19,
         "strength": 20,
         "intellect": 16,
-        "file": "kim_sang_shik.webp",
+        "file": "kim_sang_shik.jpeg",
         "exclusive": false,
         "id": "kim_sang_shik"
     },
@@ -3682,7 +3802,7 @@
         "speed": 30,
         "strength": 30,
         "intellect": 26,
-        "file": "vulcan.webp",
+        "file": "vulcan.jpeg",
         "exclusive": false,
         "id": "vulcan"
     },
@@ -3694,7 +3814,7 @@
         "speed": 13,
         "strength": 16,
         "intellect": 15,
-        "file": "yoo_jin_ho.webp",
+        "file": "yoo_jin_ho.jpeg",
         "exclusive": false,
         "id": "yoo_jin_ho"
     },
@@ -3706,7 +3826,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 12,
-        "file": "yoo_myung_han.webp",
+        "file": "yoo_myung_han.jpeg",
         "exclusive": false,
         "id": "yoo_myung_han"
     },
@@ -3718,7 +3838,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 11,
-        "file": "choi_yoo_ra.webp",
+        "file": "choi_yoo_ra.jpeg",
         "exclusive": false,
         "id": "choi_yoo_ra"
     },
@@ -3730,7 +3850,7 @@
         "speed": 13,
         "strength": 11,
         "intellect": 11,
-        "file": "hang_song_yi.webp",
+        "file": "hang_song_yi.jpeg",
         "exclusive": false,
         "id": "han_song_yi"
     },
@@ -3742,7 +3862,7 @@
         "speed": 20,
         "strength": 19,
         "intellect": 17,
-        "file": "ko_myung_hwan.webp",
+        "file": "ko_myung_hwan.jpeg",
         "exclusive": false,
         "id": "ko_myung_hwan"
     },
@@ -3754,7 +3874,7 @@
         "speed": 17,
         "strength": 24,
         "intellect": 19,
-        "file": "hwang_dong_seok.webp",
+        "file": "hwang_dong_seok.jpeg",
         "exclusive": false,
         "id": "hwang_dong_seok"
     },
@@ -3766,7 +3886,7 @@
         "speed": 99,
         "strength": 99,
         "intellect": 99,
-        "file": "moyeong_yul_cheon.webp",
+        "file": "moyeong_yul_cheon.jpeg",
         "exclusive": false,
         "id": "moyeong_yul_cheon"
     },
@@ -3778,7 +3898,7 @@
         "speed": 98,
         "strength": 97,
         "intellect": 99,
-        "file": "deung_yu_myeong.webp",
+        "file": "deung_yu_myeong.jpeg",
         "exclusive": false,
         "id": "deung_yu_myeong"
     },
@@ -3790,7 +3910,7 @@
         "speed": 98,
         "strength": 99,
         "intellect": 96,
-        "file": "jin_mu_won.webp",
+        "file": "jin_mu_won.jpeg",
         "exclusive": false,
         "id": "jin_mu_won"
     },
@@ -3802,7 +3922,7 @@
         "speed": 95,
         "strength": 97,
         "intellect": 96,
-        "file": "dam_soo_cheon.webp",
+        "file": "dam_soo_cheon.jpeg",
         "exclusive": false,
         "id": "dam_soo_cheon"
     },
@@ -3814,7 +3934,7 @@
         "speed": 95,
         "strength": 93,
         "intellect": 95,
-        "file": "seo_geom_hyang.webp",
+        "file": "seo_geom_hyang.jpeg",
         "exclusive": false,
         "id": "seo_geom_hyang"
     },
@@ -3826,7 +3946,7 @@
         "speed": 95,
         "strength": 95,
         "intellect": 94,
-        "file": "black_wings_spear.webp",
+        "file": "black_wings_spear.jpeg",
         "exclusive": false,
         "id": "black_wings_spear"
     },
@@ -3838,7 +3958,7 @@
         "speed": 96,
         "strength": 93,
         "intellect": 93,
-        "file": "nam_cheon_myeong.webp",
+        "file": "nam_cheon_myeong.jpeg",
         "exclusive": false,
         "id": "nam_cheon_myeong"
     },
@@ -3850,7 +3970,7 @@
         "speed": 91,
         "strength": 95,
         "intellect": 91,
-        "file": "man_ju_san.webp",
+        "file": "man_ju_san.jpeg",
         "exclusive": false,
         "id": "man_ju_san"
     },
@@ -3862,7 +3982,7 @@
         "speed": 91,
         "strength": 95,
         "intellect": 91,
-        "file": "hyeon_hyeon_so.webp",
+        "file": "hyeon_hyeon_so.jpeg",
         "exclusive": false,
         "id": "hyeon_hyeon_so"
     },
@@ -3874,7 +3994,7 @@
         "speed": 93,
         "strength": 94,
         "intellect": 92,
-        "file": "dam_cheok_sim.webp",
+        "file": "dam_cheok_sim.jpeg",
         "exclusive": false,
         "id": "dam_cheok_sim"
     },
@@ -3886,7 +4006,7 @@
         "speed": 95,
         "strength": 92,
         "intellect": 94,
-        "file": "neung_gun_hui.webp",
+        "file": "neung_gun_hui.jpeg",
         "exclusive": false,
         "id": "neung_gun_hui"
     },
@@ -3898,7 +4018,7 @@
         "speed": 91,
         "strength": 93,
         "intellect": 91,
-        "file": "shim_mu_wa.webp",
+        "file": "shim_mu_wa.jpeg",
         "exclusive": false,
         "id": "shim_mu_wa"
     },
@@ -3910,7 +4030,7 @@
         "speed": 92,
         "strength": 93,
         "intellect": 96,
-        "file": "seo_mun_hwa.webp",
+        "file": "seo_mun_hwa.jpeg",
         "exclusive": false,
         "id": "seo_mun_hwa"
     },
@@ -3922,7 +4042,7 @@
         "speed": 94,
         "strength": 93,
         "intellect": 93,
-        "file": "cheok_yeop.webp",
+        "file": "cheok_yeop.jpeg",
         "exclusive": false,
         "id": "cheok_yeop"
     },
@@ -3934,7 +4054,7 @@
         "speed": 91,
         "strength": 92,
         "intellect": 91,
-        "file": "bi_sa_won.webp",
+        "file": "bi_sa_won.jpeg",
         "exclusive": false,
         "id": "bi_sa_won"
     },
@@ -3946,7 +4066,7 @@
         "speed": 91,
         "strength": 95,
         "intellect": 93,
-        "file": "bul_yong.webp",
+        "file": "bul_yong.jpeg",
         "exclusive": false,
         "id": "bul_yong"
     },
@@ -3958,7 +4078,7 @@
         "speed": 88,
         "strength": 89,
         "intellect": 88,
-        "file": "jin_gwan_ho.webp",
+        "file": "jin_gwan_ho.jpeg",
         "exclusive": false,
         "id": "jin_gwan_ho"
     },
@@ -3970,7 +4090,7 @@
         "speed": 86,
         "strength": 89,
         "intellect": 87,
-        "file": "jo_uk_kun.webp",
+        "file": "jo_uk_kun.jpeg",
         "exclusive": false,
         "id": "jo_uk_kun"
     },
@@ -3982,7 +4102,7 @@
         "speed": 87,
         "strength": 85,
         "intellect": 85,
-        "file": "gyeong_mu_saeng.webp",
+        "file": "gyeong_mu_saeng.jpeg",
         "exclusive": false,
         "id": "gyeong_mu_saeng"
     },
@@ -3994,7 +4114,7 @@
         "speed": 88,
         "strength": 87,
         "intellect": 89,
-        "file": "eum_han_sol.webp",
+        "file": "eum_han_sol.jpeg",
         "exclusive": false,
         "id": "eum_han_sol"
     },
@@ -4006,7 +4126,7 @@
         "speed": 85,
         "strength": 85,
         "intellect": 83,
-        "file": "yeon_cheon_hwa.webp",
+        "file": "yeon_cheon_hwa.jpeg",
         "exclusive": false,
         "id": "yeon_cheon_hwa"
     },
@@ -4018,7 +4138,7 @@
         "speed": 83,
         "strength": 85,
         "intellect": 84,
-        "file": "jo_cheon_u.webp",
+        "file": "jo_cheon_u.jpeg",
         "exclusive": false,
         "id": "jo_cheon_u"
     },
@@ -4030,7 +4150,7 @@
         "speed": 84,
         "strength": 85,
         "intellect": 82,
-        "file": "tae_mu_kang.webp",
+        "file": "tae_mu_kang.jpeg",
         "exclusive": false,
         "id": "tae_mu_kang"
     },
@@ -4042,7 +4162,7 @@
         "speed": 81,
         "strength": 83,
         "intellect": 84,
-        "file": "tang_gon_u.webp",
+        "file": "tang_gon_u.jpeg",
         "exclusive": false,
         "id": "tang_gon_u"
     },
@@ -4054,7 +4174,7 @@
         "speed": 84,
         "strength": 88,
         "intellect": 83,
-        "file": "jae_hyeok_sim.webp",
+        "file": "jae_hyeok_sim.jpeg",
         "exclusive": false,
         "id": "jae_hyeok_sim"
     },
@@ -4066,7 +4186,7 @@
         "speed": 85,
         "strength": 82,
         "intellect": 83,
-        "file": "yeon_jong_hak.webp",
+        "file": "yeon_jong_hak.jpeg",
         "exclusive": false,
         "id": "yeon_jong_hak"
     },
@@ -4078,7 +4198,7 @@
         "speed": 86,
         "strength": 85,
         "intellect": 83,
-        "file": "moyeong_hyeon.webp",
+        "file": "moyeong_hyeon.jpeg",
         "exclusive": false,
         "id": "moyeong_hyeon"
     },
@@ -4090,7 +4210,7 @@
         "speed": 83,
         "strength": 84,
         "intellect": 81,
-        "file": "moyeong_jun.webp",
+        "file": "moyeong_jun.jpeg",
         "exclusive": false,
         "id": "moyeong_jun"
     },
@@ -4102,7 +4222,7 @@
         "speed": 82,
         "strength": 87,
         "intellect": 84,
-        "file": "moyeong_mu_san.webp",
+        "file": "moyeong_mu_san.jpeg",
         "exclusive": false,
         "id": "moyeong_mu_san"
     },
@@ -4114,7 +4234,7 @@
         "speed": 80,
         "strength": 79,
         "intellect": 80,
-        "file": "seo_mu_san.webp",
+        "file": "seo_mu_san.jpeg",
         "exclusive": false,
         "id": "seo_mu_san"
     },
@@ -4126,7 +4246,7 @@
         "speed": 76,
         "strength": 78,
         "intellect": 80,
-        "file": "tang_gi_mun.webp",
+        "file": "tang_gi_mun.jpeg",
         "exclusive": false,
         "id": "tang_gi_mun"
     },
@@ -4138,7 +4258,7 @@
         "speed": 78,
         "strength": 77,
         "intellect": 80,
-        "file": "han_jig_wol.webp",
+        "file": "han_jig_wol.jpeg",
         "exclusive": false,
         "id": "han_jig_wol"
     },
@@ -4150,7 +4270,7 @@
         "speed": 69,
         "strength": 60,
         "intellect": 79,
-        "file": "somun_hye_ryeong.webp",
+        "file": "somun_hye_ryeong.jpeg",
         "exclusive": false,
         "id": "somun_hye_ryeong"
     },
@@ -4162,7 +4282,7 @@
         "speed": 79,
         "strength": 80,
         "intellect": 79,
-        "file": "yeon_mu_san.webp",
+        "file": "yeon_mu_san.jpeg",
         "exclusive": false,
         "id": "yeon_mu_san"
     },
@@ -4174,7 +4294,7 @@
         "speed": 68,
         "strength": 65,
         "intellect": 67,
-        "file": "tang_mi_ryu.webp",
+        "file": "tang_mi_ryu.jpeg",
         "exclusive": false,
         "id": "tang_mi_ryu"
     },
@@ -4186,7 +4306,7 @@
         "speed": 60,
         "strength": 65,
         "intellect": 63,
-        "file": "nam_gung_i.webp",
+        "file": "nam_gung_i.jpeg",
         "exclusive": false,
         "id": "nam_gung_i"
     },
@@ -4198,7 +4318,7 @@
         "speed": 69,
         "strength": 73,
         "intellect": 65,
-        "file": "shim_won_yi.webp",
+        "file": "shim_won_yi.jpeg",
         "exclusive": false,
         "id": "shim_won_yi"
     },
@@ -4210,7 +4330,7 @@
         "speed": 79,
         "strength": 77,
         "intellect": 77,
-        "file": "geum_dan_yeop.webp",
+        "file": "geum_dan_yeop.jpeg",
         "exclusive": false,
         "id": "geum_dan_yeop"
     },
@@ -4222,7 +4342,7 @@
         "speed": 60,
         "strength": 62,
         "intellect": 60,
-        "file": "chil_san.webp",
+        "file": "chil_san.jpeg",
         "exclusive": false,
         "id": "chil_san"
     },
@@ -4234,7 +4354,7 @@
         "speed": 73,
         "strength": 69,
         "intellect": 76,
-        "file": "wang_dae_seong.webp",
+        "file": "wang_dae_seong.jpeg",
         "exclusive": false,
         "id": "wang_dae_seong"
     },
@@ -4246,7 +4366,7 @@
         "speed": 78,
         "strength": 75,
         "intellect": 77,
-        "file": "saryeong.webp",
+        "file": "saryeong.jpeg",
         "exclusive": false,
         "id": "saryeong"
     },
@@ -4258,7 +4378,7 @@
         "speed": 80,
         "strength": 78,
         "intellect": 78,
-        "file": "ma_dok_gwan.webp",
+        "file": "ma_dok_gwan.jpeg",
         "exclusive": false,
         "id": "ma_dok_gwan"
     },
@@ -4270,7 +4390,7 @@
         "speed": 58,
         "strength": 59,
         "intellect": 57,
-        "file": "myeong_ryu_san.webp",
+        "file": "myeong_ryu_san.jpeg",
         "exclusive": false,
         "id": "myeong_ryu_san"
     },
@@ -4282,7 +4402,7 @@
         "speed": 59,
         "strength": 58,
         "intellect": 54,
-        "file": "yeon_seo_seo.webp",
+        "file": "yeon_seo_seo.jpeg",
         "exclusive": false,
         "id": "yeon_seo_seo"
     },
@@ -4294,7 +4414,7 @@
         "speed": 58,
         "strength": 59,
         "intellect": 58,
-        "file": "nam_so_ryeong.webp",
+        "file": "nam_so_ryeong.jpeg",
         "exclusive": false,
         "id": "nam_so_ryeong"
     },
@@ -4306,7 +4426,7 @@
         "speed": 59,
         "strength": 54,
         "intellect": 57,
-        "file": "sol_gun.webp",
+        "file": "sol_gun.jpeg",
         "exclusive": false,
         "id": "sol_gun"
     },
@@ -4318,7 +4438,7 @@
         "speed": 53,
         "strength": 59,
         "intellect": 53,
-        "file": "cha_yak_ran.webp",
+        "file": "cha_yak_ran.jpeg",
         "exclusive": false,
         "id": "cha_yak_ran"
     },
@@ -4330,7 +4450,7 @@
         "speed": 59,
         "strength": 55,
         "intellect": 59,
-        "file": "jung_in.webp",
+        "file": "jung_in.jpeg",
         "exclusive": false,
         "id": "jung_in"
     },
@@ -4342,7 +4462,7 @@
         "speed": 54,
         "strength": 57,
         "intellect": 56,
-        "file": "jin_mu_won_child.webp",
+        "file": "jin_mu_won_child.jpeg",
         "exclusive": false,
         "id": "jin_mu_won_child"
     },
@@ -4354,7 +4474,7 @@
         "speed": 53,
         "strength": 56,
         "intellect": 59,
-        "file": "hwang_cheol.webp",
+        "file": "hwang_cheol.jpeg",
         "exclusive": false,
         "id": "hwang_cheol"
     },
@@ -4366,7 +4486,7 @@
         "speed": 55,
         "strength": 59,
         "intellect": 56,
-        "file": "gwak_mun_jun.webp",
+        "file": "gwak_mun_jun.jpeg",
         "exclusive": false,
         "id": "gwak_mun_jun"
     },
@@ -4378,7 +4498,7 @@
         "speed": 35,
         "strength": 32,
         "intellect": 50,
-        "file": "mu_hwan.webp",
+        "file": "mu_hwan.jpeg",
         "exclusive": false,
         "id": "mu_hwan"
     },
@@ -4390,7 +4510,7 @@
         "speed": 31,
         "strength": 33,
         "intellect": 32,
-        "file": "mu_gwan.webp",
+        "file": "mu_gwan.jpeg",
         "exclusive": false,
         "id": "mu_gwan"
     },
@@ -4402,7 +4522,7 @@
         "speed": 39,
         "strength": 43,
         "intellect": 40,
-        "file": "im_so_gwan.webp",
+        "file": "im_so_gwan.jpeg",
         "exclusive": false,
         "id": "im_so_gwan"
     },
@@ -4414,7 +4534,7 @@
         "speed": 33,
         "strength": 35,
         "intellect": 31,
-        "file": "cha_mun_ho.webp",
+        "file": "cha_mun_ho.jpeg",
         "exclusive": false,
         "id": "cha_mun_ho"
     },
@@ -4426,7 +4546,7 @@
         "speed": 49,
         "strength": 50,
         "intellect": 46,
-        "file": "hun_gang_hwi.webp",
+        "file": "hun_gang_hwi.jpeg",
         "exclusive": false,
         "id": "hun_gang_hwi"
     },
@@ -4438,7 +4558,7 @@
         "speed": 31,
         "strength": 34,
         "intellect": 32,
-        "file": "myeong_won.webp",
+        "file": "myeong_won.jpeg",
         "exclusive": false,
         "id": "myeong_won"
     },
@@ -4450,7 +4570,7 @@
         "speed": 31,
         "strength": 31,
         "intellect": 39,
-        "file": "geom_jo_san.webp",
+        "file": "geom_jo_san.jpeg",
         "exclusive": false,
         "id": "geom_jo_san"
     },
@@ -4462,7 +4582,7 @@
         "speed": 28,
         "strength": 30,
         "intellect": 30,
-        "file": "ban_so_wol.webp",
+        "file": "ban_so_wol.jpeg",
         "exclusive": false,
         "id": "ban_so_wol"
     },
@@ -4474,7 +4594,7 @@
         "speed": 27,
         "strength": 30,
         "intellect": 28,
-        "file": "guan_brothers.webp",
+        "file": "guan_brothers.jpeg",
         "exclusive": false,
         "id": "guan_brothers"
     },
@@ -4486,7 +4606,7 @@
         "speed": 29,
         "strength": 24,
         "intellect": 19,
-        "file": "shredder.webp",
+        "file": "shredder.jpeg",
         "exclusive": false,
         "id": "shredder"
     },
@@ -4498,7 +4618,7 @@
         "speed": 25,
         "strength": 24,
         "intellect": 20,
-        "file": "maeng_so_jin.webp",
+        "file": "maeng_so_jin.jpeg",
         "exclusive": false,
         "id": "maeng_so_jin"
     },
@@ -4510,7 +4630,7 @@
         "speed": 18,
         "strength": 24,
         "intellect": 19,
-        "file": "gong_jin_san.webp",
+        "file": "gong_jin_san.jpeg",
         "exclusive": false,
         "id": "gong_jin_san"
     },
@@ -4522,7 +4642,7 @@
         "speed": 17,
         "strength": 20,
         "intellect": 16,
-        "file": "yang_man_cheok.webp",
+        "file": "yang_man_cheok.jpeg",
         "exclusive": false,
         "id": "yang_man_cheok"
     },
@@ -4534,7 +4654,7 @@
         "speed": 11,
         "strength": 14,
         "intellect": 12,
-        "file": "yun_hu_mun.webp",
+        "file": "yun_hu_mun.jpeg",
         "exclusive": false,
         "id": "yun_hu_mun"
     },
@@ -4546,7 +4666,7 @@
         "speed": 10,
         "strength": 12,
         "intellect": 13,
-        "file": "mok_eun_pyeong.webp",
+        "file": "mok_eun_pyeong.jpeg",
         "exclusive": false,
         "id": "mok_eun_pyeong"
     },
@@ -4558,7 +4678,7 @@
         "speed": 11,
         "strength": 12,
         "intellect": 11,
-        "file": "yun_ya_mun.webp",
+        "file": "yun_ya_mun.jpeg",
         "exclusive": false,
         "id": "yun_ya_mun"
     },
@@ -4570,7 +4690,7 @@
         "speed": 12,
         "strength": 13,
         "intellect": 13,
-        "file": "yun_so_in.webp",
+        "file": "yun_so_in.jpeg",
         "exclusive": false,
         "id": "yun_so_in"
     },
@@ -4582,7 +4702,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 16,
-        "file": "no_tae_tae.webp",
+        "file": "no_tae_tae.jpeg",
         "exclusive": false,
         "id": "no_tae_tae"
     },
@@ -4594,7 +4714,7 @@
         "speed": 10,
         "strength": 14,
         "intellect": 11,
-        "file": "cheng_pa_san.webp",
+        "file": "cheng_pa_san.jpeg",
         "exclusive": false,
         "id": "cheng_pa_san"
     },
@@ -4606,7 +4726,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 10,
-        "file": "shim_sua.webp",
+        "file": "shim_sua.jpeg",
         "exclusive": false,
         "id": "shim_sua"
     },
@@ -4618,7 +4738,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 10,
-        "file": "han_so_ryeong.webp",
+        "file": "han_so_ryeong.jpeg",
         "exclusive": false,
         "id": "han_so_ryeong"
     },
@@ -4630,7 +4750,7 @@
         "speed": 11,
         "strength": 10,
         "intellect": 12,
-        "file": "han_tae_pyeong.webp",
+        "file": "han_tae_pyeong.jpeg",
         "exclusive": false,
         "id": "han_tae_pyeong"
     },
@@ -4642,7 +4762,7 @@
         "speed": 14,
         "strength": 22,
         "intellect": 16,
-        "file": "mu_hae.webp",
+        "file": "mu_hae.jpeg",
         "exclusive": false,
         "id": "mu_hae"
     },
@@ -4654,7 +4774,7 @@
         "speed": 17,
         "strength": 19,
         "intellect": 15,
-        "file": "sol_gun_common.webp",
+        "file": "sol_gun_common.jpeg",
         "exclusive": false,
         "id": "sol_gun_common"
     },
@@ -4666,7 +4786,7 @@
         "speed": 22,
         "strength": 22,
         "intellect": 20,
-        "file": "ji_seong_yul.webp",
+        "file": "ji_seong_yul.jpeg",
         "exclusive": false,
         "id": "ji_seong_yul"
     },
@@ -4678,7 +4798,7 @@
         "speed": 13,
         "strength": 13,
         "intellect": 19,
-        "file": "mae_wol_rin.webp",
+        "file": "mae_wol_rin.jpeg",
         "exclusive": false,
         "id": "mae_wol_rin"
     },
@@ -4690,7 +4810,7 @@
         "speed": 28,
         "strength": 30,
         "intellect": 26,
-        "file": "mak_gwaen.webp",
+        "file": "mak_gwaen.jpeg",
         "exclusive": false,
         "id": "mak_gwaen"
     },
@@ -4702,7 +4822,7 @@
         "speed": 17,
         "strength": 16,
         "intellect": 20,
-        "file": "ping.webp",
+        "file": "ping.jpeg",
         "exclusive": false,
         "id": "ping"
     },
@@ -4714,7 +4834,7 @@
         "speed": 17,
         "strength": 20,
         "intellect": 17,
-        "file": "hae_dong.webp",
+        "file": "hae_dong.jpeg",
         "exclusive": false,
         "id": "hae_dong"
     },
@@ -4726,7 +4846,7 @@
         "speed": 29,
         "strength": 28,
         "intellect": 30,
-        "file": "cheok_mu.webp",
+        "file": "cheok_mu.jpeg",
         "exclusive": false,
         "id": "cheok_mu"
     },
@@ -4738,7 +4858,7 @@
         "speed": 13,
         "strength": 14,
         "intellect": 16,
-        "file": "yu_chang_hwan.webp",
+        "file": "yu_chang_hwan.jpeg",
         "exclusive": false,
         "id": "yu_chang_hwan"
     },
@@ -4750,7 +4870,7 @@
         "speed": 14,
         "strength": 10,
         "intellect": 26,
-        "file": "jang_dae_seo.webp",
+        "file": "jang_dae_seo.jpeg",
         "exclusive": false,
         "id": "jang_dae_seo"
     },
@@ -4762,7 +4882,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 15,
-        "file": "dong_ha_ping.webp",
+        "file": "dong_ha_ping.jpeg",
         "exclusive": false,
         "id": "dong_ha_ping"
     },
@@ -4774,7 +4894,7 @@
         "speed": 11,
         "strength": 14,
         "intellect": 12,
-        "file": "nam_sun_u.webp",
+        "file": "nam_sun_u.jpeg",
         "exclusive": false,
         "id": "nam_sun_u"
     },
@@ -4786,7 +4906,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 80,
-        "file": "yunsu.webp",
+        "file": "yunsu.jpeg",
         "exclusive": true,
         "id": "yunsu"
     },
@@ -4798,7 +4918,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 80,
-        "file": "premium_card.webp",
+        "file": "premium_card.jpeg",
         "exclusive": true,
         "id": "premium_card_1"
     },
@@ -4810,7 +4930,7 @@
         "speed": 90,
         "strength": 90,
         "intellect": 85,
-        "file": "exclusive_card_1.webp",
+        "file": "exclusive_card_1.png",
         "exclusive": true,
         "id": "exclusive_card_1"
     },
@@ -4822,7 +4942,7 @@
         "speed": 99,
         "strength": 100,
         "intellect": 100,
-        "file": "excluzive_card_jaehwan.webp",
+        "file": "excluzive_card_jaehwan.jpeg",
         "exclusive": true,
         "id": "excluzive_card_jaehwan"
     }
