@@ -574,7 +574,7 @@
 
         async function fetchProfile() {
             try {
-                var res = await fetch('https://manhwcard.bothost.tech/api/profile/' + userId);
+                var res = await fetch('https://manhwacard.bothost.tech/api/profile/' + userId);
                 if (res.ok) {
                     var data = await res.json();
                     
@@ -670,7 +670,7 @@
 
         async function claimDailyBonus() {
             try {
-                var res = await fetch('https://manhwcard.bothost.tech/api/claim_daily/' + userId, { method: 'POST' });
+                var res = await fetch('https://manhwacard.bothost.tech/api/claim_daily/' + userId, { method: 'POST' });
                 var data = await res.json();
                 if (data.success) {
                     fetchProfile();
@@ -788,7 +788,7 @@
             document.getElementById('cardModal').classList.add('open');
 
             try {
-                var res = await fetch('https://manhwcard.bothost.tech/api/card_count/' + card.id);
+                var res = await fetch('https://manhwacard.bothost.tech/api/card_count/' + card.id);
                 if(res.ok) {
                     var data = await res.json();
                     document.getElementById('modalCount').innerText = data.count;
