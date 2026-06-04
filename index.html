@@ -324,7 +324,7 @@
                     <option value="Божественная">⚫ Божественная</option>
                     <option value="Мифическая">🔴 Мифическая</option>
                     <option value="Легендарная">🔵 Легендарная</option>
-                    <option value="Эпическая">���� Эпическая</option>
+                    <option value="Эпическая">🟣 Эпическая</option>
                     <option value="Редкая">🟡 Редкая</option>
                     <option value="Обычная">⚪️ Обычная</option>
                 </select>
@@ -518,6 +518,19 @@
         tg.expand();
         tg.ready();
 
+        // ============================================================
+        //  ⚠️ ГЛАВНОЕ: адрес твоего бэкенда. ПРОВЕРЬ ЕГО!
+        //  Открой этот адрес в браузере — должно вернуть {"status":"ok"}.
+        //  Если не открывается / другой домен (.ru vs .tech) — меняй ЗДЕСЬ.
+        // ============================================================
+        var API_BASE = "https://manhwcard.bothost.tech";
+
+        // Подписанные данные Telegram — единственный безопасный способ
+        // подтвердить, кто ты. Шлём их на бэкенд в заголовке.
+        function authHeaders() {
+            return { "X-Telegram-Init-Data": (tg.initData || "") };
+        }
+
         var userId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : 12345;
         var userName = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.first_name : "Игрок";
         
@@ -574,7 +587,7 @@
 
         async function fetchProfile() {
             try {
-                var res = await fetch('https://manhwacard.bothost.tech/api/profile/' + userId);
+                var res = await fetch(API_BASE + '/api/profile/' + userId, { headers: authHeaders() });
                 if (res.ok) {
                     var data = await res.json();
                     
@@ -606,9 +619,14 @@
                         dailyText.innerHTML = '<span style="color:#4ade80">✓</span> ' + currentDailyDay + '/30';
                     }
                     updateCollectionInfo(allCards.length);
+                } else {
+                    console.error("Профиль не загрузился, HTTP " + res.status);
                 }
                 updateCards();
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error("Нет связи с бэкендом:", e);
+                updateCards();
+            }
         }
 
         function renderDailyGrid() {
@@ -670,7 +688,10 @@
 
         async function claimDailyBonus() {
             try {
-                var res = await fetch('https://manhwacard.bothost.tech/api/claim_daily/' + userId, { method: 'POST' });
+                var res = await fetch(API_BASE + '/api/claim_daily/' + userId, {
+                    method: 'POST',
+                    headers: authHeaders()
+                });
                 var data = await res.json();
                 if (data.success) {
                     fetchProfile();
@@ -683,21 +704,33 @@
         }
 
         // ====== КАТАЛОГ ======
-        fetch('cards.json').then(function(r) { return r.json(); }).then(function(data) {
-            allCards = data;
-            var seriesSet = new Set();
-            allCards.forEach(function(c) { if (c.series) seriesSet.add(c.series); });
-            var seriesSelect = document.getElementById('seriesFilter');
-            seriesSet.forEach(function(s) {
-                var opt = document.createElement('option');
-                opt.value = s;
-                opt.innerText = s;
-                seriesSelect.appendChild(opt);
+        fetch('cards.json')
+            .then(function(r) {
+                if (!r.ok) throw new Error("cards.json HTTP " + r.status);
+                return r.json();
+            })
+            .then(function(data) {
+                allCards = data;
+                var seriesSet = new Set();
+                allCards.forEach(function(c) { if (c.series) seriesSet.add(c.series); });
+                var seriesSelect = document.getElementById('seriesFilter');
+                seriesSet.forEach(function(s) {
+                    var opt = document.createElement('option');
+                    opt.value = s;
+                    opt.innerText = s;
+                    seriesSelect.appendChild(opt);
+                });
+                updateCollectionInfo(allCards.length);
+                updateCards();
+            })
+            .catch(function(e) {
+                console.error("Не удалось загрузить cards.json:", e);
+                document.getElementById('cardsResultText').innerText = "Не удалось загрузить каталог";
+            })
+            .finally(function() {
+                // Профиль грузим в любом случае — даже если каталог не пришёл.
+                fetchProfile();
             });
-            updateCollectionInfo(allCards.length);
-            updateCards();
-            fetchProfile(); 
-        });
 
         function renderCards(cards) {
             var container = document.getElementById('cardsContainer');
@@ -788,7 +821,7 @@
             document.getElementById('cardModal').classList.add('open');
 
             try {
-                var res = await fetch('https://manhwacard.bothost.tech/api/card_count/' + card.id);
+                var res = await fetch(API_BASE + '/api/card_count/' + card.id);
                 if(res.ok) {
                     var data = await res.json();
                     document.getElementById('modalCount').innerText = data.count;
