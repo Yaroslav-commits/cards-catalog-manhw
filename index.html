@@ -108,6 +108,26 @@
         .locked-badge { color: #9ca3af; }
         .card.is-locked img { filter: grayscale(100%) brightness(0.6); }
 
+        /* ====== СПИННЕР ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
+        .img-wrap {
+            position: relative; width: 100%; aspect-ratio: 3/4;
+            margin-bottom: 8px; border-radius: 12px; overflow: hidden; background: #0c0c14;
+        }
+        .img-wrap img {
+            width: 100%; height: 100%; object-fit: cover; border-radius: 12px;
+            margin: 0; display: block; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .img-wrap.loaded img { opacity: 1; }
+        .img-spinner {
+            position: absolute; top: 50%; left: 50%;
+            width: 26px; height: 26px; margin: -13px 0 0 -13px;
+            border: 3px solid rgba(139, 92, 246, 0.22);
+            border-top-color: var(--accent);
+            border-radius: 50%; animation: spin 0.7s linear infinite;
+        }
+        .img-wrap.loaded .img-spinner { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         /* ================= ПРОФИЛЬ ================= */
         .profile-card {
             border: 1px solid var(--border-color); border-radius: 22px;
@@ -281,6 +301,248 @@
         }
         .daily-footer-btn.active { background: var(--accent); color: #fff; }
 
+        /* ================= РАЗДЕЛ «ЗАРАБОТОК» ================= */
+        .earn-screen {
+            position: fixed; inset: 0; z-index: 1500;
+            background: var(--bg);
+            background-image:
+                radial-gradient(circle at 15% 8%, rgba(139, 92, 246, 0.18), transparent 32%),
+                radial-gradient(circle at 88% 85%, rgba(139, 92, 246, 0.10), transparent 32%);
+            transform: translateX(100%); transition: transform 0.28s ease;
+            overflow-y: auto; padding: 16px 14px 40px;
+        }
+        .earn-screen.open { transform: translateX(0); }
+
+        .earn-head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+        .earn-back {
+            width: 42px; height: 42px; flex-shrink: 0; border-radius: 14px; border: none;
+            background: var(--surface); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .earn-back svg { width: 20px; height: 20px; }
+        .earn-screen-title { font-size: 26px; font-weight: 800; }
+
+        .earn-tabs {
+            display: flex; gap: 6px; padding: 6px; border-radius: 18px;
+            background: var(--surface); border: 1px solid var(--border-color); margin-bottom: 18px;
+        }
+        .earn-tab {
+            flex: 1; border: none; background: none; color: var(--text-muted);
+            padding: 12px 6px; border-radius: 13px; font-size: 14px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.18s;
+        }
+        .earn-tab svg { width: 17px; height: 17px; }
+        .earn-tab.active { background: var(--surface-light); color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+
+        .earn-pane { display: none; animation: fadeIn 0.25s ease; }
+        .earn-pane.active { display: block; }
+
+        /* --- Рефералы --- */
+        .ref-card {
+            background: var(--surface); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 18px; margin-bottom: 16px;
+        }
+        .ref-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .ref-top svg { width: 20px; height: 20px; color: var(--accent-light); flex-shrink: 0; }
+        .ref-top-title { font-size: 17px; font-weight: 700; flex: 1; }
+        .ref-count-badge {
+            min-width: 34px; height: 34px; padding: 0 10px; border-radius: 17px;
+            background: rgba(139,92,246,0.18); color: var(--accent-light);
+            display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800;
+        }
+        .ref-pills { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+        .ref-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 9px 14px; border-radius: 13px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06);
+            font-size: 14px; font-weight: 700; color: #e9e7ff;
+        }
+        .ref-pill .b-ico { font-size: 15px; color: var(--accent-light); }
+        .ref-pill .b-svg { width: 15px; height: 15px; color: var(--accent-light); }
+        .ref-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .ref-note b { color: var(--accent-light); }
+
+        .ref-invite-btn {
+            width: 100%; border: none; border-radius: 16px; padding: 17px;
+            background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff;
+            font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 26px rgba(139,92,246,0.32);
+        }
+        .ref-invite-btn:active { transform: scale(0.98); }
+        .ref-invite-btn svg { width: 18px; height: 18px; }
+
+        /* --- Задания --- */
+        .task-section-label {
+            display: flex; align-items: center; justify-content: space-between;
+            margin: 4px 4px 12px; font-size: 12px; font-weight: 800;
+            letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+        }
+        .task-section-label .lbl { display: flex; align-items: center; gap: 8px; color: var(--accent-light); }
+        .task-section-label .lbl svg { width: 15px; height: 15px; }
+        .task-section-label .hint { font-weight: 600; letter-spacing: 0; text-transform: none; opacity: 0.7; }
+
+        .task-card {
+            display: flex; align-items: center; gap: 14px;
+            background: var(--surface); border: 1px solid var(--border-color);
+            border-radius: 18px; padding: 14px; margin-bottom: 12px; cursor: pointer; transition: 0.15s;
+        }
+        .task-card:active { transform: scale(0.98); background: var(--surface-light); }
+        .task-ico {
+            width: 52px; height: 52px; flex-shrink: 0; border-radius: 15px;
+            background: rgba(139,92,246,0.16); color: var(--accent-light);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .task-ico svg { width: 26px; height: 26px; }
+        .task-body { flex: 1; min-width: 0; }
+        .task-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+        .task-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 7px; }
+        .task-reward { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; color: #d7d2ff; flex-wrap: wrap; }
+        .task-reward .rw { display: inline-flex; align-items: center; gap: 4px; }
+        .task-reward .b-svg { width: 14px; height: 14px; color: var(--accent-light); }
+        .task-reward .b-ico { color: var(--accent-light); }
+        .task-reward .rw-note { color: var(--text-muted); font-weight: 600; }
+        .task-chev { color: var(--text-muted); font-size: 22px; font-weight: 300; flex-shrink: 0; }
+
+        .partner-row {
+            display: flex; align-items: center; gap: 14px;
+            background: var(--surface); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 14px; margin-bottom: 12px;
+        }
+        .partner-ico {
+            width: 44px; height: 44px; flex-shrink: 0; border-radius: 13px;
+            background: rgba(139,92,246,0.16); color: var(--accent-light);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .partner-ico svg { width: 20px; height: 20px; }
+        .partner-title { flex: 1; font-size: 15px; font-weight: 600; }
+        .partner-do-btn {
+            border: none; border-radius: 12px; padding: 11px 18px;
+            background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0;
+        }
+        .partner-do-btn:active { transform: scale(0.97); }
+        .partner-do-btn:disabled { opacity: 0.55; }
+        .partner-do-btn.checking { background: rgba(255,255,255,0.08); color: var(--text-muted); }
+        .partner-done-check {
+            width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%;
+            background: rgba(139,92,246,0.18); color: var(--accent-light);
+            display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800;
+        }
+
+        /* --- Нижний лист (bottom-sheet) задания --- */
+        .sheet-overlay {
+            position: fixed; inset: 0; z-index: 1600; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
+            display: none; align-items: flex-end; justify-content: center;
+            opacity: 0; transition: opacity 0.2s ease;
+        }
+        .sheet-overlay.open { display: flex; opacity: 1; }
+        .sheet {
+            width: 100%; max-width: 460px; background: #0d0d14;
+            border-radius: 26px 26px 0 0; border: 1px solid rgba(255,255,255,0.08); border-bottom: none;
+            padding: 10px 18px calc(20px + env(safe-area-inset-bottom)); max-height: 92vh; overflow-y: auto;
+            transform: translateY(100%); transition: transform 0.28s ease;
+        }
+        .sheet-overlay.open .sheet { transform: translateY(0); }
+        .sheet-grabber { width: 44px; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.18); margin: 6px auto 16px; }
+        .sheet-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+        .sheet-head .task-ico { width: 46px; height: 46px; border-radius: 13px; }
+        .sheet-head .task-ico svg { width: 23px; height: 23px; }
+        .sheet-kicker { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+        .sheet-title { font-size: 19px; font-weight: 800; margin-top: 2px; }
+        .sheet-close { margin-left: auto; background: rgba(255,255,255,0.08); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 15px; flex-shrink: 0; }
+        .sheet-desc { font-size: 13px; color: #c7c7d6; line-height: 1.55; margin-bottom: 16px; }
+        .sheet-desc b { color: #fff; }
+
+        .sheet-reward-box {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 16px; margin-bottom: 14px;
+        }
+        .sheet-reward-head {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+            font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
+        }
+        .sheet-reward-head .when { font-weight: 600; letter-spacing: 0; text-transform: none; }
+        .sheet-reward-pills { display: flex; gap: 10px; }
+        .sheet-reward-pill {
+            display: inline-flex; align-items: center; gap: 7px; padding: 10px 15px; border-radius: 13px;
+            background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.25);
+            font-size: 16px; font-weight: 800; color: #fff;
+        }
+        .sheet-reward-pill .b-svg { width: 17px; height: 17px; color: var(--accent-light); }
+        .sheet-reward-pill .b-ico { color: var(--accent-light); }
+        .sheet-reward-foot { font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.45; }
+
+        .sheet-steps {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 16px; margin-bottom: 16px;
+        }
+        .sheet-steps-title { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+        .sheet-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 11px; }
+        .sheet-step:last-child { margin-bottom: 0; }
+        .sheet-step .num {
+            width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%;
+            background: rgba(139,92,246,0.2); color: var(--accent-light);
+            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;
+        }
+        .sheet-step .txt { font-size: 14px; line-height: 1.45; color: #e2e2ee; }
+        .sheet-step .txt b { color: #fff; }
+
+        .sheet-label { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 0 2px 8px; }
+        .sheet-input {
+            width: 100%; background: var(--surface); border: 1px solid var(--border-color);
+            color: #fff; border-radius: 14px; padding: 14px 16px; font-size: 14px; outline: none;
+            margin-bottom: 14px; transition: 0.15s; font-family: inherit; resize: none;
+        }
+        .sheet-input:focus { border-color: var(--accent); }
+        textarea.sheet-input { min-height: 76px; }
+
+        .sheet-btn {
+            width: 100%; border: none; border-radius: 15px; padding: 16px;
+            font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 9px;
+            margin-bottom: 10px;
+        }
+        .sheet-btn:active { transform: scale(0.98); }
+        .sheet-btn svg { width: 17px; height: 17px; }
+        .sheet-btn.ghost { background: var(--surface); color: #fff; border: 1px solid var(--border-color); }
+        .sheet-btn.primary { background: #fff; color: #0d0d14; }
+        .sheet-btn.accent { background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff; box-shadow: 0 10px 26px rgba(139,92,246,0.3); }
+        .sheet-btn:disabled { opacity: 0.6; }
+        .sheet-foot { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+
+        /* 7-дневный отчёт по бусту */
+        .boost-report { margin-top: 4px; }
+        .boost-report-title { font-size: 13px; font-weight: 700; color: var(--accent-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .boost-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 12px; }
+        .boost-day {
+            aspect-ratio: 1; border-radius: 10px; background: var(--surface-light);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+            border: 1px solid transparent;
+        }
+        .boost-day.done { background: rgba(139,92,246,0.16); border-color: rgba(139,92,246,0.4); color: var(--accent-light); }
+        .boost-day .dn { font-size: 9px; color: var(--text-muted); }
+        .boost-day .di { font-size: 13px; font-weight: 800; }
+        .boost-countdown {
+            text-align: center; font-size: 13px; color: #e2e2ee;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 13px; padding: 13px;
+        }
+        .boost-countdown b { color: var(--accent-light); font-size: 16px; }
+
+        /* --- Тост-уведомление сверху --- */
+        .toast {
+            position: fixed; top: -120px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 28px); max-width: 440px; z-index: 2000;
+            background: linear-gradient(135deg, #7c3aed, #6b21a8); color: #fff;
+            border-radius: 18px; padding: 15px 18px; box-shadow: 0 16px 40px rgba(124,58,237,0.45);
+            display: flex; align-items: center; gap: 13px;
+            transition: top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .toast.show { top: calc(14px + env(safe-area-inset-top)); }
+        .toast-ico { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; }
+        .toast-ico svg { width: 20px; height: 20px; }
+        .toast-body { flex: 1; min-width: 0; }
+        .toast-title { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+        .toast-text { font-size: 13px; opacity: 0.92; }
+
         /* ================= ПАРЯЩАЯ НАВИГАЦИЯ ================= */
         .bottom-nav {
             position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
@@ -406,13 +668,13 @@
         </div>
 
         <div class="dual-grid">
-            <div class="dual-card earn-card" onclick="wip('Заработок')">
+            <div class="dual-card earn-card" onclick="openEarnModal()">
                 <div class="earn-ico">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="9" r="5"/><path d="M14.5 4.2A5 5 0 1 1 16 14.8"/></svg>
                 </div>
                 <div>
                     <div class="earn-title">Заработок</div>
-                    <div class="earn-sub">Игры, задания и рефералы</div>
+                    <div class="earn-sub">Задания и рефералы</div>
                 </div>
             </div>
 
@@ -501,6 +763,134 @@
         </div>
     </div>
 
+    <!-- ================= ЭКРАН «ЗАРАБОТОК» ================= -->
+    <div class="earn-screen" id="earnScreen">
+        <div class="earn-head">
+            <button class="earn-back" onclick="closeEarnModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="earn-screen-title">Заработок</div>
+        </div>
+
+        <div class="earn-tabs">
+            <button class="earn-tab active" id="earnTabRef" onclick="switchEarnTab('ref')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Рефералы
+            </button>
+            <button class="earn-tab" id="earnTabTasks" onclick="switchEarnTab('tasks')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+                Задания
+            </button>
+        </div>
+
+        <!-- Пейн: Рефералы -->
+        <div class="earn-pane active" id="earnRef">
+            <div class="ref-card">
+                <div class="ref-top">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <div class="ref-top-title">Пригласить друзей</div>
+                    <div class="ref-count-badge" id="refCount">0</div>
+                </div>
+                <div class="ref-pills">
+                    <span class="ref-pill"><span class="b-ico">₩</span><span id="refEarnedKrw">0</span></span>
+                    <span class="ref-pill">
+                        <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                        <span id="refEarnedAtt">0</span> круток
+                    </span>
+                </div>
+                <div class="ref-note" id="refNote">Бонус за 1 друга: <b>₩ 500–850</b> + <b>5 круток</b>. Награду получаете и вы, и друг.</div>
+            </div>
+
+            <button class="ref-invite-btn" onclick="inviteFriend()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Пригласить друга
+            </button>
+        </div>
+
+        <!-- Пейн: Задания -->
+        <div class="earn-pane" id="earnTasks">
+            <div class="task-section-label">
+                <span class="lbl">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                    Соцсети
+                </span>
+                <span class="hint">Большие награды · для авторов</span>
+            </div>
+
+            <div class="task-card" onclick="openTaskSheet('tiktok')">
+                <div class="task-ico" id="ico-tiktok"></div>
+                <div class="task-body">
+                    <div class="task-title">TikTok видео про ManhwCard</div>
+                    <div class="task-sub">TikTok видео</div>
+                    <div class="task-reward">
+                        <span class="rw"><span class="b-ico">₩</span> 5 000</span>
+                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 10</span>
+                        <span class="rw rw-note">· за 1k просмотров</span>
+                    </div>
+                </div>
+                <div class="task-chev">›</div>
+            </div>
+
+            <div class="task-card" onclick="openTaskSheet('story')">
+                <div class="task-ico" id="ico-story"></div>
+                <div class="task-body">
+                    <div class="task-title">Сторис в Telegram</div>
+                    <div class="task-sub">Сторис в Telegram</div>
+                    <div class="task-reward">
+                        <span class="rw"><span class="b-ico">₩</span> 3 000</span>
+                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 5</span>
+                    </div>
+                </div>
+                <div class="task-chev">›</div>
+            </div>
+
+            <div class="task-card" onclick="openTaskSheet('boost')">
+                <div class="task-ico" id="ico-boost"></div>
+                <div class="task-body">
+                    <div class="task-title">Буст нашего Telegram-канала</div>
+                    <div class="task-sub">Буст канала</div>
+                    <div class="task-reward">
+                        <span class="rw"><span class="b-ico">₩</span> 2 000</span>
+                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 10</span>
+                        <span class="rw rw-note">· за буст</span>
+                    </div>
+                </div>
+                <div class="task-chev">›</div>
+            </div>
+
+            <div class="task-section-label" style="margin-top:22px;">
+                <span class="lbl" style="color:var(--text-muted)">Партнёры</span>
+            </div>
+
+            <div class="partner-row">
+                <div class="partner-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
+                </div>
+                <div class="partner-title">Подпишись на канал</div>
+                <button class="partner-do-btn" id="subDoBtn" onclick="checkSubscription()">Выполнить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижний лист задания -->
+    <div class="sheet-overlay" id="taskSheet">
+        <div class="sheet">
+            <div class="sheet-grabber"></div>
+            <div id="sheetContent"></div>
+        </div>
+    </div>
+
+    <!-- Тост-уведомление -->
+    <div class="toast" id="toast">
+        <div class="toast-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="toast-body">
+            <div class="toast-title" id="toastTitle">Готово!</div>
+            <div class="toast-text" id="toastText"></div>
+        </div>
+    </div>
+
     <nav class="bottom-nav">
         <button class="nav-btn" onclick="switchTab('catalog', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
@@ -509,7 +899,7 @@
             <svg viewBox="0 0 32 24" fill="currentColor"><path d="M3 22 7 2l9 12 9-12 4 20h-5L21 11l-5 8-5-8-2 11z"/></svg>
         </button>
         <button class="nav-btn" onclick="switchTab('tops', this)">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0012 18a5.01 5.01 0 004.61-5.06C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 10.82C5.84 10.4 5 9.3 5 8V7h2v3.82zM19 8c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
     </nav>
 
@@ -754,7 +1144,12 @@
                 else if (userOwnedCards.length > 0) badgeHtml = '<div class="locked-badge">LOCK</div>';
 
                 div.innerHTML = badgeHtml + 
-                    '<img src="images/' + (card.file || '') + '" loading="lazy">' +
+                    '<div class="img-wrap">' +
+                        '<div class="img-spinner"></div>' +
+                        '<img src="images/' + (card.file || '') + '" loading="lazy" ' +
+                        'onload="this.parentElement.classList.add(\'loaded\')" ' +
+                        'onerror="this.parentElement.classList.add(\'loaded\')">' +
+                    '</div>' +
                     '<h3>' + (card.name || '') + '</h3>' +
                     '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
                     '<div class="card-meta">' +
@@ -842,6 +1237,434 @@
                 if (e.target === overlay) overlay.classList.remove('open');
             });
         });
+
+        // ============================================================
+        //  ====================  ЗАРАБОТОК  =========================
+        // ============================================================
+        var refData = null;
+        var tasksData = null;
+        var LINKS = {
+            channel: "https://t.me/manhwcard",
+            boost: "https://t.me/boost/manhwcard",
+            tiktok: "https://vt.tiktok.com/ZS92ocVcSbVA5-QEi0R/"
+        };
+
+        // Иконки заданий (единый фиолетовый цвет сайта)
+        function iconFor(type) {
+            if (type === 'tiktok') {
+                return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="3"/><path d="M2 8h20M7 3v5M17 3v5"/><path d="M10 12l5 3-5 3z"/></svg>';
+            }
+            if (type === 'story') {
+                return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z"/></svg>';
+            }
+            if (type === 'boost') {
+                return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2 0-2.8a2 2 0 0 0-3 0z"/><path d="M12 15l-3-3a11 11 0 0 1 8-8c2.5 0 3 1 3 3a11 11 0 0 1-8 8z"/><path d="M9 12H4s.5-2.8 2-4 4-1 4-1M12 15v5s2.8-.5 4-2 1-4 1-4"/></svg>';
+            }
+            return '';
+        }
+        // Расставляем иконки в карточки заданий
+        document.getElementById('ico-tiktok').innerHTML = iconFor('tiktok');
+        document.getElementById('ico-story').innerHTML = iconFor('story');
+        document.getElementById('ico-boost').innerHTML = iconFor('boost');
+
+        var SVG_DIAMOND = '<svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>';
+
+        function openEarnModal() {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('earnScreen').classList.add('open');
+            manageBack();
+            switchEarnTab('ref');
+            loadReferral();
+            loadTasks();
+        }
+        function closeEarnModal() {
+            // Если открыт лист задания — сначала закрываем его
+            if (document.getElementById('taskSheet').classList.contains('open')) {
+                closeTaskSheet();
+                return;
+            }
+            document.getElementById('earnScreen').classList.remove('open');
+            manageBack();
+        }
+
+        function switchEarnTab(tab) {
+            if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+            var isRef = (tab === 'ref');
+            document.getElementById('earnTabRef').classList.toggle('active', isRef);
+            document.getElementById('earnTabTasks').classList.toggle('active', !isRef);
+            document.getElementById('earnRef').classList.toggle('active', isRef);
+            document.getElementById('earnTasks').classList.toggle('active', !isRef);
+        }
+
+        // ---------- РЕФЕРАЛЫ ----------
+        async function loadReferral() {
+            try {
+                var res = await fetch(API_BASE + '/api/referral/' + userId, { headers: authHeaders() });
+                if (!res.ok) return;
+                refData = await res.json();
+                document.getElementById('refCount').innerText = refData.count || 0;
+                document.getElementById('refEarnedKrw').innerText = refData.earned_krw || 0;
+                document.getElementById('refEarnedAtt').innerText = refData.earned_attempts || 0;
+                var mn = refData.reward_krw_min || 500, mx = refData.reward_krw_max || 850, at = refData.reward_attempts || 5;
+                document.getElementById('refNote').innerHTML =
+                    'Бонус за 1 друга: <b>₩ ' + mn + '–' + mx + '</b> + <b>' + at + ' круток</b>. Награду получаете и вы, и друг.';
+            } catch (e) { console.error('referral load error', e); }
+        }
+
+        function inviteFriend() {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
+            if (!refData || !refData.code) { loadReferral(); tg.showAlert('Секунду, подгружаю вашу ссылку...'); return; }
+            var bot = refData.bot_username || '';
+            if (!bot) { tg.showAlert('Не удалось определить имя бота. Попробуйте позже.'); return; }
+            var link = 'https://t.me/' + bot + '?start=' + refData.code;
+            var text = 'Заходи в ManhwCard — собирай карты и получай награды! 🃏';
+            var shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
+            tg.openTelegramLink(shareUrl);
+        }
+
+        // ---------- ЗАДАНИЯ ----------
+        async function loadTasks() {
+            try {
+                var res = await fetch(API_BASE + '/api/tasks/' + userId, { headers: authHeaders() });
+                if (!res.ok) return;
+                tasksData = await res.json();
+                if (tasksData.links) LINKS = tasksData.links;
+                renderPartnerSub();
+            } catch (e) { console.error('tasks load error', e); }
+        }
+
+        function renderPartnerSub() {
+            var btn = document.getElementById('subDoBtn');
+            if (!btn) return;
+            if (tasksData && tasksData.subscribe_done) {
+                var row = btn.parentElement;
+                var chk = document.createElement('div');
+                chk.className = 'partner-done-check';
+                chk.innerHTML = '✓';
+                btn.replaceWith(chk);
+            }
+        }
+
+        // ---------- НИЖНИЙ ЛИСТ ЗАДАНИЯ ----------
+        function openTaskSheet(type) {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('sheetContent').innerHTML = buildSheet(type);
+            document.getElementById('taskSheet').classList.add('open');
+            manageBack();
+            // Если это буст и он уже на кулдауне — сразу показываем отчёт
+            if (type === 'boost' && tasksData && tasksData.boost_on_cooldown) {
+                resetBoostBtn(true);
+            }
+        }
+        function closeTaskSheet() {
+            document.getElementById('taskSheet').classList.remove('open');
+            manageBack();
+        }
+        document.getElementById('taskSheet').addEventListener('click', function(e) {
+            if (e.target === this) closeTaskSheet();
+        });
+
+        function buildSheet(type) {
+            if (type === 'tiktok') {
+                return socialSheet({
+                    type: 'tiktok',
+                    kicker: 'TikTok видео',
+                    title: 'TikTok видео про ManhwCard',
+                    desc: 'Снимите короткое TikTok-видео об <b>ManhwCard</b>. Награда растёт с просмотрами: 5 000 монет + 10 алмазов за каждые 1 000 просмотров.',
+                    krw: '+5 000', dia: '+10', when: 'за 1k просмотров',
+                    foot: 'Больше охват — больше награда: выплата масштабируется по количеству просмотров.',
+                    steps: [
+                        'Снимите короткое TikTok-видео <b>или эдит</b> с упоминанием бота',
+                        'Добавьте наш хэштег <b>#manhwcard</b>, чтобы модератор нашёл ролик',
+                        'Вставьте ссылку и отправьте на модерацию'
+                    ],
+                    inputLabel: 'Ссылка на TikTok видео',
+                    openLabel: 'Открыть TikTok', openLink: LINKS.tiktok
+                });
+            }
+            if (type === 'story') {
+                return socialSheet({
+                    type: 'story',
+                    kicker: 'Сторис в Telegram',
+                    title: 'Сторис в Telegram',
+                    desc: 'Выложите сторис в Telegram с упоминанием <b>ManhwCard</b> и нашего канала. 3 000 монет + 5 гемов за одобренную сторис.',
+                    krw: '+3 000', dia: '+5', when: 'за одобренную сторис',
+                    foot: '',
+                    steps: [
+                        'Откройте Telegram и опубликуйте историю об <b>ManhwCard</b>',
+                        'Упомяните наш канал и оставьте сторис на 24 часа',
+                        'Вставьте ссылку ниже и нажмите «Отправить на проверку»'
+                    ],
+                    inputLabel: 'Ссылка на вашу сторис',
+                    openLabel: 'Открыть Telegram', openLink: LINKS.channel
+                });
+            }
+            if (type === 'boost') {
+                return boostSheet();
+            }
+            return '';
+        }
+
+        // Универсальный лист для TikTok / Сторис (отправка на модерацию)
+        function socialSheet(o) {
+            var footHtml = o.foot ? '<div class="sheet-reward-foot">' + o.foot + '</div>' : '';
+            var stepsHtml = o.steps.map(function(s, i) {
+                return '<div class="sheet-step"><div class="num">' + (i + 1) + '</div><div class="txt">' + s + '</div></div>';
+            }).join('');
+            return '' +
+            '<div class="sheet-head">' +
+                '<div class="task-ico">' + iconFor(o.type) + '</div>' +
+                '<div><div class="sheet-kicker">' + o.kicker + '</div><div class="sheet-title">' + o.title + '</div></div>' +
+                '<button class="sheet-close" onclick="closeTaskSheet()">✖</button>' +
+            '</div>' +
+            '<div class="sheet-desc">' + o.desc + '</div>' +
+            '<div class="sheet-reward-box">' +
+                '<div class="sheet-reward-head"><span>Что ты получишь</span><span class="when">' + o.when + '</span></div>' +
+                '<div class="sheet-reward-pills">' +
+                    '<span class="sheet-reward-pill"><span class="b-ico">₩</span> ' + o.krw + '</span>' +
+                    '<span class="sheet-reward-pill">' + SVG_DIAMOND + ' ' + o.dia + '</span>' +
+                '</div>' + footHtml +
+            '</div>' +
+            '<div class="sheet-steps">' +
+                '<div class="sheet-steps-title">Как это работает</div>' + stepsHtml +
+            '</div>' +
+            '<div class="sheet-label">' + o.inputLabel + '</div>' +
+            '<input id="socialLink" class="sheet-input" type="url" placeholder="https://...">' +
+            '<div class="sheet-label">Сообщение модератору (необязательно)</div>' +
+            '<textarea id="socialNote" class="sheet-input" placeholder="Контекст: просмотры, язык и т.п."></textarea>' +
+            '<button class="sheet-btn ghost" onclick="openUrl(\'' + o.openLink + '\')">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg> ' + o.openLabel + ' ›</button>' +
+            '<button class="sheet-btn primary" id="socialSubmitBtn" onclick="submitSocial(\'' + o.type + '\')">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg> Отправить на проверку</button>' +
+            '<div class="sheet-foot">После отправки заявка уходит на модерацию — приложите скриншот в боте поддержки.</div>';
+        }
+
+        // Лист для буста
+        function boostSheet() {
+            var onCd = tasksData && tasksData.boost_on_cooldown;
+            var actionHtml;
+            if (onCd) {
+                actionHtml = '<div id="boostAction">' + boostReportHtml(tasksData.boost_seconds_left) + '</div>';
+            } else {
+                actionHtml = '<div id="boostAction">' +
+                    '<button class="sheet-btn primary" id="boostCheckBtn" onclick="checkBoost()">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg> Проверить буст</button>' +
+                    '</div>';
+            }
+            return '' +
+            '<div class="sheet-head">' +
+                '<div class="task-ico">' + iconFor('boost') + '</div>' +
+                '<div><div class="sheet-kicker">Буст канала</div><div class="sheet-title">Буст нашего Telegram-канала</div></div>' +
+                '<button class="sheet-close" onclick="closeTaskSheet()">✖</button>' +
+            '</div>' +
+            '<div class="sheet-desc">Используйте ваш Premium-слот буста на <b>@manhwcard</b>. 2 000 монет + 10 гемов за каждый активный буст. Повторное получение — раз в 7 дней, пока буст активен.</div>' +
+            '<div class="sheet-reward-box">' +
+                '<div class="sheet-reward-head"><span>Что ты получишь</span><span class="when">за каждый активный буст</span></div>' +
+                '<div class="sheet-reward-pills">' +
+                    '<span class="sheet-reward-pill"><span class="b-ico">₩</span> +2 000</span>' +
+                    '<span class="sheet-reward-pill">' + SVG_DIAMOND + ' +10</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="sheet-steps">' +
+                '<div class="sheet-steps-title">Как это работает</div>' +
+                '<div class="sheet-step"><div class="num">1</div><div class="txt">Забустите наш Telegram-канал вашим слотом <b>Premium</b></div></div>' +
+                '<div class="sheet-step"><div class="num">2</div><div class="txt">Держите буст активным, чтобы сохранить награду</div></div>' +
+                '<div class="sheet-step"><div class="num">3</div><div class="txt">Нажмите «Проверить буст» — награда начислится автоматически</div></div>' +
+            '</div>' +
+            '<button class="sheet-btn ghost" onclick="openUrl(\'' + LINKS.boost + '\')">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg> Открыть канал ›</button>' +
+            actionHtml;
+        }
+
+        // 7-дневный отчёт по бусту + обратный отсчёт до следующей награды
+        function boostReportHtml(secondsLeft) {
+            var total = 7 * 24 * 3600;
+            var passed = total - (secondsLeft || 0);
+            var daysDone = Math.max(0, Math.min(7, Math.floor(passed / (24 * 3600))));
+            var cells = '';
+            for (var i = 1; i <= 7; i++) {
+                var done = i <= daysDone;
+                cells += '<div class="boost-day' + (done ? ' done' : '') + '">' +
+                    '<div class="dn">Д' + i + '</div>' +
+                    '<div class="di">' + (done ? '✓' : '•') + '</div></div>';
+            }
+            return '' +
+            '<div class="boost-report">' +
+                '<div class="boost-report-title">' +
+                    '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M9 1l5 2.5v4C14 12 11.5 14 9 15.5 6.5 14 4 12 4 7.5v-4z"/><path d="M6.5 9l1.5 1.5 3-3"/></svg>' +
+                    'Награда получена! Буст активен 🚀' +
+                '</div>' +
+                '<div class="boost-days">' + cells + '</div>' +
+                '<div class="boost-countdown">Следующая награда через <b>' + fmtLeft(secondsLeft) + '</b><br><span style="font-size:11px;color:var(--text-muted)">держите буст активным, чтобы её не потерять</span></div>' +
+            '</div>';
+        }
+
+        // Отправка TikTok / Сторис на модерацию
+        async function submitSocial(type) {
+            var link = (document.getElementById('socialLink') || {}).value || '';
+            var note = (document.getElementById('socialNote') || {}).value || '';
+            link = link.trim();
+            if (!link || link.indexOf('http') !== 0) {
+                tg.showAlert('Вставьте корректную ссылку (https://...)');
+                return;
+            }
+            var btn = document.getElementById('socialSubmitBtn');
+            if (btn) { btn.disabled = true; btn.innerText = 'Отправляем...'; }
+            try {
+                var res = await fetch(API_BASE + '/api/submit_social/' + userId, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+                    body: JSON.stringify({ task_type: type, link: link, note: note })
+                });
+                var data = await res.json();
+                if (data.ok) {
+                    if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
+                    closeTaskSheet();
+                    showToast('Заявка отправлена', 'Модератор проверит её вручную и начислит награду.');
+                } else {
+                    tg.showAlert(data.error || 'Не удалось отправить заявку');
+                    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg> Отправить на проверку'; }
+                }
+            } catch (e) {
+                tg.showAlert('Ошибка соединения');
+                if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg> Отправить на проверку'; }
+            }
+        }
+
+        // Проверка буста
+        async function checkBoost() {
+            var btn = document.getElementById('boostCheckBtn');
+            if (btn) { btn.disabled = true; btn.innerText = 'Проверяем...'; }
+            try {
+                var res = await fetch(API_BASE + '/api/check_boost/' + userId, { method: 'POST', headers: authHeaders() });
+                var data = await res.json();
+                if (!data.ok) {
+                    tg.showAlert(data.error || 'Ошибка проверки');
+                    if (btn) { btn.disabled = false; btn.innerText = 'Проверить буст'; }
+                    return;
+                }
+                if (!data.boosting) {
+                    tg.showAlert('Буст не найден. Забустите канал @manhwcard вашим слотом Premium и нажмите ещё раз.');
+                    openUrl(LINKS.boost);
+                    if (btn) { btn.disabled = false; btn.innerText = 'Проверить буст'; }
+                    return;
+                }
+                if (data.claimed) {
+                    if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
+                    var rw = data.reward || { krw: 2000, dia: 10 };
+                    showToast('Награда получена 🚀', '+' + rw.krw + ' ₩ и +' + rw.dia + ' 💎 за активный буст.');
+                    fetchProfile();
+                    if (tasksData) { tasksData.boost_on_cooldown = true; tasksData.boost_seconds_left = data.boost_seconds_left; }
+                    resetBoostBtn(false, data.boost_seconds_left);
+                } else {
+                    // Буст активен, но награда на этой неделе уже забрана
+                    if (tasksData) { tasksData.boost_on_cooldown = true; tasksData.boost_seconds_left = data.boost_seconds_left; }
+                    resetBoostBtn(true, data.boost_seconds_left);
+                }
+            } catch (e) {
+                tg.showAlert('Ошибка соединения');
+                if (btn) { btn.disabled = false; btn.innerText = 'Проверить буст'; }
+            }
+        }
+
+        // Заменяет кнопку «Проверить буст» на 7-дневный отчёт
+        function resetBoostBtn(silent, secondsLeft) {
+            var holder = document.getElementById('boostAction');
+            if (!holder) return;
+            var secs = (secondsLeft != null) ? secondsLeft : (tasksData ? tasksData.boost_seconds_left : 0);
+            holder.innerHTML = boostReportHtml(secs);
+        }
+
+        // Проверка подписки (Партнёры)
+        async function checkSubscription() {
+            var btn = document.getElementById('subDoBtn');
+            if (btn) { btn.disabled = true; btn.classList.add('checking'); btn.innerText = 'Проверяем...'; }
+            try {
+                var res = await fetch(API_BASE + '/api/check_subscription/' + userId, { method: 'POST', headers: authHeaders() });
+                var data = await res.json();
+                if (!data.ok) {
+                    tg.showAlert(data.error || 'Ошибка проверки');
+                    if (btn) { btn.disabled = false; btn.classList.remove('checking'); btn.innerText = 'Выполнить'; }
+                    return;
+                }
+                if (!data.subscribed) {
+                    openUrl(LINKS.channel);
+                    tg.showAlert('Подпишитесь на канал и нажмите «Выполнить» ещё раз.');
+                    if (btn) { btn.disabled = false; btn.classList.remove('checking'); btn.innerText = 'Выполнить'; }
+                    return;
+                }
+                // Подписан
+                if (data.rewarded) {
+                    if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
+                    var rw = data.reward || { krw: 1000, dia: 5 };
+                    showToast('Награда получена ✓', '+' + rw.krw + ' ₩ и +' + rw.dia + ' 💎 за подписку.');
+                    fetchProfile();
+                } else {
+                    showToast('Уже выполнено ✓', 'Подписка засчитана ранее.');
+                }
+                if (tasksData) tasksData.subscribe_done = true;
+                if (btn) {
+                    var chk = document.createElement('div');
+                    chk.className = 'partner-done-check';
+                    chk.innerHTML = '✓';
+                    btn.replaceWith(chk);
+                }
+            } catch (e) {
+                tg.showAlert('Ошибка соединения');
+                if (btn) { btn.disabled = false; btn.classList.remove('checking'); btn.innerText = 'Выполнить'; }
+            }
+        }
+
+        // ---------- Утилиты ----------
+        function openUrl(url) {
+            if (!url) return;
+            if (url.indexOf('t.me') !== -1 || url.indexOf('telegram.') !== -1) {
+                tg.openTelegramLink(url);
+            } else {
+                tg.openLink(url);
+            }
+        }
+
+        // Секунды -> "Xд Yч" / "Yч Zм" / "меньше минуты"
+        function fmtLeft(seconds) {
+            seconds = Math.max(0, Math.floor(seconds || 0));
+            var d = Math.floor(seconds / 86400);
+            var h = Math.floor((seconds % 86400) / 3600);
+            var m = Math.floor((seconds % 3600) / 60);
+            if (d > 0) return d + 'д ' + h + 'ч';
+            if (h > 0) return h + 'ч ' + m + 'м';
+            if (m > 0) return m + 'м';
+            return 'меньше минуты';
+        }
+
+        // Тост сверху
+        var _toastTimer = null;
+        function showToast(title, text) {
+            var t = document.getElementById('toast');
+            document.getElementById('toastTitle').innerText = title || 'Готово!';
+            document.getElementById('toastText').innerText = text || '';
+            t.classList.add('show');
+            if (_toastTimer) clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 4200);
+        }
+
+        // Кнопка «Назад» Telegram: показываем, когда открыт экран/лист
+        function manageBack() {
+            if (!tg.BackButton) return;
+            var earnOpen = document.getElementById('earnScreen').classList.contains('open');
+            var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
+            if (earnOpen || sheetOpen) tg.BackButton.show();
+            else tg.BackButton.hide();
+        }
+        if (tg.BackButton && tg.BackButton.onClick) {
+            tg.BackButton.onClick(function() {
+                if (document.getElementById('taskSheet').classList.contains('open')) {
+                    closeTaskSheet();
+                } else if (document.getElementById('earnScreen').classList.contains('open')) {
+                    closeEarnModal();
+                }
+            });
+        }
     </script>
 </body>
 </html>
