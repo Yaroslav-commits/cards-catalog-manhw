@@ -92,7 +92,6 @@
         .card[data-rarity="Мифическая"]     { border-color: rgba(239,68,68,0.4); }
         .card[data-rarity="Божественная"]   { border-color: #555; background: linear-gradient(145deg, #0a0a0f, #151520); }
 
-        .card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; margin-bottom: 8px; background: #000;}
         .card h3 { font-size: 13px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
         .rarity-badge { font-size: 10px; padding: 3px 8px; border-radius: 6px; display: inline-block; background: rgba(255,255,255,0.05); margin-bottom: 6px; font-weight: 600;}
         
@@ -1146,7 +1145,7 @@
                 div.innerHTML = badgeHtml + 
                     '<div class="img-wrap">' +
                         '<div class="img-spinner"></div>' +
-                        '<img src="images/' + (card.file || '') + '" loading="lazy" ' +
+                        '<img src="images/' + (card.file || '') + '" ' +
                         'onload="this.parentElement.classList.add(\'loaded\')" ' +
                         'onerror="this.parentElement.classList.add(\'loaded\')">' +
                     '</div>' +
