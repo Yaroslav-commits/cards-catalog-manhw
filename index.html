@@ -107,10 +107,14 @@
         .locked-badge { color: #9ca3af; }
         .card.is-locked img { filter: grayscale(100%) brightness(0.6); }
 
-        /* ====== СПИННЕР ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
+/* ====== СПИННЕР ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
         .img-wrap {
             position: relative; width: 100%; aspect-ratio: 3/4;
             margin-bottom: 8px; border-radius: 12px; overflow: hidden; background: #0c0c14;
+        }
+        @supports not (aspect-ratio: 3/4) {
+            .img-wrap { padding-bottom: 133.33%; height: 0; }
+            .img-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         }
         .img-wrap img {
             width: 100%; height: 100%; object-fit: cover; border-radius: 12px;
@@ -1142,12 +1146,13 @@
                 if (isOwned) badgeHtml = '<div class="owned-badge">МОЯ</div>';
                 else if (userOwnedCards.length > 0) badgeHtml = '<div class="locked-badge">LOCK</div>';
 
-                div.innerHTML = badgeHtml + 
+                div.innerHTML = badgeHtml +
                     '<div class="img-wrap">' +
                         '<div class="img-spinner"></div>' +
                         '<img src="images/' + (card.file || '') + '" ' +
-                        'onload="this.parentElement.classList.add(\'loaded\')" ' +
-                        'onerror="this.parentElement.classList.add(\'loaded\')">' +
+                        'loading="lazy" ' +
+                        'onload="if(this.parentElement) this.parentElement.classList.add(\'loaded\')" ' +
+                        'onerror="if(this.parentElement) this.parentElement.classList.add(\'loaded\')">' +
                     '</div>' +
                     '<h3>' + (card.name || '') + '</h3>' +
                     '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
