@@ -98,58 +98,44 @@
         .card-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .mini-stat { padding: 4px 0; border-radius: 8px; background: rgba(255,255,255,0.05); color: #d7d2ff; font-size: 10px; font-weight: 700; }
 
-        .owned-badge, .locked-badge {
+.owned-badge, .locked-badge {
             position: absolute; top: 12px; left: 12px; z-index: 3; padding: 4px 8px;
             border-radius: 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
-            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
         }
         .owned-badge { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
         .locked-badge { color: #9ca3af; }
-        .card.is-locked img { filter: grayscale(100%) brightness(0.6); }
+        .card.is-locked img { filter: grayscale(100%) brightness(0.6); -webkit-filter: grayscale(100%) brightness(0.6); }
 
-/* ====== СКЕЛЕТОН ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
+        /* ====== СКЕЛЕТОН ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
         .img-wrap {
             position: relative;
             width: 100%;
-            padding-bottom: 133.33%; /* Жесткая пропорция 3:4 для любых экранов */
-            background: #1c1c28;     /* Красивый темный фон загрузки */
+            padding-bottom: 133.33%; /* Жесткая пропорция 3:4 для 100% совместимости с iPhone */
+            background: #1c1c28;
             border-radius: 12px;
             overflow: hidden;
-        }
-        @supports (aspect-ratio: 3/4) {
-            .img-wrap {
-                padding-bottom: 0;
-                aspect-ratio: 3/4;
-            }
+            -webkit-mask-image: -webkit-radial-gradient(white, black); /* Фикс бага со скруглением в Safari */
         }
         /* Анимация переливания (блик) */
         .img-wrap::after {
             content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.15), transparent);
             transform: translateX(-100%);
             animation: shimmer 1.5s infinite;
+            pointer-events: none;
         }
-        @keyframes shimmer {
-            100% { transform: translateX(100%); }
-        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
         .img-wrap img {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-            opacity: 0; /* Скрыта до загрузки */
-            transition: opacity 0.5s ease-in-out;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; border-radius: 12px;
+            opacity: 0; transition: opacity 0.4s ease-in-out;
             z-index: 2;
         }
-        .img-wrap.loaded::after {
-            display: none;
-            animation: none;
-        }
-        .img-wrap.loaded img {
-            opacity: 1; /* Плавное проявление */
-        }
+        .img-wrap.loaded::after { display: none; animation: none; }
+        .img-wrap.loaded img { opacity: 1; }
 
         /* ================= ПРОФИЛЬ ================= */
         .profile-card {
@@ -1144,15 +1130,18 @@
                 // Профиль грузим в любом случае — даже если каталог не пришёл.
                 fetchProfile();
             });
-
-        function renderCards(cards) {
+function renderCards(cards) {
             var container = document.getElementById('cardsContainer');
             container.innerHTML = '';
             updateCollectionInfo(cards.length);
             if (!cards.length) {
-                container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px;                 opacity:0.6;">Измените фильтры</span></div>';
+                container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px; opacity:0.6;">Измените фильтры</span></div>';
                 return;
             }
+            
+            // Используем фрагмент для оптимизации отрисовки на мобильных
+            var frag = document.createDocumentFragment();
+            
             cards.forEach(function(card) {
                 var cleanRarity = (card.rarity || '').split(' ')[0];
                 var isOwned = userOwnedCards.includes(card.id);
@@ -1168,10 +1157,7 @@
 
                 div.innerHTML = badgeHtml + 
                     '<div class="img-wrap">' +
-                        '<img src="images/' + (card.file || '') + '" ' +
-                        'loading="lazy" ' +
-                        'onload="this.parentElement && this.parentElement.classList.add(\'loaded\')" ' +
-                        'onerror="this.parentElement && this.parentElement.classList.add(\'loaded\')">' +
+                        '<img src="images/' + (card.file || '') + '" loading="lazy">' +
                     '</div>' +
                     '<h3>' + (card.name || '') + '</h3>' +
                     '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
@@ -1180,8 +1166,27 @@
                         '<div class="mini-stat">💪 ' + (card.strength || 0) + '</div>' +
                         '<div class="mini-stat">🧠 ' + (card.intellect || 0) + '</div>' +
                     '</div>';
-                container.appendChild(div);
+                    
+                // Безопасное отслеживание загрузки картинки (без inline JS, чтобы не крашило iOS)
+                var img = div.querySelector('img');
+                if (img) {
+                    if (img.complete) {
+                        div.querySelector('.img-wrap').classList.add('loaded');
+                    } else {
+                        img.onload = function() { 
+                            var wrap = div.querySelector('.img-wrap');
+                            if(wrap) wrap.classList.add('loaded'); 
+                        };
+                        img.onerror = function() { 
+                            var wrap = div.querySelector('.img-wrap');
+                            if(wrap) wrap.classList.add('loaded'); 
+                        };
+                    }
+                }
+                
+                frag.appendChild(div);
             });
+            container.appendChild(frag);
         }
 
         function updateCards() {
