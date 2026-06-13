@@ -108,33 +108,42 @@
         .locked-badge { color: #9ca3af; }
         .card.is-locked img { filter: grayscale(100%) brightness(0.6); -webkit-filter: grayscale(100%) brightness(0.6); }
 
-        /* ====== СКЕЛЕТОН ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
+/* ====== ПРОГРУЗЧИК (СТИЛЬ ИЗ КАРТИНКИ) И ФИКС ДЛЯ iOS ====== */
         .img-wrap {
             position: relative;
             width: 100%;
-            padding-bottom: 133.33%; /* Жесткая пропорция 3:4 для 100% совместимости с iPhone */
-            background: #1c1c28;
+            padding-bottom: 133.33%; /* Фикс пропорций 3:4 для старых айфонов */
+            background: #06060c; /* Темный фон под спиннер */
             border-radius: 12px;
             overflow: hidden;
-            -webkit-mask-image: -webkit-radial-gradient(white, black); /* Фикс бага со скруглением в Safari */
+            /* Убрали -webkit-mask-image, именно он крашил рендер на iOS! */
         }
-        /* Анимация переливания (блик) */
-        .img-wrap::after {
-            content: "";
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.15), transparent);
-            transform: translateX(-100%);
-            animation: shimmer 1.5s infinite;
-            pointer-events: none;
+        @supports (aspect-ratio: 3/4) {
+            .img-wrap { padding-bottom: 0; aspect-ratio: 3/4; }
         }
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        /* Неоновый фиолетовый спиннер как на фото */
+        .spinner-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 40px; height: 40px;
+            margin: -20px 0 0 -20px;
+            border-radius: 50%;
+            border: 4px solid #1a0b2e; /* Темное кольцо */
+            border-top: 4px solid #bf00ff; /* Яркий неон */
+            box-shadow: 0 0 16px rgba(191, 0, 255, 0.7); /* Свечение */
+            animation: spinRing 0.8s linear infinite;
+            z-index: 1;
+        }
+        @keyframes spinRing { to { transform: rotate(360deg); } }
+
         .img-wrap img {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; border-radius: 12px;
-            opacity: 0; transition: opacity 0.4s ease-in-out;
+            opacity: 0; transition: opacity 0.3s ease;
             z-index: 2;
         }
-        .img-wrap.loaded::after { display: none; animation: none; }
+        .img-wrap.loaded .spinner-ring { display: none; }
         .img-wrap.loaded img { opacity: 1; }
 
         /* ================= ПРОФИЛЬ ================= */
@@ -1130,7 +1139,14 @@
                 // Профиль грузим в любом случае — даже если каталог не пришёл.
                 fetchProfile();
             });
-function renderCards(cards) {
+// Глобальная функция для iOS, чтобы браузер не терял контекст картинки
+        window.cardImageLoaded = function(img) {
+            if (img && img.parentElement) {
+                img.parentElement.classList.add('loaded');
+            }
+        };
+
+        function renderCards(cards) {
             var container = document.getElementById('cardsContainer');
             container.innerHTML = '';
             updateCollectionInfo(cards.length);
@@ -1138,9 +1154,6 @@ function renderCards(cards) {
                 container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px; opacity:0.6;">Измените фильтры</span></div>';
                 return;
             }
-            
-            // Используем фрагмент для оптимизации отрисовки на мобильных
-            var frag = document.createDocumentFragment();
             
             cards.forEach(function(card) {
                 var cleanRarity = (card.rarity || '').split(' ')[0];
@@ -1157,7 +1170,8 @@ function renderCards(cards) {
 
                 div.innerHTML = badgeHtml + 
                     '<div class="img-wrap">' +
-                        '<img src="images/' + (card.file || '') + '" loading="lazy">' +
+                        '<div class="spinner-ring"></div>' +
+                        '<img src="images/' + (card.file || '') + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)">' +
                     '</div>' +
                     '<h3>' + (card.name || '') + '</h3>' +
                     '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
@@ -1166,27 +1180,9 @@ function renderCards(cards) {
                         '<div class="mini-stat">💪 ' + (card.strength || 0) + '</div>' +
                         '<div class="mini-stat">🧠 ' + (card.intellect || 0) + '</div>' +
                     '</div>';
-                    
-                // Безопасное отслеживание загрузки картинки (без inline JS, чтобы не крашило iOS)
-                var img = div.querySelector('img');
-                if (img) {
-                    if (img.complete) {
-                        div.querySelector('.img-wrap').classList.add('loaded');
-                    } else {
-                        img.onload = function() { 
-                            var wrap = div.querySelector('.img-wrap');
-                            if(wrap) wrap.classList.add('loaded'); 
-                        };
-                        img.onerror = function() { 
-                            var wrap = div.querySelector('.img-wrap');
-                            if(wrap) wrap.classList.add('loaded'); 
-                        };
-                    }
-                }
                 
-                frag.appendChild(div);
+                container.appendChild(div);
             });
-            container.appendChild(frag);
         }
 
         function updateCards() {
