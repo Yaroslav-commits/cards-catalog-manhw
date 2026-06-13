@@ -107,29 +107,49 @@
         .locked-badge { color: #9ca3af; }
         .card.is-locked img { filter: grayscale(100%) brightness(0.6); }
 
-/* ====== СПИННЕР ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
+/* ====== СКЕЛЕТОН ЗАГРУЗКИ КАРТИНОК КАРТ ====== */
         .img-wrap {
-            position: relative; width: 100%; aspect-ratio: 3/4;
-            margin-bottom: 8px; border-radius: 12px; overflow: hidden; background: #0c0c14;
+            position: relative;
+            width: 100%;
+            padding-bottom: 133.33%; /* Жесткая пропорция 3:4 для любых экранов */
+            background: #1c1c28;     /* Красивый темный фон загрузки */
+            border-radius: 12px;
+            overflow: hidden;
         }
-        @supports not (aspect-ratio: 3/4) {
-            .img-wrap { padding-bottom: 133.33%; height: 0; }
-            .img-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        @supports (aspect-ratio: 3/4) {
+            .img-wrap {
+                padding-bottom: 0;
+                aspect-ratio: 3/4;
+            }
+        }
+        /* Анимация переливания (блик) */
+        .img-wrap::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.15), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
         }
         .img-wrap img {
-            width: 100%; height: 100%; object-fit: cover; border-radius: 12px;
-            margin: 0; display: block; opacity: 0; transition: opacity 0.3s ease;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            opacity: 0; /* Скрыта до загрузки */
+            transition: opacity 0.5s ease-in-out;
+            z-index: 2;
         }
-        .img-wrap.loaded img { opacity: 1; }
-        .img-spinner {
-            position: absolute; top: 50%; left: 50%;
-            width: 26px; height: 26px; margin: -13px 0 0 -13px;
-            border: 3px solid rgba(139, 92, 246, 0.22);
-            border-top-color: var(--accent);
-            border-radius: 50%; animation: spin 0.7s linear infinite;
+        .img-wrap.loaded::after {
+            display: none;
+            animation: none;
         }
-        .img-wrap.loaded .img-spinner { display: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .img-wrap.loaded img {
+            opacity: 1; /* Плавное проявление */
+        }
 
         /* ================= ПРОФИЛЬ ================= */
         .profile-card {
@@ -1130,7 +1150,7 @@
             container.innerHTML = '';
             updateCollectionInfo(cards.length);
             if (!cards.length) {
-                container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px; opacity:0.6;">Измените фильтры</span></div>';
+                container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px;                 opacity:0.6;">Измените фильтры</span></div>';
                 return;
             }
             cards.forEach(function(card) {
@@ -1146,13 +1166,12 @@
                 if (isOwned) badgeHtml = '<div class="owned-badge">МОЯ</div>';
                 else if (userOwnedCards.length > 0) badgeHtml = '<div class="locked-badge">LOCK</div>';
 
-                div.innerHTML = badgeHtml +
+                div.innerHTML = badgeHtml + 
                     '<div class="img-wrap">' +
-                        '<div class="img-spinner"></div>' +
                         '<img src="images/' + (card.file || '') + '" ' +
                         'loading="lazy" ' +
-                        'onload="if(this.parentElement) this.parentElement.classList.add(\'loaded\')" ' +
-                        'onerror="if(this.parentElement) this.parentElement.classList.add(\'loaded\')">' +
+                        'onload="this.parentElement && this.parentElement.classList.add(\'loaded\')" ' +
+                        'onerror="this.parentElement && this.parentElement.classList.add(\'loaded\')">' +
                     '</div>' +
                     '<h3>' + (card.name || '') + '</h3>' +
                     '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
