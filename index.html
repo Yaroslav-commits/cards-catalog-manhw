@@ -581,49 +581,6 @@
         .nav-center svg { width: 32px; height: 26px; }
 
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px;}
-        /* Фикс скролла каталога на мобилках */
-.tab-content { height: 100vh; overflow-y: auto; padding-bottom: 120px; -webkit-overflow-scrolling: touch; }
-body { overflow: hidden; } /* Запрещаем скролл body, скроллим только внутри tab-content */
-
-/* НОВЫЙ ПРОФИЛЬ */
-.prof-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.prof-back { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; }
-.prof-actions { display: flex; gap: 10px; }
-.prof-btn-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; }
-
-.prof-user-card { background: var(--surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 16px; margin-bottom: 16px; }
-.prof-user-info { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-.prof-avatar-wrap { position: relative; }
-.prof-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
-.prof-details { flex: 1; }
-.prof-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-.prof-title-pill { display: inline-block; background: rgba(139,92,246,0.2); color: var(--accent-light); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 8px; margin-bottom: 2px; cursor: pointer; }
-.prof-username { color: var(--text-muted); font-size: 13px; }
-
-.prof-stats-bar { display: flex; justify-content: space-between; background: #0a0a0f; border-radius: 12px; padding: 12px 16px; border: 1px solid rgba(255,255,255,0.03); }
-.prof-stat { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; }
-.prof-stat-ico { color: var(--text-muted); font-size: 14px; }
-
-/* ЛЮБИМЫЕ КАРТЫ */
-.fav-section { background: var(--surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 16px; margin-bottom: 16px; }
-.fav-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; font-weight: 700; color: #fff; }
-.fav-header-item { display: flex; align-items: center; gap: 6px; }
-.fav-container { display: flex; gap: 12px; }
-.fav-main { flex: 1; aspect-ratio: 3/4; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
-.fav-grid { flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); gap: 6px; }
-.fav-slot { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; overflow: hidden; position: relative; }
-.fav-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-.plus-icon { font-size: 24px; font-weight: 300; opacity: 0.5; }
-
-/* Выбор титула и карт (BottomSheet) */
-.list-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
-.list-item.active { border: 1px solid var(--accent); background: rgba(139,92,246,0.1); }
-.list-item-check { color: #4ade80; display: none; }
-.list-item.active .list-item-check { display: block; }
-
-.cards-select-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; max-height: 50vh; overflow-y: auto; }
-.card-mini { aspect-ratio: 3/4; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
-.card-mini img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -680,113 +637,86 @@ body { overflow: hidden; } /* Запрещаем скролл body, скролл
         <div class="cards-grid" id="cardsContainer"></div>
     </div>
 
-<div id="tab-profile" class="tab-content active">
-    
-    <div class="prof-topbar">
-        <div class="prof-back">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20"><path d="M15 18l-6-6 6-6"/></svg>
-            Профиль
-        </div>
-        <div class="prof-actions">
-            <button class="prof-btn-icon" onclick="wip('Настройки')">✏️</button>
-            <button class="prof-btn-icon" onclick="wip('Поделиться')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            </button>
-        </div>
-    </div>
+    <div id="tab-profile" class="tab-content active">
 
-    <div class="prof-user-card">
-        <div class="prof-user-info">
-            <div class="prof-avatar-wrap">
-                <img src="" id="userAvatar" class="prof-avatar">
+        <div class="profile-card" onclick="wip('Профиль')">
+            <div class="profile-head">
+                <img src="https://placehold.co/150x150/1c1c28/8b5cf6?text=U" id="userAvatar" class="profile-avatar">
+                <div class="profile-name">
+                    <span id="userName">Игрок</span>
+                    <span class="puzzle" id="userStatusEmoji">🧩</span>
+                </div>
+                <div class="profile-chevron">›</div>
             </div>
-            <div class="prof-details">
-                <div class="prof-title-pill" id="userTitleBtn" onclick="openTitleSheet()">Новичок 💩</div>
-                <div class="prof-name"><span id="userName">Игрок</span> <span id="userStatusEmoji">🧩</span></div>
-                <div class="prof-username" id="userTgTag">@username</div>
-            </div>
-        </div>
-        <div class="prof-stats-bar">
-            <div class="prof-stat"><span class="prof-stat-ico">₩</span> <span id="valKrw">0</span></div>
-            <div class="prof-stat"><span class="prof-stat-ico">💎</span> <span id="valDiamond">0</span></div>
-            <div class="prof-stat"><span class="prof-stat-ico">Ⓑ</span> <span id="valBc">0</span></div>
-            <div class="prof-stat"><span class="prof-stat-ico">📚</span> <span id="valCards">0</span></div>
-            <div class="prof-stat"><span class="prof-stat-ico">🏆</span> <span id="valWins">0</span></div>
-        </div>
-        <div style="text-align: center; font-size: 10px; color: var(--text-muted); margin-top: 12px;">Зарегистрирован: <span id="userRegDate">Недавно</span></div>
-    </div>
-
-    <div class="fav-section">
-        <div class="fav-header">
-            <div class="fav-header-item"><span style="color:#ef4444">♡</span> Любимый</div>
-            <div class="fav-header-item"><span style="color:#fbbf24">☆</span> Избранное</div>
-        </div>
-        <div class="fav-container">
-            <div class="fav-main" onclick="openFavSelect(0)">
-                <div class="plus-icon" id="fav-plus-0">+</div>
-                <img src="" id="fav-img-0" class="fav-img" style="display:none;">
-            </div>
-            <div class="fav-grid">
-                <div class="fav-slot" onclick="openFavSelect(1)"><div class="plus-icon" id="fav-plus-1">+</div><img src="" id="fav-img-1" class="fav-img" style="display:none;"></div>
-                <div class="fav-slot" onclick="openFavSelect(2)"><div class="plus-icon" id="fav-plus-2">+</div><img src="" id="fav-img-2" class="fav-img" style="display:none;"></div>
-                <div class="fav-slot" onclick="openFavSelect(3)"><div class="plus-icon" id="fav-plus-3">+</div><img src="" id="fav-img-3" class="fav-img" style="display:none;"></div>
-                <div class="fav-slot" onclick="openFavSelect(4)"><div class="plus-icon" id="fav-plus-4">+</div><img src="" id="fav-img-4" class="fav-img" style="display:none;"></div>
-                <div class="fav-slot" onclick="openFavSelect(5)"><div class="plus-icon" id="fav-plus-5">+</div><img src="" id="fav-img-5" class="fav-img" style="display:none;"></div>
-                <div class="fav-slot" onclick="openFavSelect(6)"><div class="plus-icon" id="fav-plus-6">+</div><img src="" id="fav-img-6" class="fav-img" style="display:none;"></div>
+            <div class="profile-divider"></div>
+            <div class="balance-row">
+                <div class="balance-cell"><span class="b-ico">₩</span><span id="valKrw">0</span></div>
+                <div class="balance-sep"></div>
+                <div class="balance-cell">
+                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
+                    <span id="valDiamond">0</span>
+                </div>
+                <div class="balance-sep"></div>
+                <div class="balance-cell"><span class="b-ico">Ⓑ</span><span id="valBc">0</span></div>
+                <div class="balance-sep"></div>
+                <div class="balance-cell">
+                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
+                    <span id="valCards">0</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="pass-bar" onclick="wip('PASS')">
-        <div class="pass-badge">PASS</div>
-        <div class="pass-mid">Уровень <b>1/14</b></div>
-        <div class="pass-right">Прогресс <b>10%</b> ›</div>
-    </div>
+        <div class="pass-bar" onclick="wip('PASS')">
+            <div class="pass-badge">PASS</div>
+            <div class="pass-mid">Уровень <b>1/14</b></div>
+            <div class="pass-right">Прогресс <b>10%</b> ›</div>
+        </div>
 
-    <div class="module-card" onclick="wip('Банда')" style="margin-bottom:14px;">
-        <div class="module-left">
-            <div class="module-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5z"/></svg>
+        <div class="module-card" onclick="wip('Банда')" style="margin-bottom:14px;">
+            <div class="module-left">
+                <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5z"/></svg>
+                </div>
+                <div>
+                    <div class="module-title">Банда</div>
+                    <div class="module-sub">Только для своих.</div>
+                </div>
             </div>
-            <div>
-                <div class="module-title">Банда</div>
-                <div class="module-sub">Только для своих.</div>
+            <div class="chev">›</div>
+        </div>
+
+        <div class="dual-grid">
+            <div class="dual-card earn-card" onclick="openEarnModal()">
+                <div class="earn-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="9" r="5"/><path d="M14.5 4.2A5 5 0 1 1 16 14.8"/></svg>
+                </div>
+                <div>
+                    <div class="earn-title">Заработок</div>
+                    <div class="earn-sub">Задания и рефералы</div>
+                </div>
+            </div>
+
+            <div class="dual-card bonus-card" onclick="openDailyModal()">
+                <div class="bonus-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 2 7.5 4 12 7 12 7zM12 7s1.5-5 4.5-3S12 7 12 7z"/></svg>
+                </div>
+                <div>
+                    <div class="bonus-title">Ежедневный бонус</div>
+                    <div class="bonus-sub" id="dailyStatusText"><span style="color:#4ade80">✓</span> 1/30</div>
+                </div>
             </div>
         </div>
-        <div class="chev">›</div>
-    </div>
 
-    <div class="dual-grid">
-        <div class="dual-card earn-card" onclick="openEarnModal()">
-            <div class="earn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="9" r="5"/><path d="M14.5 4.2A5 5 0 1 1 16 14.8"/></svg></div>
-            <div><div class="earn-title">Заработок</div><div class="earn-sub">Задания и рефералы</div></div>
-        </div>
-        <div class="dual-card bonus-card" onclick="openDailyModal()">
-            <div class="bonus-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 2 7.5 4 12 7 12 7z"/></svg></div>
-            <div><div class="bonus-title">Бонус</div><div class="bonus-sub" id="dailyStatusText">✓</div></div>
-        </div>
-    </div>
-
-    <div class="shop-banner" onclick="wip('Магазин')">
-        <div class="shop-banner-bg"></div>
-        <div class="shop-banner-overlay"></div>
-        <div class="shop-banner-content">
-            <h2>МАГАЗИН</h2>
-            <p>Покупай карты, наборы и другие уникальные предметы.</p>
-            <button class="shop-btn">Перейти в магазин</button>
+        <div class="shop-banner" onclick="wip('Магазин')">
+            <div class="shop-banner-bg"></div>
+            <div class="shop-banner-overlay"></div>
+            <div class="shop-banner-content">
+                <h2>МАГАЗИН</h2>
+                <p>Покупай карты, наборы и другие уникальные предметы.</p>
+                <button class="shop-btn">Перейти в магазин</button>
+            </div>
         </div>
     </div>
-
-</div> <div class="sheet-overlay" id="customActionSheet">
-    <div class="sheet">
-        <div class="sheet-grabber"></div>
-        <div class="sheet-head">
-            <div><div class="sheet-title" id="actionSheetTitle">Действие</div></div>
-            <button class="sheet-close" onclick="document.getElementById('customActionSheet').classList.remove('open')">✖</button>
-        </div>
-        <div id="actionSheetContent"></div>
-    </div>
-</div>
 
     <div id="tab-tops" class="tab-content">
         <h2 style="text-align:center; margin-top:50px; color:var(--text-muted)">Топы в разработке 🏆</h2>
@@ -1001,7 +931,7 @@ body { overflow: hidden; } /* Запрещаем скролл body, скролл
         //  Открой этот адрес в браузере — должно вернуть {"status":"ok"}.
         //  Если не открывается / другой домен (.ru vs .tech) — меняй ЗДЕСЬ.
         // ============================================================
-        var API_BASE = "https://bot-1781446430-8791-yaroslav-nersovich.bothost.tech";
+        var API_BASE = "https://bot-1781358223-7638-yaroslav-nersovich.bothost.tech";
 
         // Подписанные данные Telegram — единственный безопасный способ
         // подтвердить, кто ты. Шлём их на бэкенд в заголовке.
@@ -1075,40 +1005,7 @@ body { overflow: hidden; } /* Запрещаем скролл body, скролл
                     
                     userOwnedCards = data.owned_cards || [];
                     document.getElementById('valCards').innerText = userOwnedCards.length;
-                    // === НАЧАЛО НОВОГО КОДА ===
-                    document.getElementById('valWins').innerText = data.wins || 0;
-                    
-                    let tagText = '@username';
-                    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) {
-                        tagText = '@' + tg.initDataUnsafe.user.username;
-                    }
-                    document.getElementById('userTgTag').innerText = tagText;
 
-                    // Обновляем титул
-                    if (data.active_title) {
-                        document.getElementById('userTitleBtn').innerText = data.active_title;
-                    } else {
-                        document.getElementById('userTitleBtn').innerText = "Выбрать титул";
-                    }
-
-                    // Рендерим любимые карты (Вайфу) при входе
-                    userFavCards = data.favs || {};
-                    for(let i=0; i<=6; i++) {
-                        let imgEl = document.getElementById('fav-img-' + i);
-                        let plusEl = document.getElementById('fav-plus-' + i);
-                        if(userFavCards[i]) {
-                            let cardObj = allCards.find(c => c.id === userFavCards[i]);
-                            if(cardObj) {
-                                imgEl.src = 'images/' + cardObj.file;
-                                imgEl.style.display = 'block';
-                                plusEl.style.display = 'none';
-                            }
-                        } else {
-                            imgEl.style.display = 'none';
-                            plusEl.style.display = 'block';
-                        }
-                    }
-                    // === КОНЕЦ НОВОГО КОДА ===
                     var statusEmojiEl = document.getElementById('userStatusEmoji');
                     if (data.is_premium) {
                         statusEmojiEl.innerText = "👑"; 
@@ -1723,7 +1620,7 @@ body { overflow: hidden; } /* Запрещаем скролл body, скролл
                 // Подписан
                 if (data.rewarded) {
                     if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
-                    var rw = data.reward || { krw: 1000, dia: 15 };
+                    var rw = data.reward || { krw: 1000, dia: 5 };
                     showToast('Награда получена ✓', '+' + rw.krw + ' ₩ и +' + rw.dia + ' 💎 за подписку.');
                     fetchProfile();
                 } else {
@@ -1792,105 +1689,6 @@ body { overflow: hidden; } /* Запрещаем скролл body, скролл
                 }
             });
         }
-let allTitles = [];
-let userFavCards = {};
-let currentEditingSlot = 0;
-
-// Загружаем титулы
-fetch('title.json').then(r => r.json()).then(data => { allTitles = data; }).catch(e => console.log('Нет title.json'));
-
-async function openTitleSheet() {
-    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    document.getElementById('actionSheetTitle').innerText = "Выбрать титул";
-    let content = document.getElementById('actionSheetContent');
-    content.innerHTML = '<div style="text-align:center; padding: 20px;">Загрузка...</div>';
-    document.getElementById('customActionSheet').classList.add('open');
-
-    try {
-        let res = await fetch(API_BASE + '/api/user_titles/' + userId, { headers: authHeaders() });
-        let data = await res.json();
-        let owned = data.owned || [];
-        
-        let html = '';
-        allTitles.forEach(t => {
-            if(owned.includes(t.id) || t.id === "title_dev") { // Для теста показываем. В реале проверяем owned.includes(t.id)
-                let isActive = document.getElementById('userTitleBtn').innerText === t.name;
-                html += `
-                <div class="list-item ${isActive ? 'active' : ''}" onclick="selectTitle('${t.id}', '${t.name}')">
-                    <div style="font-weight:700; color:#fff;">${t.name}</div>
-                    <div class="list-item-check">✓</div>
-                </div>`;
-            }
-        });
-        
-        if(html === '') html = '<div class="empty-state">Нет доступных титулов</div>';
-        content.innerHTML = html;
-
-    } catch(e) { content.innerHTML = '<div class="empty-state">Ошибка загрузки</div>'; }
-}
-
-async function selectTitle(id, name) {
-    if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-    document.getElementById('userTitleBtn').innerText = name;
-    document.getElementById('customActionSheet').classList.remove('open');
-    await fetch(API_BASE + '/api/set_title/' + userId, {
-        method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
-        body: JSON.stringify({ title_id: name }) // Сохраняем имя для простоты отображения, или id (нужно синхронизировать)
-    });
-}
-
-function openFavSelect(slotIndex) {
-    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    currentEditingSlot = slotIndex;
-    document.getElementById('actionSheetTitle').innerText = slotIndex === 0 ? "Выберите любимую карту" : "Выберите карту в избранное";
-    
-    let html = `
-        <input type="text" id="favSearch" class="sheet-input" placeholder="🔍 Поиск карты..." oninput="renderFavSelection()">
-        <div class="cards-select-grid" id="favCardsGrid"></div>
-    `;
-    document.getElementById('actionSheetContent').innerHTML = html;
-    document.getElementById('customActionSheet').classList.add('open');
-    renderFavSelection();
-}
-
-function renderFavSelection() {
-    let search = document.getElementById('favSearch').value.toLowerCase();
-    let grid = document.getElementById('favCardsGrid');
-    
-    // Показываем только те карты, что есть у пользователя
-    let myCardsObjs = allCards.filter(c => userOwnedCards.includes(c.id));
-    let filtered = myCardsObjs.filter(c => (c.name || '').toLowerCase().includes(search));
-    
-    if(filtered.length === 0) {
-        grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1">Карт не найдено</div>';
-        return;
-    }
-
-    let html = '';
-    filtered.forEach(c => {
-        html += `<div class="card-mini" onclick="setFavCard('${c.id}')"><img src="images/${c.file}"></div>`;
-    });
-    grid.innerHTML = html;
-}
-
-async function setFavCard(cardId) {
-    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    document.getElementById('customActionSheet').classList.remove('open');
-    
-    // Оптимистичный UI апдейт
-    userFavCards[currentEditingSlot] = cardId;
-    let cardObj = allCards.find(c => c.id === cardId);
-    if(cardObj) {
-        document.getElementById('fav-img-' + currentEditingSlot).src = 'images/' + cardObj.file;
-        document.getElementById('fav-img-' + currentEditingSlot).style.display = 'block';
-        document.getElementById('fav-plus-' + currentEditingSlot).style.display = 'none';
-    }
-
-    await fetch(API_BASE + '/api/set_fav/' + userId, {
-        method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
-        body: JSON.stringify({ slot: currentEditingSlot, card_id: cardId })
-    });
-}
     </script>
 </body>
 </html>
