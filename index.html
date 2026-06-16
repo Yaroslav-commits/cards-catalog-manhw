@@ -561,6 +561,123 @@
         .toast-title { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
         .toast-text { font-size: 13px; opacity: 0.92; }
 
+        /* ================= ЭКРАН ПРОФИЛЯ (детальный) ================= */
+        .profile-screen {
+            position: fixed; inset: 0; z-index: 1400;
+            background: var(--bg);
+            background-image:
+                radial-gradient(circle at 15% 8%, rgba(139, 92, 246, 0.18), transparent 32%),
+                radial-gradient(circle at 88% 85%, rgba(139, 92, 246, 0.10), transparent 32%);
+            transform: translateX(100%); transition: transform 0.28s ease;
+            overflow-y: auto; padding: 14px 14px 40px;
+        }
+        .profile-screen.open { transform: translateX(0); }
+        .ps-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .ps-back {
+            width: 42px; height: 42px; flex-shrink: 0; border-radius: 14px; border: none;
+            background: var(--surface); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ps-back svg { width: 20px; height: 20px; }
+        .ps-title { font-size: 24px; font-weight: 800; flex: 1; }
+        .ps-action {
+            width: 42px; height: 42px; flex-shrink: 0; border-radius: 14px;
+            border: 1px solid var(--border-color); background: var(--surface); color: #cfcfe0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ps-action svg { width: 18px; height: 18px; }
+
+        .ps-card {
+            border: 1px solid var(--border-color); border-radius: 22px; padding: 18px; margin-bottom: 14px;
+            background: linear-gradient(140deg, rgba(139,92,246,0.12), rgba(18,18,26,0.55) 65%);
+            box-shadow: var(--shadow-soft);
+        }
+        .ps-card-head { display: flex; align-items: center; gap: 14px; }
+        .ps-avatar {
+            width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            border: 2px solid var(--accent); box-shadow: 0 0 16px rgba(139,92,246,0.5);
+        }
+        .ps-id { flex: 1; min-width: 0; }
+        .ps-name { font-size: 24px; font-weight: 800; line-height: 1.1; }
+        .ps-username { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+        .ps-title-badge {
+            display: inline-block; margin-top: 8px; padding: 4px 12px; border-radius: 10px;
+            background: rgba(139,92,246,0.25); color: var(--accent-light); font-size: 13px; font-weight: 700;
+            cursor: pointer; border: 1px solid rgba(139,92,246,0.35);
+        }
+        .ps-title-badge.empty { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.08); }
+
+        .ps-stats { display: flex; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.07); }
+        .ps-stat { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; color: #fff; }
+        .ps-stat .b-ico { font-size: 17px; color: #e9e7ff; }
+        .ps-stat .b-svg { width: 17px; height: 17px; color: #e9e7ff; }
+        .ps-stat-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.09); }
+        .ps-reg { margin-top: 14px; text-align: center; font-size: 12px; color: var(--text-muted); }
+
+        /* избранные карты */
+        .fav-block { border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; margin-bottom: 14px; background: var(--surface); }
+        .fav-labels { display: flex; gap: 10px; margin-bottom: 12px; }
+        .fav-label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .fav-label.heart { color: #f472b6; width: 38%; }
+        .fav-label.star { color: var(--premium-gold); flex: 1; }
+        .fav-layout { display: flex; gap: 10px; }
+        .fav-main { width: 38%; flex-shrink: 0; }
+        .fav-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .fav-main-slot, .fav-grid-slot {
+            position: relative; border-radius: 14px; overflow: hidden;
+            background: var(--surface-light); border: 1.5px dashed rgba(255,255,255,0.12);
+            aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .fav-grid-slot { border-radius: 10px; }
+        .fav-main-slot.filled, .fav-grid-slot.filled { border-style: solid; border-color: rgba(139,92,246,0.5); }
+        .fav-main-slot img, .fav-grid-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .fav-plus { font-size: 28px; color: var(--text-muted); font-weight: 300; }
+        .fav-remove {
+            position: absolute; top: 6px; right: 6px; z-index: 3; width: 24px; height: 24px; border-radius: 50%;
+            border: none; background: rgba(0,0,0,0.6); color: #fff; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+        }
+        .fav-name {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 8px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 11px; font-weight: 700; text-align: left;
+        }
+        .fav-rar-Обычная { border-color: rgba(148,163,184,0.5) !important; }
+        .fav-rar-Редкая { border-color: rgba(59,130,246,0.6) !important; }
+        .fav-rar-Эпическая { border-color: rgba(168,85,247,0.6) !important; }
+        .fav-rar-Легендарная { border-color: rgba(245,158,11,0.6) !important; }
+        .fav-rar-Мифическая { border-color: rgba(239,68,68,0.6) !important; }
+        .fav-rar-Божественная { border-color: #666 !important; }
+
+        /* закрытые наборы placeholder */
+        .ps-sets { border: 1px solid var(--border-color); border-radius: 20px; padding: 18px; background: var(--surface); }
+        .ps-sets-head { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+        .ps-sets-head svg { width: 20px; height: 20px; color: var(--accent-2); }
+        .ps-sets-empty { text-align: center; color: var(--text-muted); font-size: 13px; padding: 24px 0; line-height: 1.7; }
+
+        /* список титулов */
+        .title-option {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border-color);
+            margin-bottom: 10px; cursor: pointer; font-size: 15px; font-weight: 600;
+        }
+        .title-option.active { border-color: var(--accent); color: var(--accent-light); }
+        .title-option .chk { color: var(--accent-light); font-weight: 800; }
+
+        /* выбор карты (избранное) */
+        .picker-controls { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
+        .picker-controls input, .picker-controls select {
+            width: 100%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--border-color);
+            background: var(--surface); color: #fff; font-size: 13px; outline: none;
+        }
+        .picker-controls input:focus, .picker-controls select:focus { border-color: var(--accent); }
+        .picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .picker-card { background: var(--surface); border-radius: 12px; padding: 5px; border: 1.5px solid var(--surface-light); cursor: pointer; text-align: center; }
+        .picker-card:active { transform: scale(0.95); }
+        .picker-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; background: #06060c; }
+        .picker-card .pc-name { font-size: 10px; font-weight: 600; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .picker-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 13px; line-height: 1.6; }
+
         /* ================= ПАРЯЩАЯ НАВИГАЦИЯ ================= */
         .bottom-nav {
             position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
@@ -639,7 +756,7 @@
 
     <div id="tab-profile" class="tab-content active">
 
-        <div class="profile-card" onclick="wip('Профиль')">
+        <div class="profile-card" onclick="openProfileScreen()">
             <div class="profile-head">
                 <img src="https://placehold.co/150x150/1c1c28/8b5cf6?text=U" id="userAvatar" class="profile-avatar">
                 <div class="profile-name">
@@ -663,6 +780,8 @@
                     <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
                     <span id="valCards">0</span>
                 </div>
+                <div class="balance-sep"></div>
+                <div class="balance-cell"><span class="b-ico" style="color:var(--premium-gold);">🏆</span><span id="valWins">0</span></div>
             </div>
         </div>
 
@@ -781,120 +900,101 @@
         </div>
     </div>
 
-    <!-- ================= ЭКРАН «ЗАРАБОТОК» ================= -->
-    <div class="earn-screen" id="earnScreen">
-        <div class="earn-head">
-            <button class="earn-back" onclick="closeEarnModal()">
+    <!-- ================= ЭКРАН ПРОФИЛЯ (детальный) ================= -->
+    <div class="profile-screen" id="profileScreen">
+        <div class="ps-head">
+            <button class="ps-back" onclick="closeProfileScreen()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
-            <div class="earn-screen-title">Заработок</div>
-        </div>
-
-        <div class="earn-tabs">
-            <button class="earn-tab active" id="earnTabRef" onclick="switchEarnTab('ref')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Рефералы
+            <div class="ps-title">Профиль</div>
+            <button class="ps-action" id="psEditBtn" onclick="wip('Настройка профиля')" title="Настройки">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
             </button>
-            <button class="earn-tab" id="earnTabTasks" onclick="switchEarnTab('tasks')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
-                Задания
+            <button class="ps-action" id="psShareBtn" onclick="shareProfile()" title="Поделиться">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
             </button>
         </div>
 
-        <!-- Пейн: Рефералы -->
-        <div class="earn-pane active" id="earnRef">
-            <div class="ref-card">
-                <div class="ref-top">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    <div class="ref-top-title">Пригласить друзей</div>
-                    <div class="ref-count-badge" id="refCount">0</div>
+        <div class="ps-card">
+            <div class="ps-card-head">
+                <img src="" id="psAvatar" class="ps-avatar">
+                <div class="ps-id">
+                    <div class="ps-name" id="psName">Игрок</div>
+                    <div class="ps-title-badge empty" id="psTitleBadge" onclick="openTitleSheet()">Нет титула</div>
+                    <div class="ps-username" id="psUsername"></div>
                 </div>
-                <div class="ref-pills">
-                    <span class="ref-pill"><span class="b-ico">₩</span><span id="refEarnedKrw">0</span></span>
-                    <span class="ref-pill">
-                        <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                        <span id="refEarnedAtt">0</span> круток
-                    </span>
-                </div>
-                <div class="ref-note" id="refNote">Бонус за 1 друга: <b>₩ 500–850</b> + <b>5 круток</b>. Награду получаете и вы, и друг.</div>
             </div>
-
-            <button class="ref-invite-btn" onclick="inviteFriend()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                Пригласить друга
-            </button>
+            <div class="ps-stats">
+                <div class="ps-stat"><span class="b-ico">₩</span><span id="psKrw">0</span></div>
+                <div class="ps-stat-sep"></div>
+                <div class="ps-stat">
+                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
+                    <span id="psDia">0</span>
+                </div>
+                <div class="ps-stat-sep"></div>
+                <div class="ps-stat"><span class="b-ico">Ⓑ</span><span id="psBc">0</span></div>
+                <div class="ps-stat-sep"></div>
+                <div class="ps-stat">
+                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
+                    <span id="psCards">0</span>
+                </div>
+                <div class="ps-stat-sep"></div>
+                <div class="ps-stat"><span class="b-ico" style="color:var(--premium-gold);">🏆</span><span id="psWins">0</span></div>
+            </div>
+            <div class="ps-reg" id="psReg"></div>
         </div>
 
-        <!-- Пейн: Задания -->
-        <div class="earn-pane" id="earnTasks">
-            <div class="task-section-label">
-                <span class="lbl">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-                    Соцсети
-                </span>
-                <span class="hint">Большие награды · для авторов</span>
+        <div class="fav-block">
+            <div class="fav-labels">
+                <div class="fav-label heart">♥ Любимый</div>
+                <div class="fav-label star">★ Избранное</div>
             </div>
+            <div class="fav-layout">
+                <div class="fav-main" id="favMain"></div>
+                <div class="fav-grid" id="favGrid"></div>
+            </div>
+        </div>
 
-            <div class="task-card" onclick="openTaskSheet('tiktok')">
-                <div class="task-ico" id="ico-tiktok"></div>
-                <div class="task-body">
-                    <div class="task-title">TikTok видео про ManhwCard</div>
-                    <div class="task-sub">TikTok видео</div>
-                    <div class="task-reward">
-                        <span class="rw"><span class="b-ico">₩</span> 5 000</span>
-                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 10</span>
-                        <span class="rw rw-note">· за 1k просмотров</span>
-                    </div>
-                </div>
-                <div class="task-chev">›</div>
+        <div class="ps-sets">
+            <div class="ps-sets-head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
+                Закрытые наборы
             </div>
-
-            <div class="task-card" onclick="openTaskSheet('story')">
-                <div class="task-ico" id="ico-story"></div>
-                <div class="task-body">
-                    <div class="task-title">Сторис в Telegram</div>
-                    <div class="task-sub">Сторис в Telegram</div>
-                    <div class="task-reward">
-                        <span class="rw"><span class="b-ico">₩</span> 3 000</span>
-                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 5</span>
-                    </div>
-                </div>
-                <div class="task-chev">›</div>
-            </div>
-
-            <div class="task-card" onclick="openTaskSheet('boost')">
-                <div class="task-ico" id="ico-boost"></div>
-                <div class="task-body">
-                    <div class="task-title">Буст нашего Telegram-канала</div>
-                    <div class="task-sub">Буст канала</div>
-                    <div class="task-reward">
-                        <span class="rw"><span class="b-ico">₩</span> 2 000</span>
-                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 10</span>
-                        <span class="rw rw-note">· за буст</span>
-                    </div>
-                </div>
-                <div class="task-chev">›</div>
-            </div>
-
-            <div class="task-section-label" style="margin-top:22px;">
-                <span class="lbl" style="color:var(--text-muted)">Партнёры</span>
-            </div>
-
-            <div class="partner-row">
-                <div class="partner-ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
-                </div>
-                <div class="partner-title">Подпишись на канал</div>
-                <button class="partner-do-btn" id="subDoBtn" onclick="checkSubscription()">Выполнить</button>
-            </div>
+            <div class="ps-sets-empty">📖<br>Нет закрытых наборов</div>
         </div>
     </div>
 
-    <!-- Нижний лист задания -->
-    <div class="sheet-overlay" id="taskSheet">
+    <!-- Нижний лист: выбор титула -->
+    <div class="sheet-overlay" id="titleSheet">
         <div class="sheet">
             <div class="sheet-grabber"></div>
-            <div id="sheetContent"></div>
+            <div class="sheet-head" style="margin-bottom:14px;">
+                <div><div class="sheet-title">Выбрать титул</div></div>
+                <button class="sheet-close" onclick="closeTitleSheet()">✖</button>
+            </div>
+            <div id="titleList"></div>
+        </div>
+    </div>
+
+    <!-- Нижний лист: выбор карты в избранное -->
+    <div class="sheet-overlay" id="favPicker">
+        <div class="sheet">
+            <div class="sheet-grabber"></div>
+            <div class="sheet-head" style="margin-bottom:12px;">
+                <div><div class="sheet-kicker">Избранное</div><div class="sheet-title">Выбрать карту</div></div>
+                <button class="sheet-close" onclick="closeFavPicker()">✖</button>
+            </div>
+            <div class="picker-controls">
+                <input type="text" id="pickerSearch" placeholder="🔍 Поиск по имени персонажа..." oninput="renderFavPicker()">
+                <select id="pickerSort" onchange="renderFavPicker()">
+                    <option value="name">Сортировка: По имени (А-Я)</option>
+                    <option value="rarity">По редкости</option>
+                    <option value="str_desc">Сила: по убыванию</option>
+                    <option value="spd_desc">Скорость: по убыванию</option>
+                    <option value="int_desc">Интеллект: по убыванию</option>
+                </select>
+            </div>
+            <div class="picker-grid" id="pickerGrid"></div>
         </div>
     </div>
 
@@ -939,6 +1039,10 @@
             return { "X-Telegram-Init-Data": (tg.initData || "") };
         }
 
+        function haptic(kind) {
+            try { if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred(kind || 'light'); } catch (e) {}
+        }
+
         var userId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : 12345;
         var userName = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.first_name : "Игрок";
         
@@ -962,6 +1066,18 @@
         var allCards = [];
         var userOwnedCards = [];
 
+        // ===== Состояние профиля / титулов / избранного =====
+        var userWins = 0;
+        var botUsername = "";
+        var ownedTitles = [];          // [{id, name}]
+        var activeTitleId = null;
+        var activeTitleName = null;
+        var favorites = [];            // [{slot, card_id}]  slot 0 = «Любимый», 1..6 = «Избранное»
+        var favPickerSlot = null;
+        var profileReadOnly = false;   // true когда смотрим чужой профиль по ссылке
+        var startParamChecked = false;
+        var profileMeta = { name: userName, username: "", join_date: "", active_title_name: null };
+
         var currentDailyDay = 0;
         var canClaimDaily = false;
         
@@ -974,6 +1090,16 @@
             {krw: 900}, {krw: 950}, {pack: 'Pack'}, {krw: 1000}, {pack: 'Mythic'}
         ];
 
+        var RU_MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+        function formatJoinDate(s) {
+            try {
+                var p = String(s).split(' ')[0].split('-');
+                var y = +p[0], m = +p[1], d = +p[2];
+                if (!y || !m || !d) return '';
+                return d + ' ' + RU_MONTHS[m - 1] + ' ' + y + ' г.';
+            } catch (e) { return ''; }
+        }
+
         function switchTab(tabId, btnElement) {
             if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) {
                 tg.HapticFeedback.selectionChanged();
@@ -982,6 +1108,22 @@
             document.querySelectorAll('.nav-btn').forEach(function(btn) { btn.classList.remove('active'); });
             document.getElementById('tab-' + tabId).classList.add('active');
             btnElement.classList.add('active');
+            // ФИКС каталога на телефоне: когда вкладка становится видимой,
+            // подхватываем уже загруженные (кэшированные) картинки, чтобы не висел спиннер.
+            if (tabId === 'catalog') {
+                setTimeout(refreshCatalogImages, 60);
+                setTimeout(refreshCatalogImages, 400);
+            }
+        }
+
+        // Помечает картинки каталога как загруженные, если они уже complete.
+        function refreshCatalogImages() {
+            document.querySelectorAll('#cardsContainer .img-wrap').forEach(function(w) {
+                var img = w.querySelector('img');
+                if (img && img.complete && img.naturalWidth > 0) {
+                    w.classList.add('loaded');
+                }
+            });
         }
 
         function updateCollectionInfo(visibleCount) {
@@ -1005,6 +1147,16 @@
                     
                     userOwnedCards = data.owned_cards || [];
                     document.getElementById('valCards').innerText = userOwnedCards.length;
+
+                    userWins = data.wins || 0;
+                    document.getElementById('valWins').innerText = userWins;
+
+                    if (data.bot_username) botUsername = data.bot_username;
+                    profileMeta.name = data.nickname || userName;
+                    profileMeta.username = data.username || "";
+                    profileMeta.join_date = data.join_date || "";
+                    activeTitleId = data.active_title || null;
+                    activeTitleName = data.active_title_name || null;
 
                     var statusEmojiEl = document.getElementById('userStatusEmoji');
                     if (data.is_premium) {
@@ -1034,6 +1186,11 @@
             } catch (e) {
                 console.error("Нет связи с бэкендом:", e);
                 updateCards();
+            }
+            // Проверяем, не открыли ли приложение по ссылке на чужой профиль
+            if (!startParamChecked) {
+                startParamChecked = true;
+                checkStartParam();
             }
         }
 
