@@ -940,11 +940,11 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     <span class="ps-setting-lbl">ИЗМЕНИТЬ<br>АВАТАР</span>
                 </button>
-                <button class="ps-setting-btn" onclick="openTitleSystem()">
+<button class="ps-setting-btn" onclick="wip('Выбор рамки')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
                     <span class="ps-setting-lbl">ВЫБРАТЬ<br>РАМКУ</span>
                 </button>
-                <button class="ps-setting-btn" onclick="wip('Выбор титула')">
+                <button class="ps-setting-btn" onclick="openTitleSystem()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     <span class="ps-setting-lbl">ВЫБРАТЬ<br>ТИТУЛ</span>
                 </button>
@@ -1153,18 +1153,6 @@
 
         var currentDailyDay = 0;
         var canClaimDaily = false;
-
-                    // Сохраняем титулы игрока
-                    userUnlockedTitles = data.unlocked_titles || [];
-                    userActiveTitle = data.active_title;
-                    
-                    // Обновляем текст в профиле
-                    var titleText = "ТИТУЛ: НЕ ВЫБРАН";
-                    if (userActiveTitle) {
-                        var foundTitle = allTitles.find(t => t.id === userActiveTitle);
-                        if (foundTitle) titleText = "ТИТУЛ: " + foundTitle.name.toUpperCase();
-                    }
-                    document.getElementById('psTitle').innerText = titleText;
         
         var DAILY_REWARDS = [
             {krw: 200}, {krw: 300}, {krw: 350}, {krw: 350}, {krw: 400}, 
@@ -1220,6 +1208,18 @@
 
                     currentDailyDay = data.daily_day || 0;
                     canClaimDaily = data.can_claim_daily || false;
+
+                    // Сохраняем титулы игрока
+                    userUnlockedTitles = data.unlocked_titles || [];
+                    userActiveTitle = data.active_title;
+                    
+                    // Обновляем текст в профиле
+                    var titleText = "ТИТУЛ: НЕ ВЫБРАН";
+                    if (userActiveTitle) {
+                        var foundTitle = allTitles.find(t => t.id === userActiveTitle);
+                        if (foundTitle) titleText = "ТИТУЛ: " + foundTitle.name.toUpperCase();
+                    }
+                    document.getElementById('psTitle').innerText = titleText;
                     
                     var dailyText = document.getElementById('dailyStatusText');
                     if (canClaimDaily) {
