@@ -1094,7 +1094,22 @@
                 </div>
         </div>
     </div>
-
+    <div class="system-overlay" id="favSystemSheet">
+        <div class="system-window" style="display: flex; flex-direction: column; max-height: 90vh;">
+            <div class="sys-head" style="flex-shrink: 0;">
+                <button class="sys-close" onclick="closeFavSystem()">✖</button>
+                <div class="sys-kicker">SYSTEM NOTIFICATION</div>
+                <div class="sys-title">ВЫБОР КАРТЫ</div>
+            </div>
+            
+            <div class="filters-grid" style="margin-bottom: 16px; flex-shrink: 0;">
+                <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по инвентарю..." oninput="renderFavSelector()">
+            </div>
+            
+            <div class="cards-grid" id="favListContainer" style="overflow-y: auto; padding-bottom: 20px; flex: 1;">
+                </div>
+        </div>
+    </div>
     <nav class="bottom-nav">
         <button class="nav-btn" onclick="switchTab('catalog', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
@@ -1150,6 +1165,7 @@
         var allTitles = [];
         var userUnlockedTitles = [];
         var userActiveTitle = null; 
+        var userFavCards = {};
 
         var currentDailyDay = 0;
         var canClaimDaily = false;
@@ -1209,10 +1225,6 @@
                     currentDailyDay = data.daily_day || 0;
                     canClaimDaily = data.can_claim_daily || false;
 
-                    // Сохраняем титулы игрока
-                    userUnlockedTitles = data.unlocked_titles || [];
-                    userActiveTitle = data.active_title;
-                    
                     // Обновляем текст в профиле
                     var titleText = "ТИТУЛ: НЕ ВЫБРАН";
                     if (userActiveTitle) {
@@ -1221,6 +1233,15 @@
                     }
                     document.getElementById('psTitle').innerText = titleText;
                     
+                    // --- ОБНОВЛЕНИЕ СТАТИСТИКИ И КАРТ ---
+                    userFavCards = data.fav_cards || {};
+                    document.getElementById('psWins').innerText = data.wins || 0;
+                    document.getElementById('psLosses').innerText = data.losses || 0;
+                    document.getElementById('psWinrate').innerText = (data.winrate || 0) + '%';
+                    document.getElementById('psMaxStreak').innerText = data.max_streak || 0;
+                    renderFavSlots(); // Отрисовываем любимые карты
+                    // -----------------------------------
+
                     var dailyText = document.getElementById('dailyStatusText');
                     if (canClaimDaily) {
                         dailyText.innerHTML = '<span style="color:var(--accent-light)">🎁 Доступно</span>';
@@ -1994,6 +2015,124 @@ function closeProfileModal() {
                     renderTitles();
                     
                     setTimeout(closeTitleSystem, 300); // Красиво закрываем окно с задержкой
+                } else {
+                    tg.showAlert("Ошибка: " + data.error);
+                }
+            } catch (e) {
+                tg.showAlert("Ошибка соединения с сервером");
+            }
+        }
+// ================= ЛЮБИМЫЕ КАРТЫ =================
+        var currentFavSlot = 0;
+
+        function renderFavSlots() {
+            var container = document.querySelector('.ps-fav-grid');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 3; i++) {
+                var cardId = userFavCards[i];
+                var html = '';
+                
+                if (cardId && cardId !== 'none') {
+                    var card = allCards.find(c => c.id === cardId);
+                    if (card) {
+                        html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')" style="border:none; padding:0;">' +
+                               '<img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">' +
+                               '</div>';
+                    } else {
+                        html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')">+</div>';
+                    }
+                } else {
+                    html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')">+</div>';
+                }
+                container.innerHTML += html;
+            }
+        }
+
+        function openFavSystem(slotIndex) {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            currentFavSlot = slotIndex;
+            document.getElementById('favSearchInput').value = ''; // Сбрасываем поиск
+            renderFavSelector();
+            document.getElementById('favSystemSheet').classList.add('open');
+        }
+
+        function closeFavSystem() {
+            document.getElementById('favSystemSheet').classList.remove('open');
+        }
+
+        document.getElementById('favSystemSheet').addEventListener('click', function(e) {
+            if (e.target === this) closeFavSystem();
+        });
+
+        function renderFavSelector() {
+            var container = document.getElementById('favListContainer');
+            container.innerHTML = '';
+            var search = document.getElementById('favSearchInput').value.toLowerCase();
+
+            // Кнопка снятия карты
+            var noneDiv = document.createElement('div');
+            noneDiv.className = 'card';
+            noneDiv.style.display = 'flex'; noneDiv.style.alignItems = 'center'; noneDiv.style.justifyContent = 'center'; 
+            noneDiv.style.cursor = 'pointer'; noneDiv.style.minHeight = '180px';
+            noneDiv.innerHTML = '<div style="color:var(--mythic); font-weight:800; text-align:center;">ОЧИСТИТЬ<br>СЛОТ ✖</div>';
+            noneDiv.onclick = function() { setFavCard('none'); };
+            container.appendChild(noneDiv);
+
+            // Оставляем только те карты, которые реально есть в инвентаре у игрока
+            var ownedCardsData = allCards.filter(c => userOwnedCards.includes(c.id));
+            var filtered = ownedCardsData.filter(c => String(c.name || '').toLowerCase().includes(search));
+
+            if (filtered.length === 0 && search !== '') {
+                container.innerHTML += '<div class="empty-state" style="grid-column: 1 / -1;">Карты не найдены</div>';
+                return;
+            } else if (filtered.length === 0) {
+                container.innerHTML += '<div class="empty-state" style="grid-column: 1 / -1;">Инвентарь пуст</div>';
+                return;
+            }
+
+            filtered.forEach(function(card) {
+                var cleanRarity = (card.rarity || '').split(' ')[0];
+                var div = document.createElement('div');
+                div.className = 'card';
+                div.dataset.rarity = cleanRarity;
+                div.style.cursor = 'pointer';
+                div.onclick = function() { setFavCard(card.id); };
+
+                // Показываем плашку, если карта уже надета в каком-то слоте
+                var isAlreadyFav = Object.values(userFavCards).includes(card.id);
+                var badgeHtml = isAlreadyFav ? '<div class="owned-badge" style="background:rgba(139,92,246,0.9); border-color:var(--accent);">НАДЕТА</div>' : '';
+
+                div.innerHTML = badgeHtml +
+                    '<div class="img-wrap"><img src="images/' + (card.file || '') + '" style="opacity:1;"></div>' +
+                    '<h3>' + (card.name || '') + '</h3>' +
+                    '<div class="rarity-badge">' + (card.rarity || '') + '</div>';
+                
+                container.appendChild(div);
+            });
+        }
+
+        async function setFavCard(cardId) {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
+            
+            try {
+                var res = await fetch(API_BASE + '/api/profile/favorite/' + userId, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+                    body: JSON.stringify({ card_id: cardId, slot_index: currentFavSlot })
+                });
+                var data = await res.json();
+                
+                if (data.success) {
+                    showToast('Система', 'Любимая карта обновлена!');
+                    if (cardId === 'none') {
+                        delete userFavCards[currentFavSlot];
+                    } else {
+                        userFavCards[currentFavSlot] = cardId;
+                    }
+                    renderFavSlots();
+                    closeFavSystem();
                 } else {
                     tg.showAlert("Ошибка: " + data.error);
                 }
