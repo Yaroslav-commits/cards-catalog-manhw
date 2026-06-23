@@ -1283,6 +1283,11 @@
                     currentDailyDay = data.daily_day || 0;
                     canClaimDaily = data.can_claim_daily || false;
 
+                    // Синхронизируем титулы напрямую с бэкенда (никаких JSON!)
+                    allTitles = data.all_titles || [];
+                    userUnlockedTitles = data.unlocked_titles || [];
+                    userActiveTitle = data.active_title;
+
                     // Обновляем текст в профиле
                     var titleText = "ТИТУЛ: НЕ ВЫБРАН";
                     if (userActiveTitle) {
@@ -1994,11 +1999,6 @@ function closeProfileModal() {
     manageBack();
 }
 // ================= ТИТУЛЫ (ЛОГИКА И 3D ОКНО) =================
-        // Загружаем все существующие титулы при старте
-        fetch('title.json')
-            .then(r => r.json())
-            .then(data => { allTitles = data; })
-            .catch(e => console.error("Ошибка загрузки title.json:", e));
 
         function openTitleSystem() {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
