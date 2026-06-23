@@ -767,15 +767,18 @@
         .page-indicator { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: 0.1em; }
 /* ================= ФОНЫ ПРОФИЛЯ ================= */
         .profile-bg-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 590px; /* Сделали больше, чтобы заходил прямо под карточки */
+            position: absolute; top: 0; left: 0; width: 100%; 
+            height: 520px; /* Установили идеальную высоту, чтобы заходить точнехонько под Любимые карты */
             z-index: 0; overflow: hidden; pointer-events: none;
         }
         .profile-bg-container img, .profile-bg-container video {
-            width: 100%; height: 100%; object-fit: cover; opacity: 0.55; /* Чуть приглушили яркость, чтобы текст Ярик читался идеально */
+            width: 100%; height: 100%; object-fit: cover; opacity: 0.55;
         }
         .profile-bg-overlay {
             position: absolute; inset: 0; 
-            background: linear-gradient(to bottom, rgba(10,10,18,0) 0%, rgba(10,10,18,0.4) 50%, #0a0a12 100%); /* Плавный переход в темноту */
+            /* ИСПРАВЛЕНО: картинка теперь будет идеально сочной и открытой на 75% высоты, 
+               а плавно уходить в темноту начнет только у самой твоей желтой линии! */
+            background: linear-gradient(to bottom, rgba(10,10,18,0) 0%, rgba(10,10,18,0) 75%, #0a0a12 100%);
         }
 
         /* Выводим контент профиля поверх фона */
