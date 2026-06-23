@@ -1085,6 +1085,46 @@
         </div>
     </div>
 
+    <div class="profile-screen" id="publicProfileScreen">
+        <div class="profile-bg-container">
+            <div id="pubBgMedia"></div>
+            <div class="profile-bg-overlay"></div>
+        </div>
+
+        <div class="ps-head">
+            <button class="ps-back" onclick="closePublicProfile()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                Назад
+            </button>
+            <div style="font-weight: 700; font-size: 16px;" id="pubHeaderName">Игрок</div>
+            <div style="width: 24px;"></div> 
+        </div>
+
+        <div class="ps-user-info">
+            <div class="ps-avatar-wrap">
+                <img src="" id="pubAvatar" class="ps-avatar">
+            </div>
+            <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
+            <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+        </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">ЛЮБИМЫЕ КАРТЫ</div>
+            <div class="ps-fav-grid" id="pubFavGrid">
+                </div>
+        </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">СТАТИСТИКА БОЁВ</div>
+            <div class="ps-stats-grid">
+                <div class="ps-stat-card win"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg></div><div class="stat-info"><div class="stat-lbl">Победы</div><div class="stat-val" id="pubWins">0</div></div></div>
+                <div class="ps-stat-card loss"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="M12.5 17h-1"/><path d="M12 2a7 7 0 0 0-7 7v4.5a2.5 2.5 0 0 0 2.5 2.5h9a2.5 2.5 0 0 0 2.5-2.5V9a7 7 0 0 0-7-7z"/></svg></div><div class="stat-info"><div class="stat-lbl">Поражения</div><div class="stat-val" id="pubLosses">0</div></div></div>
+                <div class="ps-stat-card wr"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="stat-info"><div class="stat-lbl">Винрейт</div><div class="stat-val" id="pubWinrate">0%</div></div></div>
+                <div class="ps-stat-card streak"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg></div><div class="stat-info"><div class="stat-lbl">Стрик</div><div class="stat-val" id="pubMaxStreak">0</div></div></div>
+            </div>
+        </div>
+    </div>
+
     <div class="profile-screen" id="fullProfileScreen">
         <div class="profile-bg-container">
             <div id="profileBgMedia"></div>
@@ -2175,26 +2215,24 @@
         }
 
         // Кнопка «Назад» Telegram: показываем, когда открыт экран/лист
-function manageBack() {
-    if (!tg.BackButton) return;
-    var earnOpen = document.getElementById('earnScreen').classList.contains('open');
-    var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
-    var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
-    
-    if (earnOpen || sheetOpen || profileOpen) tg.BackButton.show();
-    else tg.BackButton.hide();
-}
-if (tg.BackButton && tg.BackButton.onClick) {
-    tg.BackButton.onClick(function() {
-        if (document.getElementById('taskSheet').classList.contains('open')) {
-            closeTaskSheet();
-        } else if (document.getElementById('earnScreen').classList.contains('open')) {
-            closeEarnModal();
-        } else if (document.getElementById('fullProfileScreen').classList.contains('open')) {
-            closeProfileModal();
+        function manageBack() {
+            if (!tg.BackButton) return;
+            var earnOpen = document.getElementById('earnScreen').classList.contains('open');
+            var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
+            var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
+            var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); // НОВОЕ
+            
+            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen) tg.BackButton.show();
+            else tg.BackButton.hide();
         }
-    });
-}
+        if (tg.BackButton && tg.BackButton.onClick) {
+            tg.BackButton.onClick(function() {
+                if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
+                else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
+                else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
+                else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile(); // НОВОЕ
+            });
+        }
 // Открытие профиля
 function openProfileModal() {
     if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
@@ -2679,7 +2717,7 @@ function closeProfileModal() {
                     scoreHtml = '<span class="top-score-ico">🏅</span> ' + player.score.replace(' RP', '');
                 }
 
-                var clickAction = "tg.showAlert('Профиль игрока ' + `" + cleanName + "` + ' в разработке!')";
+                var clickAction = "openPublicProfile(" + player.id + ")";
 
                 var html = '<div class="top-row" onclick="' + clickAction + '">' +
                     '<div class="top-rank ' + rankClass + '">' + rankContent + '</div>' +
@@ -2730,6 +2768,96 @@ function closeProfileModal() {
             
             var el = document.getElementById('topsTimeValue');
             if (el) el.innerText = text;
+        }
+// ================= ЧУЖОЙ ПРОФИЛЬ =================
+        async function openPublicProfile(targetId) {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            
+            document.getElementById('publicProfileScreen').classList.add('open');
+            manageBack();
+            
+            try {
+                var res = await fetch(API_BASE + '/api/public_profile/' + targetId);
+                var data = await res.json();
+                
+                if (data.success) {
+                    var p = data.profile;
+                    var dispName = p.nickname || p.username || 'Игрок ' + p.id;
+                    
+                    document.getElementById('pubHeaderName').innerText = dispName;
+                    document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
+                    
+                    // Аватарка
+                    var initial = dispName.charAt(0).toUpperCase();
+                    document.getElementById('pubAvatar').src = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
+                    if (p.is_premium) {
+                        document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)"; 
+                        document.getElementById('pubAvatar').style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.4)"; 
+                    } else {
+                        document.getElementById('pubAvatar').style.borderColor = "var(--accent)"; 
+                        document.getElementById('pubAvatar').style.boxShadow = "0 0 18px rgba(139,92,246,0.55)"; 
+                    }
+
+                    // Титул
+                    var titleText = "ТИТУЛ: НЕ ВЫБРАН";
+                    if (p.active_title) {
+                        var foundTitle = allTitles.find(t => t.id === p.active_title);
+                        if (foundTitle) titleText = "ТИТУЛ: " + foundTitle.name.toUpperCase();
+                    }
+                    document.getElementById('pubTitle').innerText = titleText;
+                    
+                    // Статистика
+                    document.getElementById('pubWins').innerText = p.wins;
+                    document.getElementById('pubLosses').innerText = p.losses;
+                    document.getElementById('pubWinrate').innerText = p.winrate + '%';
+                    document.getElementById('pubMaxStreak').innerText = p.max_streak;
+                    
+                    // Фон профиля
+                    var mediaContainer = document.getElementById('pubBgMedia');
+                    var bgData = allBgs.find(b => b.id === p.active_bg) || allBgs.find(b => b.id === 'default');
+                    if (bgData) {
+                        var ext = (bgData.file || '').split('.').pop().toLowerCase();
+                        if (ext === 'mp4' || ext === 'webm') {
+                            mediaContainer.innerHTML = '<video src="images/backgrounds/' + bgData.file + '" autoplay loop muted playsinline></video>';
+                        } else {
+                            mediaContainer.innerHTML = '<img src="images/backgrounds/' + bgData.file + '">';
+                        }
+                    }
+                    
+                    // Любимые карты
+                    var favGrid = document.getElementById('pubFavGrid');
+                    favGrid.innerHTML = '';
+                    for (let i = 0; i < 3; i++) {
+                        var cardId = p.fav_cards[i];
+                        if (cardId && cardId !== 'none') {
+                            var card = allCards.find(c => c.id === cardId);
+                            if (card) {
+                                // Если карта есть - открываем её 3D просмотр по клику!
+                                favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
+                                continue;
+                            }
+                        }
+                        favGrid.innerHTML += '<div class="ps-fav-slot" style="cursor:default; opacity:0.15;">+</div>';
+                    }
+                    
+                } else {
+                    tg.showAlert("Ошибка: " + data.error);
+                    closePublicProfile();
+                }
+            } catch (e) {
+                tg.showAlert("Ошибка соединения с сервером");
+                closePublicProfile();
+            }
+        }
+
+        function closePublicProfile() {
+            document.getElementById('publicProfileScreen').classList.remove('open');
+            manageBack();
+        }
+        
+        function openModalById(cardId) {
+            var card = allCards.find(c => c.id === cardId);
+            if(card) openModal(card);
         }
     </script>
 </body>
