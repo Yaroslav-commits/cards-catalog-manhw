@@ -807,6 +807,67 @@
         }
         .bg-item.locked { filter: grayscale(100%); opacity: 0.4; }
         .bg-item.locked .bg-status { color: var(--text-muted); }
+/* ================= ТОПЫ (РЕЙТИНГИ) ================= */
+        .tops-header {
+            text-align: center; margin-bottom: 16px; padding-top: 10px;
+        }
+        .tops-title {
+            font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;
+        }
+        .tops-timer {
+            font-size: 12px; font-weight: 700; color: var(--accent-light);
+            background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3);
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 12px;
+        }
+        
+        .tops-nav {
+            display: flex; overflow-x: auto; gap: 8px; padding-bottom: 12px; margin-bottom: 12px;
+            scrollbar-width: none; /* Прячем ползунок прокрутки */
+        }
+        .tops-nav::-webkit-scrollbar { display: none; }
+        
+        .tops-nav-btn {
+            flex: 0 0 auto; background: var(--surface); border: 1px solid var(--border-color);
+            color: var(--text-muted); padding: 10px 16px; border-radius: 14px;
+            font-size: 13px; font-weight: 700; transition: 0.2s; cursor: pointer;
+        }
+        .tops-nav-btn:active { transform: scale(0.96); }
+        .tops-nav-btn.active {
+            background: var(--accent); color: #fff; border-color: var(--accent);
+            box-shadow: 0 4px 15px rgba(139,92,246,0.35);
+        }
+        
+        .tops-list {
+            background: var(--surface); border: 1px solid var(--border-color);
+            border-radius: 20px; overflow: hidden; padding: 4px 0;
+        }
+        .top-row {
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04); transition: 0.15s; cursor: pointer;
+        }
+        .top-row:active { background: var(--surface-light); }
+        .top-row:last-child { border-bottom: none; }
+        
+        .top-rank {
+            width: 24px; font-size: 15px; font-weight: 800; color: var(--text-muted); text-align: center; flex-shrink: 0;
+        }
+        .top-rank.rank-1 { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.4); font-size: 18px;}
+        .top-rank.rank-2 { color: #94a3b8; font-size: 17px;}
+        .top-rank.rank-3 { color: #b45309; font-size: 16px;}
+        
+        .top-avatar {
+            width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+            background: rgba(255,255,255,0.05); flex-shrink: 0; border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .top-name {
+            flex: 1; font-size: 15px; font-weight: 700; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .top-score {
+            font-size: 14px; font-weight: 800; color: var(--accent-light); flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -945,7 +1006,25 @@
     </div>
 
     <div id="tab-tops" class="tab-content">
-        <h2 style="text-align:center; margin-top:50px; color:var(--text-muted)">Топы в разработке 🏆</h2>
+        <div class="tops-header">
+            <div class="tops-title">Рейтинг игроков</div>
+            <div class="tops-timer" id="topsTimer" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                До сброса: <span id="topsTimeValue">...</span>
+            </div>
+        </div>
+
+        <div class="tops-nav">
+            <button class="tops-nav-btn active" id="btnTopPvp" onclick="switchTopCategory('pvp', this)">PvP (Сезон)</button>
+            <button class="tops-nav-btn" onclick="switchTopCategory('krw', this)">Баланс ₩</button>
+            <button class="tops-nav-btn" onclick="switchTopCategory('cards', this)">Карты</button>
+            <button class="tops-nav-btn" onclick="switchTopCategory('rank', this)">Очки ранга</button>
+            <button class="tops-nav-btn" onclick="switchTopCategory('diamond', this)">Алмазы 💎</button>
+        </div>
+
+        <div class="tops-list" id="topsListContainer">
+            <div style="text-align:center; padding: 40px; color: var(--text-muted);">Загрузка...</div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="dailyModal">
@@ -1370,6 +1449,12 @@
             document.querySelectorAll('.nav-btn').forEach(function(btn) { btn.classList.remove('active'); });
             document.getElementById('tab-' + tabId).classList.add('active');
             btnElement.classList.add('active');
+
+            // --- НОВОЕ: Загружаем топы только при первом переходе на вкладку ---
+            if (tabId === 'tops' && !topsTimerInterval) {
+                loadTopsTimer();
+                switchTopCategory('pvp', document.getElementById('btnTopPvp'));
+            }
         }
 
         function updateCollectionInfo(visibleCount) {
@@ -2506,6 +2591,120 @@ function closeProfileModal() {
             } catch (e) {
                 tg.showAlert("Ошибка соединения с сервером");
             }
+        }
+// ================= ТОПЫ (ЛОГИКА) =================
+        var currentTopCategory = 'pvp';
+        var topsTimerInterval = null;
+        var topsSecondsLeft = 0;
+
+        function switchTopCategory(category, btnEl) {
+            if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+            
+            // Красим активную кнопку
+            document.querySelectorAll('.tops-nav-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            if (btnEl) btnEl.classList.add('active');
+
+            currentTopCategory = category;
+            
+            // Показываем таймер ТОЛЬКО для PvP сезона
+            document.getElementById('topsTimer').style.display = (category === 'pvp') ? 'inline-flex' : 'none';
+
+            loadTops(category);
+        }
+
+        async function loadTops(category) {
+            var container = document.getElementById('topsListContainer');
+            container.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);"><div class="spinner-ring" style="position:relative; margin: 0 auto 10px; border-color:rgba(255,255,255,0.1); border-top-color:var(--accent);"></div>Загрузка данных...</div>';
+
+            try {
+                var res = await fetch(API_BASE + '/api/tops/' + category);
+                var data = await res.json();
+
+                if (data.success) {
+                    renderTops(data.leaderboard);
+                } else {
+                    container.innerHTML = '<div style="text-align:center; padding: 40px; color: #ef4444;">Ошибка: ' + data.error + '</div>';
+                }
+            } catch (e) {
+                container.innerHTML = '<div style="text-align:center; padding: 40px; color: #ef4444;">Ошибка соединения с сервером</div>';
+            }
+        }
+
+        function renderTops(list) {
+            var container = document.getElementById('topsListContainer');
+            container.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Список пуст</div>';
+                return;
+            }
+
+            list.forEach(function(player, index) {
+                var rank = index + 1;
+                var rankClass = '';
+                var rankContent = rank;
+
+                // Топ-3 получаем особые иконки
+                if (rank === 1) { rankClass = 'rank-1'; rankContent = '👑'; }
+                else if (rank === 2) { rankClass = 'rank-2'; }
+                else if (rank === 3) { rankClass = 'rank-3'; }
+
+                // Генерируем красивую заглушку аватара по первой букве имени
+                var initial = (player.name && player.name.trim() !== '') ? player.name.trim().charAt(0).toUpperCase() : 'U';
+                var avatarUrl = 'https://placehold.co/100x100/1c1c28/8b5cf6?text=' + initial;
+
+                // Обработчик клика. Пока стоит заглушка!
+                var clickAction = "tg.showAlert('Профиль игрока ' + `" + player.name + "` + ' в разработке! В следующем обновлении тут будет просмотр инвентаря.')";
+
+                var html = '<div class="top-row" onclick="' + clickAction + '">' +
+                    '<div class="top-rank ' + rankClass + '">' + rankContent + '</div>' +
+                    '<img src="' + avatarUrl + '" class="top-avatar">' +
+                    '<div class="top-name">' + player.name + '</div>' +
+                    '<div class="top-score">' + player.score + '</div>' +
+                '</div>';
+
+                container.innerHTML += html;
+            });
+        }
+
+        // ================= ТАЙМЕР PVP СЕЗОНА =================
+        async function loadTopsTimer() {
+            try {
+                var res = await fetch(API_BASE + '/api/tops/time_left');
+                var data = await res.json();
+                if (data.success) {
+                    topsSecondsLeft = data.seconds_left;
+                    startTopsTimer();
+                }
+            } catch (e) { console.error('Ошибка загрузки таймера', e); }
+        }
+
+        function startTopsTimer() {
+            if (topsTimerInterval) clearInterval(topsTimerInterval);
+            updateTopsTimerDisplay();
+
+            topsTimerInterval = setInterval(function() {
+                if (topsSecondsLeft > 0) {
+                    topsSecondsLeft--;
+                    updateTopsTimerDisplay();
+                } else {
+                    clearInterval(topsTimerInterval);
+                    document.getElementById('topsTimeValue').innerText = 'Сезон завершён!';
+                }
+            }, 1000);
+        }
+
+        function updateTopsTimerDisplay() {
+            var d = Math.floor(topsSecondsLeft / 86400);
+            var h = Math.floor((topsSecondsLeft % 86400) / 3600);
+            var m = Math.floor((topsSecondsLeft % 3600) / 60);
+            
+            var text = '';
+            if (d > 0) text += d + 'д ';
+            text += h + 'ч ' + m + 'м';
+            
+            var el = document.getElementById('topsTimeValue');
+            if (el) el.innerText = text;
         }
     </script>
 </body>
