@@ -767,7 +767,7 @@
         .page-indicator { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: 0.1em; }
 /* ================= ФОНЫ ПРОФИЛЯ ================= */
         .profile-bg-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 320px;
+            position: absolute; top: 0; left: 0; width: 100%; height: 230px; /* Укоротили, чтобы не лезло на любимые карты */
             z-index: 0; overflow: hidden; pointer-events: none;
         }
         .profile-bg-container img, .profile-bg-container video {
@@ -775,24 +775,27 @@
         }
         .profile-bg-overlay {
             position: absolute; inset: 0; 
-            background: linear-gradient(to bottom, rgba(10,10,18,0.1) 0%, #0a0a12 95%);
+            background: linear-gradient(to bottom, rgba(10,10,18,0) 0%, #0a0a12 100%); /* Плавное растворение в фон */
         }
 
         /* Выводим контент профиля поверх фона */
         .ps-head, .ps-user-info { position: relative; z-index: 1; }
 
-        .bg-list { display: flex; flex-direction: column; gap: 14px; overflow-y: auto; padding-bottom: 20px; max-height: 65vh; }
+        /* Стили для нового 16:9 Слайдера фонов */
+        .bg-slider-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;
+        }
         .bg-item {
             width: 100%; aspect-ratio: 16/9; border-radius: 18px;
             border: 2px solid rgba(255,255,255,0.05); position: relative;
             overflow: hidden; cursor: pointer; transition: 0.2s; background: #000;
+            box-sizing: border-box;
         }
-        .bg-item:active { transform: scale(0.97); }
         .bg-item.active-bg { border-color: var(--accent); box-shadow: 0 0 25px rgba(139,92,246,0.4); }
         .bg-item img, .bg-item video { width: 100%; height: 100%; object-fit: cover; }
         .bg-item-overlay {
-            position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
-            display: flex; align-items: flex-end; padding: 16px;
+            position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+            display: flex; align-items: flex-end; padding: 16px; box-sizing: border-box;
         }
         .bg-name { font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
         .bg-status {
@@ -1244,14 +1247,21 @@
         </div>
     </div>
     <div class="system-overlay-center" id="bgSystemSheet">
-        <div class="system-window-center" style="max-width: 480px; width: calc(100% - 24px); padding: 20px 14px;">
-            <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
+        <div class="system-window-center" style="max-width: 440px; width: calc(100% - 24px); padding: 20px 16px;">
+            <div class="sys-head" style="flex-shrink: 0; margin-bottom: 20px;">
                 <button class="sys-close" onclick="closeBgSystem()">✖</button>
                 <div class="sys-kicker">SYSTEM NOTIFICATION</div>
                 <div class="sys-title">ВЫБОР ФОНА</div>
             </div>
-            <div class="bg-list" id="bgListContainer">
+            
+            <div class="bg-slider-container" id="bgListContainer">
                 </div>
+
+            <div class="pagination-bar" style="margin-top: 20px;">
+                <button class="page-btn" id="bgPrevBtn" onclick="changeBgPage(-1)">◀ Пред</button>
+                <div class="page-indicator" id="bgPageIndicator">1 / 1</div>
+                <button class="page-btn" id="bgNextBtn" onclick="changeBgPage(1)">След ▶</button>
+            </div>
         </div>
     </div>
     <div class="system-overlay-center" id="favSystemSheet">
@@ -2383,7 +2393,9 @@ function closeProfileModal() {
                 tg.showAlert("Ошибка соединения с сервером");
             }
         }
-// ================= ФОНЫ =================
+// ================= ФОНЫ (СЛАЙДЕР ПО 1 ФОНУ) =================
+        var currentBgPage = 1;
+
         function applyProfileBg() {
             var mediaContainer = document.getElementById('profileBgMedia');
             if (!mediaContainer || !allBgs.length) return;
@@ -2401,6 +2413,11 @@ function closeProfileModal() {
 
         function openBgSystem() {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            
+            // Автоматически открываем слайдер на том фоне, который сейчас НАДЕТ на игроке
+            var activeIdx = allBgs.findIndex(b => b.id === userActiveBg);
+            currentBgPage = activeIdx !== -1 ? activeIdx + 1 : 1;
+
             renderBgs();
             document.getElementById('bgSystemSheet').classList.add('open');
         }
@@ -2413,38 +2430,57 @@ function closeProfileModal() {
             if (e.target === this) closeBgSystem();
         });
 
+        // Функция переключения слайдов
+        function changeBgPage(direction) {
+            if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+            currentBgPage += direction;
+            renderBgs();
+        }
+
         function renderBgs() {
             var container = document.getElementById('bgListContainer');
+            if (!container || !allBgs.length) return;
             container.innerHTML = '';
 
-            allBgs.forEach(function(bg) {
-                var isUnlocked = userUnlockedBgs.includes(bg.id) || bg.id === 'default';
-                var isActive = (userActiveBg === bg.id);
-                
-                var statusText = isActive ? '<span style="color:#4ade80">ВЫБРАН ✓</span>' : (isUnlocked ? 'НАДЕТЬ' : 'ЗАКРЫТО 🔒');
-                var classNames = 'bg-item';
-                if (isActive) classNames += ' active-bg';
-                if (!isUnlocked) classNames += ' locked';
+            var totalBgs = allBgs.length;
+            
+            // Защита от вылета за границы массива
+            if (currentBgPage > totalBgs) currentBgPage = totalBgs;
+            if (currentBgPage < 1) currentBgPage = 1;
 
-                var ext = (bg.file || '').split('.').pop().toLowerCase();
-                var mediaHtml = '';
-                // Видео ставим на muted autoplay
-                if (ext === 'mp4' || ext === 'webm') {
-                    mediaHtml = '<video src="images/backgrounds/' + bg.file + '" autoplay loop muted playsinline></video>';
-                } else {
-                    mediaHtml = '<img src="images/backgrounds/' + bg.file + '">';
-                }
+            // Настраиваем доступность стрелочек и текст страниц
+            document.getElementById('bgPrevBtn').disabled = (currentBgPage === 1);
+            document.getElementById('bgNextBtn').disabled = (currentBgPage === totalBgs);
+            document.getElementById('bgPageIndicator').innerText = currentBgPage + ' / ' + totalBgs;
 
-                var html = '<div class="' + classNames + '" onclick="' + (isUnlocked ? 'setBg(\'' + bg.id + '\')' : 'tg.showAlert(\'Этот фон еще не разблокирован!\')') + '">' +
-                    mediaHtml +
-                    '<div class="bg-item-overlay">' +
-                        '<div class="bg-name">' + bg.name + '</div>' +
-                    '</div>' +
-                    '<div class="bg-status">' + statusText + '</div>' +
-                '</div>';
-                
-                container.innerHTML += html;
-            });
+            // Берем ровно ОДИН фон для текущего слайда
+            var bg = allBgs[currentBgPage - 1];
+            
+            var isUnlocked = userUnlockedBgs.includes(bg.id) || bg.id === 'default';
+            var isActive = (userActiveBg === bg.id);
+            
+            var statusText = isActive ? '<span style="color:#4ade80">ВЫБРАН ✓</span>' : (isUnlocked ? 'НАДЕТЬ' : 'ЗАКРЫТО 🔒');
+            var classNames = 'bg-item';
+            if (isActive) classNames += ' active-bg';
+            if (!isUnlocked) classNames += ' locked';
+
+            var ext = (bg.file || '').split('.').pop().toLowerCase();
+            var mediaHtml = '';
+            if (ext === 'mp4' || ext === 'webm') {
+                mediaHtml = '<video src="images/backgrounds/' + bg.file + '" autoplay loop muted playsinline></video>';
+            } else {
+                mediaHtml = '<img src="images/backgrounds/' + bg.file + '">';
+            }
+
+            var html = '<div class="' + classNames + '" onclick="' + (isUnlocked ? 'setBg(\'' + bg.id + '\')' : 'tg.showAlert(\'Этот фон еще не разблокирован!\')') + '">' +
+                mediaHtml +
+                '<div class="bg-item-overlay">' +
+                    '<div class="bg-name">' + bg.name + '</div>' +
+                '</div>' +
+                '<div class="bg-status">' + statusText + '</div>' +
+            '</div>';
+            
+            container.innerHTML = html;
         }
 
         async function setBg(bgId) {
@@ -2462,8 +2498,8 @@ function closeProfileModal() {
                 if (data.success) {
                     showToast('Система', 'Фон профиля обновлен!');
                     userActiveBg = bgId;
-                    applyProfileBg(); // Моментально меняем шапку
-                    renderBgs(); // Перевешиваем галочку "Выбран"
+                    applyProfileBg(); // Меняем шапку профиля на лету
+                    renderBgs(); // Перерисовываем плашку "ВЫБРАН ✓" в слайдере
                     setTimeout(closeBgSystem, 300);
                 } else {
                     tg.showAlert("Ошибка: " + data.error);
