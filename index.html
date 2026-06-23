@@ -807,67 +807,67 @@
         }
         .bg-item.locked { filter: grayscale(100%); opacity: 0.4; }
         .bg-item.locked .bg-status { color: var(--text-muted); }
-/* ================= ТОПЫ (РЕЙТИНГИ) ================= */
-        .tops-header {
-            text-align: center; margin-bottom: 16px; padding-top: 10px;
-        }
-        .tops-title {
-            font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;
-        }
+/* ================= ТОПЫ (ДОРОГО-БОГАТО) ================= */
+        .tops-header { text-align: center; margin-bottom: 20px; padding-top: 10px; }
+        .tops-title { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px; letter-spacing: 0.02em; }
         .tops-timer {
-            font-size: 12px; font-weight: 700; color: var(--accent-light);
-            background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3);
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 12px; border-radius: 12px;
+            font-size: 13px; font-weight: 800; color: var(--accent-light);
+            background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(76,29,149,0.1));
+            border: 1px solid rgba(139,92,246,0.3); display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; border-radius: 14px; box-shadow: 0 4px 15px rgba(139,92,246,0.1);
         }
         
+        /* Слайдер категорий */
         .tops-nav {
-            display: flex; overflow-x: auto; gap: 8px; padding-bottom: 12px; margin-bottom: 12px;
-            scrollbar-width: none; /* Прячем ползунок прокрутки */
+            display: flex; overflow-x: auto; gap: 10px; padding: 4px 14px 16px; margin-bottom: 4px;
+            scrollbar-width: none;
         }
         .tops-nav::-webkit-scrollbar { display: none; }
         
         .tops-nav-btn {
-            flex: 0 0 auto; background: var(--surface); border: 1px solid var(--border-color);
-            color: var(--text-muted); padding: 10px 16px; border-radius: 14px;
-            font-size: 13px; font-weight: 700; transition: 0.2s; cursor: pointer;
+            flex: 0 0 auto; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            color: var(--text-muted); padding: 12px 20px; border-radius: 16px;
+            font-size: 14px; font-weight: 700; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
         }
-        .tops-nav-btn:active { transform: scale(0.96); }
         .tops-nav-btn.active {
-            background: var(--accent); color: #fff; border-color: var(--accent);
-            box-shadow: 0 4px 15px rgba(139,92,246,0.35);
+            background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff; border-color: transparent;
+            box-shadow: 0 8px 24px rgba(139,92,246,0.35); transform: translateY(-2px);
         }
         
-        .tops-list {
-            background: var(--surface); border: 1px solid var(--border-color);
-            border-radius: 20px; overflow: hidden; padding: 4px 0;
-        }
+        /* Сетка игроков */
+        .tops-list { display: flex; flex-direction: column; gap: 10px; padding: 0 14px; }
+        
         .top-row {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.04); transition: 0.15s; cursor: pointer;
+            display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+            background: var(--surface); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 20px; transition: 0.2s; cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
         }
-        .top-row:active { background: var(--surface-light); }
-        .top-row:last-child { border-bottom: none; }
+        .top-row:active { transform: scale(0.98); background: var(--surface-light); border-color: rgba(255,255,255,0.1); }
         
-        .top-rank {
-            width: 24px; font-size: 15px; font-weight: 800; color: var(--text-muted); text-align: center; flex-shrink: 0;
-        }
-        .top-rank.rank-1 { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.4); font-size: 18px;}
-        .top-rank.rank-2 { color: #94a3b8; font-size: 17px;}
-        .top-rank.rank-3 { color: #b45309; font-size: 16px;}
+        .top-rank { width: 26px; font-size: 16px; font-weight: 800; color: rgba(255,255,255,0.25); text-align: center; flex-shrink: 0; }
+        .top-rank.rank-1 { color: #fbbf24; text-shadow: 0 0 14px rgba(251,191,36,0.5); font-size: 22px; }
+        .top-rank.rank-2 { color: #e2e8f0; text-shadow: 0 0 12px rgba(226,232,240,0.4); font-size: 19px; }
+        .top-rank.rank-3 { color: #d97706; text-shadow: 0 0 12px rgba(217,119,6,0.4); font-size: 17px; }
         
+        /* Локальные аватарки без сторонних сервисов */
         .top-avatar {
-            width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
-            background: rgba(255,255,255,0.05); flex-shrink: 0; border: 1px solid rgba(255,255,255,0.05);
+            width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 4px 10px rgba(0,0,0,0.3);
         }
         
         .top-name {
-            flex: 1; font-size: 15px; font-weight: 700; color: #fff;
+            flex: 1; font-size: 16px; font-weight: 700; color: #fff;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        
         .top-score {
-            font-size: 14px; font-weight: 800; color: var(--accent-light); flex-shrink: 0;
+            font-size: 15px; font-weight: 800; color: #fff; flex-shrink: 0;
+            display: inline-flex; align-items: center; gap: 6px;
         }
+        .top-score-ico { color: var(--accent-light); display: flex; align-items: center; }
+        .top-score-ico svg { width: 16px; height: 16px; }
     </style>
 </head>
 <body>
@@ -1007,9 +1007,9 @@
 
     <div id="tab-tops" class="tab-content">
         <div class="tops-header">
-            <div class="tops-title">Рейтинг игроков</div>
+            <div class="tops-title">🏆 Рейтинг игроков</div>
             <div class="tops-timer" id="topsTimer" style="display: none;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 До сброса: <span id="topsTimeValue">...</span>
             </div>
         </div>
@@ -1023,8 +1023,7 @@
         </div>
 
         <div class="tops-list" id="topsListContainer">
-            <div style="text-align:center; padding: 40px; color: var(--text-muted);">Загрузка...</div>
-        </div>
+            </div>
     </div>
 
     <div class="modal-overlay" id="dailyModal">
@@ -2630,6 +2629,19 @@ function closeProfileModal() {
             }
         }
 
+// Генератор цветов для аватарок (чтобы было красиво и без картинок из интернета)
+        function getAvatarStyle(name) {
+            var colors = [
+                'linear-gradient(135deg, #8b5cf6, #581c87)', // Фиолетовый
+                'linear-gradient(135deg, #3b82f6, #1e3a8a)', // Синий
+                'linear-gradient(135deg, #f59e0b, #78350f)', // Оранжевый
+                'linear-gradient(135deg, #10b981, #064e3b)', // Изумрудный
+                'linear-gradient(135deg, #ec4899, #831843)'  // Розовый
+            ];
+            var charCode = name.charCodeAt(0) || 0;
+            return colors[charCode % colors.length];
+        }
+
         function renderTops(list) {
             var container = document.getElementById('topsListContainer');
             container.innerHTML = '';
@@ -2644,23 +2656,36 @@ function closeProfileModal() {
                 var rankClass = '';
                 var rankContent = rank;
 
-                // Топ-3 получаем особые иконки
+                // Топ-3
                 if (rank === 1) { rankClass = 'rank-1'; rankContent = '👑'; }
                 else if (rank === 2) { rankClass = 'rank-2'; }
                 else if (rank === 3) { rankClass = 'rank-3'; }
 
-                // Генерируем красивую заглушку аватара по первой букве имени
-                var initial = (player.name && player.name.trim() !== '') ? player.name.trim().charAt(0).toUpperCase() : 'U';
-                var avatarUrl = 'https://placehold.co/100x100/1c1c28/8b5cf6?text=' + initial;
+                var cleanName = (player.name || 'Игрок').trim();
+                var initial = cleanName.charAt(0).toUpperCase();
+                var avatarBg = getAvatarStyle(cleanName);
 
-                // Обработчик клика. Пока стоит заглушка!
-                var clickAction = "tg.showAlert('Профиль игрока ' + `" + player.name + "` + ' в разработке! В следующем обновлении тут будет просмотр инвентаря.')";
+                // Настраиваем красивый значок для значения рейтинга в зависимости от категории
+                var scoreHtml = player.score;
+                if (currentTopCategory === 'krw') {
+                    scoreHtml = '<span class="top-score-ico">₩</span> ' + player.score.replace(' ₩', '');
+                } else if (currentTopCategory === 'diamond') {
+                    scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span> ' + player.score.replace(' 💎', '');
+                } else if (currentTopCategory === 'cards') {
+                    scoreHtml = '<span class="top-score-ico">🃏</span> ' + player.score.replace(' шт.', '');
+                } else if (currentTopCategory === 'pvp') {
+                    scoreHtml = '<span class="top-score-ico">⚔️</span> ' + player.score.replace(' побед', '');
+                } else if (currentTopCategory === 'rank') {
+                    scoreHtml = '<span class="top-score-ico">🏅</span> ' + player.score.replace(' RP', '');
+                }
+
+                var clickAction = "tg.showAlert('Профиль игрока ' + `" + cleanName + "` + ' в разработке!')";
 
                 var html = '<div class="top-row" onclick="' + clickAction + '">' +
                     '<div class="top-rank ' + rankClass + '">' + rankContent + '</div>' +
-                    '<img src="' + avatarUrl + '" class="top-avatar">' +
-                    '<div class="top-name">' + player.name + '</div>' +
-                    '<div class="top-score">' + player.score + '</div>' +
+                    '<div class="top-avatar" style="background: ' + avatarBg + ';">' + initial + '</div>' +
+                    '<div class="top-name">' + cleanName + '</div>' +
+                    '<div class="top-score">' + scoreHtml + '</div>' +
                 '</div>';
 
                 container.innerHTML += html;
