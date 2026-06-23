@@ -1246,7 +1246,7 @@
                 </div>
         </div>
     </div>
-    <div class="system-overlay-center" id="bgSystemSheet">
+<div class="system-overlay-center" id="bgSystemSheet">
         <div class="system-window-center" style="max-width: 440px; width: calc(100% - 24px); padding: 20px 16px;">
             <div class="sys-head" style="flex-shrink: 0; margin-bottom: 20px;">
                 <button class="sys-close" onclick="closeBgSystem()">✖</button>
@@ -2472,7 +2472,7 @@ function closeProfileModal() {
                 mediaHtml = '<img src="images/backgrounds/' + bg.file + '">';
             }
 
-            var html = '<div class="' + classNames + '" onclick="' + (isUnlocked ? 'setBg(\'' + bg.id + '\')' : 'tg.showAlert(\'Этот фон еще не разблокирован!\')') + '">' +
+            var html = '<div class="' + classNames + '" onclick="' + (isUnlocked ? 'setBg(\'' + bg.id + '\')' : 'tg.showAlert(\'Этот фон еще не разблокирован в боте!\')') + '">' +
                 mediaHtml +
                 '<div class="bg-item-overlay">' +
                     '<div class="bg-name">' + bg.name + '</div>' +
