@@ -1461,11 +1461,7 @@
         //  Открой этот адрес в браузере — должно вернуть {"status":"ok"}.
         //  Если не открывается / другой домен (.ru vs .tech) — меняй ЗДЕСЬ.
         // ============================================================
-<<<<<<< HEAD
-        var API_BASE = "https://bot-1782299708-8736-yaroslav-nersovich.bothost.tech";
-=======
-        var API_BASE = "https://bot-1782299708-8736-yaroslav-nersovich.bothost.tech/";
->>>>>>> 436803ffb40aef6e52baebf77a0121266ad4b5d1
+        var API_BASE = "https://bot-1782178385-1653-yaroslav-nersovich.bothost.tech";
 
         // Подписанные данные Telegram — единственный безопасный способ
         // подтвердить, кто ты. Шлём их на бэкенд в заголовке.
@@ -2812,7 +2808,7 @@ function closeProfileModal() {
             if (el) el.innerText = text;
         }
 // ================= ЧУЖОЙ ПРОФИЛЬ (БЕЗ БАГОВ И ВЫЛЕТОВ) =================
-        async function openPublicProfile(targetId) {
+async function openPublicProfile(targetId) {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             
             document.getElementById('publicProfileScreen').classList.add('open');
