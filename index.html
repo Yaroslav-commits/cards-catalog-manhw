@@ -882,12 +882,13 @@
         .top-rank.rank-2 { color: #e2e8f0; text-shadow: 0 0 12px rgba(226,232,240,0.4); font-size: 19px; }
         .top-rank.rank-3 { color: #d97706; text-shadow: 0 0 12px rgba(217,119,6,0.4); font-size: 17px; }
         
-        /* Локальные аватарки без сторонних сервисов */
+/* Локальные аватарки без сторонних сервисов */
         .top-avatar {
             width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
             box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 4px 10px rgba(0,0,0,0.3);
-        }
+            object-fit: cover; /* ФИКС: Чтобы круглые аватарки из ТГ не растягивало */
+        } 
         
         .top-name {
             flex: 1; font-size: 16px; font-weight: 700; color: #fff;
@@ -2756,7 +2757,7 @@ function closeProfileModal() {
 
                 var html = '<div class="top-row" onclick="' + clickAction + '">' +
                     '<div class="top-rank ' + rankClass + '">' + rankContent + '</div>' +
-                    '<div class="top-avatar" style="background: ' + avatarBg + ';">' + initial + '</div>' +
+                    '<img src="' + API_BASE + '/api/avatar/' + player.id + '" class="top-avatar" onerror="this.src=\'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial + '\'">' +
                     '<div class="top-name">' + cleanName + '</div>' +
                     '<div class="top-score">' + scoreHtml + '</div>' +
                 '</div>';
@@ -2822,10 +2823,8 @@ function closeProfileModal() {
                     // ФИКС: Убрали несуществующий pubHeaderName, который вызывал краш функции!
                     document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
                     
-                    // Аватарка чужого игрока
-                    var initial = dispName.charAt(0).toUpperCase();
-                    document.getElementById('pubAvatar').src = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
-                    if (p.is_premium) {
+// Аватарка чужого игрока — теперь берется напрямую из Telegram через наш бэкенд шлюз!
+                        document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id;
                         document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)"; 
                         document.getElementById('pubAvatar').style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.4)"; 
                     } else {
