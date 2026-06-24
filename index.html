@@ -2270,19 +2270,19 @@
         }
 // Открытие профиля
 function openProfileModal() {
-    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
-    document.getElementById('fullProfileScreen').classList.add('open');
-    
-    // Копируем базовые данные с главной страницы
-    document.getElementById('psAvatar').src = document.getElementById('userAvatar').src;
-    document.getElementById('psAvatar').style.borderColor = document.getElementById('userAvatar').style.borderColor;
-    document.getElementById('psAvatar').style.boxShadow = document.getElementById('userAvatar').style.boxShadow;
-    
-    document.getElementById('psName').innerHTML = userName + ' <span style="font-size: 20px;">' + document.getElementById('userStatusEmoji').innerText + '</span>';
-    document.getElementById('psHeaderName').innerText = userName;
-    
-    manageBack();
-}
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('fullProfileScreen').classList.add('open');
+            
+            // Копируем базовые данные с главной страницы
+            document.getElementById('psAvatar').src = document.getElementById('userAvatar').src;
+            document.getElementById('psAvatar').style.borderColor = document.getElementById('userAvatar').style.borderColor;
+            document.getElementById('psAvatar').style.boxShadow = document.getElementById('userAvatar').style.boxShadow;
+            
+            document.getElementById('psName').innerHTML = userName + ' <span style="font-size: 20px;">' + document.getElementById('userStatusEmoji').innerText + '</span>';
+            
+            // ФИКС: Убрали несуществующий psHeaderName, из-за которого ломался BackButton
+            manageBack();
+        }
 
 function closeProfileModal() {
     document.getElementById('fullProfileScreen').classList.remove('open');
@@ -2387,7 +2387,7 @@ function closeProfileModal() {
                 if (cardId && cardId !== 'none') {
                     var card = allCards.find(c => c.id === cardId);
                     if (card) {
-                        html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')" style="border:none; padding:0;">' +
+                        html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')" style="border:none; padding:0; cursor:pointer;">' +
                                '<img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">' +
                                '</div>';
                     } else {
@@ -2804,7 +2804,7 @@ function closeProfileModal() {
             var el = document.getElementById('topsTimeValue');
             if (el) el.innerText = text;
         }
-// ================= ЧУЖОЙ ПРОФИЛЬ =================
+// ================= ЧУЖОЙ ПРОФИЛЬ (БЕЗ БАГОВ И ВЫЛЕТОВ) =================
         async function openPublicProfile(targetId) {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             
@@ -2819,10 +2819,10 @@ function closeProfileModal() {
                     var p = data.profile;
                     var dispName = p.nickname || p.username || 'Игрок ' + p.id;
                     
-                    document.getElementById('pubHeaderName').innerText = dispName;
+                    // ФИКС: Убрали несуществующий pubHeaderName, который вызывал краш функции!
                     document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
                     
-                    // Аватарка
+                    // Аватарка чужого игрока
                     var initial = dispName.charAt(0).toUpperCase();
                     document.getElementById('pubAvatar').src = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
                     if (p.is_premium) {
@@ -2833,7 +2833,7 @@ function closeProfileModal() {
                         document.getElementById('pubAvatar').style.boxShadow = "0 0 18px rgba(139,92,246,0.55)"; 
                     }
 
-                    // Титул
+                    // Титул чужого игрока
                     var titleText = "ТИТУЛ: НЕ ВЫБРАН";
                     if (p.active_title) {
                         var foundTitle = allTitles.find(t => t.id === p.active_title);
@@ -2841,7 +2841,7 @@ function closeProfileModal() {
                     }
                     document.getElementById('pubTitle').innerText = titleText;
                     
-                    // Статистика
+                    // Статистика боёв
                     document.getElementById('pubWins').innerText = p.wins;
                     document.getElementById('pubLosses').innerText = p.losses;
                     document.getElementById('pubWinrate').innerText = p.winrate + '%';
@@ -2859,15 +2859,16 @@ function closeProfileModal() {
                         }
                     }
                     
-                    // Любимые карты
+                    // Любимые карты чужого профиля (строго изолированно)
                     var favGrid = document.getElementById('pubFavGrid');
                     favGrid.innerHTML = '';
+                    var pubFavs = p.fav_cards || {};
+                    
                     for (let i = 0; i < 3; i++) {
-                        var cardId = p.fav_cards[i];
+                        var cardId = pubFavs[i] || pubFavs[String(i)];
                         if (cardId && cardId !== 'none') {
                             var card = allCards.find(c => c.id === cardId);
                             if (card) {
-                                // Если карта есть - открываем её 3D просмотр по клику!
                                 favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
                                 continue;
                             }
@@ -2880,19 +2881,10 @@ function closeProfileModal() {
                     closePublicProfile();
                 }
             } catch (e) {
+                console.error("Ошибка в функции openPublicProfile:", e);
                 tg.showAlert("Ошибка соединения с сервером");
                 closePublicProfile();
             }
-        }
-
-        function closePublicProfile() {
-            document.getElementById('publicProfileScreen').classList.remove('open');
-            manageBack();
-        }
-        
-        function openModalById(cardId) {
-            var card = allCards.find(c => c.id === cardId);
-            if(card) openModal(card);
         }
     </script>
 </body>
