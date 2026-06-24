@@ -1461,7 +1461,11 @@
         //  Открой этот адрес в браузере — должно вернуть {"status":"ok"}.
         //  Если не открывается / другой домен (.ru vs .tech) — меняй ЗДЕСЬ.
         // ============================================================
+<<<<<<< HEAD
         var API_BASE = "https://bot-1782299708-8736-yaroslav-nersovich.bothost.tech";
+=======
+        var API_BASE = "https://bot-1782299708-8736-yaroslav-nersovich.bothost.tech/";
+>>>>>>> 436803ffb40aef6e52baebf77a0121266ad4b5d1
 
         // Подписанные данные Telegram — единственный безопасный способ
         // подтвердить, кто ты. Шлём их на бэкенд в заголовке.
@@ -2730,16 +2734,13 @@ function closeProfileModal() {
                 var rankClass = '';
                 var rankContent = rank;
 
-                // Топ-3
                 if (rank === 1) { rankClass = 'rank-1'; rankContent = '👑'; }
                 else if (rank === 2) { rankClass = 'rank-2'; }
                 else if (rank === 3) { rankClass = 'rank-3'; }
 
                 var cleanName = (player.name || 'Игрок').trim();
                 var initial = cleanName.charAt(0).toUpperCase();
-                var avatarBg = getAvatarStyle(cleanName);
 
-                // Настраиваем красивый значок для значения рейтинга в зависимости от категории
                 var scoreHtml = player.score;
                 if (currentTopCategory === 'krw') {
                     scoreHtml = '<span class="top-score-ico">₩</span> ' + player.score.replace(' ₩', '');
@@ -2754,10 +2755,15 @@ function closeProfileModal() {
                 }
 
                 var clickAction = "openPublicProfile(" + player.id + ")";
+                
+                // ИСПРАВЛЕНО: Безопасная сборка картинки без конфликта кавычек!
+                var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
+                var avatarSrc = API_BASE + "/api/avatar/" + player.id;
+                var imgHtml = '<img src="' + avatarSrc + '" class="top-avatar" onerror="this.src=\'' + fallbackImg + '\'">';
 
                 var html = '<div class="top-row" onclick="' + clickAction + '">' +
                     '<div class="top-rank ' + rankClass + '">' + rankContent + '</div>' +
-                    '<img src="' + API_BASE + '/api/avatar/' + player.id + '" class="top-avatar" onerror="this.src=\'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial + '\'">' +
+                    imgHtml +
                     '<div class="top-name">' + cleanName + '</div>' +
                     '<div class="top-score">' + scoreHtml + '</div>' +
                 '</div>';
@@ -2820,11 +2826,12 @@ function closeProfileModal() {
                     var p = data.profile;
                     var dispName = p.nickname || p.username || 'Игрок ' + p.id;
                     
-                    // ФИКС: Убрали несуществующий pubHeaderName, который вызывал краш функции!
                     document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
                     
-// Аватарка чужого игрока — теперь берется напрямую из Telegram через наш бэкенд шлюз!
-                        document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id;
+                    // Аватарка чужого игрока из ТГ
+                    document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id;
+                    
+                    if (p.is_premium) {
                         document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)"; 
                         document.getElementById('pubAvatar').style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.4)"; 
                     } else {
@@ -2832,7 +2839,6 @@ function closeProfileModal() {
                         document.getElementById('pubAvatar').style.boxShadow = "0 0 18px rgba(139,92,246,0.55)"; 
                     }
 
-                    // Титул чужого игрока
                     var titleText = "ТИТУЛ: НЕ ВЫБРАН";
                     if (p.active_title) {
                         var foundTitle = allTitles.find(t => t.id === p.active_title);
@@ -2840,13 +2846,11 @@ function closeProfileModal() {
                     }
                     document.getElementById('pubTitle').innerText = titleText;
                     
-                    // Статистика боёв
                     document.getElementById('pubWins').innerText = p.wins;
                     document.getElementById('pubLosses').innerText = p.losses;
                     document.getElementById('pubWinrate').innerText = p.winrate + '%';
                     document.getElementById('pubMaxStreak').innerText = p.max_streak;
                     
-                    // Фон профиля
                     var mediaContainer = document.getElementById('pubBgMedia');
                     var bgData = allBgs.find(b => b.id === p.active_bg) || allBgs.find(b => b.id === 'default');
                     if (bgData) {
@@ -2858,7 +2862,6 @@ function closeProfileModal() {
                         }
                     }
                     
-                    // Любимые карты чужого профиля (строго изолированно)
                     var favGrid = document.getElementById('pubFavGrid');
                     favGrid.innerHTML = '';
                     var pubFavs = p.fav_cards || {};
