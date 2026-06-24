@@ -595,66 +595,11 @@
 .ps-back { background: none; border: none; color: #fff; padding: 4px; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 600; cursor: pointer; }
 .ps-back svg { width: 24px; height: 24px; }
 
-/* ================= ОБНОВЛЕННАЯ ШАПКА ПРОФИЛЯ В ОДИН РЯД ================= */
-        .ps-user-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 0 16px;
-            margin-top: 70px; /* Сдвигаем вниз, чтобы не перекрывалось кнопкой Назад */
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        .ps-avatar-wrap {
-            position: relative;
-            flex-shrink: 0;
-            width: 74px;
-            height: 74px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .ps-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 18px rgba(139,92,246,0.55);
-        }
-        
-        /* Блок с текстами правее авы */
-        .ps-user-texts {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            justify-content: center;
-            min-width: 0; /* Чтобы длинные ники красиво обрезались */
-        }
-        .ps-name {
-            font-size: 20px;
-            font-weight: 800;
-            color: #fff;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .ps-title-text {
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            color: var(--accent-light);
-            text-transform: uppercase;
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+.ps-user-info { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; text-align: center; }
+.ps-avatar-wrap { position: relative; margin-bottom: 12px; }
+.ps-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 25px rgba(168,85,247,0.4); }
+.ps-name { font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.ps-title-text { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
 
 .ps-box { 
     background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); 
@@ -1151,6 +1096,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 Назад
             </button>
+            <div style="font-weight: 700; font-size: 16px;" id="pubHeaderName">Игрок</div>
             <div style="width: 24px;"></div> 
         </div>
 
@@ -1158,10 +1104,8 @@
             <div class="ps-avatar-wrap">
                 <img src="" id="pubAvatar" class="ps-avatar">
             </div>
-            <div class="ps-user-texts">
-                <div class="ps-name"><span id="pubName">Игрок</span> <span id="pubStatusEmoji" style="font-size: 18px;">🧩</span></div>
-                <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
-            </div>
+            <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
+            <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
         </div>
 
         <div class="ps-box">
@@ -1190,19 +1134,17 @@
         <div class="ps-head">
             <button class="ps-back" onclick="closeProfileModal()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-                Назад
+                Профиль
             </button>
-            <div style="width: 24px;"></div> 
-        </div>
+            <div style="font-weight: 700; font-size: 16px;" id="psHeaderName">Ярик</div>
+            <div style="width: 24px;"></div> </div>
 
         <div class="ps-user-info">
             <div class="ps-avatar-wrap">
                 <img src="" id="psAvatar" class="ps-avatar">
             </div>
-            <div class="ps-user-texts">
-                <div class="ps-name"><span id="psName">Игрок</span> <span id="psStatusEmoji" style="font-size: 18px;">🧩</span></div>
-                <div class="ps-title-text" id="psTitle">ТИТУЛ: НЕ ВЫБРАН</div>
-            </div>
+            <div class="ps-name" id="psName">Ярик <span id="psStatusEmoji" style="font-size: 20px;">🧩</span></div>
+            <div class="ps-title-text" id="psTitle">ТИТУЛ: НЕ ВЫБРАН</div>
         </div>
 
         <div class="ps-box">
@@ -1565,22 +1507,7 @@
 
         async function fetchProfile() {
             try {
-                // Подтягиваем реальную аватарку текущего пользователя из Telegram Web App!
-                var avatarEl = document.getElementById('psAvatar');
-                if (avatarEl) {
-                    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.photo_url) {
-                        avatarEl.src = tg.initDataUnsafe.user.photo_url;
-                    } else {
-                        // Резервный вариант, если ТГ не отдал фото
-                        var fallbackName = document.getElementById('psName').innerText || 'U';
-                        avatarEl.src = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + fallbackName.charAt(0).toUpperCase();
-                    }
-                }
-
-                var res = await fetch(API_BASE + '/api/profile/' + userId, {
-                    headers: authHeaders()
-                });
-
+                var res = await fetch(API_BASE + '/api/profile/' + userId, { headers: authHeaders() });
                 if (res.ok) {
                     var data = await res.json();
                     
@@ -2842,7 +2769,7 @@ function closeProfileModal() {
             var el = document.getElementById('topsTimeValue');
             if (el) el.innerText = text;
         }
-// ================= ЧУЖОЙ ПРОФИЛЬ (ИСПРАВЛЕННЫЙ БАГ) =================
+// ================= ЧУЖОЙ ПРОФИЛЬ =================
         async function openPublicProfile(targetId) {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             
@@ -2857,13 +2784,12 @@ function closeProfileModal() {
                     var p = data.profile;
                     var dispName = p.nickname || p.username || 'Игрок ' + p.id;
                     
-                    document.getElementById('pubName').innerText = dispName;
-                    document.getElementById('pubStatusEmoji').innerText = p.is_premium ? '👑' : '🧩';
+                    document.getElementById('pubHeaderName').innerText = dispName;
+                    document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
                     
-                    // Генерируем красивую градиентную заглушку для чужого игрока
+                    // Аватарка
                     var initial = dispName.charAt(0).toUpperCase();
                     document.getElementById('pubAvatar').src = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
-                    
                     if (p.is_premium) {
                         document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)"; 
                         document.getElementById('pubAvatar').style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.4)"; 
@@ -2872,7 +2798,7 @@ function closeProfileModal() {
                         document.getElementById('pubAvatar').style.boxShadow = "0 0 18px rgba(139,92,246,0.55)"; 
                     }
 
-                    // Чужой Титул
+                    // Титул
                     var titleText = "ТИТУЛ: НЕ ВЫБРАН";
                     if (p.active_title) {
                         var foundTitle = allTitles.find(t => t.id === p.active_title);
@@ -2898,18 +2824,15 @@ function closeProfileModal() {
                         }
                     }
                     
-                    // Рендерим чужие любимые карты в ИЗОЛИРОВАННУЮ сетку (баг ликвидирован 🎯)
+                    // Любимые карты
                     var favGrid = document.getElementById('pubFavGrid');
                     favGrid.innerHTML = '';
-                    
-                    // Берем локальную копию чужих карт, не трогая глобальную userFavCards текущего игрока!
-                    var localPubCards = p.fav_cards || {};
-                    
                     for (let i = 0; i < 3; i++) {
-                        var cardId = localPubCards[i];
+                        var cardId = p.fav_cards[i];
                         if (cardId && cardId !== 'none') {
                             var card = allCards.find(c => c.id === cardId);
                             if (card) {
+                                // Если карта есть - открываем её 3D просмотр по клику!
                                 favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
                                 continue;
                             }
@@ -2925,6 +2848,16 @@ function closeProfileModal() {
                 tg.showAlert("Ошибка соединения с сервером");
                 closePublicProfile();
             }
+        }
+
+        function closePublicProfile() {
+            document.getElementById('publicProfileScreen').classList.remove('open');
+            manageBack();
+        }
+        
+        function openModalById(cardId) {
+            var card = allCards.find(c => c.id === cardId);
+            if(card) openModal(card);
         }
     </script>
 </body>
