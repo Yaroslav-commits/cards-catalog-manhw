@@ -595,11 +595,66 @@
 .ps-back { background: none; border: none; color: #fff; padding: 4px; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 600; cursor: pointer; }
 .ps-back svg { width: 24px; height: 24px; }
 
-.ps-user-info { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; text-align: center; }
-.ps-avatar-wrap { position: relative; margin-bottom: 12px; }
-.ps-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 25px rgba(168,85,247,0.4); }
-.ps-name { font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-.ps-title-text { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+/* ================= ОБНОВЛЕННАЯ ШАПКА ПРОФИЛЯ В ОДИН РЯД ================= */
+        .ps-user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 16px;
+            margin-top: 70px; /* Сдвигаем вниз, чтобы не перекрывалось кнопкой Назад */
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .ps-avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 74px;
+            height: 74px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ps-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 18px rgba(139,92,246,0.55);
+        }
+        
+        /* Блок с текстами правее авы */
+        .ps-user-texts {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            justify-content: center;
+            min-width: 0; /* Чтобы длинные ники красиво обрезались */
+        }
+        .ps-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ps-title-text {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--accent-light);
+            text-transform: uppercase;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
 .ps-box { 
     background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); 
