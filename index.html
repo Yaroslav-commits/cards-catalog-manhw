@@ -595,11 +595,43 @@
 .ps-back { background: none; border: none; color: #fff; padding: 4px; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 600; cursor: pointer; }
 .ps-back svg { width: 24px; height: 24px; }
 
-.ps-user-info { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; text-align: center; }
-.ps-avatar-wrap { position: relative; margin-bottom: 12px; }
-.ps-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 25px rgba(168,85,247,0.4); }
-.ps-name { font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-.ps-title-text { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+/* ================= ОБНОВЛЕННАЯ ШАПКА В ОДИН РЯД ================= */
+.ps-user-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 16px;
+    margin-top: 60px; /* Сдвигаем вниз, чтобы не перекрывало кнопку Назад */
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+    text-align: left;
+}
+.ps-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0;
+}
+.ps-avatar {
+    width: 100%; height: 100%;
+    border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 18px rgba(139,92,246,0.55);
+}
+.ps-user-texts {
+    display: flex; flex-direction: column; gap: 4px; justify-content: center; min-width: 0;
+}
+.ps-name {
+    font-size: 22px; font-weight: 800; color: #fff;
+    margin: 0; display: flex; align-items: center; gap: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ps-title-text {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.05em;
+    color: var(--accent-light); text-transform: uppercase; margin: 0;
+}
 
 .ps-box { 
     background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); 
@@ -1096,7 +1128,6 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 Назад
             </button>
-            <div style="font-weight: 700; font-size: 16px;" id="pubHeaderName">Игрок</div>
             <div style="width: 24px;"></div> 
         </div>
 
@@ -1104,8 +1135,10 @@
             <div class="ps-avatar-wrap">
                 <img src="" id="pubAvatar" class="ps-avatar">
             </div>
-            <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
-            <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            <div class="ps-user-texts">
+                <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
+                <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            </div>
         </div>
 
         <div class="ps-box">
@@ -1134,22 +1167,24 @@
         <div class="ps-head">
             <button class="ps-back" onclick="closeProfileModal()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-                Профиль
+                Назад
             </button>
-            <div style="font-weight: 700; font-size: 16px;" id="psHeaderName">Ярик</div>
-            <div style="width: 24px;"></div> </div>
+            <div style="width: 24px;"></div> 
+        </div>
 
         <div class="ps-user-info">
             <div class="ps-avatar-wrap">
                 <img src="" id="psAvatar" class="ps-avatar">
             </div>
-            <div class="ps-name" id="psName">Ярик <span id="psStatusEmoji" style="font-size: 20px;">🧩</span></div>
-            <div class="ps-title-text" id="psTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            <div class="ps-user-texts">
+                <div class="ps-name" id="psName">Ярик <span id="psStatusEmoji" style="font-size: 20px;">🧩</span></div>
+                <div class="ps-title-text" id="psTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            </div>
         </div>
 
         <div class="ps-box">
             <div class="ps-box-title">ЛЮБИМЫЕ КАРТЫ</div>
-            <div class="ps-fav-grid">
+            <div class="ps-fav-grid" id="myFavGrid">
                 <div class="ps-fav-slot" onclick="openFavSystem(0)">+</div>
                 <div class="ps-fav-slot" onclick="openFavSystem(1)">+</div>
                 <div class="ps-fav-slot" onclick="openFavSystem(2)">+</div>
@@ -2341,7 +2376,7 @@ function closeProfileModal() {
         var FAV_ITEMS_PER_PAGE = 8; // По 8 элементов на страницу (4 ряда по 2)
 
         function renderFavSlots() {
-            var container = document.querySelector('.ps-fav-grid');
+            var container = document.getElementById('myFavGrid');
             if (!container) return;
             container.innerHTML = '';
             
