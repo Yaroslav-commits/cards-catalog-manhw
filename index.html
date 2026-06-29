@@ -318,6 +318,9 @@
             font-size: 14px; font-weight: 600;
         }
         .daily-footer-btn.active { background: var(--accent); color: #fff; }
+        .daily-footer-btn.recover { background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; margin-bottom: 8px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        .daily-footer-btn.reset { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); margin-top: 0; }
+        .daily-item.recovery-mode { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
 
         /* ================= РАЗДЕЛ «ЗАРАБОТОК» ================= */
         .earn-screen {
@@ -1066,7 +1069,7 @@
                 <button class="close-btn" onclick="closeDailyModal()">✖</button>
             </div>
             <div class="daily-grid" id="dailyGrid"></div>
-            <button class="daily-footer-btn" id="claimDailyBtn" onclick="claimDailyBonus()">Возвращайтесь завтра!</button>
+            <div id="dailyFooterContainer" style="display:flex; flex-direction:column; padding: 0 15px 15px;"></div>
         </div>
     </div>
 
@@ -1506,6 +1509,8 @@
             .catch(e => console.error("Ошибка загрузки bgs.json:", e));
         var currentDailyDay = 0;
         var canClaimDaily = false;
+        var needsRecovery = false; // НОВОЕ
+        var dailyShownThisSession = false; // НОВОЕ (чтобы окно открывалось только 1 раз при входе) 
         
         var DAILY_REWARDS = [
             {krw: 200}, {krw: 300}, {krw: 350}, {krw: 350}, {krw: 400}, 
@@ -1598,9 +1603,19 @@
                     renderFavSlots(); // Отрисовываем любимые карты
                     // -----------------------------------
 
+                    currentDailyDay = data.daily_day || 0;
+                    canClaimDaily = data.can_claim_daily || false;
+                    needsRecovery = data.needs_recovery || false;
+
                     var dailyText = document.getElementById('dailyStatusText');
                     if (canClaimDaily) {
                         dailyText.innerHTML = '<span style="color:var(--accent-light)">🎁 Доступно</span>';
+                        
+                        // === АВТОМАТИЧЕСКОЕ ОТКРЫТИЕ ПРИ ВХОДЕ ===
+                        if (!dailyShownThisSession) {
+                            dailyShownThisSession = true;
+                            setTimeout(openDailyModal, 800); // Небольшая задержка для плавности
+                        }
                     } else {
                         dailyText.innerHTML = '<span style="color:#4ade80">✓</span> ' + currentDailyDay + '/30';
                     }
@@ -1626,7 +1641,7 @@
 
                 var classes = 'daily-item';
                 if (isPast) classes += ' claimed';
-                if (isToday) classes += ' available';
+                if (isToday) classes += (needsRecovery ? ' recovery-mode' : ' available');
 
                 var isPack = r.pack !== undefined;
                 var isMythic = r.pack === 'Mythic';
@@ -1652,15 +1667,18 @@
                 grid.innerHTML += '<div class="' + classes + '">' + innerHtml + '</div>';
             });
 
-            var btn = document.getElementById('claimDailyBtn');
+            // Рендер кнопок в зависимости от статуса пропущенных дней
+            var footerContainer = document.getElementById('dailyFooterContainer');
             if (canClaimDaily) {
-                btn.disabled = false;
-                btn.innerText = "Забрать награду";
-                btn.className = "daily-footer-btn active";
+                if (needsRecovery) {
+                    footerContainer.innerHTML = 
+                        '<button class="daily-footer-btn active recover" onclick="claimDailyBonus(\'recover\')">Восстановить стрик (10 💎)</button>' +
+                        '<button class="daily-footer-btn reset" onclick="claimDailyBonus(\'reset\')">Начать заново (Бесплатно)</button>';
+                } else {
+                    footerContainer.innerHTML = '<button class="daily-footer-btn active" onclick="claimDailyBonus(\'claim\')">Забрать награду</button>';
+                }
             } else {
-                btn.disabled = true;
-                btn.innerText = "Возвращайтесь завтра!";
-                btn.className = "daily-footer-btn";
+                footerContainer.innerHTML = '<button class="daily-footer-btn" disabled>Возвращайтесь завтра!</button>';
             }
         }
 
@@ -1672,17 +1690,22 @@
             document.getElementById('dailyModal').classList.remove('open');
         }
 
-        async function claimDailyBonus() {
+        async function claimDailyBonus(actionType = 'claim') {
             try {
                 var res = await fetch(API_BASE + '/api/claim_daily/' + userId, {
                     method: 'POST',
-                    headers: authHeaders()
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+                    body: JSON.stringify({ action: actionType })
                 });
                 var data = await res.json();
                 if (data.success) {
-                    fetchProfile();
+                    fetchProfile(); // Моментально обновляем интерфейс
                     closeDailyModal();
-                    tg.showAlert("Награда получена!");
+                    if (data.card_key) {
+                        tg.showAlert("Награда получена! Вам выпала карта, проверьте инвентарь.");
+                    } else {
+                        tg.showAlert("Ежедневная награда успешно получена!");
+                    }
                 } else {
                     tg.showAlert("Ошибка: " + data.error);
                 }
