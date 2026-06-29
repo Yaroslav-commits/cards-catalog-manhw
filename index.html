@@ -951,20 +951,25 @@
             width: 220px; height: 320px; position: relative;
             transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d; /* Фикс 3D для iOS */
         }
         .card-3d-inner.flipped { transform: rotateY(180deg) scale(1.1); animation: floatCube 4s ease-in-out infinite 1s; }
         
         .card-3d-front, .card-3d-back {
             position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 16px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* ЖЕСТКИЙ ФИКС: Чтобы картинка не была прозрачной на айфонах! */
+            border-radius: 16px;
         }
-        .card-3d-front {
-            background: linear-gradient(135deg, #12121a, #000);
-            border: 2px solid #06b6d4; display: flex; align-items: center; justify-content: center;
-            color: #06b6d4; font-family: monospace; font-size: 24px; font-weight: bold;
+        
+        /* Клёвая пульсирующая подсказка в стиле СИСТЕМЫ */
+        .sys-click-hint {
+            color: #06b6d4; font-family: monospace; font-size: 13px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px;
+            text-align: center; animation: pulseHint 1.5s infinite;
+            text-shadow: 0 0 8px rgba(6,182,212,0.4);
         }
-        .card-3d-back { transform: rotateY(180deg); background: #000; border: 3px solid #fff; }
-        .card-3d-back img { width: 100%; height: 100%; object-fit: cover; border-radius: 13px; }
+        @keyframes pulseHint { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
         
         .pack-card-info { margin-top: 40px; text-align: center; opacity: 0; transition: opacity 0.5s 1s; }
         .pack-card-info.show { opacity: 1; }
@@ -1540,9 +1545,11 @@
         </div>
 
         <div class="pack-result-container" id="packResultContainer">
-            <div class="card-3d-wrapper">
+            <div class="sys-click-hint" id="sysClickHint">[ КОСНИТЕСЬ КАРТЫ ]</div>
+
+            <div class="card-3d-wrapper" onclick="clickToFlipCard()" style="cursor: pointer;">
                 <div class="card-3d-inner" id="packCardInner">
-                    <div class="card-3d-front">СИСТЕМА</div>
+                    <div class="card-3d-front" style="text-shadow: 0 0 10px #06b6d4;">SYSTEM</div>
                     <div class="card-3d-back" id="packCardBack">
                         <img src="" id="packCardImg">
                     </div>
@@ -1557,7 +1564,6 @@
                 <button class="sys-btn" id="packCloseBtn" onclick="closeSystemPack()">ПОДТВЕРДИТЬ</button>
             </div>
         </div>
-    </div>
     <script>
         var tg = window.Telegram.WebApp;
         tg.expand();
@@ -1819,11 +1825,14 @@
             } catch(e) { tg.showAlert("Ошибка соединения"); }
         }
 
-        // ================= 3D АНИМАЦИЯ ОТКРЫТИЯ ПАКА =================
+// ================= 3D ИНТЕРАКТИВНАЯ АНИМАЦИЯ ОТКРЫТИЯ ПАКА =================
         var currentPackData = null;
+        var isCardFlipped = false; // Флаг контроля, чтобы нельзя было кликать дважды
 
         function startPackSequence(data) {
             currentPackData = data;
+            isCardFlipped = false; // Сбрасываем статус при новом открытии
+            
             document.getElementById('packOverlay').classList.add('open');
             document.getElementById('packBoxContainer').style.display = 'block';
             document.getElementById('packResultContainer').style.display = 'none';
@@ -1833,13 +1842,20 @@
             document.getElementById('packCardInner').classList.remove('flipped');
             document.getElementById('packCardInfo').classList.remove('show');
             document.getElementById('packCloseBtn').classList.remove('show');
+            
+            // Возвращаем подсказку в исходное состояние
+            var hintEl = document.getElementById('sysClickHint');
+            if (hintEl) {
+                hintEl.style.display = 'block';
+                hintEl.innerText = '[ КОСНИТЕСЬ КАРТЫ ДЛЯ ИДЕНТИФИКАЦИИ ]';
+            }
         }
 
         function openSystemPack() {
             var cube = document.getElementById('packCube');
-            cube.classList.add('shake'); // Тряска куба
+            cube.classList.add('shake');
             
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
             
             setTimeout(() => {
                 document.getElementById('sysFlash').classList.add('active'); // Вспышка света
@@ -1848,13 +1864,13 @@
                     document.getElementById('packBoxContainer').style.display = 'none';
                     document.getElementById('packResultContainer').style.display = 'flex';
                     
-                    // Подготавливаем реальную картинку и текст карты
+                    // Загружаем картинку карты на обратную сторону ЗАРАНЕЕ, пока она скрыта
                     document.getElementById('packCardImg').src = 'images/' + currentPackData.card_file;
                     document.getElementById('packCardTitle').innerText = currentPackData.card_name;
                     document.getElementById('packCardRarity').innerText = currentPackData.card_rarity;
                     
                     // Высчитываем цвет Ауры по редкости
-                    var rarityStr = currentPackData.card_rarity;
+                    var rarityStr = currentPackData.card_rarity || '';
                     var color = '#fff';
                     if(rarityStr.includes('Обыч')) color = '#e2e8f0';
                     else if(rarityStr.includes('Редк')) color = '#fef08a';
@@ -1877,18 +1893,34 @@
                     } else {
                         dupMsg.style.display = 'none';
                     }
-                    
-                    // Эффект переворота 3D
-                    setTimeout(() => {
-                        document.getElementById('packCardInner').classList.add('flipped');
-                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                        
-                        document.getElementById('packCardInfo').classList.add('show');
-                        document.getElementById('packCloseBtn').classList.add('show');
-                    }, 100);
+
+                    // ТЕПЕРЬ ВСЁ: Карта замерла рубашкой вверх ("SYSTEM") и ждёт тапа игрока! 😎
 
                 }, 200);
             }, 500);
+        }
+
+        // Функция интерактивного клика по карте
+        function clickToFlipCard() {
+            if (isCardFlipped || !currentPackData) return;
+            isCardFlipped = true; // Блокируем повторные клики
+            
+            if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+            
+            // Прячем системную подсказку клика
+            var hintEl = document.getElementById('sysClickHint');
+            if (hintEl) hintEl.style.display = 'none';
+            
+            // Запускаем премиальный 3D-переворот!
+            document.getElementById('packCardInner').classList.add('flipped');
+            
+            // С небольшой задержкой проявляем текст и кнопку закрытия под картой
+            setTimeout(() => {
+                document.getElementById('packCardInfo').classList.add('show');
+                document.getElementById('packCloseBtn').classList.add('show');
+            }, 400);
         }
 
         function closeSystemPack() {
