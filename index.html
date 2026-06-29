@@ -958,55 +958,72 @@
             animation: floatCube 4s ease-in-out infinite 1s; 
         }
         
-        /* === Анимации тапов по карте (как в Покемонах) === */
+        /* Анимации тапов по карте (как в Покемонах) */
         .card-tap-1 { animation: tapShake1 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         .card-tap-2 { animation: tapShake2 0.4s cubic-bezier(.36,.07,.19,.97) both; }
         
         @keyframes tapShake1 {
-            10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-2deg); }
-            20%, 80% { transform: translate3d(4px, 0, 0) rotate(2deg); }
-            30%, 50%, 70% { transform: translate3d(-6px, 0, 0) rotate(-4deg); }
-            40%, 60% { transform: translate3d(6px, 0, 0) rotate(4deg); }
+            10%, 90% { transform: translate3d(-3px, 0, 0) rotate(-3deg); }
+            20%, 80% { transform: translate3d(5px, 0, 0) rotate(3deg); }
+            30%, 50%, 70% { transform: translate3d(-7px, 0, 0) rotate(-5deg); }
+            40%, 60% { transform: translate3d(7px, 0, 0) rotate(5deg); }
         }
         @keyframes tapShake2 {
-            10%, 90% { transform: translate3d(-4px, 0, 0) scale(1.05) rotate(-3deg); }
-            20%, 80% { transform: translate3d(6px, 0, 0) scale(1.05) rotate(3deg); }
-            30%, 50%, 70% { transform: translate3d(-10px, 0, 0) scale(1.05) rotate(-6deg); }
-            40%, 60% { transform: translate3d(10px, 0, 0) scale(1.05) rotate(6deg); }
-            100% { transform: translate3d(0, 0, 0) scale(1.05); } /* Замирает перед взрывом */
+            10%, 90% { transform: translate3d(-5px, 0, 0) scale(1.05) rotate(-4deg); }
+            20%, 80% { transform: translate3d(7px, 0, 0) scale(1.05) rotate(4deg); }
+            30%, 50%, 70% { transform: translate3d(-12px, 0, 0) scale(1.05) rotate(-7deg); }
+            40%, 60% { transform: translate3d(12px, 0, 0) scale(1.05) rotate(7deg); }
+            100% { transform: translate3d(0, 0, 0) scale(1.05); }
         }
         
         .card-3d-front, .card-3d-back {
-            position: absolute; width: 100%; height: 100%;
+            position: absolute; inset: 0;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
             border-radius: 16px;
-        }
-        .card-3d-front {
-            background: linear-gradient(135deg, #12121a, #000);
-            border: 2px solid #06b6d4; display: flex; align-items: center; justify-content: center;
-            color: #06b6d4; font-family: monospace; font-size: 24px; font-weight: bold;
+            overflow: hidden;
         }
         
-        /* === ЖЕСТКИЙ ФИКС КАРТИНКИ И ЭПИЧНАЯ АУРА === */
+        /* ПЕРЕДНЯЯ СТОРОНА (РУБАШКА SYSTEM) */
+        .card-3d-front {
+            background: linear-gradient(135deg, #09090e, #020204);
+            border: 2px solid #06b6d4; display: flex; align-items: center; justify-content: center;
+            color: #06b6d4; font-family: monospace; font-size: 24px; font-weight: bold;
+            transform: translateZ(2px); -webkit-transform: translateZ(2px); /* Выталкиваем вперед, чтобы не перекрывало зад */
+            box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+        
+        /* ЗАДНЯЯ СТОРОНА (КАРТИНКА С МОЩНОЙ АУРОЙ СИСТЕМЫ) */
         .card-3d-back { 
-            transform: rotateY(180deg); background: #000; border: 3px solid #fff; 
-            --aura-color: #fff; /* Динамическая переменная для JS */
+            transform: rotateY(180deg) translateZ(2px); 
+            -webkit-transform: rotateY(180deg) translateZ(2px); /* Фикс мертвой зоны Safari */
+            background: #000; border: 3px solid #fff;
+            --aura-color: #fff;
         }
         .card-3d-back img { 
             width: 100%; height: 100%; 
             object-fit: cover; 
-            border-radius: 13px; 
             display: block; 
-            -webkit-user-drag: none; /* Запрещает айфонам "тащить" картинку, ломая верстку */
+            -webkit-user-drag: none;
         }
         
+        /* МЕГА ЭПИЧЕСКАЯ ПОЛЛЫХАЮЩАЯ АУРА */
         .card-3d-back.epic-glow {
-            animation: epicAuraAnim 2s infinite ease-in-out;
+            animation: epicAuraAnim 1.8s infinite ease-in-out;
         }
         @keyframes epicAuraAnim {
-            0%, 100% { box-shadow: 0 0 30px var(--aura-color), inset 0 0 15px var(--aura-color); }
-            50% { box-shadow: 0 0 80px var(--aura-color), 0 0 120px var(--aura-color), inset 0 0 40px var(--aura-color); }
+            0%, 100% { 
+                box-shadow: 0 0 35px var(--aura-color), 
+                            0 0 15px var(--aura-color), 
+                            inset 0 0 20px var(--aura-color); 
+            }
+            50% { 
+                box-shadow: 0 0 75px var(--aura-color), 
+                            0 0 140px var(--aura-color), 
+                            0 0 200px rgba(255,255,255,0.1),
+                            inset 0 0 45px var(--aura-color); 
+                transform: rotateY(180deg) translateZ(2px) scale(1.02);
+            }
         }
         
         .pack-card-info { margin-top: 40px; text-align: center; opacity: 0; transition: opacity 0.5s 1s; }
@@ -1590,11 +1607,11 @@
         </div>
 
         <div class="pack-result-container" id="packResultContainer">
-            <div class="sys-click-hint" id="sysClickHint">[ КОСНИТЕСЬ КАРТЫ ]</div>
+            <div class="sys-click-hint" id="sysClickHint">[ КОСНИТЕСЬ КАРТЫ ДЛЯ ИДЕНТИФИКАЦИИ ]</div>
 
             <div class="card-3d-wrapper" onclick="clickToFlipCard()" style="cursor: pointer;">
                 <div class="card-3d-inner" id="packCardInner">
-                    <div class="card-3d-front" style="text-shadow: 0 0 10px #06b6d4;">SYSTEM</div>
+                    <div class="card-3d-front">SYSTEM</div>
                     <div class="card-3d-back" id="packCardBack">
                         <img src="" id="packCardImg">
                     </div>
@@ -1908,6 +1925,9 @@
             
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
             
+            // ПРЕДЗАГРУЗКА: Прописываем путь к картинке СРАЗУ при взрыве куба, чтобы браузер успел её скачать
+            document.getElementById('packCardImg').src = 'images/' + currentPackData.card_file;
+
             setTimeout(() => {
                 var flash = document.getElementById('sysFlash');
                 flash.classList.remove('active');
@@ -1918,7 +1938,6 @@
                     document.getElementById('packBoxContainer').style.display = 'none';
                     document.getElementById('packResultContainer').style.display = 'flex';
                     
-                    document.getElementById('packCardImg').src = 'images/' + currentPackData.card_file;
                     document.getElementById('packCardTitle').innerText = currentPackData.card_name;
                     document.getElementById('packCardRarity').innerText = currentPackData.card_rarity;
                     
@@ -1931,7 +1950,6 @@
                     else if(rarityStr.includes('Мифич')) color = '#ef4444';
                     else if(rarityStr.includes('Божест')) color = '#a855f7';
                     
-                    // Передаем цвет в CSS-переменную для эпичного свечения!
                     var backEl = document.getElementById('packCardBack');
                     backEl.style.setProperty('--aura-color', color);
                     backEl.style.borderColor = color;
