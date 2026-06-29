@@ -2591,23 +2591,41 @@
 
         // Кнопка «Назад» Telegram: показываем, когда открыт экран/лист
         function manageBack() {
-            if (!tg.BackButton) return;
-            var earnOpen = document.getElementById('earnScreen').classList.contains('open');
-            var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
-            var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
-            var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); // НОВОЕ
-            
-            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen) tg.BackButton.show();
-            else tg.BackButton.hide();
+            var anyModalOpen = 
+                document.getElementById('deckModal').classList.contains('open') || 
+                document.getElementById('dailyModal').classList.contains('open') || 
+                document.getElementById('cardModal').classList.contains('open') ||
+                document.getElementById('settingsModal').classList.contains('open') ||
+                document.getElementById('publicProfileScreen').classList.contains('open') ||
+                (document.getElementById('packOverlay') && document.getElementById('packOverlay').classList.contains('open'));
+
+            var notMainScreen = !document.getElementById('mainScreen').classList.contains('active');
+
+            if (anyModalOpen || notMainScreen) {
+                tg.BackButton.show();
+            } else {
+                tg.BackButton.hide();
+            }
         }
         if (tg.BackButton && tg.BackButton.onClick) {
-            tg.BackButton.onClick(function() {
-                if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
-                else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
-                else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
-                else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile(); // НОВОЕ
-            });
-        }
+// Setup Telegram Back Button
+        tg.BackButton.onClick(function() {
+            if (document.getElementById('packOverlay') && document.getElementById('packOverlay').classList.contains('open')) {
+                closeSystemPack();
+            } else if (document.getElementById('deckModal').classList.contains('open')) {
+                closeDeckModal();
+            } else if (document.getElementById('dailyModal').classList.contains('open')) {
+                closeDailyModal();
+            } else if (document.getElementById('cardModal').classList.contains('open')) {
+                closeModal();
+            } else if (document.getElementById('settingsModal').classList.contains('open')) {
+                closeSettingsModal();
+            } else if (document.getElementById('publicProfileScreen').classList.contains('open')) {
+                closePublicProfile();
+            } else if (document.getElementById('topsScreen').classList.contains('active')) {
+                closeTops();
+            }
+        });
 // Открытие профиля
 function openProfileModal() {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
