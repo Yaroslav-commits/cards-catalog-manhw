@@ -949,27 +949,65 @@
         }
         .card-3d-inner {
             width: 220px; height: 320px; position: relative;
-            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
-            -webkit-transform-style: preserve-3d; /* Фикс 3D для iOS */
+            -webkit-transform-style: preserve-3d;
         }
-        .card-3d-inner.flipped { transform: rotateY(180deg) scale(1.1); animation: floatCube 4s ease-in-out infinite 1s; }
+        .card-3d-inner.flipped { 
+            transform: rotateY(180deg) scale(1.1); 
+            animation: floatCube 4s ease-in-out infinite 1s; 
+        }
+        
+        /* === Анимации тапов по карте (как в Покемонах) === */
+        .card-tap-1 { animation: tapShake1 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        .card-tap-2 { animation: tapShake2 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        
+        @keyframes tapShake1 {
+            10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-2deg); }
+            20%, 80% { transform: translate3d(4px, 0, 0) rotate(2deg); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0) rotate(-4deg); }
+            40%, 60% { transform: translate3d(6px, 0, 0) rotate(4deg); }
+        }
+        @keyframes tapShake2 {
+            10%, 90% { transform: translate3d(-4px, 0, 0) scale(1.05) rotate(-3deg); }
+            20%, 80% { transform: translate3d(6px, 0, 0) scale(1.05) rotate(3deg); }
+            30%, 50%, 70% { transform: translate3d(-10px, 0, 0) scale(1.05) rotate(-6deg); }
+            40%, 60% { transform: translate3d(10px, 0, 0) scale(1.05) rotate(6deg); }
+            100% { transform: translate3d(0, 0, 0) scale(1.05); } /* Замирает перед взрывом */
+        }
         
         .card-3d-front, .card-3d-back {
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden;
-            -webkit-backface-visibility: hidden; /* ЖЕСТКИЙ ФИКС: Чтобы картинка не была прозрачной на айфонах! */
+            -webkit-backface-visibility: hidden;
             border-radius: 16px;
         }
-        
-        /* Клёвая пульсирующая подсказка в стиле СИСТЕМЫ */
-        .sys-click-hint {
-            color: #06b6d4; font-family: monospace; font-size: 13px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px;
-            text-align: center; animation: pulseHint 1.5s infinite;
-            text-shadow: 0 0 8px rgba(6,182,212,0.4);
+        .card-3d-front {
+            background: linear-gradient(135deg, #12121a, #000);
+            border: 2px solid #06b6d4; display: flex; align-items: center; justify-content: center;
+            color: #06b6d4; font-family: monospace; font-size: 24px; font-weight: bold;
         }
-        @keyframes pulseHint { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        
+        /* === ЖЕСТКИЙ ФИКС КАРТИНКИ И ЭПИЧНАЯ АУРА === */
+        .card-3d-back { 
+            transform: rotateY(180deg); background: #000; border: 3px solid #fff; 
+            --aura-color: #fff; /* Динамическая переменная для JS */
+        }
+        .card-3d-back img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+            border-radius: 13px; 
+            display: block; 
+            -webkit-user-drag: none; /* Запрещает айфонам "тащить" картинку, ломая верстку */
+        }
+        
+        .card-3d-back.epic-glow {
+            animation: epicAuraAnim 2s infinite ease-in-out;
+        }
+        @keyframes epicAuraAnim {
+            0%, 100% { box-shadow: 0 0 30px var(--aura-color), inset 0 0 15px var(--aura-color); }
+            50% { box-shadow: 0 0 80px var(--aura-color), 0 0 120px var(--aura-color), inset 0 0 40px var(--aura-color); }
+        }
         
         .pack-card-info { margin-top: 40px; text-align: center; opacity: 0; transition: opacity 0.5s 1s; }
         .pack-card-info.show { opacity: 1; }
@@ -986,6 +1024,13 @@
         }
         .sys-btn.show { opacity: 1; pointer-events: auto; }
         .sys-btn:active { background: #06b6d4; color: #000; }
+        
+        .sys-click-hint {
+            color: #06b6d4; font-family: monospace; font-size: 14px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 25px;
+            text-align: center; text-shadow: 0 0 10px rgba(6,182,212,0.6);
+            transition: 0.2s;
+        }
     </style>
 </head>
 <body>
@@ -1827,11 +1872,13 @@
 
 // ================= 3D ИНТЕРАКТИВНАЯ АНИМАЦИЯ ОТКРЫТИЯ ПАКА =================
         var currentPackData = null;
-        var isCardFlipped = false; // Флаг контроля, чтобы нельзя было кликать дважды
+        var isCardFlipped = false; 
+        var packTapCount = 0; // Считаем тапы!
 
         function startPackSequence(data) {
             currentPackData = data;
-            isCardFlipped = false; // Сбрасываем статус при новом открытии
+            isCardFlipped = false; 
+            packTapCount = 0; // Сбрасываем тапы при новом паке
             
             document.getElementById('packOverlay').classList.add('open');
             document.getElementById('packBoxContainer').style.display = 'block';
@@ -1839,15 +1886,19 @@
             
             document.getElementById('packCube').classList.remove('shake');
             document.getElementById('sysFlash').classList.remove('active');
-            document.getElementById('packCardInner').classList.remove('flipped');
+            
+            var innerCard = document.getElementById('packCardInner');
+            innerCard.classList.remove('flipped', 'card-tap-1', 'card-tap-2');
+            innerCard.style.transform = ''; // Сброс скейла
+            
+            document.getElementById('packCardBack').classList.remove('epic-glow');
             document.getElementById('packCardInfo').classList.remove('show');
             document.getElementById('packCloseBtn').classList.remove('show');
             
-            // Возвращаем подсказку в исходное состояние
             var hintEl = document.getElementById('sysClickHint');
             if (hintEl) {
                 hintEl.style.display = 'block';
-                hintEl.innerText = '[ КОСНИТЕСЬ КАРТЫ ДЛЯ ИДЕНТИФИКАЦИИ ]';
+                hintEl.innerText = '[ КОСНИТЕСЬ ПАКА : 3 ]';
             }
         }
 
@@ -1858,34 +1909,36 @@
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
             
             setTimeout(() => {
-                document.getElementById('sysFlash').classList.add('active'); // Вспышка света
+                var flash = document.getElementById('sysFlash');
+                flash.classList.remove('active');
+                void flash.offsetWidth;
+                flash.classList.add('active'); 
                 
                 setTimeout(() => {
                     document.getElementById('packBoxContainer').style.display = 'none';
                     document.getElementById('packResultContainer').style.display = 'flex';
                     
-                    // Загружаем картинку карты на обратную сторону ЗАРАНЕЕ, пока она скрыта
                     document.getElementById('packCardImg').src = 'images/' + currentPackData.card_file;
                     document.getElementById('packCardTitle').innerText = currentPackData.card_name;
                     document.getElementById('packCardRarity').innerText = currentPackData.card_rarity;
                     
-                    // Высчитываем цвет Ауры по редкости
                     var rarityStr = currentPackData.card_rarity || '';
                     var color = '#fff';
                     if(rarityStr.includes('Обыч')) color = '#e2e8f0';
                     else if(rarityStr.includes('Редк')) color = '#fef08a';
                     else if(rarityStr.includes('Эпич')) color = '#4ade80';
                     else if(rarityStr.includes('Легенд')) color = '#60a5fa';
-                    else if(rarityStr.includes('Мифич')) color = '#f87171';
-                    else if(rarityStr.includes('Божест')) color = '#c084fc';
+                    else if(rarityStr.includes('Мифич')) color = '#ef4444';
+                    else if(rarityStr.includes('Божест')) color = '#a855f7';
                     
+                    // Передаем цвет в CSS-переменную для эпичного свечения!
                     var backEl = document.getElementById('packCardBack');
+                    backEl.style.setProperty('--aura-color', color);
                     backEl.style.borderColor = color;
-                    backEl.style.boxShadow = '0 0 40px ' + color + ', inset 0 0 20px ' + color;
+                    
                     document.getElementById('packCardRarity').style.color = color;
                     document.getElementById('packCardRarity').style.textShadow = '0 0 10px ' + color;
                     
-                    // Показ компенсации дубликата
                     var dupMsg = document.getElementById('packDupMsg');
                     if (currentPackData.is_duplicate) {
                         dupMsg.style.display = 'inline-block';
@@ -1893,34 +1946,62 @@
                     } else {
                         dupMsg.style.display = 'none';
                     }
-
-                    // ТЕПЕРЬ ВСЁ: Карта замерла рубашкой вверх ("SYSTEM") и ждёт тапа игрока! 😎
-
                 }, 200);
             }, 500);
         }
 
-        // Функция интерактивного клика по карте
+        // ================= МЕХАНИКА 3-Х ТАПОВ =================
         function clickToFlipCard() {
             if (isCardFlipped || !currentPackData) return;
-            isCardFlipped = true; // Блокируем повторные клики
             
-            if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-            
-            // Прячем системную подсказку клика
+            packTapCount++;
+            var innerCard = document.getElementById('packCardInner');
             var hintEl = document.getElementById('sysClickHint');
-            if (hintEl) hintEl.style.display = 'none';
-            
-            // Запускаем премиальный 3D-переворот!
-            document.getElementById('packCardInner').classList.add('flipped');
-            
-            // С небольшой задержкой проявляем текст и кнопку закрытия под картой
-            setTimeout(() => {
-                document.getElementById('packCardInfo').classList.add('show');
-                document.getElementById('packCloseBtn').classList.add('show');
-            }, 400);
+
+            // ПЕРВЫЙ ТАП: Легкая тряска
+            if (packTapCount === 1) {
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                innerCard.classList.remove('card-tap-1');
+                void innerCard.offsetWidth; // Магия для перезапуска анимации
+                innerCard.classList.add('card-tap-1');
+                if (hintEl) hintEl.innerText = '[ РАЗРЫВ ПАКА... 2 ]';
+                return;
+            }
+
+            // ВТОРОЙ ТАП: Сильная тряска и увеличение
+            if (packTapCount === 2) {
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                innerCard.classList.remove('card-tap-2');
+                void innerCard.offsetWidth;
+                innerCard.classList.add('card-tap-2');
+                if (hintEl) hintEl.innerText = '[ КРИТИЧЕСКИЙ РАЗРЫВ : 1 ]';
+                return;
+            }
+
+            // ТРЕТИЙ ТАП: Взрыв, вспышка и переворот!
+            if (packTapCount >= 3) {
+                isCardFlipped = true;
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+                
+                if (hintEl) hintEl.style.display = 'none';
+                
+                // Эпичная вспышка света!
+                var flash = document.getElementById('sysFlash');
+                flash.classList.remove('active');
+                void flash.offsetWidth;
+                flash.classList.add('active');
+
+                // Очищаем классы тапов и запускаем переворот + пульсирующую ауру
+                innerCard.classList.remove('card-tap-1', 'card-tap-2');
+                innerCard.style.transform = ''; 
+                innerCard.classList.add('flipped');
+                document.getElementById('packCardBack').classList.add('epic-glow');
+                
+                setTimeout(() => {
+                    document.getElementById('packCardInfo').classList.add('show');
+                    document.getElementById('packCloseBtn').classList.add('show');
+                }, 600);
+            }
         }
 
         function closeSystemPack() {
