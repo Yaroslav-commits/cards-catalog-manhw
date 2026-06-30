@@ -3147,6 +3147,11 @@ function closeProfileModal() {
             if (el) el.innerText = text;
         }
 // ================= ЧУЖОЙ ПРОФИЛЬ (БЕЗ БАГОВ И ВЫЛЕТОВ) =================
+function closePublicProfile() {
+    document.getElementById('publicProfileScreen').classList.remove('open');
+    manageBack();
+}
+
 async function openPublicProfile(targetId) {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             
