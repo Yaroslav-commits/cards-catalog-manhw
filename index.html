@@ -1590,8 +1590,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
     </nav>
-
-    <div class="pack-overlay" id="packOverlay">
+<div class="pack-overlay" id="packOverlay">
         <div class="sys-flash" id="sysFlash"></div>
         
         <div class="pack-box-container" id="packBoxContainer" onclick="openSystemPack()">
@@ -1619,7 +1618,15 @@
                 <button class="sys-btn" id="packCloseBtn" onclick="closeSystemPack()">ПОДТВЕРДИТЬ</button>
             </div>
         </div>
-    </div>
+            
+            <div class="pack-card-info" id="packCardInfo">
+                <div class="pack-card-title" id="packCardTitle">ИМЯ КАРТЫ</div>
+                <div class="pack-card-rarity" id="packCardRarity">Редкость</div>
+                <div class="pack-dup-msg" id="packDupMsg" style="display:none;"></div>
+                <br>
+                <button class="sys-btn" id="packCloseBtn" onclick="closeSystemPack()">ПОДТВЕРДИТЬ</button>
+            </div>
+        </div>
     <script>
         var tg = window.Telegram.WebApp;
         tg.expand();
@@ -2584,41 +2591,23 @@
 
         // Кнопка «Назад» Telegram: показываем, когда открыт экран/лист
         function manageBack() {
-            var anyModalOpen = 
-                document.getElementById('deckModal').classList.contains('open') || 
-                document.getElementById('dailyModal').classList.contains('open') || 
-                document.getElementById('cardModal').classList.contains('open') ||
-                document.getElementById('settingsModal').classList.contains('open') ||
-                document.getElementById('publicProfileScreen').classList.contains('open') ||
-                (document.getElementById('packOverlay') && document.getElementById('packOverlay').classList.contains('open'));
-
-            var notMainScreen = !document.getElementById('mainScreen').classList.contains('active');
-
-            if (anyModalOpen || notMainScreen) {
-                tg.BackButton.show();
-            } else {
-                tg.BackButton.hide();
-            }
+            if (!tg.BackButton) return;
+            var earnOpen = document.getElementById('earnScreen').classList.contains('open');
+            var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
+            var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
+            var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); // НОВОЕ
+            
+            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen) tg.BackButton.show();
+            else tg.BackButton.hide();
         }
         if (tg.BackButton && tg.BackButton.onClick) {
-// Setup Telegram Back Button
-        tg.BackButton.onClick(function() {
-            if (document.getElementById('packOverlay') && document.getElementById('packOverlay').classList.contains('open')) {
-                closeSystemPack();
-            } else if (document.getElementById('deckModal').classList.contains('open')) {
-                closeDeckModal();
-            } else if (document.getElementById('dailyModal').classList.contains('open')) {
-                closeDailyModal();
-            } else if (document.getElementById('cardModal').classList.contains('open')) {
-                closeModal();
-            } else if (document.getElementById('settingsModal').classList.contains('open')) {
-                closeSettingsModal();
-            } else if (document.getElementById('publicProfileScreen').classList.contains('open')) {
-                closePublicProfile();
-            } else if (document.getElementById('topsScreen').classList.contains('active')) {
-                closeTops();
-            }
-        });
+            tg.BackButton.onClick(function() {
+                if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
+                else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
+                else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
+                else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile(); // НОВОЕ
+            });
+        }
 // Открытие профиля
 function openProfileModal() {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
@@ -3158,7 +3147,7 @@ function closeProfileModal() {
             if (el) el.innerText = text;
         }
 // ================= ЧУЖОЙ ПРОФИЛЬ (БЕЗ БАГОВ И ВЫЛЕТОВ) =================
-        async function openPublicProfile(targetId) {
+async function openPublicProfile(targetId) {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             
             document.getElementById('publicProfileScreen').classList.add('open');
@@ -3233,12 +3222,6 @@ function closeProfileModal() {
                 tg.showAlert("Ошибка соединения с сервером");
                 closePublicProfile();
             }
-        }
-
-        // Вынесли функцию отдельно наружу, чтобы код не крашился!
-        function closePublicProfile() {
-            document.getElementById('publicProfileScreen').classList.remove('open');
-            manageBack();
         }
     </script>
 </body>
