@@ -1070,6 +1070,55 @@
             text-align: center; text-shadow: 0 0 10px rgba(6,182,212,0.6);
             transition: 0.2s;
         }
+/* ================= ROYALE PASS SCREEN ================= */
+        .pass-hero {
+            text-align: center; padding: 24px 16px; margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(18, 18, 26, 0.6));
+            border: 1px solid var(--border-color); border-radius: 22px;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.01);
+        }
+        .pass-lvl-badge {
+            font-size: 54px; font-weight: 900; color: #fff;
+            text-shadow: 0 0 25px rgba(139, 92, 246, 0.6); margin-bottom: 4px; line-height: 1;
+        }
+        .pass-xp-text {
+            font-size: 14px; font-weight: 800; color: var(--accent-light); margin-bottom: 14px; letter-spacing: 0.5px;
+        }
+        .pass-progress-bg {
+            width: 100%; height: 12px; background: rgba(255, 255, 255, 0.04);
+            border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .pass-progress-fill {
+            width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            box-shadow: 0 0 14px var(--accent); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .pass-rewards-container { display: flex; flex-direction: column; gap: 10px; }
+        .pass-reward-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 16px; background: var(--surface); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        .pass-reward-left { display: flex; align-items: center; gap: 14px; }
+        .pass-reward-ico {
+            width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,0.04);
+            display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+        }
+        .pass-reward-lvl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .pass-reward-name { font-size: 16px; font-weight: 700; color: #fff; margin-top: 1px; }
+        
+        .pass-action-btn {
+            width: 100%; border: none; padding: 16px; border-radius: 16px;
+            font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.2s; text-align: center; margin-top: 16px;
+        }
+        .pass-action-btn.disabled {
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-muted); cursor: default;
+        }
+        .pass-action-btn.active {
+            background: linear-gradient(135deg, #10b981, #059669); color: #fff; cursor: pointer;
+            box-shadow: 0 6px 22px rgba(16, 185, 129, 0.35); animation: sysPulse 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -1155,10 +1204,10 @@
             </div>
         </div>
 
-        <div class="pass-bar" onclick="wip('PASS')">
+        <div class="pass-bar" onclick="openPassModal()">
             <div class="pass-badge">PASS</div>
-            <div class="pass-mid">Уровень <b>1/14</b></div>
-            <div class="pass-right">Прогресс <b>10%</b> ›</div>
+            <div class="pass-mid">Уровень <b>1</b></div>
+            <div class="pass-right">Прогресс <b>0%</b> ›</div>
         </div>
 
         <div class="module-card" onclick="wip('Банда')" style="margin-bottom:14px;">
@@ -1619,6 +1668,39 @@
         <button class="nav-btn" onclick="switchTab('tops', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
+<div class="profile-screen" id="passScreen">
+        <div class="profile-bg-container">
+            <div class="profile-bg-overlay" style="background: linear-gradient(to bottom, rgba(10,10,18,0) 0%, #0a0a12 100%);"></div>
+        </div>
+
+        <div class="ps-head">
+            <button class="ps-back" onclick="closePassModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                Назад
+            </button>
+            <div style="width: 24px;"></div> 
+        </div>
+
+        <div class="tops-header">
+            <div class="tops-title">⭐ ManhwCard Pass</div>
+        </div>
+
+        <div class="pass-hero">
+            <div class="sys-kicker" style="margin-bottom: 8px;">Текущий уровень пропуска</div>
+            <div class="pass-lvl-badge" id="passLevelVal">1</div>
+            <div class="pass-xp-text" id="passXpVal">0 / 3000 XP</div>
+            <div class="pass-progress-bg">
+                <div class="pass-progress-fill" id="passProgressFill"></div>
+            </div>
+        </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">БЛИЖАЙШИЕ НАГРАДЫ</div>
+            <div class="pass-rewards-container" id="passRewardsList"></div>
+        </div>
+
+        <button class="pass-action-btn disabled" id="passActionBtn">Следующая награда через 3000 XP</button>
+    </div>
     </nav>
 <div class="pack-overlay" id="packOverlay">
         <div class="sys-flash" id="sysFlash"></div>
@@ -2619,15 +2701,16 @@
             _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 4200);
         }
 
-        // Кнопка «Назад» Telegram: показываем, когда открыт экран/лист
+// Кнопка «Назад» Telegram: показываем, когда открыт экран/лист
         function manageBack() {
             if (!tg.BackButton) return;
             var earnOpen = document.getElementById('earnScreen').classList.contains('open');
             var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
             var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
-            var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); // НОВОЕ
+            var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); 
+            var passOpen = document.getElementById('passScreen').classList.contains('open'); // НОВОЕ
             
-            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen) tg.BackButton.show();
+            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen) tg.BackButton.show();
             else tg.BackButton.hide();
         }
         if (tg.BackButton && tg.BackButton.onClick) {
@@ -2635,7 +2718,8 @@
                 if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
                 else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
                 else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
-                else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile(); // НОВОЕ
+                else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile(); 
+                else if (document.getElementById('passScreen').classList.contains('open')) closePassModal(); // НОВОЕ
             });
         }
 // Открытие профиля
@@ -3256,6 +3340,67 @@ async function openPublicProfile(targetId) {
                 console.error("Ошибка в функции openPublicProfile:", e);
                 tg.showAlert("Ошибка соединения с сервером");
                 closePublicProfile();
+            }
+        }
+// ================= ЛОГИКА ROYALE PASS (ТЕСТОВЫЙ СТЕНД) =================
+        var passXp = 3000; // Поставь тут например 1200 для проверки обычного режима!
+        var passLevel = 1;
+
+        function openPassModal() {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('passScreen').classList.add('open');
+            manageBack();
+            renderPassScreen();
+        }
+
+        function closePassModal() {
+            document.getElementById('passScreen').classList.remove('open');
+            manageBack();
+        }
+
+        function renderPassScreen() {
+            document.getElementById('passLevelVal').innerText = passLevel;
+            document.getElementById('passXpVal').innerText = passXp + " / 3000 XP";
+            
+            var percent = Math.min(100, (passXp / 3000) * 100);
+            document.getElementById('passProgressFill').style.width = percent + "%";
+
+            var btn = document.getElementById('passActionBtn');
+            if (passXp >= 3000) {
+                btn.className = "pass-action-btn active";
+                btn.innerText = "Забрать награду за уровень";
+                btn.onclick = function() {
+                    if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert("Вы успешно повысили уровень Royale Pass!");
+                    passXp = 0; // Сбрасываем опыт для демонстрации следующего лвла
+                    passLevel++;
+                    renderPassScreen();
+                };
+            } else {
+                btn.className = "pass-action-btn disabled";
+                var leftXp = 3000 - passXp;
+                btn.innerText = "Следующая награда через " + leftXp + " XP";
+                btn.onclick = null;
+            }
+
+            // Генерируем 3 будущие награды вперед
+            var list = document.getElementById('passRewardsList');
+            list.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                var targetLvl = passLevel + i;
+                var rewardName = (targetLvl % 2 === 0) ? "500 💎 Алмазов" : "Коробка карт 📦";
+                var ico = (targetLvl % 2 === 0) ? "💎" : "📦";
+                
+                list.innerHTML += '<div class="pass-reward-row">' +
+                    '<div class="pass-reward-left">' +
+                        '<div class="pass-reward-ico">' + ico + '</div>' +
+                        '<div>' +
+                            '<div class="pass-reward-lvl">Уровень ' + targetLvl + '</div>' +
+                            '<div class="pass-reward-name">' + rewardName + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="title-status" style="color:var(--text-muted)">🔒 Ожидание</div>' +
+                '</div>';
             }
         }
     </script>
