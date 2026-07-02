@@ -1070,55 +1070,114 @@
             text-align: center; text-shadow: 0 0 10px rgba(6,182,212,0.6);
             transition: 0.2s;
         }
-/* ================= ROYALE PASS SCREEN ================= */
-        .pass-hero {
-            text-align: center; padding: 24px 16px; margin-bottom: 20px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(18, 18, 26, 0.6));
-            border: 1px solid var(--border-color); border-radius: 22px;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.01);
+/* ================= MANHWCARD PASS SCREEN ================= */
+        .pass-screen {
+            position: fixed; inset: 0; z-index: 1500;
+            background: #0a0a0f;
+            transform: translateX(100%); transition: transform 0.28s ease;
+            overflow-y: auto; padding-bottom: 40px;
         }
-        .pass-lvl-badge {
-            font-size: 54px; font-weight: 900; color: #fff;
-            text-shadow: 0 0 25px rgba(139, 92, 246, 0.6); margin-bottom: 4px; line-height: 1;
+        .pass-screen.open { transform: translateX(0); }
+
+        .pass-top-banner {
+            position: relative; padding: 50px 20px 30px; margin-bottom: 16px;
+            background: linear-gradient(to right, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%), url('https://placehold.co/800x400/12121a/4c1d95?text=Bg') center/cover;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .pass-xp-text {
-            font-size: 14px; font-weight: 800; color: var(--accent-light); margin-bottom: 14px; letter-spacing: 0.5px;
+        .pass-top-banner::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, #0a0a0f 0%, transparent 60%);
         }
-        .pass-progress-bg {
-            width: 100%; height: 12px; background: rgba(255, 255, 255, 0.04);
-            border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05);
+        .pass-top-content { position: relative; z-index: 2; }
+        .pass-main-title { font-size: 38px; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 8px; letter-spacing: -1px; }
+        .pass-main-title span { font-family: 'Brush Script MT', cursive, serif; font-weight: 500; color: #a855f7; font-size: 42px; line-height: 0.8; display: block; margin-top: -5px;}
+        .pass-main-desc { font-size: 13px; color: #d1d5db; line-height: 1.4; }
+        .pass-main-desc span { color: #a855f7; font-weight: 700; }
+
+        .pass-section {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 20px; padding: 20px; margin: 0 16px 16px;
         }
-        .pass-progress-fill {
-            width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2));
-            box-shadow: 0 0 14px var(--accent); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .pass-rewards-container { display: flex; flex-direction: column; gap: 10px; }
-        .pass-reward-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 16px; background: var(--surface); border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-        }
-        .pass-reward-left { display: flex; align-items: center; gap: 14px; }
-        .pass-reward-ico {
-            width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,0.04);
-            display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
-        }
-        .pass-reward-lvl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .pass-reward-name { font-size: 16px; font-weight: 700; color: #fff; margin-top: 1px; }
         
-        .pass-action-btn {
-            width: 100%; border: none; padding: 16px; border-radius: 16px;
-            font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-            transition: 0.2s; text-align: center; margin-top: 16px;
+        /* Блок прогресса (Гексагон) */
+        .pass-prog-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .pass-hex-wrap {
+            width: 68px; height: 76px; flex-shrink: 0;
+            background: linear-gradient(135deg, #a855f7, #4c1d95);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex; align-items: center; justify-content: center; padding: 2px;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
         }
-        .pass-action-btn.disabled {
-            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);
-            color: var(--text-muted); cursor: default;
+        .pass-hex-inner {
+            width: 100%; height: 100%; background: #12121a;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .pass-action-btn.active {
-            background: linear-gradient(135deg, #10b981, #059669); color: #fff; cursor: pointer;
-            box-shadow: 0 6px 22px rgba(16, 185, 129, 0.35); animation: sysPulse 2s infinite;
+        .pass-hex-num { font-size: 24px; font-weight: 900; color: #fff; line-height: 1; margin-top: 4px; }
+        .pass-hex-lbl { font-size: 9px; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
+        
+        .pass-prog-info { flex: 1; }
+        .pass-prog-top-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+        .pass-prog-xp-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; margin-bottom: 10px; }
+        .pass-prog-xp-row .current { color: #fff; }
+        .pass-prog-xp-row .current span { color: var(--text-muted); font-weight: 600; }
+        .pass-prog-xp-row .left { color: var(--accent-light); font-size: 14px;}
+        
+        .pass-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; }
+        .pass-bar-fill { height: 100%; background: var(--accent); border-radius: 5px; transition: width 0.3s ease; box-shadow: 0 0 10px var(--accent); }
+
+        .pass-activities { font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 12px; }
+        .pass-icons-row { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 0 10px; }
+        .pass-ico-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #d1d5db; font-weight: 600; }
+        .pass-ico-item svg { width: 16px; height: 16px; color: var(--accent-light); }
+
+        .pass-btn {
+            width: 100%; padding: 16px; border-radius: 14px; font-size: 14px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 8px; border: none; transition: 0.2s;
         }
+        .pass-btn.waiting { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); }
+        .pass-btn.waiting span { color: var(--accent-light); }
+        .pass-btn.ready { background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff; cursor: pointer; box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3); }
+        .pass-btn.ready:active { transform: scale(0.98); }
+
+        /* Задания */
+        .pass-sec-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .pass-sec-title-left { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 800; color: #fff; }
+        .pass-sec-title-left svg { width: 20px; height: 20px; color: var(--accent-light); }
+        .pass-sec-title-right { text-align: right; font-size: 10px; color: var(--text-muted); line-height: 1.3; }
+        
+        .pass-task { margin-bottom: 16px; }
+        .pass-task:last-child { margin-bottom: 0; }
+        .pass-task-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+        .pass-task-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+        .pass-task-xp { font-size: 13px; font-weight: 800; color: var(--accent-light); }
+        .pass-task-bar-wrap { display: flex; align-items: center; gap: 12px; }
+        .pass-task-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+        .pass-task-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+        .pass-task-count { font-size: 11px; font-weight: 600; color: var(--text-muted); min-width: 40px; text-align: right; }
+        .pass-task-foot { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 20px; }
+
+        /* Награды */
+        .pass-sec-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+        .rew-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+        .rew-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; padding: 16px 6px; display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .rew-ico { font-size: 32px; font-weight: 900; margin-bottom: 8px; line-height: 1; }
+        .rew-krw { color: var(--accent-light); text-shadow: 0 0 15px rgba(139,92,246,0.5); }
+        .rew-dia { color: #06b6d4; text-shadow: 0 0 15px rgba(6,182,212,0.5); font-size: 28px; }
+        .rew-bc { color: #fff; background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 8px; }
+        
+        .rew-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .rew-rarity { font-size: 9px; padding: 2px 8px; border-radius: 8px; margin-bottom: 10px; font-weight: 700; border: 1px solid transparent; }
+        .rew-rarity.common { color: #94a3b8; background: rgba(148,163,184,0.1); border-color: rgba(148,163,184,0.3); }
+        .rew-rarity.epic { color: #06b6d4; background: rgba(6,182,212,0.1); border-color: rgba(6,182,212,0.3); }
+        .rew-rarity.rare { color: var(--accent-light); background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3); }
+        
+        .rew-amount { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 12px; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 10px; }
+        .rew-chance { font-size: 10px; font-weight: 800; color: #e2e8f0; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 10px; }
+        .rew-chance span { color: var(--text-muted); font-weight: 600; }
     </style>
 </head>
 <body>
@@ -1206,8 +1265,8 @@
 
         <div class="pass-bar" onclick="openPassModal()">
             <div class="pass-badge">PASS</div>
-            <div class="pass-mid">Уровень <b>1</b></div>
-            <div class="pass-right">Прогресс <b>0%</b> ›</div>
+            <div class="pass-mid" id="mainMenuPassLvl">Уровень <b>1</b></div>
+            <div class="pass-right" id="mainMenuPassProg">Прогресс <b>0%</b> ›</div>
         </div>
 
         <div class="module-card" onclick="wip('Банда')" style="margin-bottom:14px;">
@@ -1668,38 +1727,145 @@
         <button class="nav-btn" onclick="switchTab('tops', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
-<div class="profile-screen" id="passScreen">
-        <div class="profile-bg-container">
-            <div class="profile-bg-overlay" style="background: linear-gradient(to bottom, rgba(10,10,18,0) 0%, #0a0a12 100%);"></div>
-        </div>
-
-        <div class="ps-head">
+    <div class="pass-screen" id="passScreen">
+        <div class="ps-head" style="position: absolute; top: 10px; left: 10px; z-index: 10; margin: 0;">
             <button class="ps-back" onclick="closePassModal()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-                Назад
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <div style="width: 24px;"></div> 
         </div>
 
-        <div class="tops-header">
-            <div class="tops-title">⭐ ManhwCard Pass</div>
-        </div>
-
-        <div class="pass-hero">
-            <div class="sys-kicker" style="margin-bottom: 8px;">Текущий уровень пропуска</div>
-            <div class="pass-lvl-badge" id="passLevelVal">1</div>
-            <div class="pass-xp-text" id="passXpVal">0 / 3000 XP</div>
-            <div class="pass-progress-bg">
-                <div class="pass-progress-fill" id="passProgressFill"></div>
+        <div class="pass-top-banner">
+            <div class="pass-top-content">
+                <div class="pass-main-title">ManhwCard <span>Pass</span></div>
+                <div class="pass-main-desc">Повышай уровень за активность<br>и получай <span>награды</span></div>
             </div>
         </div>
 
-        <div class="ps-box">
-            <div class="ps-box-title">БЛИЖАЙШИЕ НАГРАДЫ</div>
-            <div class="pass-rewards-container" id="passRewardsList"></div>
+        <div class="pass-section">
+            <div class="pass-prog-header">
+                <div class="pass-hex-wrap">
+                    <div class="pass-hex-inner">
+                        <div class="pass-hex-num" id="passHexLvl">37</div>
+                        <div class="pass-hex-lbl">УРОВЕНЬ</div>
+                    </div>
+                </div>
+                <div class="pass-prog-info">
+                    <div class="pass-prog-top-row">
+                        <span>Текущий прогресс (i)</span>
+                        <span>До следующего уровня</span>
+                    </div>
+                    <div class="pass-prog-xp-row">
+                        <div class="current" id="passXpText">2 450 <span>/ 3 000 XP</span></div>
+                        <div class="left" id="passLeftTextTop">550 XP</div>
+                    </div>
+                    <div class="pass-bar-bg"><div class="pass-bar-fill" id="passProgressBar"></div></div>
+                </div>
+            </div>
+
+            <div class="pass-activities">Уровень повышается за любую активность в игре:</div>
+            <div class="pass-icons-row">
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M14.5 6.5L18 3h3v3l-3.5 3.5"/><path d="M10 5L4 11"/></svg> Бои</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Крутки</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/></svg> Победы</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Инвайты</div>
+            </div>
+
+            <button class="pass-btn waiting" id="passMainBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 
+                Следующая награда через <span id="passLeftTextBtn">550 XP</span>
+            </button>
         </div>
 
-        <button class="pass-action-btn disabled" id="passActionBtn">Следующая награда через 3000 XP</button>
+        <div class="pass-section">
+            <div class="pass-sec-title">
+                <div class="pass-sec-title-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+                    ЕЖЕНЕДЕЛЬНЫЕ ЗАДАНИЯ
+                </div>
+                <div class="pass-sec-title-right">↻ Обновление через<br>4д 12ч</div>
+            </div>
+
+            <div class="pass-task">
+                <div class="pass-task-top">
+                    <div class="pass-task-name">Проведи 10 боёв</div>
+                    <div class="pass-task-xp">+500 XP</div>
+                </div>
+                <div class="pass-task-bar-wrap">
+                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:60%;"></div></div>
+                    <div class="pass-task-count">6 / 10</div>
+                </div>
+            </div>
+            
+            <div class="pass-task">
+                <div class="pass-task-top">
+                    <div class="pass-task-name">Одержи 5 побед</div>
+                    <div class="pass-task-xp">+400 XP</div>
+                </div>
+                <div class="pass-task-bar-wrap">
+                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:60%;"></div></div>
+                    <div class="pass-task-count">3 / 5</div>
+                </div>
+            </div>
+
+            <div class="pass-task">
+                <div class="pass-task-top">
+                    <div class="pass-task-name">Сделай 5 круток</div>
+                    <div class="pass-task-xp">+350 XP</div>
+                </div>
+                <div class="pass-task-bar-wrap">
+                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:40%;"></div></div>
+                    <div class="pass-task-count">2 / 5</div>
+                </div>
+            </div>
+
+            <div class="pass-task">
+                <div class="pass-task-top">
+                    <div class="pass-task-name">Пригласи 3 друзей</div>
+                    <div class="pass-task-xp">+300 XP</div>
+                </div>
+                <div class="pass-task-bar-wrap">
+                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:33%;"></div></div>
+                    <div class="pass-task-count">1 / 3</div>
+                </div>
+            </div>
+
+            <div class="pass-task-foot">Выполняй задания и получай опыт для повышения уровня!</div>
+        </div>
+
+        <div class="pass-section">
+            <div class="pass-sec-title" style="margin-bottom: 0;">
+                <div class="pass-sec-title-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 2 7.5 4 12 7 12 7zM12 7s1.5-5 4.5-3S12 7 12 7z"/></svg>
+                    <div>НАГРАДА ЗА ПОВЫШЕНИЕ<div class="pass-sec-sub">Получай случайную награду при аппе уровня</div></div>
+                </div>
+            </div>
+
+            <div class="rew-grid">
+                <div class="rew-card">
+                    <div class="rew-ico rew-krw">₩</div>
+                    <div class="rew-name">KRW</div>
+                    <div class="rew-rarity common">Обычная</div>
+                    <div class="rew-amount">150 – 250</div>
+                    <div class="rew-chance">70% <span>ШАНС</span></div>
+                </div>
+                <div class="rew-card">
+                    <div class="rew-ico rew-dia">💎</div>
+                    <div class="rew-name">Алмазы</div>
+                    <div class="rew-rarity epic">Эпическая</div>
+                    <div class="rew-amount">2 – 6</div>
+                    <div class="rew-chance">5% <span>ШАНС</span></div>
+                </div>
+                <div class="rew-card">
+                    <div class="rew-ico rew-bc">B</div>
+                    <div class="rew-name">BattleCoin</div>
+                    <div class="rew-rarity rare">Редкая</div>
+                    <div class="rew-amount">50 – 100</div>
+                    <div class="rew-chance">25% <span>ШАНС</span></div>
+                </div>
+            </div>
+            
+            <div class="pass-task-foot" style="margin-top:12px;">Награда определяется случайным образом</div>
+        </div>
     </div>
     </nav>
 <div class="pack-overlay" id="packOverlay">
@@ -3342,8 +3508,9 @@ async function openPublicProfile(targetId) {
                 closePublicProfile();
             }
         }
-// ================= ЛОГИКА ROYALE PASS (ТЕСТОВЫЙ СТЕНД) =================
-        var passXp = 3000; // Поставь тут например 1200 для проверки обычного режима!
+// ================= ЛОГИКА MANHWCARD PASS =================
+        var passXp = 1000; // Для теста: поставь тут 3000, чтобы проверить кнопку повышения!
+        var passMaxXp = 3000;
         var passLevel = 1;
 
         function openPassModal() {
@@ -3358,51 +3525,49 @@ async function openPublicProfile(targetId) {
             manageBack();
         }
 
-        function renderPassScreen() {
-            document.getElementById('passLevelVal').innerText = passLevel;
-            document.getElementById('passXpVal').innerText = passXp + " / 3000 XP";
-            
-            var percent = Math.min(100, (passXp / 3000) * 100);
-            document.getElementById('passProgressFill').style.width = percent + "%";
+        // Синхронизация кнопки в главном меню
+        function updateMainMenuPass() {
+            var pct = Math.floor((passXp / passMaxXp) * 100);
+            var lvlEl = document.getElementById('mainMenuPassLvl');
+            var progEl = document.getElementById('mainMenuPassProg');
+            if(lvlEl) lvlEl.innerHTML = 'Уровень <b>' + passLevel + '</b>';
+            if(progEl) progEl.innerHTML = 'Прогресс <b>' + pct + '%</b> ›';
+        }
 
-            var btn = document.getElementById('passActionBtn');
-            if (passXp >= 3000) {
-                btn.className = "pass-action-btn active";
-                btn.innerText = "Забрать награду за уровень";
+        function renderPassScreen() {
+            var percent = Math.min(100, (passXp / passMaxXp) * 100);
+            var xpLeft = Math.max(0, passMaxXp - passXp);
+
+            // Обновляем гексагон и тексты
+            document.getElementById('passHexLvl').innerText = passLevel;
+            document.getElementById('passXpText').innerHTML = passXp + ' <span>/ ' + passMaxXp + ' XP</span>';
+            document.getElementById('passProgressBar').style.width = percent + '%';
+            document.getElementById('passLeftTextTop').innerText = xpLeft + ' XP';
+
+            var btn = document.getElementById('passMainBtn');
+            if (passXp >= passMaxXp) {
+                // Если опыт накоплен — кнопка меняется!
+                btn.className = "pass-btn ready";
+                btn.innerHTML = "Забрать награду за уровень";
                 btn.onclick = function() {
                     if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert("Вы успешно повысили уровень Royale Pass!");
-                    passXp = 0; // Сбрасываем опыт для демонстрации следующего лвла
-                    passLevel++;
-                    renderPassScreen();
+                    tg.showAlert("Уровень повышен! Случайная награда начислена.");
+                    passXp = 0; // Сбрасываем опыт
+                    passLevel++; // Повышаем уровень
+                    renderPassScreen(); // Перерисовываем
                 };
             } else {
-                btn.className = "pass-action-btn disabled";
-                var leftXp = 3000 - passXp;
-                btn.innerText = "Следующая награда через " + leftXp + " XP";
+                // Опыта не хватает
+                btn.className = "pass-btn waiting";
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Следующая награда через <span id="passLeftTextBtn">' + xpLeft + ' XP</span>';
                 btn.onclick = null;
             }
-
-            // Генерируем 3 будущие награды вперед
-            var list = document.getElementById('passRewardsList');
-            list.innerHTML = '';
-            for (let i = 1; i <= 3; i++) {
-                var targetLvl = passLevel + i;
-                var rewardName = (targetLvl % 2 === 0) ? "500 💎 Алмазов" : "Коробка карт 📦";
-                var ico = (targetLvl % 2 === 0) ? "💎" : "📦";
-                
-                list.innerHTML += '<div class="pass-reward-row">' +
-                    '<div class="pass-reward-left">' +
-                        '<div class="pass-reward-ico">' + ico + '</div>' +
-                        '<div>' +
-                            '<div class="pass-reward-lvl">Уровень ' + targetLvl + '</div>' +
-                            '<div class="pass-reward-name">' + rewardName + '</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="title-status" style="color:var(--text-muted)">🔒 Ожидание</div>' +
-                '</div>';
-            }
+            
+            updateMainMenuPass(); // Обновляем плашку в меню
         }
+        
+        // Вызываем сразу при старте, чтобы плашка в меню правильно отображалась до открытия пасса
+        updateMainMenuPass();
     </script>
 </body>
 </html>
