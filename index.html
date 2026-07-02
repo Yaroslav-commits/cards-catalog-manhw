@@ -1127,9 +1127,9 @@
         .pass-bar-fill { height: 100%; background: var(--accent); border-radius: 5px; transition: width 0.3s ease; box-shadow: 0 0 10px var(--accent); }
 
         .pass-activities { font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 12px; }
-        .pass-icons-row { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 0 10px; }
-        .pass-ico-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #d1d5db; font-weight: 600; }
-        .pass-ico-item svg { width: 16px; height: 16px; color: var(--accent-light); }
+        .pass-icons-row { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 0; }
+        .pass-ico-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #d1d5db; font-weight: 600; letter-spacing: 0.2px; }
+        .pass-ico-item svg { width: 14px; height: 14px; color: var(--accent-light); }
 
         .pass-btn {
             width: 100%; padding: 16px; border-radius: 14px; font-size: 14px; font-weight: 700;
@@ -1764,10 +1764,11 @@
 
             <div class="pass-activities">Уровень повышается за любую активность в игре:</div>
             <div class="pass-icons-row">
-                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M14.5 6.5L18 3h3v3l-3.5 3.5"/><path d="M10 5L4 11"/></svg> Бои</div>
-                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Крутки</div>
-                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/></svg> Победы</div>
-                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Инвайты</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M14.5 6.5L18 3h3v3l-3.5 3.5"/><path d="M10 5L4 11"/></svg> Бои</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Крутки</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg> Победы</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Инвайты</div>
+                <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg> Прочее</div>
             </div>
 
             <button class="pass-btn waiting" id="passMainBtn">
@@ -1849,7 +1850,9 @@
                     <div class="rew-chance">70% <span>ШАНС</span></div>
                 </div>
                 <div class="rew-card">
-                    <div class="rew-ico rew-dia">💎</div>
+                    <div class="rew-ico rew-dia">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" style="width: 32px; height: 32px; display: block; margin: 0 auto; color: #06b6d4;"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
+                    </div>
                     <div class="rew-name">Алмазы</div>
                     <div class="rew-rarity epic">Эпическая</div>
                     <div class="rew-amount">2 – 6</div>
