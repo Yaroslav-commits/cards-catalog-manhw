@@ -3556,13 +3556,18 @@ async function openPublicProfile(targetId) {
         var realPassLevel = 1;
         var claimedPassLevels = 1;
         var passXp = 0;
-        var passMaxXp = 3000; // Требуемый опыт на 1 уровень
+        var passMaxXp = 3000;
+        var userPassQuests = {};
 
         function openPassModal() {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             document.getElementById('passScreen').classList.add('open');
             manageBack();
+            
+            // Жёстко триггерим отрисовку квестов и таймера при каждом открытии окна
             renderPassScreen();
+            renderPassQuests();
+            updatePassResetTimer();
         }
 
         function closePassModal() {
@@ -3591,78 +3596,31 @@ async function openPublicProfile(targetId) {
             var percent = Math.min(100, (passXp / passMaxXp) * 100);
             var xpLeft = Math.max(0, passMaxXp - passXp);
 
-            document.getElementById('passHexLvl').innerText = realPassLevel;
-            document.getElementById('passXpText').innerHTML = passXp + ' <span>/ ' + passMaxXp + ' XP</span>';
-            document.getElementById('passProgressBar').style.width = percent + '%';
-            document.getElementById('passLeftTextTop').innerText = xpLeft + ' XP';
+            var hexLvl = document.getElementById('passHexLvl');
+            var xpText = document.getElementById('passXpText');
+            var progressBar = document.getElementById('passProgressBar');
+            var leftTextTop = document.getElementById('passLeftTextTop');
+
+            if (hexLvl) hexLvl.innerText = realPassLevel;
+            if (xpText) xpText.innerHTML = passXp + ' <span>/ ' + passMaxXp + ' XP</span>';
+            if (progressBar) progressBar.style.width = percent + '%';
+            if (leftTextTop) leftTextTop.innerText = xpLeft + ' XP';
 
             var btn = document.getElementById('passMainBtn');
-            
-            // Проверяем, есть ли несобранные награды
-            if (unclaimed > 0) {
-                btn.className = "pass-btn ready";
-                btn.innerHTML = "Забрать награду (" + unclaimed + " шт)";
-                btn.onclick = claimPassLevel;
-            } else {
-                btn.className = "pass-btn waiting";
-                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Следующая награда через <span id="passLeftTextBtn">' + xpLeft + ' XP</span>';
-                btn.onclick = null;
+            if (btn) {
+                if (unclaimed > 0) {
+                    btn.className = "pass-btn ready";
+                    btn.innerHTML = "Забрать награду (" + unclaimed + " шт)";
+                    btn.onclick = claimPassLevel;
+                } else {
+                    btn.className = "pass-btn waiting";
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Следующая награда через <span>' + xpLeft + ' XP</span>';
+                    btn.onclick = null;
+                }
             }
             
             updateMainMenuPass();
         }
-
-        async function claimPassLevel() {
-            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
-            var btn = document.getElementById('passMainBtn');
-            btn.innerHTML = "Получение...";
-            btn.onclick = null; // Защита от двойного клика
-            
-            try {
-                // ДЕЛАЕМ РЕАЛЬНЫЙ ЗАПРОС К БЭКЕНДУ
-                var res = await fetch(API_BASE + '/api/pass_claim_level/' + userId, { method: 'POST', headers: authHeaders() });
-                var data = await res.json();
-                
-                if (data.success) {
-                    showPremiumToast(data.reward);
-                    fetchProfile(); // Перезагружаем профиль, чтобы обновились уровни и баланс
-                } else {
-                    tg.showAlert("Ошибка: " + data.error);
-                    renderPassScreen();
-                }
-            } catch(e) {
-                tg.showAlert("Ошибка сети!");
-                renderPassScreen();
-            }
-        }
-
-        // ========================================================
-        // ФУНКЦИЯ КРАСИВОГО УВЕДОМЛЕНИЯ (ВОТ ОНА!)
-        // ========================================================
-        function showPremiumToast(rewardText) {
-            var toast = document.getElementById('webAppPremiumToast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'webAppPremiumToast';
-                toast.className = 'premium-toast';
-                document.body.appendChild(toast);
-            }
-            
-            toast.innerHTML = '<span class="toast-icon">🎉</span> <span>Награда получена: <b style="color:#c4b5fd;">' + rewardText + '</b></span>';
-            toast.classList.add('active');
-            
-            if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-            
-            setTimeout(function() {
-                toast.classList.remove('active');
-            }, 3500);
-        }
-
-        // Вызываем сразу при старте, чтобы плашка в меню правильно отображалась до открытия пасса
-        updateMainMenuPass();
-        var userPassQuests = {};
 
         function renderPassQuests() {
             var container = document.getElementById('passQuestsContainer');
@@ -3671,7 +3629,7 @@ async function openPublicProfile(targetId) {
             
             var keys = Object.keys(userPassQuests);
             if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">Задания появятся позже</div>';
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">Задания появятся после загрузки профиля...</div>';
                 return;
             }
             
@@ -3682,9 +3640,8 @@ async function openPublicProfile(targetId) {
                 
                 var barHtml = '';
                 if (isDone) {
-                    // ЗЕЛЕНАЯ ГАЛОЧКА И ЗАПОЛНЕННАЯ ПОЛОСКА ПРИ ВЫПОЛНЕНИИ
                     barHtml = '<div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:100%; background:#4ade80; box-shadow:0 0 10px rgba(74,222,128,0.5);"></div></div>' +
-                              '<div class="pass-task-count" style="color:#4ade80; font-size:12px;">✓ Выполнено</div>';
+                              '<div class="pass-task-count" style="color:#4ade80; font-size:12px; font-weight:600;">✓ Выполнено</div>';
                 } else {
                     barHtml = '<div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:' + pct + '%;"></div></div>' +
                               '<div class="pass-task-count">' + q.progress + ' / ' + q.target + '</div>';
@@ -3692,7 +3649,7 @@ async function openPublicProfile(targetId) {
                 
                 var html = '<div class="pass-task">' +
                     '<div class="pass-task-top">' +
-                        '<div class="pass-task-name" ' + (isDone ? 'style="color:#4ade80;"' : '') + '>' + q.name + '</div>' +
+                        '<div class="pass-task-name" ' + (isDone ? 'style="color:#4ade80; font-weight:600;"' : '') + '>' + q.name + '</div>' +
                         '<div class="pass-task-xp">' + (isDone ? '' : '+' + q.xp + ' XP') + '</div>' +
                     '</div>' +
                     '<div class="pass-task-bar-wrap">' + barHtml + '</div>' +
@@ -3702,7 +3659,6 @@ async function openPublicProfile(targetId) {
             });
         }
 
-        // РАСЧЁТ ВРЕМЕНИ ДО ПОНЕДЕЛЬНИКА 00:00 (МСК)
         function updatePassResetTimer() {
             var now = new Date();
             var mskOffset = 3 * 60 * 60 * 1000;
@@ -3733,8 +3689,54 @@ async function openPublicProfile(targetId) {
             if (el) el.innerHTML = '↻ Обновление через<br>' + text;
         }
 
-        // Обновляем таймер раз в минуту
+        async function claimPassLevel() {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
+            var btn = document.getElementById('passMainBtn');
+            if (!btn) return;
+            btn.innerHTML = "Получение...";
+            btn.onclick = null;
+            
+            try {
+                var res = await fetch(API_BASE + '/api/pass_claim_level/' + userId, { method: 'POST', headers: authHeaders() });
+                var data = await res.json();
+                
+                if (data.success) {
+                    showPremiumToast(data.reward);
+                    fetchProfile();
+                } else {
+                    tg.showAlert("Ошибка: " + data.error);
+                    renderPassScreen();
+                }
+            } catch(e) {
+                tg.showAlert("Ошибка сети!");
+                renderPassScreen();
+            }
+        }
+
+        function showPremiumToast(rewardText) {
+            var toast = document.getElementById('webAppPremiumToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'webAppPremiumToast';
+                toast.className = 'premium-toast';
+                document.body.appendChild(toast);
+            }
+            
+            toast.innerHTML = '<span class="toast-icon">🎉</span> <span>Награда получена: <b style="color:#c4b5fd;">' + rewardText + '</b></span>';
+            toast.classList.add('active');
+            
+            if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+            
+            setTimeout(function() {
+                toast.classList.remove('active');
+            }, 3500);
+        }
+
+        // Таймеры обновления
         setInterval(updatePassResetTimer, 60000);
+        updateMainMenuPass();
     </script>
 </body>
 </html>
