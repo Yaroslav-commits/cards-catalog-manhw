@@ -1806,51 +1806,11 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
                     ЕЖЕНЕДЕЛЬНЫЕ ЗАДАНИЯ
                 </div>
-                <div class="pass-sec-title-right">↻ Обновление через<br>4д 12ч</div>
+                <div class="pass-sec-title-right" id="passQuestTimer">↻ Обновление через<br>...</div>
             </div>
 
-            <div class="pass-task">
-                <div class="pass-task-top">
-                    <div class="pass-task-name">Проведи 10 боёв</div>
-                    <div class="pass-task-xp">+500 XP</div>
-                </div>
-                <div class="pass-task-bar-wrap">
-                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:60%;"></div></div>
-                    <div class="pass-task-count">6 / 10</div>
-                </div>
-            </div>
-            
-            <div class="pass-task">
-                <div class="pass-task-top">
-                    <div class="pass-task-name">Одержи 5 побед</div>
-                    <div class="pass-task-xp">+400 XP</div>
-                </div>
-                <div class="pass-task-bar-wrap">
-                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:60%;"></div></div>
-                    <div class="pass-task-count">3 / 5</div>
-                </div>
-            </div>
-
-            <div class="pass-task">
-                <div class="pass-task-top">
-                    <div class="pass-task-name">Сделай 5 круток</div>
-                    <div class="pass-task-xp">+350 XP</div>
-                </div>
-                <div class="pass-task-bar-wrap">
-                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:40%;"></div></div>
-                    <div class="pass-task-count">2 / 5</div>
-                </div>
-            </div>
-
-            <div class="pass-task">
-                <div class="pass-task-top">
-                    <div class="pass-task-name">Пригласи 3 друзей</div>
-                    <div class="pass-task-xp">+300 XP</div>
-                </div>
-                <div class="pass-task-bar-wrap">
-                    <div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:33%;"></div></div>
-                    <div class="pass-task-count">1 / 3</div>
-                </div>
+            <div id="passQuestsContainer">
+                <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">Загрузка заданий...</div>
             </div>
 
             <div class="pass-task-foot">Выполняй задания и получай опыт для повышения уровня!</div>
@@ -2043,16 +2003,16 @@
                     currentDailyDay = data.daily_day || 0;
                     canClaimDaily = data.can_claim_daily || false;
 
-                    // Синхронизируем титулы напрямую с бэкенда (никаких JSON!)
+                    // Синхронизируем титулы напрямую с бэкенда
                     allTitles = data.all_titles || [];
                     userUnlockedTitles = data.unlocked_titles || [];
                     userActiveTitle = data.active_title;
 
-                    // === ВОТ ТУТ КАК ТЫ И СДЕЛАЛ: ПРИСВАИВАЕМ ДАННЫЕ ПАССА ===
+                    // Обновляем данные Пасса
                     realPassLevel = data.pass_level || 1;
                     passXp = data.pass_xp || 0;
                     claimedPassLevels = data.claimed_pass_levels || 1;
-                    // ========================================================
+                    userPassQuests = data.pass_quests || {};
 
                     // Обновляем текст в профиле
                     var titleText = "ТИТУЛ: НЕ ВЫБРАН";
@@ -2069,10 +2029,6 @@
                     applyProfileBg(); // Вызываем установку фона!
                     
                     document.getElementById('psWins').innerText = data.wins || 0;
-
-                    // --- ОБНОВЛЕНИЕ СТАТИСТИКИ И КАРТ ---
-                    userFavCards = data.fav_cards || {};
-                    document.getElementById('psWins').innerText = data.wins || 0;
                     document.getElementById('psLosses').innerText = data.losses || 0;
                     document.getElementById('psWinrate').innerText = (data.winrate || 0) + '%';
                     document.getElementById('psMaxStreak').innerText = data.max_streak || 0;
@@ -2087,22 +2043,21 @@
                     if (canClaimDaily) {
                         dailyText.innerHTML = '<span style="color:var(--accent-light)">🎁 Доступно</span>';
                         
-                        // === АВТОМАТИЧЕСКОЕ ОТКРЫТИЕ ПРИ ВХОДЕ ===
                         if (!dailyShownThisSession) {
                             dailyShownThisSession = true;
-                            setTimeout(openDailyModal, 800); // Небольшая задержка для плавности
+                            setTimeout(openDailyModal, 800);
                         }
                     } else {
                         dailyText.innerHTML = '<span style="color:#4ade80">✓</span> ' + currentDailyDay + '/30';
                     }
                     updateCollectionInfo(allCards.length);
 
-                    // === А ТУТ В САМОМ КОНЦЕ ОБНОВЛЯЕМ ИНТЕРФЕЙС ПАССА ===
+                    // Перерисовываем интерфейс пасса при получении свежих данных
                     if (document.getElementById('passScreen').classList.contains('open')) {
                         renderPassScreen();
+                        renderPassQuests();
                     }
                     updateMainMenuPass();
-                    // ====================================================
 
                 } else {
                     console.error("Профиль не загрузился, HTTP " + res.status);
@@ -3545,13 +3500,17 @@ async function openPublicProfile(targetId) {
         var realPassLevel = 1;
         var claimedPassLevels = 1;
         var passXp = 0;
-        var passMaxXp = 3000; // Требуемый опыт на 1 уровень
+        var passMaxXp = 3000;
+        var userPassQuests = {};
 
         function openPassModal() {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             document.getElementById('passScreen').classList.add('open');
             manageBack();
+            
             renderPassScreen();
+            renderPassQuests();
+            updatePassResetTimer();
         }
 
         function closePassModal() {
@@ -3580,41 +3539,113 @@ async function openPublicProfile(targetId) {
             var percent = Math.min(100, (passXp / passMaxXp) * 100);
             var xpLeft = Math.max(0, passMaxXp - passXp);
 
-            document.getElementById('passHexLvl').innerText = realPassLevel;
-            document.getElementById('passXpText').innerHTML = passXp + ' <span>/ ' + passMaxXp + ' XP</span>';
-            document.getElementById('passProgressBar').style.width = percent + '%';
-            document.getElementById('passLeftTextTop').innerText = xpLeft + ' XP';
+            var hexLvl = document.getElementById('passHexLvl');
+            var xpText = document.getElementById('passXpText');
+            var progressBar = document.getElementById('passProgressBar');
+            var leftTextTop = document.getElementById('passLeftTextTop');
+
+            if (hexLvl) hexLvl.innerText = realPassLevel;
+            if (xpText) xpText.innerHTML = passXp + ' <span>/ ' + passMaxXp + ' XP</span>';
+            if (progressBar) progressBar.style.width = percent + '%';
+            if (leftTextTop) leftTextTop.innerText = xpLeft + ' XP';
 
             var btn = document.getElementById('passMainBtn');
-            
-            // Проверяем, есть ли несобранные награды
-            if (unclaimed > 0) {
-                btn.className = "pass-btn ready";
-                btn.innerHTML = "Забрать награду (" + unclaimed + " шт)";
-                btn.onclick = claimPassLevel;
-            } else {
-                btn.className = "pass-btn waiting";
-                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Следующая награда через <span id="passLeftTextBtn">' + xpLeft + ' XP</span>';
-                btn.onclick = null;
+            if (btn) {
+                if (unclaimed > 0) {
+                    btn.className = "pass-btn ready";
+                    btn.innerHTML = "Забрать награду (" + unclaimed + " шт)";
+                    btn.onclick = claimPassLevel;
+                } else {
+                    btn.className = "pass-btn waiting";
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Следующая награда через <span>' + xpLeft + ' XP</span>';
+                    btn.onclick = null;
+                }
             }
             
             updateMainMenuPass();
         }
 
+        function renderPassQuests() {
+            var container = document.getElementById('passQuestsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            var keys = Object.keys(userPassQuests);
+            if (keys.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">Задания появятся после загрузки профиля...</div>';
+                return;
+            }
+            
+            keys.forEach(function(k) {
+                var q = userPassQuests[k];
+                var pct = Math.min(100, (q.progress / q.target) * 100);
+                var isDone = q.done || q.progress >= q.target;
+                
+                var barHtml = '';
+                if (isDone) {
+                    barHtml = '<div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:100%; background:#4ade80; box-shadow:0 0 10px rgba(74,222,128,0.5);"></div></div>' +
+                              '<div class="pass-task-count" style="color:#4ade80; font-size:12px; font-weight:600;">✓ Выполнено</div>';
+                } else {
+                    barHtml = '<div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:' + pct + '%;"></div></div>' +
+                              '<div class="pass-task-count">' + q.progress + ' / ' + q.target + '</div>';
+                }
+                
+                var html = '<div class="pass-task">' +
+                    '<div class="pass-task-top">' +
+                        '<div class="pass-task-name" ' + (isDone ? 'style="color:#4ade80; font-weight:600;"' : '') + '>' + q.name + '</div>' +
+                        '<div class="pass-task-xp">' + (isDone ? '' : '+' + q.xp + ' XP') + '</div>' +
+                    '</div>' +
+                    '<div class="pass-task-bar-wrap">' + barHtml + '</div>' +
+                '</div>';
+                
+                container.innerHTML += html;
+            });
+        }
+
+        function updatePassResetTimer() {
+            var now = new Date();
+            var mskOffset = 3 * 60 * 60 * 1000;
+            var utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            var mskNow = new Date(utc + mskOffset);
+
+            var day = mskNow.getDay(); 
+            var daysUntilMonday = (1 - day + 7) % 7;
+            if (daysUntilMonday === 0 && (mskNow.getHours() > 0 || mskNow.getMinutes() > 0 || mskNow.getSeconds() > 0)) {
+                daysUntilMonday = 7;
+            }
+
+            var nextMonday = new Date(mskNow);
+            nextMonday.setDate(mskNow.getDate() + daysUntilMonday);
+            nextMonday.setHours(0, 0, 0, 0);
+
+            var diffMs = nextMonday.getTime() - mskNow.getTime();
+            
+            var d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            var h = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            var text = '';
+            if (d > 0) text = d + 'д ' + h + 'ч';
+            else text = h + 'ч ' + m + 'м';
+            
+            var el = document.getElementById('passQuestTimer');
+            if (el) el.innerHTML = '↻ Обновление через<br>' + text;
+        }
+
         async function claimPassLevel() {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
             var btn = document.getElementById('passMainBtn');
+            if (!btn) return;
             btn.innerHTML = "Получение...";
-            btn.onclick = null; // Защита от двойного клика
+            btn.onclick = null;
             
             try {
-                // ДЕЛАЕМ РЕАЛЬНЫЙ ЗАПРОС К БЭКЕНДУ
                 var res = await fetch(API_BASE + '/api/pass_claim_level/' + userId, { method: 'POST', headers: authHeaders() });
                 var data = await res.json();
                 
                 if (data.success) {
                     showPremiumToast(data.reward);
-                    fetchProfile(); // Перезагружаем профиль, чтобы обновились уровни и баланс
+                    fetchProfile();
                 } else {
                     tg.showAlert("Ошибка: " + data.error);
                     renderPassScreen();
@@ -3625,9 +3656,6 @@ async function openPublicProfile(targetId) {
             }
         }
 
-        // ========================================================
-        // ФУНКЦИЯ КРАСИВОГО УВЕДОМЛЕНИЯ (ВОТ ОНА!)
-        // ========================================================
         function showPremiumToast(rewardText) {
             var toast = document.getElementById('webAppPremiumToast');
             if (!toast) {
@@ -3649,7 +3677,83 @@ async function openPublicProfile(targetId) {
             }, 3500);
         }
 
-        // Вызываем сразу при старте, чтобы плашка в меню правильно отображалась до открытия пасса
+        function closePublicProfile() {
+            document.getElementById('publicProfileScreen').classList.remove('open');
+            manageBack();
+        }
+
+        // ================= ЧУЖОЙ ПРОФИЛЬ (БЕЗ БАГОВ И ВЫЛЕТОВ) =================
+        async function openPublicProfile(targetId) {
+            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+            
+            document.getElementById('publicProfileScreen').classList.add('open');
+            manageBack();
+
+            try {
+                var res = await fetch(API_BASE + '/api/public_profile/' + targetId, { headers: authHeaders() });
+                if (res.ok) {
+                    var data = await res.json();
+                    var p = data.profile;
+                    
+                    document.getElementById('pubPsWins').innerText = p.wins || 0;
+                    document.getElementById('pubPsLosses').innerText = p.losses || 0;
+                    document.getElementById('pubPsWinrate').innerText = (p.winrate || 0) + '%';
+                    document.getElementById('pubPsMaxStreak').innerText = p.max_streak || 0;
+                    
+                    document.getElementById('pubNickname').innerText = p.nickname || p.username || ("ID: " + targetId);
+                    
+                    var titleEl = document.getElementById('pubPsTitle');
+                    if (p.active_title && data.all_titles) {
+                        var found = data.all_titles.find(t => t.id === p.active_title);
+                        if (found) titleEl.innerText = "ТИТУЛ: " + found.name.toUpperCase();
+                        else titleEl.innerText = "ТИТУЛ: НЕ ВЫБРАН";
+                    } else {
+                        titleEl.innerText = "ТИТУЛ: НЕ ВЫБРАН";
+                    }
+                    
+                    var bgContainer = document.getElementById('pubProfileBgContainer');
+                    if (bgContainer) {
+                        bgContainer.innerHTML = '';
+                        var bgId = p.active_bg || 'default';
+                        if (bgId !== 'default') {
+                            var isVideo = ['bg_space_vid', 'bg_neon_vid', 'bg_matrix_vid', 'bg_fire_vid', 'bg_cyber_vid'].includes(bgId);
+                            if (isVideo) {
+                                bgContainer.innerHTML = '<video src="videos/' + bgId + '.mp4" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>';
+                            } else {
+                                bgContainer.innerHTML = '<img src="images/bgs/' + bgId + '.png" style="width:100%; height:100%; object-fit:cover;">';
+                            }
+                        }
+                    }
+                    
+                    var favGrid = document.getElementById('pubFavGrid');
+                    favGrid.innerHTML = '';
+                    var pubFavs = p.fav_cards || {};
+                    
+                    for (let i = 0; i < 3; i++) {
+                        var cardId = pubFavs[i] || pubFavs[String(i)];
+                        if (cardId && cardId !== 'none') {
+                            var card = allCards.find(c => c.id === cardId);
+                            if (card) {
+                                favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
+                                continue;
+                            }
+                        }
+                        favGrid.innerHTML += '<div class="ps-fav-slot" style="cursor:default; opacity:0.15;">+</div>';
+                    }
+                    
+                } else {
+                    tg.showAlert("Ошибка: " + data.error);
+                    closePublicProfile();
+                }
+            } catch (e) {
+                console.error("Ошибка в функции openPublicProfile:", e);
+                tg.showAlert("Ошибка соединения с сервером");
+                closePublicProfile();
+            }
+        }
+
+        // Инициализация интервалов
+        setInterval(updatePassResetTimer, 60000);
         updateMainMenuPass();
     </script>
 </body>
