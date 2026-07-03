@@ -1806,8 +1806,15 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
                     ЕЖЕНЕДЕЛЬНЫЕ ЗАДАНИЯ
                 </div>
-                <div class="pass-sec-title-right">↻ Обновление через<br>4д 12ч</div>
+                <div class="pass-sec-title-right" id="passQuestTimer">↻ Обновление через<br>...</div>
             </div>
+
+            <div id="passQuestsContainer">
+                <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">Загрузка заданий...</div>
+            </div>
+
+            <div class="pass-task-foot">Выполняй задания и получай опыт для повышения уровня!</div>
+        </div>
 
             <div class="pass-task">
                 <div class="pass-task-top">
@@ -2052,6 +2059,10 @@
                     realPassLevel = data.pass_level || 1;
                     passXp = data.pass_xp || 0;
                     claimedPassLevels = data.claimed_pass_levels || 1;
+                    
+                    userPassQuests = data.pass_quests || {}; // <-- ДОБАВИЛИ КВЕСТЫ
+                    renderPassQuests(); // <-- ОТРИСОВЫВАЕМ ИХ В ЛЕНТЕ
+                    updatePassResetTimer(); // <-- ЗАПУСКАЕМ ТАЙМЕР ДО ПОНЕДЕЛЬНИКА
                     // ========================================================
 
                     // Обновляем текст в профиле
@@ -3651,6 +3662,79 @@ async function openPublicProfile(targetId) {
 
         // Вызываем сразу при старте, чтобы плашка в меню правильно отображалась до открытия пасса
         updateMainMenuPass();
+        var userPassQuests = {};
+
+        function renderPassQuests() {
+            var container = document.getElementById('passQuestsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            var keys = Object.keys(userPassQuests);
+            if (keys.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">Задания появятся позже</div>';
+                return;
+            }
+            
+            keys.forEach(function(k) {
+                var q = userPassQuests[k];
+                var pct = Math.min(100, (q.progress / q.target) * 100);
+                var isDone = q.done || q.progress >= q.target;
+                
+                var barHtml = '';
+                if (isDone) {
+                    // ЗЕЛЕНАЯ ГАЛОЧКА И ЗАПОЛНЕННАЯ ПОЛОСКА ПРИ ВЫПОЛНЕНИИ
+                    barHtml = '<div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:100%; background:#4ade80; box-shadow:0 0 10px rgba(74,222,128,0.5);"></div></div>' +
+                              '<div class="pass-task-count" style="color:#4ade80; font-size:12px;">✓ Выполнено</div>';
+                } else {
+                    barHtml = '<div class="pass-task-bar-bg"><div class="pass-task-bar-fill" style="width:' + pct + '%;"></div></div>' +
+                              '<div class="pass-task-count">' + q.progress + ' / ' + q.target + '</div>';
+                }
+                
+                var html = '<div class="pass-task">' +
+                    '<div class="pass-task-top">' +
+                        '<div class="pass-task-name" ' + (isDone ? 'style="color:#4ade80;"' : '') + '>' + q.name + '</div>' +
+                        '<div class="pass-task-xp">' + (isDone ? '' : '+' + q.xp + ' XP') + '</div>' +
+                    '</div>' +
+                    '<div class="pass-task-bar-wrap">' + barHtml + '</div>' +
+                '</div>';
+                
+                container.innerHTML += html;
+            });
+        }
+
+        // РАСЧЁТ ВРЕМЕНИ ДО ПОНЕДЕЛЬНИКА 00:00 (МСК)
+        function updatePassResetTimer() {
+            var now = new Date();
+            var mskOffset = 3 * 60 * 60 * 1000;
+            var utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            var mskNow = new Date(utc + mskOffset);
+
+            var day = mskNow.getDay(); 
+            var daysUntilMonday = (1 - day + 7) % 7;
+            if (daysUntilMonday === 0 && (mskNow.getHours() > 0 || mskNow.getMinutes() > 0 || mskNow.getSeconds() > 0)) {
+                daysUntilMonday = 7;
+            }
+
+            var nextMonday = new Date(mskNow);
+            nextMonday.setDate(mskNow.getDate() + daysUntilMonday);
+            nextMonday.setHours(0, 0, 0, 0);
+
+            var diffMs = nextMonday.getTime() - mskNow.getTime();
+            
+            var d = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            var h = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            var text = '';
+            if (d > 0) text = d + 'д ' + h + 'ч';
+            else text = h + 'ч ' + m + 'м';
+            
+            var el = document.getElementById('passQuestTimer');
+            if (el) el.innerHTML = '↻ Обновление через<br>' + text;
+        }
+
+        // Обновляем таймер раз в минуту
+        setInterval(updatePassResetTimer, 60000);
     </script>
 </body>
 </html>
