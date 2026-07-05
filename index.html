@@ -2026,14 +2026,13 @@
                     userFavCards = data.fav_cards || {};
                     userUnlockedBgs = data.unlocked_bgs || [];
                     userActiveBg = data.active_bg || 'default';
-                    applyProfileBg(); // Вызываем установку фона!
+                    applyProfileBg();
                     
                     document.getElementById('psWins').innerText = data.wins || 0;
                     document.getElementById('psLosses').innerText = data.losses || 0;
                     document.getElementById('psWinrate').innerText = (data.winrate || 0) + '%';
                     document.getElementById('psMaxStreak').innerText = data.max_streak || 0;
-                    renderFavSlots(); // Отрисовываем любимые карты
-                    // -----------------------------------
+                    renderFavSlots();
 
                     currentDailyDay = data.daily_day || 0;
                     canClaimDaily = data.can_claim_daily || false;
@@ -2050,9 +2049,9 @@
                     } else {
                         dailyText.innerHTML = '<span style="color:#4ade80">✓</span> ' + currentDailyDay + '/30';
                     }
+                    
                     updateCollectionInfo(allCards.length);
 
-                    // Перерисовываем интерфейс пасса при получении свежих данных
                     if (document.getElementById('passScreen').classList.contains('open')) {
                         renderPassScreen();
                         renderPassQuests();
