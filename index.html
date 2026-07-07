@@ -1725,26 +1725,8 @@
         </div>
     </div>
 
-<div class="system-overlay-center" id="bgSystemSheet">
-        <div class="system-window-center" style="max-width: 440px; width: calc(100% - 24px); padding: 20px 16px;">
-            <div class="sys-head" style="flex-shrink: 0; margin-bottom: 20px;">
-                <button class="sys-close" onclick="closeBgSystem()">✖</button>
-                <div class="sys-kicker">SYSTEM NOTIFICATION</div>
-                <div class="sys-title">ВЫБОР ФОНА</div>
-            </div>
-            
-            <div class="bg-slider-container" id="bgListContainer">
-                </div>
-
-            <div class="pagination-bar" style="margin-top: 20px;">
-                <button class="page-btn" id="bgPrevBtn" onclick="changeBgPage(-1)">◀ Пред</button>
-                <div class="page-indicator" id="bgPageIndicator">1 / 1</div>
-                <button class="page-btn" id="bgNextBtn" onclick="changeBgPage(1)">След ▶</button>
-            </div>
-        </div>
-    </div>
     <div class="system-overlay-center" id="favSystemSheet">
-        <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh;">
+        <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh; padding-bottom: 0;">
             
             <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
                 <button class="sys-close" onclick="closeFavSystem()">✖</button>
@@ -1752,13 +1734,13 @@
                 <div class="sys-title">ВЫБОР КАРТЫ</div>
             </div>
             
-            <div class="filters-grid" style="margin-bottom: 16px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="renderFavSelector()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg); color: white; box-sizing: border-box; font-family: inherit; font-size: 14px;">
+            <div class="filters-grid" style="margin-bottom: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="renderFavSelector()">
                 
-                <div id="favRarityFilters" style="display: flex; justify-content: flex-start; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; cursor: grab;">
+                <div id="favRarityFilters" style="display: flex; justify-content: flex-start; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; user-select: none;">
                     </div>
                 
-                <select id="favSortSelect" onchange="renderFavSelector()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg); color: white; box-sizing: border-box; font-family: inherit; appearance: none; font-size: 14px; outline: none;">
+                <select id="favSortSelect" onchange="renderFavSelector()" class="filter-full">
                     <option value="rarity_desc">✨ От Божественных к Обычным</option>
                     <option value="rarity_asc">✨ От Обычных к Божественным</option>
                     <option value="newest">📅 По дате получения (новые выше)</option>
@@ -1768,10 +1750,10 @@
                 <div id="favCardCount" style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight: 500;"></div>
             </div>
 
-            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow-y: auto; flex: 1 1 auto; min-height: 0; padding-bottom: 15px; padding-right: 5px; align-content: start; cursor: grab;">
-            </div>
+            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: max-content; gap: 8px; overflow-y: auto; flex: 1 1 auto; min-height: 0; padding-bottom: 20px; user-select: none;">
+                </div>
             
-            <div style="flex-shrink: 0; padding-top: 12px; border-top: 1px solid var(--border-color);">
+            <div style="flex-shrink: 0; padding-top: 12px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05);">
                 <button onclick="selectFavCard('none')" style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s;">
                     Снять карту со слота ❌
                 </button>
@@ -3019,7 +3001,7 @@ function closeProfileModal() {
 // ================= ЛЮБИМЫЕ КАРТЫ =================
         var currentFavSlot = 0;
         var activeFavRarity = 'all';
-        var favDragInitialized = false; // Флаг для драг-скролла
+        var favDragInitialized = false;
 
         function renderFavSlots() {
             var grid = document.getElementById('myFavGrid');
@@ -3072,7 +3054,7 @@ function closeProfileModal() {
             manageBack();
             renderFavSelector();
 
-            // Инициализация листания мышкой (один раз при открытии)
+            // Включаем скролл мышкой
             if (!favDragInitialized) {
                 initDragScroll(document.getElementById('favListContainer'), 'y');
                 initDragScroll(document.getElementById('favRarityFilters'), 'x');
@@ -3085,7 +3067,7 @@ function closeProfileModal() {
             manageBack();
         }
 
-        // ================= ФУНКЦИЯ ЛИСТАНИЯ КУРСОРСОРМ =================
+        // ================= ЭМУЛЯЦИЯ СВАЙПА МЫШКОЙ =================
         function initDragScroll(slider, direction) {
             if (!slider) return;
             let isDown = false;
@@ -3104,7 +3086,7 @@ function closeProfileModal() {
                 if (!isDown) return;
                 e.preventDefault();
                 const pos = direction === 'y' ? e.pageY - slider.offsetTop : e.pageX - slider.offsetLeft;
-                const walk = (pos - startPos) * 2; // Умножаем на 2 для скорости листания
+                const walk = (pos - startPos) * 2; 
                 if (direction === 'y') slider.scrollTop = scrollPos - walk;
                 else slider.scrollLeft = scrollPos - walk;
             });
@@ -3189,11 +3171,8 @@ function closeProfileModal() {
             filtered.forEach(function(item) {
                 var c = item.card;
                 var div = document.createElement('div');
-                div.className = 'card';
-                // Отключаем нативное выделение при драге
-                div.style.userSelect = 'none'; 
+                div.className = 'card'; // Твой родной класс для карточек!
                 
-                // Чтобы клик работал только при простом тапе, а не при перетаскивании (свайпе)
                 let isDragging = false;
                 div.addEventListener('mousedown', () => isDragging = false);
                 div.addEventListener('mousemove', () => isDragging = true);
@@ -3201,18 +3180,54 @@ function closeProfileModal() {
                     if (!isDragging) selectFavCard(c.id);
                 });
 
-                // ИСПРАВЛЕНО: Добавлен загрузчик (spinner-ring) и функция onload для прогрузки картинок!
+                // ИСПОЛЬЗУЕМ ТВОЙ РОДНОЙ HTML ДЛЯ КАРТОЧЕК (с img-wrap и onload!)
                 div.innerHTML = `
-                    <div class="img-wrap" style="padding-bottom: 133.33%; position: relative; border-radius: 10px; overflow: hidden; background: #06060c;">
+                    <div class="img-wrap">
                         <div class="spinner-ring"></div>
-                        <img src="images/${c.file}" alt="${c.name}" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; pointer-events: none;">
+                        <img src="images/${c.file}" alt="${c.name}" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)">
                     </div>
-                    <div class="card-info" style="padding: 6px 2px 2px; text-align: center;">
-                        <div class="card-name" style="font-size: 11px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${c.name}</div>
-                    </div>
+                    <div class="card-name">${c.name}</div>
+                    <div class="card-rarity">${c.rarity}</div>
                 `;
                 grid.appendChild(div);
             });
+        }
+
+        // ================= КРАСИВОЕ УВЕДОМЛЕНИЕ (TikTok Style) =================
+        function showFavToast(msg, isError = false) {
+            var toast = document.getElementById('favActionToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'favActionToast';
+                document.body.appendChild(toast);
+            }
+            
+            var bgColor = isError ? 'rgba(239, 68, 68, 0.95)' : 'rgba(74, 222, 128, 0.95)';
+            var icon = isError ? '❌' : '✨';
+            
+            toast.style.cssText = \`
+                position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+                background: \${bgColor}; color: #fff; padding: 12px 24px;
+                border-radius: 16px; font-weight: 600; font-size: 14px;
+                z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+                opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                pointer-events: none; display: flex; align-items: center; gap: 8px;
+            \`;
+            
+            toast.innerHTML = \`<span>\${icon}</span> <span>\${msg}</span>\`;
+            void toast.offsetWidth; // Триггер анимации
+            
+            toast.style.opacity = '1';
+            toast.style.top = '40px';
+            
+            if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) {
+                tg.HapticFeedback.notificationOccurred(isError ? 'error' : 'success');
+            }
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.top = '20px';
+            }, 3000);
         }
 
         async function selectFavCard(cardId) {
@@ -3233,18 +3248,22 @@ function closeProfileModal() {
             closeFavSystem();
             
             try {
-                var res = await fetch(API_BASE + '/api/set_favorite/' + userId, {
+                // ИСПРАВЛЕНИЕ: Добавили JSON заголовок, чтобы бэкенд не выдавал ошибку!
+                var res = await fetch(API_BASE + '/api/set_favorite', {
                     method: 'POST',
-                    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+                    headers: Object.assign({'Content-Type': 'application/json'}, authHeaders()),
                     body: JSON.stringify({ slot_index: currentFavSlot, card_id: cardId })
                 });
                 var data = await res.json();
-                if (!data.success) {
-                    tg.showAlert("Ошибка сохранения: " + (data.error || "Неизвестная ошибка"));
+                
+                if (data.success) {
+                    showFavToast(cardId === 'none' ? 'Карта убрана со слота' : 'Карта успешно применена!');
+                } else {
+                    showFavToast(data.error || "Неизвестная ошибка сервера", true);
                 }
             } catch (e) {
                 console.error("Ошибка сети при сохранении любимой карты:", e);
-                tg.showAlert("Ошибка сети при сохранении любимого слота!");
+                showFavToast("Ошибка сети при сохранении!", true);
             }
         }
 // ================= ФОНЫ =================
