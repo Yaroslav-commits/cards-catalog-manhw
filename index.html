@@ -1755,7 +1755,7 @@
             <div class="filters-grid" style="margin-bottom: 16px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="renderFavSelector()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg); color: white; box-sizing: border-box; font-family: inherit; font-size: 14px;">
                 
-                <div id="favRarityFilters" style="display: flex; justify-content: flex-start; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch;">
+                <div id="favRarityFilters" style="display: flex; justify-content: flex-start; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; cursor: grab;">
                     </div>
                 
                 <select id="favSortSelect" onchange="renderFavSelector()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg); color: white; box-sizing: border-box; font-family: inherit; appearance: none; font-size: 14px; outline: none;">
@@ -1768,7 +1768,7 @@
                 <div id="favCardCount" style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight: 500;"></div>
             </div>
 
-            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow-y: auto; flex-grow: 1; padding-bottom: 15px; padding-right: 5px; align-content: start;">
+            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow-y: auto; flex: 1 1 auto; min-height: 0; padding-bottom: 15px; padding-right: 5px; align-content: start; cursor: grab;">
             </div>
             
             <div style="flex-shrink: 0; padding-top: 12px; border-top: 1px solid var(--border-color);">
@@ -3019,6 +3019,7 @@ function closeProfileModal() {
 // ================= ЛЮБИМЫЕ КАРТЫ =================
         var currentFavSlot = 0;
         var activeFavRarity = 'all';
+        var favDragInitialized = false; // Флаг для драг-скролла
 
         function renderFavSlots() {
             var grid = document.getElementById('myFavGrid');
@@ -3030,7 +3031,6 @@ function closeProfileModal() {
                 if (cardId && cardId !== 'none') {
                     var card = allCards.find(c => c.id === cardId);
                     if (card) {
-                        // ИСПРАВЛЕН ПУТЬ К КАРТИНКАМ (убрали /cards/)
                         slotHtml = '<img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">';
                     }
                 }
@@ -3043,7 +3043,6 @@ function closeProfileModal() {
             if (card) openModal(card);
         }
 
-        // Овальные кнопки с полным текстом
         const FAV_RARITIES = [
             { id: 'all', icon: 'Все карты' },
             { id: 'Обычная ⚪️', icon: '⚪️ Обычные' },
@@ -3072,11 +3071,43 @@ function closeProfileModal() {
             document.getElementById('favSystemSheet').classList.add('open');
             manageBack();
             renderFavSelector();
+
+            // Инициализация листания мышкой (один раз при открытии)
+            if (!favDragInitialized) {
+                initDragScroll(document.getElementById('favListContainer'), 'y');
+                initDragScroll(document.getElementById('favRarityFilters'), 'x');
+                favDragInitialized = true;
+            }
         }
 
         function closeFavSystem() {
             document.getElementById('favSystemSheet').classList.remove('open');
             manageBack();
+        }
+
+        // ================= ФУНКЦИЯ ЛИСТАНИЯ КУРСОРСОРМ =================
+        function initDragScroll(slider, direction) {
+            if (!slider) return;
+            let isDown = false;
+            let startPos;
+            let scrollPos;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.style.cursor = 'grabbing';
+                startPos = direction === 'y' ? e.pageY - slider.offsetTop : e.pageX - slider.offsetLeft;
+                scrollPos = direction === 'y' ? slider.scrollTop : slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
+            slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const pos = direction === 'y' ? e.pageY - slider.offsetTop : e.pageX - slider.offsetLeft;
+                const walk = (pos - startPos) * 2; // Умножаем на 2 для скорости листания
+                if (direction === 'y') slider.scrollTop = scrollPos - walk;
+                else slider.scrollLeft = scrollPos - walk;
+            });
         }
 
         function renderFavRarityCircles() {
@@ -3159,12 +3190,22 @@ function closeProfileModal() {
                 var c = item.card;
                 var div = document.createElement('div');
                 div.className = 'card';
-                div.onclick = function() { selectFavCard(c.id); };
+                // Отключаем нативное выделение при драге
+                div.style.userSelect = 'none'; 
                 
-                // ИСПРАВЛЕН ПУТЬ К КАРТИНКАМ И ДОБАВЛЕН КОНТЕЙНЕР (чтобы выглядели 1в1 как в каталоге)
+                // Чтобы клик работал только при простом тапе, а не при перетаскивании (свайпе)
+                let isDragging = false;
+                div.addEventListener('mousedown', () => isDragging = false);
+                div.addEventListener('mousemove', () => isDragging = true);
+                div.addEventListener('mouseup', () => {
+                    if (!isDragging) selectFavCard(c.id);
+                });
+
+                // ИСПРАВЛЕНО: Добавлен загрузчик (spinner-ring) и функция onload для прогрузки картинок!
                 div.innerHTML = `
                     <div class="img-wrap" style="padding-bottom: 133.33%; position: relative; border-radius: 10px; overflow: hidden; background: #06060c;">
-                        <img src="images/${c.file}" alt="${c.name}" loading="lazy" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover;">
+                        <div class="spinner-ring"></div>
+                        <img src="images/${c.file}" alt="${c.name}" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; pointer-events: none;">
                     </div>
                     <div class="card-info" style="padding: 6px 2px 2px; text-align: center;">
                         <div class="card-name" style="font-size: 11px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${c.name}</div>
@@ -3192,7 +3233,6 @@ function closeProfileModal() {
             closeFavSystem();
             
             try {
-                // ИСПРАВЛЕН ЗАПРОС СОХРАНЕНИЯ: Добавлен Content-Type и /userId к ссылке
                 var res = await fetch(API_BASE + '/api/set_favorite/' + userId, {
                     method: 'POST',
                     headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
