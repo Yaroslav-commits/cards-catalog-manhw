@@ -3027,6 +3027,7 @@ function closeProfileModal() {
                 if (cardId && cardId !== 'none') {
                     var card = allCards.find(c => c.id === cardId);
                     if (card) {
+                        // ИСПРАВЛЕНО: Чистый путь images/
                         slotHtml = '<img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">';
                     }
                 }
@@ -3068,7 +3069,6 @@ function closeProfileModal() {
             manageBack();
             renderFavSelector();
 
-            // Активация листания мышкой (скролл работает!)
             if (!favDragInitialized) {
                 initDragScroll(document.getElementById('favListContainer'), 'y');
                 initDragScroll(document.getElementById('favRarityFilters'), 'x');
@@ -3194,21 +3194,21 @@ function closeProfileModal() {
                     if (!isDragging) selectFavCard(c.id);
                 });
 
-                // ЧИСТЫЙ HTML БЕЗ ПРОЗРАЧНОСТЕЙ - КАРТИНКИ СРАЗУ ВИДНО!
+                // ИСПРАВЛЕНО: Твоя родная структура для карт (img-wrap, spinner, onload, images/)
                 var html = '';
-                html += '<div class="img-wrap" style="padding-bottom: 133.33%; position: relative; border-radius: 10px; overflow: hidden; background: #06060c;">';
-                html += '<img src="images/' + c.file + '" alt="' + c.name + '" loading="lazy" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; pointer-events: none;">';
+                html += '<div class="img-wrap">';
+                html += '<div class="spinner-ring"></div>';
+                html += '<img src="images/' + c.file + '" alt="' + c.name + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)" style="pointer-events: none;">';
                 html += '</div>';
-                html += '<div class="card-info" style="padding: 6px 2px 2px; text-align: center;">';
-                html += '<div class="card-name" style="font-size: 11px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">' + c.name + '</div>';
-                html += '</div>';
+                html += '<div class="card-name">' + c.name + '</div>';
+                html += '<div class="card-rarity">' + c.rarity + '</div>';
                 
                 div.innerHTML = html;
                 grid.appendChild(div);
             });
         }
 
-        // ================= КРАСИВОЕ УВЕДОМЛЕНИЕ (Без синтаксических багов) =================
+        // ================= КРАСИВОЕ УВЕДОМЛЕНИЕ (Toast) =================
         function showFavToast(msg, isError = false) {
             var toast = document.getElementById('favActionToast');
             if (!toast) {
@@ -3221,10 +3221,9 @@ function closeProfileModal() {
             var icon = isError ? '❌' : '✨';
             
             toast.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: ' + bgColor + '; color: #fff; padding: 12px 24px; border-radius: 16px; font-weight: 600; font-size: 14px; z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); pointer-events: none; display: flex; align-items: center; gap: 8px;';
-            
             toast.innerHTML = '<span>' + icon + '</span> <span>' + msg + '</span>';
             
-            void toast.offsetWidth; // Триггер анимации
+            void toast.offsetWidth; // Сброс кэша анимации
             
             toast.style.opacity = '1';
             toast.style.top = '40px';
@@ -3257,7 +3256,8 @@ function closeProfileModal() {
             closeFavSystem();
             
             try {
-                var res = await fetch(API_BASE + '/api/set_favorite', {
+                // ИСПРАВЛЕНО: Указан правильный URL (с userId) и заголовок JSON
+                var res = await fetch(API_BASE + '/api/set_favorite/' + userId, {
                     method: 'POST',
                     headers: Object.assign({'Content-Type': 'application/json'}, authHeaders()),
                     body: JSON.stringify({ slot_index: currentFavSlot, card_id: cardId })
