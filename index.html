@@ -1201,6 +1201,43 @@
 .premium-toast.active { top: 24px; }
 .premium-toast .toast-icon { font-size: 20px; animation: toastBounce 1s infinite alternate; }
 @keyframes toastBounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+/* === СТИЛИ ФИЛЬТРОВ И СКРОЛЛА ДЛЯ ЛЮБИМЫХ КАРТ === */
+        .rarity-filter-btn {
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            border: 2px solid var(--border-color); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 14px;
+            cursor: pointer; 
+            background: var(--surface); 
+            transition: all 0.2s ease; 
+            flex-shrink: 0;
+            color: white;
+            font-weight: bold;
+        }
+        .rarity-filter-btn.active {
+            border-color: var(--accent);
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(1.1);
+        }
+        /* Убираем уродливый скроллбар в фильтрах */
+        #favRarityFilters::-webkit-scrollbar {
+            display: none;
+        }
+        /* Кастомный скроллбар для сетки карт */
+        #favGrid::-webkit-scrollbar {
+            width: 6px;
+        }
+        #favGrid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #favGrid::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1719,25 +1756,39 @@
         </div>
     </div>
     <div class="system-overlay-center" id="favSystemSheet">
-        <div class="system-window-center">
+        <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh;">
+            
             <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
                 <button class="sys-close" onclick="closeFavSystem()">✖</button>
                 <div class="sys-kicker">SYSTEM NOTIFICATION</div>
                 <div class="sys-title">ВЫБОР КАРТЫ</div>
             </div>
             
-            <div class="filters-grid" style="margin-bottom: 16px; flex-shrink: 0;">
-                <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="if(typeof changeFavPage === 'function') changeFavPage(1); else renderFavSelector();">
+            <div class="filters-grid" style="margin-bottom: 16px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="renderFavSelector()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg); color: white; box-sizing: border-box; font-family: inherit; font-size: 14px;">
+                
+                <div id="favRarityFilters" style="display: flex; justify-content: space-between; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch;">
+                    </div>
+                
+                <select id="favSortSelect" onchange="renderFavSelector()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg); color: white; box-sizing: border-box; font-family: inherit; appearance: none; font-size: 14px; outline: none;">
+                    <option value="rarity_desc">✨ От Божественных к Обычным</option>
+                    <option value="rarity_asc">✨ От Обычных к Божественным</option>
+                    <option value="newest">📅 По дате получения (новые выше)</option>
+                    <option value="oldest">📅 По дате получения (старые выше)</option>
+                </select>
+                
+                <div id="favCardCount" style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight: 500;"></div>
             </div>
-            
-            <div class="fav-cards-grid" id="favListContainer">
-                </div>
 
-            <div class="pagination-bar">
-                <button class="page-btn" id="favPrevBtn" onclick="if(typeof changeFavPage === 'function') changeFavPage(currentFavPage - 1)">◀ Назад</button>
-                <div class="page-indicator" id="favPageIndicator">1 / 1</div>
-                <button class="page-btn" id="favNextBtn" onclick="if(typeof changeFavPage === 'function') changeFavPage(currentFavPage + 1)">Вперед ▶</button>
+            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; flex-grow: 1; padding-bottom: 15px; padding-right: 5px;">
+                </div>
+            
+            <div style="flex-shrink: 0; padding-top: 12px; border-top: 1px solid var(--border-color);">
+                <button onclick="selectFavCard('none')" style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s;">
+                    Снять карту со слота ❌
+                </button>
             </div>
+
         </div>
     </div>
     <nav class="bottom-nav">
@@ -2979,184 +3030,198 @@ function closeProfileModal() {
         }
 // ================= ЛЮБИМЫЕ КАРТЫ =================
         var currentFavSlot = 0;
-        var currentFavPage = 1;
-        var FAV_ITEMS_PER_PAGE = 8; // По 8 элементов на страницу (4 ряда по 2)
+        var activeFavRarity = 'all';
 
+        // 🟢 ВОЗВРАЩАЕМ ПОТЕРЯННУЮ ФУНКЦИЮ ДЛЯ СВОЕГО ПРОФИЛЯ
         function renderFavSlots() {
-            var container = document.getElementById('myFavGrid');
-            if (!container) return;
-            container.innerHTML = '';
-            
+            var grid = document.getElementById('myFavGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
             for (let i = 0; i < 3; i++) {
-                var cardId = userFavCards[i];
-                var html = '';
-                
+                var cardId = userFavCards[i] || userFavCards[String(i)];
+                var slotHtml = '+';
                 if (cardId && cardId !== 'none') {
                     var card = allCards.find(c => c.id === cardId);
                     if (card) {
-                        html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')" style="border:none; padding:0; cursor:pointer;">' +
-                               '<img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">' +
-                               '</div>';
-                    } else {
-                        html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')">+</div>';
+                        slotHtml = '<img src="images/cards/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">';
                     }
-                } else {
-                    html = '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')">+</div>';
                 }
-                container.innerHTML += html;
+                // Динамически пересоздаем слоты
+                grid.innerHTML += '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')">' + slotHtml + '</div>';
             }
         }
+
+        // 🟢 ВОЗВРАЩАЕМ ПОТЕРЯННУЮ ФУНКЦИЮ ДЛЯ ЧУЖОГО ПРОФИЛЯ
+        async function openModalById(cardId) {
+            var card = allCards.find(c => c.id === cardId);
+            if (card) openModal(card);
+        }
+
+        // 6 редкостей
+        const FAV_RARITIES = [
+            { id: 'all', icon: 'Все' },
+            { id: 'Обычная ⚪️', icon: '⚪️' },
+            { id: 'Редкая 🟡', icon: '🟡' },
+            { id: 'Эпическая 🟢', icon: '🟢' },
+            { id: 'Легендарная 🔵', icon: '🔵' },
+            { id: 'Мифическая 🔴', icon: '🔴' },
+            { id: 'Божественная ⚫️', icon: '⚫️' }
+        ];
+
+        const RARITY_WEIGHTS = {
+            "Обычная ⚪️": 1,
+            "Редкая 🟡": 2,
+            "Эпическая 🟢": 3,
+            "Легендарная 🔵": 4,
+            "Мифическая 🔴": 5,
+            "Божественная ⚫️": 6
+        };
 
         function openFavSystem(slotIndex) {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
             currentFavSlot = slotIndex;
-            currentFavPage = 1; // Всегда открываем на первой странице
-            document.getElementById('favSearchInput').value = ''; // Сбрасываем поиск
-            renderFavSelector();
+            activeFavRarity = 'all'; 
+            
+            var searchInp = document.getElementById('favSearchInput');
+            var sortSel = document.getElementById('favSortSelect');
+            if (searchInp) searchInp.value = '';
+            if (sortSel) sortSel.value = 'rarity_desc'; 
+            
             document.getElementById('favSystemSheet').classList.add('open');
+            manageBack();
+            renderFavSelector();
         }
 
         function closeFavSystem() {
             document.getElementById('favSystemSheet').classList.remove('open');
+            manageBack();
         }
 
-        document.getElementById('favSystemSheet').addEventListener('click', function(e) {
-            // Закрытие при клике мимо окна
-            if (e.target === this) closeFavSystem();
-        });
-
-        // Функция переключения страниц
-        function changeFavPage(newPage) {
-            if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
-            currentFavPage = newPage;
-            renderFavSelector();
+        function renderFavRarityCircles() {
+            var container = document.getElementById('favRarityFilters');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            FAV_RARITIES.forEach(function(r) {
+                var btn = document.createElement('div');
+                btn.className = 'rarity-filter-btn' + (activeFavRarity === r.id ? ' active' : '');
+                btn.innerHTML = r.icon;
+                btn.onclick = function() {
+                    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+                    activeFavRarity = r.id;
+                    renderFavSelector();
+                };
+                container.appendChild(btn);
+            });
         }
 
         function renderFavSelector() {
-            var container = document.getElementById('favListContainer');
-            container.innerHTML = '';
-            var search = document.getElementById('favSearchInput').value.toLowerCase();
+            renderFavRarityCircles();
+            
+            var grid = document.getElementById('favListContainer');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            var searchInp = document.getElementById('favSearchInput');
+            var sortSel = document.getElementById('favSortSelect');
+            
+            var searchStr = searchInp ? searchInp.value.toLowerCase() : '';
+            var sortType = sortSel ? sortSel.value : 'rarity_desc';
+            
+            var uniqueOwnedCardIds = [...new Set(userOwnedCards)];
+            
+            var mappedCards = uniqueOwnedCardIds.map((cid, idx) => {
+                var cData = allCards.find(c => c.id === cid);
+                return { card: cData, originalIndex: idx };
+            }).filter(item => item.card != null);
 
-            // Оставляем только те карты, которые реально есть в инвентаре у игрока
-            var ownedCardsData = allCards.filter(c => userOwnedCards.includes(c.id));
-            var filtered = ownedCardsData.filter(c => String(c.name || '').toLowerCase().includes(search));
+            var totalInThisRarity = mappedCards.filter(item => {
+                return (activeFavRarity === 'all') || (item.card.rarity === activeFavRarity);
+            }).length;
 
-            // Крутая сортировка по редкости (от Божественной к Обычной)
-            var rarityOrder = {"Божественная": 6, "Мифическая": 5, "Легендарная": 4, "Эпическая": 3, "Редкая": 2, "Обычная": 1};
-            filtered.sort(function(a, b) {
-                var rA = (a.rarity || '').split(' ')[0];
-                var rB = (b.rarity || '').split(' ')[0];
-                var valA = rarityOrder[rA] || 0;
-                var valB = rarityOrder[rB] || 0;
-                return valB - valA; // По убыванию (сильные сверху)
+            var filtered = mappedCards.filter(item => {
+                var matchSearch = item.card.name.toLowerCase().includes(searchStr);
+                var matchRarity = (activeFavRarity === 'all') || (item.card.rarity === activeFavRarity);
+                return matchSearch && matchRarity;
             });
 
-            // Формируем финальный список. Кнопку "Очистить слот" добавляем только если нет поиска
-            var allItems = [];
-            if (search === '') {
-                allItems.push({ isClearBtn: true });
-            }
-            allItems = allItems.concat(filtered);
-
-            // Пагинация: рассчитываем страницы
-            var totalItems = allItems.length;
-            var totalPages = Math.ceil(totalItems / FAV_ITEMS_PER_PAGE) || 1;
-            
-            // Защита от выхода за пределы
-            if (currentFavPage > totalPages) currentFavPage = totalPages;
-            if (currentFavPage < 1) currentFavPage = 1;
-
-            // Вырезаем нужный кусок массива для текущей страницы
-            var startIndex = (currentFavPage - 1) * FAV_ITEMS_PER_PAGE;
-            var endIndex = startIndex + FAV_ITEMS_PER_PAGE;
-            var pageItems = allItems.slice(startIndex, endIndex);
-
-            // Обновляем визуальные кнопки навигации
-            var pageInd = document.getElementById('favPageIndicator');
-            var prevBtn = document.getElementById('favPrevBtn');
-            var nextBtn = document.getElementById('favNextBtn');
-            
-            if (pageInd) pageInd.innerText = currentFavPage + ' / ' + totalPages;
-            if (prevBtn) prevBtn.disabled = (currentFavPage === 1);
-            if (nextBtn) nextBtn.disabled = (currentFavPage === totalPages);
-
-            // Обработка пустых списков
-            if (pageItems.length === 0 && search !== '') {
-                container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;">Карты не найдены</div>';
-                return;
-            } else if (pageItems.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;">Инвентарь пуст</div>';
-                return;
-            }
-
-            // Отрисовываем карты на странице
-            pageItems.forEach(function(item) {
-                if (item.isClearBtn) {
-                    var noneDiv = document.createElement('div');
-                    noneDiv.className = 'card';
-                    noneDiv.style.display = 'flex'; noneDiv.style.alignItems = 'center'; noneDiv.style.justifyContent = 'center'; 
-                    noneDiv.style.cursor = 'pointer'; noneDiv.style.minHeight = '180px';
-                    noneDiv.innerHTML = '<div style="color:var(--mythic); font-weight:800; text-align:center;">Очистить<br>Слот ✖</div>';
-                    noneDiv.onclick = function() { setFavCard('none'); };
-                    container.appendChild(noneDiv);
-                    return;
+            filtered.sort((a, b) => {
+                if (sortType === 'newest') return b.originalIndex - a.originalIndex;
+                if (sortType === 'oldest') return a.originalIndex - b.originalIndex;
+                
+                var weightA = RARITY_WEIGHTS[a.card.rarity] || 0;
+                var weightB = RARITY_WEIGHTS[b.card.rarity] || 0;
+                
+                if (sortType === 'rarity_desc') {
+                    if (weightA !== weightB) return weightB - weightA;
+                    return b.originalIndex - a.originalIndex; 
                 }
+                if (sortType === 'rarity_asc') {
+                    if (weightA !== weightB) return weightA - weightB;
+                    return b.originalIndex - a.originalIndex;
+                }
+                return 0;
+            });
 
-                var card = item;
-                var cleanRarity = (card.rarity || '').split(' ')[0];
+            var countEl = document.getElementById('favCardCount');
+            if (countEl) {
+                countEl.innerHTML = `Показано карт: <b style="color:#c4b5fd;">${filtered.length}</b> | В этой редкости: <b style="color:#4ade80;">${totalInThisRarity}</b>`;
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px 10px; font-size: 13px;">Ничего не найдено 😔</div>';
+                return;
+            }
+
+            filtered.forEach(function(item) {
+                var c = item.card;
                 var div = document.createElement('div');
                 div.className = 'card';
-                div.dataset.rarity = cleanRarity;
-                div.style.cursor = 'pointer';
-                div.onclick = function() { setFavCard(card.id); };
-
-                // Плашка "НАДЕТА", если карта уже в слотах
-                var isAlreadyFav = Object.values(userFavCards).includes(card.id);
-                var badgeHtml = isAlreadyFav ? '<div class="owned-badge" style="background:rgba(139,92,246,0.9); border-color:var(--accent);">НАДЕТА</div>' : '';
-
-                div.innerHTML = badgeHtml +
-                    '<div class="img-wrap">' +
-                        '<div class="spinner-ring"></div>' +
-                        '<img src="images/' + (card.file || '') + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)">' +
-                    '</div>' +
-                    '<h3>' + (card.name || '') + '</h3>' +
-                    '<div class="rarity-badge">' + (card.rarity || '') + '</div>';
+                div.onclick = function() { selectFavCard(c.id); };
                 
-                container.appendChild(div);
+                div.innerHTML = `
+                    <img src="images/cards/${c.file}" alt="${c.name}" loading="lazy" style="width:100%; border-radius:10px; display:block;">
+                    <div class="card-info" style="padding: 8px;">
+                        <div class="card-name" style="font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.name}</div>
+                        <div class="card-rarity" style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">${c.rarity}</div>
+                    </div>
+                `;
+                grid.appendChild(div);
             });
-            
-            // Если карточек на странице мало, прокручиваем вверх, чтобы было красиво
-            container.scrollTop = 0;
         }
 
-        async function setFavCard(cardId) {
+        async function selectFavCard(cardId) {
             if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
             
+            if (cardId === 'none') {
+                userFavCards[currentFavSlot] = 'none';
+            } else {
+                for (let i = 0; i < 3; i++) {
+                    if (userFavCards[i] === cardId) {
+                        userFavCards[i] = 'none';
+                    }
+                }
+                userFavCards[currentFavSlot] = cardId;
+            }
+            
+            renderFavSlots();
+            closeFavSystem();
+            
             try {
-                var res = await fetch(API_BASE + '/api/profile/favorite/' + userId, {
+                var res = await fetch(API_BASE + '/api/set_favorite', {
                     method: 'POST',
-                    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
-                    body: JSON.stringify({ card_id: cardId, slot_index: currentFavSlot })
+                    headers: authHeaders(),
+                    body: JSON.stringify({ slot_index: currentFavSlot, card_id: cardId })
                 });
                 var data = await res.json();
-                
-                if (data.success) {
-                    showToast('Система', 'Любимая карта обновлена!');
-                    if (cardId === 'none') {
-                        delete userFavCards[currentFavSlot];
-                    } else {
-                        userFavCards[currentFavSlot] = cardId;
-                    }
-                    renderFavSlots();
-                    closeFavSystem();
-                } else {
-                    tg.showAlert("Ошибка: " + data.error);
+                if (!data.success) {
+                    tg.showAlert("Ошибка сохранения слота: " + (data.error || "Неизвестная ошибка"));
                 }
             } catch (e) {
-                tg.showAlert("Ошибка соединения с сервером");
+                console.error("Ошибка сети при сохранении любимой карты:", e);
+                tg.showAlert("Ошибка сети при сохранении любимого слота!");
             }
         }
-// ================= ФОНЫ (СЛАЙДЕР ПО 1 ФОНУ) =================
         var currentBgPage = 1;
 
         function applyProfileBg() {
