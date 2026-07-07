@@ -1201,6 +1201,7 @@
 .premium-toast.active { top: 24px; }
 .premium-toast .toast-icon { font-size: 20px; animation: toastBounce 1s infinite alternate; }
 @keyframes toastBounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+
 /* === СТИЛИ ФИЛЬТР ЛЮБИМЫХ КАРТ === */
         .rarity-filter-btn {
             padding: 8px 14px;
@@ -1223,9 +1224,22 @@
             background: rgba(139, 92, 246, 0.2);
         }
         #favRarityFilters::-webkit-scrollbar { display: none; }
-        #favListContainer::-webkit-scrollbar { width: 6px; }
-        #favListContainer::-webkit-scrollbar-track { background: transparent; }
-        #favListContainer::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        /* СКРОЛЛ ДЛЯ ЛЮБИМЫХ КАРТ */
+        #favListContainer {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch; /* Плавный скролл на телефонах */
+        }
+        #favListContainer::-webkit-scrollbar { 
+            width: 5px; 
+        }
+        #favListContainer::-webkit-scrollbar-track { 
+            background: rgba(255, 255, 255, 0.05); 
+            border-radius: 10px; 
+        }
+        #favListContainer::-webkit-scrollbar-thumb { 
+            background: var(--accent); 
+            border-radius: 10px; 
+        }
     </style>
 </head>
 <body>
@@ -1750,7 +1764,7 @@
                 <div id="favCardCount" style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight: 500;"></div>
             </div>
 
-            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: max-content; gap: 8px; overflow-y: auto; flex: 1 1 auto; min-height: 0; padding-bottom: 20px; user-select: none;">
+            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: max-content; gap: 8px; flex: 1 1 auto; min-height: 0; padding-bottom: 20px; user-select: none;">
                 </div>
             
             <div style="flex-shrink: 0; padding-top: 12px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05);">
@@ -3013,7 +3027,7 @@ function closeProfileModal() {
                 if (cardId && cardId !== 'none') {
                     var card = allCards.find(c => c.id === cardId);
                     if (card) {
-                        slotHtml = '<img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">';
+                        slotHtml = '<img src="images/cards/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">';
                     }
                 }
                 grid.innerHTML += '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')">' + slotHtml + '</div>';
@@ -3054,7 +3068,7 @@ function closeProfileModal() {
             manageBack();
             renderFavSelector();
 
-            // Включаем скролл мышкой
+            // Активация листания мышкой (скролл работает!)
             if (!favDragInitialized) {
                 initDragScroll(document.getElementById('favListContainer'), 'y');
                 initDragScroll(document.getElementById('favRarityFilters'), 'x');
@@ -3067,22 +3081,21 @@ function closeProfileModal() {
             manageBack();
         }
 
-        // ================= ЭМУЛЯЦИЯ СВАЙПА МЫШКОЙ =================
         function initDragScroll(slider, direction) {
             if (!slider) return;
             let isDown = false;
             let startPos;
             let scrollPos;
 
-            slider.addEventListener('mousedown', (e) => {
+            slider.addEventListener('mousedown', function(e) {
                 isDown = true;
                 slider.style.cursor = 'grabbing';
                 startPos = direction === 'y' ? e.pageY - slider.offsetTop : e.pageX - slider.offsetLeft;
                 scrollPos = direction === 'y' ? slider.scrollTop : slider.scrollLeft;
             });
-            slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
-            slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
-            slider.addEventListener('mousemove', (e) => {
+            slider.addEventListener('mouseleave', function() { isDown = false; slider.style.cursor = 'grab'; });
+            slider.addEventListener('mouseup', function() { isDown = false; slider.style.cursor = 'grab'; });
+            slider.addEventListener('mousemove', function(e) {
                 if (!isDown) return;
                 e.preventDefault();
                 const pos = direction === 'y' ? e.pageY - slider.offsetTop : e.pageX - slider.offsetLeft;
@@ -3125,22 +3138,22 @@ function closeProfileModal() {
             
             var uniqueOwnedCardIds = [...new Set(userOwnedCards)];
             
-            var mappedCards = uniqueOwnedCardIds.map((cid, idx) => {
+            var mappedCards = uniqueOwnedCardIds.map(function(cid, idx) {
                 var cData = allCards.find(c => c.id === cid);
                 return { card: cData, originalIndex: idx };
             }).filter(item => item.card != null);
 
-            var totalInThisRarity = mappedCards.filter(item => {
+            var totalInThisRarity = mappedCards.filter(function(item) {
                 return (activeFavRarity === 'all') || (item.card.rarity === activeFavRarity);
             }).length;
 
-            var filtered = mappedCards.filter(item => {
+            var filtered = mappedCards.filter(function(item) {
                 var matchSearch = item.card.name.toLowerCase().includes(searchStr);
                 var matchRarity = (activeFavRarity === 'all') || (item.card.rarity === activeFavRarity);
                 return matchSearch && matchRarity;
             });
 
-            filtered.sort((a, b) => {
+            filtered.sort(function(a, b) {
                 if (sortType === 'newest') return b.originalIndex - a.originalIndex;
                 if (sortType === 'oldest') return a.originalIndex - b.originalIndex;
                 
@@ -3160,7 +3173,7 @@ function closeProfileModal() {
 
             var countEl = document.getElementById('favCardCount');
             if (countEl) {
-                countEl.innerHTML = `Показано карт: <b style="color:#c4b5fd;">${filtered.length}</b> | В этой редкости: <b style="color:#4ade80;">${totalInThisRarity}</b>`;
+                countEl.innerHTML = 'Показано карт: <b style="color:#c4b5fd;">' + filtered.length + '</b> | В этой редкости: <b style="color:#4ade80;">' + totalInThisRarity + '</b>';
             }
 
             if (filtered.length === 0) {
@@ -3171,29 +3184,31 @@ function closeProfileModal() {
             filtered.forEach(function(item) {
                 var c = item.card;
                 var div = document.createElement('div');
-                div.className = 'card'; // Твой родной класс для карточек!
+                div.className = 'card'; 
+                div.style.userSelect = 'none';
                 
                 let isDragging = false;
-                div.addEventListener('mousedown', () => isDragging = false);
-                div.addEventListener('mousemove', () => isDragging = true);
-                div.addEventListener('mouseup', () => {
+                div.addEventListener('mousedown', function() { isDragging = false; });
+                div.addEventListener('mousemove', function() { isDragging = true; });
+                div.addEventListener('mouseup', function() {
                     if (!isDragging) selectFavCard(c.id);
                 });
 
-                // ИСПОЛЬЗУЕМ ТВОЙ РОДНОЙ HTML ДЛЯ КАРТОЧЕК (с img-wrap и onload!)
-                div.innerHTML = `
-                    <div class="img-wrap">
-                        <div class="spinner-ring"></div>
-                        <img src="images/${c.file}" alt="${c.name}" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)">
-                    </div>
-                    <div class="card-name">${c.name}</div>
-                    <div class="card-rarity">${c.rarity}</div>
-                `;
+                // ЧИСТЫЙ HTML БЕЗ ПРОЗРАЧНОСТЕЙ - КАРТИНКИ СРАЗУ ВИДНО!
+                var html = '';
+                html += '<div class="img-wrap" style="padding-bottom: 133.33%; position: relative; border-radius: 10px; overflow: hidden; background: #06060c;">';
+                html += '<img src="images/cards/' + c.file + '" alt="' + c.name + '" loading="lazy" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; pointer-events: none;">';
+                html += '</div>';
+                html += '<div class="card-info" style="padding: 6px 2px 2px; text-align: center;">';
+                html += '<div class="card-name" style="font-size: 11px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">' + c.name + '</div>';
+                html += '</div>';
+                
+                div.innerHTML = html;
                 grid.appendChild(div);
             });
         }
 
-        // ================= КРАСИВОЕ УВЕДОМЛЕНИЕ (TikTok Style) =================
+        // ================= КРАСИВОЕ УВЕДОМЛЕНИЕ (Без синтаксических багов) =================
         function showFavToast(msg, isError = false) {
             var toast = document.getElementById('favActionToast');
             if (!toast) {
@@ -3205,16 +3220,10 @@ function closeProfileModal() {
             var bgColor = isError ? 'rgba(239, 68, 68, 0.95)' : 'rgba(74, 222, 128, 0.95)';
             var icon = isError ? '❌' : '✨';
             
-            toast.style.cssText = \`
-                position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-                background: \${bgColor}; color: #fff; padding: 12px 24px;
-                border-radius: 16px; font-weight: 600; font-size: 14px;
-                z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-                opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-                pointer-events: none; display: flex; align-items: center; gap: 8px;
-            \`;
+            toast.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: ' + bgColor + '; color: #fff; padding: 12px 24px; border-radius: 16px; font-weight: 600; font-size: 14px; z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); pointer-events: none; display: flex; align-items: center; gap: 8px;';
             
-            toast.innerHTML = \`<span>\${icon}</span> <span>\${msg}</span>\`;
+            toast.innerHTML = '<span>' + icon + '</span> <span>' + msg + '</span>';
+            
             void toast.offsetWidth; // Триггер анимации
             
             toast.style.opacity = '1';
@@ -3224,7 +3233,7 @@ function closeProfileModal() {
                 tg.HapticFeedback.notificationOccurred(isError ? 'error' : 'success');
             }
             
-            setTimeout(() => {
+            setTimeout(function() {
                 toast.style.opacity = '0';
                 toast.style.top = '20px';
             }, 3000);
@@ -3248,7 +3257,6 @@ function closeProfileModal() {
             closeFavSystem();
             
             try {
-                // ИСПРАВЛЕНИЕ: Добавили JSON заголовок, чтобы бэкенд не выдавал ошибку!
                 var res = await fetch(API_BASE + '/api/set_favorite', {
                     method: 'POST',
                     headers: Object.assign({'Content-Type': 'application/json'}, authHeaders()),
@@ -3262,7 +3270,7 @@ function closeProfileModal() {
                     showFavToast(data.error || "Неизвестная ошибка сервера", true);
                 }
             } catch (e) {
-                console.error("Ошибка сети при сохранении любимой карты:", e);
+                console.error("Ошибка сети:", e);
                 showFavToast("Ошибка сети при сохранении!", true);
             }
         }
