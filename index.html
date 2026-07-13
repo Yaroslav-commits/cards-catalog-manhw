@@ -1775,6 +1775,28 @@
 
         </div>
     </div>
+
+    <div class="system-overlay-center" id="bgSystemSheet">
+        <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh;">
+            
+            <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
+                <button class="sys-close" onclick="closeBgSystem()">✖</button>
+                <div class="sys-kicker">SYSTEM NOTIFICATION</div>
+                <div class="sys-title">ФОН ПРОФИЛЯ</div>
+            </div>
+            
+            <div class="bg-slider-container" id="bgListContainer" style="margin-bottom: 16px;">
+                </div>
+
+            <div class="pagination-bar">
+                <button class="page-btn" id="bgPrevBtn" onclick="changeBgPage(-1)">◀ Назад</button>
+                <div class="page-indicator" id="bgPageIndicator">1 / 1</div>
+                <button class="page-btn" id="bgNextBtn" onclick="changeBgPage(1)">Вперед ▶</button>
+            </div>
+
+        </div>
+    </div>
+
     <nav class="bottom-nav">
         <button class="nav-btn" onclick="switchTab('catalog', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
