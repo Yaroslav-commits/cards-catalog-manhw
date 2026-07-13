@@ -1240,6 +1240,50 @@
             background: var(--accent); 
             border-radius: 10px; 
         }
+/* === СТИЛИ НАВИГАЦИИ КАТАЛОГА КАРТ (ПО 12 КАРТ) === */
+        .catalog-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 24px auto 40px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        .catalog-page-btn {
+            background: var(--surface-light);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            min-width: 38px;
+            height: 38px;
+            padding: 0 6px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+        .catalog-page-btn:active {
+            transform: scale(0.92);
+        }
+        .catalog-page-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(139, 92, 246, 0.45);
+        }
+        .catalog-page-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            transform: none !important;
+        }
     </style>
 </head>
 <body>
@@ -1294,6 +1338,7 @@
         </div>
         
         <div class="cards-grid" id="cardsContainer"></div>
+        <div class="catalog-pagination" id="catalogPagination"></div>
     </div>
 
     <div id="tab-profile" class="tab-content active">
@@ -2385,16 +2430,36 @@
             }
         };
 
+        var currentCatalogPage = 1;
+        var lastCatalogFilterKey = "";
+
         function renderCards(cards) {
             var container = document.getElementById('cardsContainer');
+            var pagContainer = document.getElementById('catalogPagination');
+            
             container.innerHTML = '';
+            if (pagContainer) pagContainer.innerHTML = '';
+            
             updateCollectionInfo(cards.length);
+            
             if (!cards.length) {
                 container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px; opacity:0.6;">Измените фильтры</span></div>';
                 return;
             }
             
-            cards.forEach(function(card) {
+            // МАТЕМАТИКА: 12 карт на страницу
+            var cardsPerPage = 12;
+            var totalPages = Math.ceil(cards.length / cardsPerPage) || 1;
+            
+            if (currentCatalogPage > totalPages) currentCatalogPage = totalPages;
+            if (currentCatalogPage < 1) currentCatalogPage = 1;
+
+            var start = (currentCatalogPage - 1) * cardsPerPage;
+            var end = start + cardsPerPage;
+            var pageCards = cards.slice(start, end);
+            
+            // Отрисовка твоих карт (ОРИГИНАЛЬНЫЙ ДИЗАЙН)
+            pageCards.forEach(function(card) {
                 var cleanRarity = (card.rarity || '').split(' ')[0];
                 var isOwned = userOwnedCards.includes(card.id);
                 var div = document.createElement('div');
@@ -2422,6 +2487,54 @@
                 
                 container.appendChild(div);
             });
+
+            // ГЕНЕРАЦИЯ КНОПОК ПАГИНАЦИИ
+            if (totalPages > 1 && pagContainer) {
+                var prevBtn = document.createElement('button');
+                prevBtn.className = 'catalog-page-btn';
+                prevBtn.innerHTML = '◀';
+                prevBtn.disabled = (currentCatalogPage === 1);
+                prevBtn.onclick = function() {
+                    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+                    currentCatalogPage--;
+                    renderCards(cards);
+                    document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"}); // Автоскролл наверх
+                };
+                pagContainer.appendChild(prevBtn);
+
+                var startPage = Math.max(1, currentCatalogPage - 2);
+                var endPage = Math.min(totalPages, startPage + 4);
+                if (endPage - startPage < 4) {
+                    startPage = Math.max(1, endPage - 4);
+                }
+
+                for (var p = startPage; p <= endPage; p++) {
+                    (function(pageNum) {
+                        var pageBtn = document.createElement('button');
+                        pageBtn.className = 'catalog-page-btn' + (pageNum === currentCatalogPage ? ' active' : '');
+                        pageBtn.innerText = pageNum;
+                        pageBtn.onclick = function() {
+                            if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+                            currentCatalogPage = pageNum;
+                            renderCards(cards);
+                            document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"});
+                        };
+                        pagContainer.appendChild(pageBtn);
+                    })(p);
+                }
+
+                var nextBtn = document.createElement('button');
+                nextBtn.className = 'catalog-page-btn';
+                nextBtn.innerHTML = '▶';
+                nextBtn.disabled = (currentCatalogPage === totalPages);
+                nextBtn.onclick = function() {
+                    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+                    currentCatalogPage++;
+                    renderCards(cards);
+                    document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"});
+                };
+                pagContainer.appendChild(nextBtn);
+            }
         }
 
         function updateCards() {
@@ -2429,6 +2542,13 @@
             var rarity = document.getElementById('rarityFilter').value;
             var series = document.getElementById('seriesFilter').value;
             var sortType = document.getElementById('sortFilter').value;
+
+            // СБРОС на 1 страницу при новом поиске или фильтре
+            var currentFilterKey = search + "_" + rarity + "_" + series + "_" + sortType;
+            if (lastCatalogFilterKey !== currentFilterKey) {
+                currentCatalogPage = 1;
+                lastCatalogFilterKey = currentFilterKey;
+            }
 
             var filtered = allCards.filter(function(card) {
                 var cleanRarity = (card.rarity || '').split(' ')[0];
