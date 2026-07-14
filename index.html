@@ -1470,6 +1470,35 @@
                 filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.6)); 
             }
         }
+/* === ЭФФЕКТ ДУБЛИКАТОВ (Разбитая карта) === */
+        .summon-card-back img.is-dup-img {
+            filter: grayscale(85%) brightness(0.5); /* Обесцвечиваем и затемняем */
+        }
+        .dup-overlay {
+            position: absolute; inset: 0; z-index: 5; pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .dup-slash {
+            position: absolute; inset: 0;
+            /* Эффект диагонального разреза/разбитого стекла */
+            background: linear-gradient(105deg, transparent 48%, rgba(255, 0, 0, 0.8) 49%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 0, 0, 0.8) 51%, transparent 52%);
+            mix-blend-mode: overlay;
+        }
+        .dup-stamp {
+            position: relative; z-index: 6;
+            font-family: 'Russo One', sans-serif;
+            font-size: 16px; font-weight: 900; color: #fff;
+            background: rgba(220, 38, 38, 0.85);
+            padding: 8px 12px; border: 2px solid #ffaaaa;
+            border-radius: 8px; box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
+            text-transform: uppercase; text-align: center;
+            transform: rotate(-15deg) scale(1.2);
+            animation: stampSlam 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes stampSlam {
+            0% { transform: rotate(-15deg) scale(3); opacity: 0; }
+            100% { transform: rotate(-15deg) scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -4355,11 +4384,30 @@ async function openPublicProfile(targetId) {
             var glow = getRarityGlowColor(card.rarity);
             var isDivine = (card.rarity || '').includes('Божест');
 
+            // УМНЫЙ ЗАМЕНИТЕЛЬ КАРТИНОК (.jpeg -> .webp)
+            var imgSrc = `images/${card.file}`;
+            var fallbackSrc = imgSrc.replace(/\.jpe?g$/i, '.webp');
+
+            // ЛОГИКА ДУБЛИКАТА
+            var dupHtml = '';
+            var imgClass = '';
+            if (card.is_dup) {
+                imgClass = 'is-dup-img';
+                dupHtml = `<div class="dup-overlay">
+                              <div class="dup-slash"></div>
+                              <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} 💴</div>
+                           </div>`;
+            }
+
+            // onerror="this.onerror=null; this.src=..." — если картинки нет, браузер сам подставит .webp
             cardEl.innerHTML = `
                 <div class="rarity-flash" style="background: ${glow}"></div>
                 <div class="summon-card-inner">
                     <div class="summon-card-front" style="background-image: url('images/${backImg}'), linear-gradient(#333, #111);"></div>
-                    <div class="summon-card-back"><img src="images/${card.file}"></div>
+                    <div class="summon-card-back">
+                        <img class="${imgClass}" src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                        ${dupHtml}
+                    </div>
                 </div>
             `;
             grid.appendChild(cardEl);
@@ -4410,7 +4458,28 @@ async function openPublicProfile(targetId) {
                 var cardEl = document.createElement('div');
                 cardEl.className = 'summon-card landed flipped';
                 cardEl.style.transition = 'none';
-                cardEl.innerHTML = `<div class="summon-card-inner" style="transition: none;"><div class="summon-card-back"><img src="images/${card.file}"></div></div>`;
+
+                var imgSrc = `images/${card.file}`;
+                var fallbackSrc = imgSrc.replace(/\.jpe?g$/i, '.webp');
+
+                var dupHtml = '';
+                var imgClass = '';
+                if (card.is_dup) {
+                    imgClass = 'is-dup-img';
+                    dupHtml = `<div class="dup-overlay">
+                                  <div class="dup-slash"></div>
+                                  <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} 💴</div>
+                               </div>`;
+                }
+
+                cardEl.innerHTML = `
+                    <div class="summon-card-inner" style="transition: none;">
+                        <div class="summon-card-back">
+                            <img class="${imgClass}" src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                            ${dupHtml}
+                        </div>
+                    </div>
+                `;
                 grid.appendChild(cardEl);
             });
             document.getElementById('summonClaimBtn').classList.add('show');
