@@ -1427,8 +1427,6 @@
         .flipped .rarity-flash { animation: rarityBurst 0.8s ease-out forwards; }
         @keyframes rarityBurst { 0% { opacity: 1; transform: scale(0.8); } 100% { opacity: 0; transform: scale(1.5); } }
 /* === ЭКРАН ЗАГРУЗКИ (SPLASH SCREEN) === */
-        @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
-
         .splash-screen {
             position: fixed;
             inset: 0;
@@ -1444,19 +1442,16 @@
             visibility: hidden;
         }
         .splash-text {
-            font-family: 'Russo One', sans-serif;
-            font-size: 46px;
-            letter-spacing: 3px;
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            /* Уникальный стиль: небольшой наклон для динамики и поднятие выше центра */
-            transform: translateY(-15vh) skewX(-8deg); 
             /* Градиент в твоих фирменных цветах */
             background: linear-gradient(270deg, var(--accent), var(--accent-2), var(--accent-light), var(--accent));
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            /* Новый эффект без зума */
-            animation: gradientMove 3s ease infinite, auraGlow 2.5s ease-in-out infinite;
+            animation: gradientMove 3s ease infinite, pulseGlow 2s ease-in-out infinite;
         }
         
         @keyframes gradientMove {
@@ -1465,12 +1460,14 @@
             100% { background-position: 0% 50%; }
         }
         
-        @keyframes auraGlow {
+        @keyframes pulseGlow {
             0%, 100% { 
-                filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.4)) drop-shadow(0 0 20px rgba(139, 92, 246, 0.2)) hue-rotate(0deg); 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4)); 
             }
             50% { 
-                filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 40px rgba(6, 182, 212, 0.4)) hue-rotate(15deg); 
+                transform: scale(1.05); 
+                filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.6)); 
             }
         }
     </style>
