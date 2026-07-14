@@ -1922,7 +1922,7 @@
             <div class="pass-sec-title" style="margin-bottom: 0;">
                 <div class="pass-sec-title-left">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 2 7.5 4 12 7 12 7zM12 7s1.5-5 4.5-3S12 7 12 7z"/></svg>
-                    <div>НАГРАДА ЗА ПОВЫШЕНИЕ<div class="pass-sec-sub">Получай случайную награду при аппе уровня</div></div>
+                    <div id="passRewTitleLevel">НАГРАДА ЗА ПОВЫШЕНИЕ<div class="pass-sec-sub">Получай случайную награду при аппе уровня</div></div>
                 </div>
             </div>
 
@@ -1931,7 +1931,7 @@
                     <div class="rew-ico rew-krw">₩</div>
                     <div class="rew-name">KRW</div>
                     <div class="rew-rarity common">Обычная</div>
-                    <div class="rew-amount">150 – 250</div>
+                    <div class="rew-amount" id="passRewKrw">150 – 250</div>
                     <div class="rew-chance">70% <span>ШАНС</span></div>
                 </div>
                 <div class="rew-card">
@@ -1940,14 +1940,14 @@
                     </div>
                     <div class="rew-name">Алмазы</div>
                     <div class="rew-rarity epic">Эпическая</div>
-                    <div class="rew-amount">2 – 6</div>
+                    <div class="rew-amount" id="passRewDia">2 – 6</div>
                     <div class="rew-chance">5% <span>ШАНС</span></div>
                 </div>
                 <div class="rew-card">
                     <div class="rew-ico rew-bc">Ⓑ</div>
                     <div class="rew-name">BattleCoin</div>
                     <div class="rew-rarity rare">Редкая</div>
-                    <div class="rew-amount">50 – 100</div>
+                    <div class="rew-amount" id="passRewBc">50 – 100</div>
                     <div class="rew-chance">25% <span>ШАНС</span></div>
                 </div>
             </div>
@@ -2112,7 +2112,14 @@
                     passXp = parseInt(data.pass_xp) || 0;
                     if (isNaN(passXp)) passXp = 0;
                     claimedPassLevels = parseInt(data.claimed_pass_levels) || 1;
-                    passMaxXp = 3000; // Принудительно задаем константу до отрисовки
+                    
+                    // УМНАЯ ШКАЛА ОПЫТА
+                    if (realPassLevel < 30) {
+                        passMaxXp = (realPassLevel + 1) * 100;
+                    } else {
+                        passMaxXp = 3000;
+                    }
+                    
                     userPassQuests = data.pass_quests || {};
                     // =============================
 
@@ -3793,6 +3800,42 @@ async function openPublicProfile(targetId) {
             }
         }
 
+        function getRewardRanges(level) {
+            if (level > 30) return { krw: '200 – 300', dia: '2 – 8', bc: '75 – 175' };
+            const r = {
+                2: { krw: '30 – 35', dia: '2 – 3', bc: '10 – 25' },
+                3: { krw: '30 – 35', dia: '2 – 3', bc: '20 – 25' },
+                4: { krw: '35', dia: '2 – 3', bc: '25' },
+                5: { krw: '35 – 50', dia: '2 – 3', bc: '25 – 30' },
+                6: { krw: '35 – 50', dia: '2 – 3', bc: '25 – 30' },
+                7: { krw: '50', dia: '2 – 3', bc: '35' },
+                8: { krw: '50 – 65', dia: '2 – 3', bc: '25 – 30' },
+                9: { krw: '50 – 65', dia: '2 – 3', bc: '25 – 30' },
+                10: { krw: '65', dia: '2 – 3', bc: '50' },
+                11: { krw: '65 – 70', dia: '2 – 3', bc: '30' },
+                12: { krw: '65 – 75', dia: '2 – 3', bc: '25 – 35' },
+                13: { krw: '65 – 75', dia: '2 – 3', bc: '25 – 35' },
+                14: { krw: '75', dia: '2 – 3', bc: '50' },
+                15: { krw: '75 – 80', dia: '2 – 3', bc: '25 – 35' },
+                16: { krw: '80', dia: '2 – 3', bc: '35' },
+                17: { krw: '80 – 85', dia: '2 – 3', bc: '30 – 35' },
+                18: { krw: '85', dia: '2 – 3', bc: '40' },
+                19: { krw: '85 – 90', dia: '2 – 3', bc: '30 – 35' },
+                20: { krw: '90', dia: '2 – 3', bc: '50' },
+                21: { krw: '90 – 95', dia: '2 – 3', bc: '35 – 40' },
+                22: { krw: '95', dia: '2 – 3', bc: '40' },
+                23: { krw: '95 – 100', dia: '2 – 3', bc: '35 – 40' },
+                24: { krw: '100', dia: '2 – 3', bc: '45' },
+                25: { krw: '100 – 110', dia: '2 – 3', bc: '35 – 45' },
+                26: { krw: '110', dia: '2 – 3', bc: '45' },
+                27: { krw: '110 – 120', dia: '2 – 3', bc: '40 – 45' },
+                28: { krw: '120 – 130', dia: '2 – 3', bc: '45' },
+                29: { krw: '130 – 140', dia: '2 – 3', bc: '45 – 50' },
+                30: { krw: '150', dia: '2 – 3', bc: '50' }
+            };
+            return r[level] || { krw: '200 – 300', dia: '2 – 8', bc: '75 – 175' };
+        }
+
         function renderPassScreen() {
             var unclaimed = realPassLevel - claimedPassLevels;
             var percent = Math.floor((passXp / passMaxXp) * 100) || 0;
@@ -3805,6 +3848,21 @@ async function openPublicProfile(targetId) {
             var xpText = document.getElementById('passXpText');
             var progressBar = document.getElementById('passProgressBar');
             var leftTextTop = document.getElementById('passLeftTextTop');
+           
+            // Динамическое обновление наград
+            var targetLvl = claimedPassLevels + 1; 
+            if (targetLvl > realPassLevel + 1) targetLvl = realPassLevel + 1;
+            
+            var rewRanges = getRewardRanges(targetLvl);
+            var rKrw = document.getElementById('passRewKrw');
+            var rDia = document.getElementById('passRewDia');
+            var rBc = document.getElementById('passRewBc');
+            var rTitle = document.getElementById('passRewTitleLevel');
+            
+            if (rKrw) rKrw.innerText = rewRanges.krw;
+            if (rDia) rDia.innerText = rewRanges.dia;
+            if (rBc) rBc.innerText = rewRanges.bc;
+            if (rTitle) rTitle.innerHTML = 'НАГРАДА ЗА ' + targetLvl + ' УРОВЕНЬ<div class="pass-sec-sub">Получай случайную награду при аппе уровня</div>';
 
             if (hexLvl) hexLvl.innerText = realPassLevel;
             if (xpText) xpText.innerHTML = passXp + ' <span>/ ' + passMaxXp + ' XP</span>';
