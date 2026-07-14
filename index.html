@@ -1426,10 +1426,56 @@
         }
         .flipped .rarity-flash { animation: rarityBurst 0.8s ease-out forwards; }
         @keyframes rarityBurst { 0% { opacity: 1; transform: scale(0.8); } 100% { opacity: 0; transform: scale(1.5); } }
+/* === ЭКРАН ЗАГРУЗКИ (SPLASH SCREEN) === */
+        .splash-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 999999; /* Поверх абсолютно всего */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .splash-text {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            /* Градиент в твоих фирменных цветах */
+            background: linear-gradient(270deg, var(--accent), var(--accent-2), var(--accent-light), var(--accent));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s ease infinite, pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4)); 
+            }
+            50% { 
+                transform: scale(1.05); 
+                filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.6)); 
+            }
+        }
     </style>
 </head>
 <body>
-
+   <div id="splashScreen" class="splash-screen">
+        <div class="splash-text">ManhwCard</div>
+    </div>
     <div id="tab-catalog" class="tab-content">
         <div class="section-hero">
             <div class="hero-kicker">ManhwCard Archive</div>
@@ -4376,6 +4422,18 @@ async function openPublicProfile(targetId) {
             var claimBtn = document.getElementById('summonClaimBtn');
             if(claimBtn) claimBtn.classList.remove('show');
         }
+// ================= СПЛЭШ-ЭКРАН (ЗАГРУЗКА) =================
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var splash = document.getElementById('splashScreen');
+                if (splash) {
+                    splash.classList.add('hidden'); // Плавно скрываем
+                    
+                    // Полностью удаляем элемент из HTML через 0.5 сек (после завершения анимации)
+                    setTimeout(() => splash.remove(), 500); 
+                }
+            }, 2500); // 2500 миллисекунд = 2.5 секунды
+        });
     </script>
 </body>
 </html>
