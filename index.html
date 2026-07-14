@@ -4423,17 +4423,13 @@ async function openPublicProfile(targetId) {
             if(claimBtn) claimBtn.classList.remove('show');
         }
 // ================= СПЛЭШ-ЭКРАН (ЗАГРУЗКА) =================
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                var splash = document.getElementById('splashScreen');
-                if (splash) {
-                    splash.classList.add('hidden'); // Плавно скрываем
-                    
-                    // Полностью удаляем элемент из HTML через 0.5 сек (после завершения анимации)
-                    setTimeout(() => splash.remove(), 500); 
-                }
-            }, 2500); // 2500 миллисекунд = 2.5 секунды
-        });
+        setTimeout(function() {
+            var splash = document.getElementById('splashScreen');
+            if (splash) {
+                splash.classList.add('hidden');
+                setTimeout(() => splash.remove(), 500); 
+            }
+        }, 2500); // Строго 2.5 секунды независимо от скорости интернета
     </script>
 </body>
 </html>
