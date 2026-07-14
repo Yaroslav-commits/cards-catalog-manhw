@@ -10,14 +10,19 @@ if not os.path.exists(folder_path):
 else:
     # Перебираем все файлы в папке
     for filename in os.listdir(folder_path):
-        # Ищем файлы, которые заканчиваются на .jpeg (игнорируя регистр букв)
-        if filename.lower().endswith('.jpeg'):
+        # Ищем файлы, которые заканчиваются на .jpeg или .jpg
+        if filename.lower().endswith(('.jpeg', '.jpg')):
             # Создаем полные пути к файлам
             old_path = os.path.join(folder_path, filename)
 
-            # Меняем расширение с .jpeg на .webp для нового файла
+            # Меняем расширение на .webp для нового файла
             new_filename = filename.rsplit('.', 1)[0] + '.webp'
             new_path = os.path.join(folder_path, new_filename)
+
+            # 🆕 ПРОВЕРКА: если файл .webp уже существует, пропускаем конвертацию
+            if os.path.exists(new_path):
+                print(f"⏭️ Пропущено (уже конвертировано): {new_filename}")
+                continue
 
             try:
                 # Открываем оригинальную картинку и сохраняем как WebP
