@@ -1315,13 +1315,17 @@
         /* --- СЦЕНА ПРИЗЫВА --- */
         .summon-overlay {
             position: fixed; inset: 0; z-index: 9999;
-            background: rgba(0, 0, 0, 0); backdrop-filter: blur(0px);
+            background: rgba(0, 0, 0, 0); 
+            -webkit-backdrop-filter: blur(0px);
+            backdrop-filter: blur(0px);
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            transition: background 0.3s ease, backdrop-filter 0.3s ease;
-            overflow: hidden; perspective: 1000px;
+            transition: background 0.3s ease, -webkit-backdrop-filter 0.3s ease, backdrop-filter 0.3s ease;
+            overflow: hidden;
         }
         .summon-overlay.open {
-            display: flex; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+            display: flex; background: rgba(0, 0, 0, 0.85); 
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
         }
         .summon-overlay.shake { animation: divineShake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes divineShake {
@@ -1353,28 +1357,60 @@
             width: 100%; max-width: 500px; padding: 20px;
         }
 
+        /* 3D Карта с индивидуальной перспективой */
         .summon-card {
             aspect-ratio: 3/4; position: relative; cursor: pointer;
-            transform: translateY(150vh) scale(0.5); opacity: 0;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.4s;
+            -webkit-perspective: 1000px;
+            perspective: 1000px; /* Каждой карте своя 3D глубина */
+            transform: translateY(120vh) scale(0.3) rotateX(35deg); /* Летят снизу с небольшим наклоном */
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2), opacity 0.5s;
         }
-        .summon-card.landed { transform: translateY(0) scale(1); opacity: 1; }
+        .summon-card.landed { transform: translateY(0) scale(1) rotateX(0deg); opacity: 1; }
         .summon-card.floating { animation: cardFloat 3s ease-in-out infinite; }
         @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
         .summon-card-inner {
             width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .summon-card.flipped .summon-card-inner { transform: rotateY(180deg) scale(1.1); }
+        
+        /* Поворот в 3D пространстве */
+        .summon-card.flipped .summon-card-inner {
+            -webkit-transform: rotateY(180deg) scale(1.05);
+            transform: rotateY(180deg) scale(1.05);
+        }
 
         .summon-card-front, .summon-card-back {
-            position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; overflow: hidden;
+            position: absolute; inset: 0;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px; overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .summon-card-front { background-size: cover; background-position: center; border: 2px solid rgba(255,255,255,0.1); }
-        .summon-card-back { transform: rotateY(180deg); background: #000; }
-        .summon-card-back img { width: 100%; height: 100%; object-fit: cover; pointer-events: none;}
+        
+        /* Передняя сторона (рубашка) */
+        .summon-card-front {
+            background-size: cover; background-position: center; border: 2px solid rgba(255,255,255,0.1);
+            z-index: 2;
+            -webkit-transform: rotateY(0deg);
+            transform: rotateY(0deg);
+        }
+        
+        /* Задняя сторона (лицо карты) */
+        .summon-card-back {
+            background: #000;
+            z-index: 1;
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+        }
+        .summon-card-back img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+        /* Бронебойный хак для Safari на iOS: переключаем приоритет слоев в момент переворота */
+        .summon-card.flipped .summon-card-front { z-index: 1; }
+        .summon-card.flipped .summon-card-back { z-index: 2; }
 
         .summon-claim-btn {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(50px);
@@ -1517,7 +1553,7 @@
             </div>
         </div>
 
-        <div class="shop-banner" onclick="wip('Магазин')">
+        <div class="shop-banner" onclick="switchTab('shop', document.querySelectorAll('.nav-btn')[1])">
             <div class="shop-banner-bg"></div>
             <div class="shop-banner-overlay"></div>
             <div class="shop-banner-content">
