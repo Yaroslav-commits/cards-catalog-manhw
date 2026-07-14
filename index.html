@@ -1284,6 +1284,112 @@
             cursor: not-allowed;
             transform: none !important;
         }
+/* ================= МАГАЗИН И ГАЧА ================= */
+        .shop-controls { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
+        .summon-amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .summon-amt-btn {
+            background: var(--surface-light); border: 1px solid var(--border-color);
+            color: #fff; padding: 12px; border-radius: 12px; font-weight: 800;
+            cursor: pointer; transition: 0.2s;
+        }
+        .summon-amt-btn.active {
+            background: rgba(139, 92, 246, 0.2); border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+        
+        .summon-actions { display: flex; gap: 10px; }
+        .summon-btn {
+            flex: 1; padding: 16px; border-radius: 16px; font-weight: 800; font-size: 16px;
+            border: none; cursor: pointer; transition: 0.2s;
+        }
+        .summon-btn.primary {
+            background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+        .summon-btn.quick {
+            background: var(--surface-light); border: 1px solid var(--border-color); color: var(--text-muted);
+        }
+        .summon-btn:active { transform: scale(0.96); }
+        .summon-btn:disabled { opacity: 0.5; pointer-events: none; }
+
+        /* --- СЦЕНА ПРИЗЫВА --- */
+        .summon-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0, 0, 0, 0); backdrop-filter: blur(0px);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            transition: background 0.3s ease, backdrop-filter 0.3s ease;
+            overflow: hidden; perspective: 1000px;
+        }
+        .summon-overlay.open {
+            display: flex; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+        }
+        .summon-overlay.shake { animation: divineShake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes divineShake {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-8px, 5px); }
+            40% { transform: translate(8px, -5px); }
+            60% { transform: translate(-8px, -5px); }
+            80% { transform: translate(8px, 5px); }
+        }
+
+        .summon-portal {
+            position: absolute; bottom: -150px; left: 50%; transform: translateX(-50%);
+            width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(139, 92, 246, 0.8) 0%, transparent 70%);
+            opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+            animation: portalPulse 2s infinite alternate;
+        }
+        @keyframes portalPulse { from { transform: translateX(-50%) scale(1); opacity: 0.6; } to { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+        
+        .summon-rays {
+            position: absolute; bottom: 0; left: 50%; width: 200%; height: 100%;
+            background: repeating-conic-gradient(from 0deg at 50% 100%, transparent 0deg, rgba(139, 92, 246, 0.1) 5deg, transparent 10deg);
+            transform: translateX(-50%); opacity: 0; pointer-events: none;
+            mask-image: linear-gradient(to top, black, transparent);
+            -webkit-mask-image: linear-gradient(to top, black, transparent);
+        }
+
+        .summon-grid {
+            position: relative; z-index: 10; display: grid; gap: 12px;
+            width: 100%; max-width: 500px; padding: 20px;
+        }
+
+        .summon-card {
+            aspect-ratio: 3/4; position: relative; cursor: pointer;
+            transform: translateY(150vh) scale(0.5); opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.4s;
+        }
+        .summon-card.landed { transform: translateY(0) scale(1); opacity: 1; }
+        .summon-card.floating { animation: cardFloat 3s ease-in-out infinite; }
+        @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+        .summon-card-inner {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .summon-card.flipped .summon-card-inner { transform: rotateY(180deg) scale(1.1); }
+
+        .summon-card-front, .summon-card-back {
+            position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .summon-card-front { background-size: cover; background-position: center; border: 2px solid rgba(255,255,255,0.1); }
+        .summon-card-back { transform: rotateY(180deg); background: #000; }
+        .summon-card-back img { width: 100%; height: 100%; object-fit: cover; pointer-events: none;}
+
+        .summon-claim-btn {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(50px);
+            padding: 16px 40px; background: #fff; color: #0d0d14; font-weight: 800; font-size: 16px;
+            border-radius: 20px; border: none; opacity: 0; pointer-events: none; transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3); z-index: 20;
+        }
+        .summon-claim-btn.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; cursor: pointer; }
+        .summon-claim-btn:active { transform: translateX(-50%) scale(0.95); }
+
+        .rarity-flash {
+            position: absolute; inset: -20px; border-radius: 20px; z-index: -1; opacity: 0; pointer-events: none;
+        }
+        .flipped .rarity-flash { animation: rarityBurst 0.8s ease-out forwards; }
+        @keyframes rarityBurst { 0% { opacity: 1; transform: scale(0.8); } 100% { opacity: 0; transform: scale(1.5); } }
     </style>
 </head>
 <body>
@@ -1441,6 +1547,47 @@
 
         <div class="tops-list" id="topsListContainer">
             </div>
+    </div>
+
+    <div id="tab-shop" class="tab-content">
+        <div class="section-hero" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(18, 18, 26, 0.8)); border-color: rgba(6,182,212,0.3);">
+            <div class="hero-kicker" style="color: var(--accent-2);">Gacha Portal</div>
+            <div class="hero-title">Призыв Карт</div>
+            <div class="hero-subtitle">Испытай удачу и собери редчайших персонажей.</div>
+            <div class="hero-pills">
+                <span class="hero-pill" style="background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.3);">
+                    🎟 Доступно попыток: <span id="shopAttemptsBal" style="color: #fff; font-weight: 800; font-size: 14px;">0</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="shop-controls">
+            <div style="font-size: 14px; font-weight: 700; color: var(--text-muted);">Количество круток:</div>
+            <div class="summon-amounts">
+                <button class="summon-amt-btn active" onclick="selectSummonAmount(1, this)">1</button>
+                <button class="summon-amt-btn" onclick="selectSummonAmount(2, this)">2</button>
+                <button class="summon-amt-btn" onclick="selectSummonAmount(4, this)">4</button>
+                <button class="summon-amt-btn" onclick="selectSummonAmount(8, this)">8</button>
+                <button class="summon-amt-btn" onclick="selectSummonAmount(12, this)">12</button>
+                <button class="summon-amt-btn" onclick="selectSummonAmount(16, this)">16</button>
+            </div>
+            
+            <div style="text-align: center; margin: 10px 0; font-size: 16px; font-weight: 800;">
+                Стоимость: <span id="summonCostText" style="color: var(--accent-light);">1 попытка</span>
+            </div>
+
+            <div class="summon-actions">
+                <button class="summon-btn quick" id="btnQuickSummon" onclick="executeSummon(true)">Быстро</button>
+                <button class="summon-btn primary" id="btnFullSummon" onclick="executeSummon(false)">Открыть 1</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="summon-overlay" id="summonOverlay">
+        <div class="summon-portal" id="summonPortal"></div>
+        <div class="summon-rays" id="summonRays"></div>
+        <div class="summon-grid" id="summonGrid"></div>
+        <button class="summon-claim-btn" id="summonClaimBtn" onclick="closeSummonScene()">Забрать карты</button>
     </div>
 
     <div class="modal-overlay" id="dailyModal">
@@ -1846,6 +1993,9 @@
         <button class="nav-btn" onclick="switchTab('catalog', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
         </button>
+        <button class="nav-btn" onclick="switchTab('shop', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </button>
         <button class="nav-btn nav-center active" onclick="switchTab('profile', this)">
             <svg viewBox="0 0 32 24" fill="currentColor"><path d="M3 22 7 2l9 12 9-12 4 20h-5L21 11l-5 8-5-8-2 11z"/></svg>
         </button>
@@ -2087,6 +2237,9 @@
                     document.getElementById('valKrw').innerText = data.krw;
                     document.getElementById('valDiamond').innerText = data.diamond;
                     document.getElementById('valBc').innerText = data.battlecoin;
+                    if (document.getElementById('shopAttemptsBal')) {
+                        document.getElementById('shopAttemptsBal').innerText = data.attempts || 0;
+                    }
                     
                     userOwnedCards = data.owned_cards || [];
                     document.getElementById('valCards').innerText = userOwnedCards.length;
@@ -4005,6 +4158,188 @@ async function openPublicProfile(targetId) {
         // Инициализация интервалов
         setInterval(updatePassResetTimer, 60000);
         updateMainMenuPass();
+// ================= ЛОГИКА ГАЧИ (МАГАЗИН) =================
+        var selectedSummonAmount = 1;
+        var summonedCardsData = [];
+        var flippedCardsCount = 0;
+
+        function selectSummonAmount(amount, btnEl) {
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            selectedSummonAmount = amount;
+            
+            document.querySelectorAll('.summon-amt-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+            
+            var textStr = ' попыток';
+            if (amount === 1) textStr = ' попытка';
+            else if (amount < 5) textStr = ' попытки';
+            
+            document.getElementById('summonCostText').innerText = amount + textStr;
+            document.getElementById('btnFullSummon').innerText = 'Открыть ' + amount;
+        }
+
+        async function executeSummon(isQuick) {
+            var btnFull = document.getElementById('btnFullSummon');
+            var btnQuick = document.getElementById('btnQuickSummon');
+            btnFull.disabled = true; btnQuick.disabled = true;
+
+            try {
+                var res = await fetch(API_BASE + '/api/multi_summon/' + userId, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+                    body: JSON.stringify({ amount: selectedSummonAmount })
+                });
+                var data = await res.json();
+                
+                if (data.success) {
+                    summonedCardsData = data.cards;
+                    document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
+                    fetchProfile(); // Фоново обновляем основную коллекцию
+                    
+                    if (isQuick) showQuickResults();
+                    else startEpicSummonSequence();
+                } else {
+                    tg.showAlert(data.error);
+                }
+            } catch (e) {
+                tg.showAlert("Ошибка соединения с сервером");
+            }
+            
+            btnFull.disabled = false; btnQuick.disabled = false;
+        }
+
+        // --- ЭПИЧНАЯ СЦЕНА ---
+        function startEpicSummonSequence() {
+            var overlay = document.getElementById('summonOverlay');
+            var portal = document.getElementById('summonPortal');
+            var rays = document.getElementById('summonRays');
+            var grid = document.getElementById('summonGrid');
+            var claimBtn = document.getElementById('summonClaimBtn');
+            
+            flippedCardsCount = 0;
+            grid.innerHTML = '';
+            claimBtn.classList.remove('show');
+            overlay.classList.remove('shake');
+            
+            var cols = selectedSummonAmount <= 2 ? selectedSummonAmount : 4;
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            
+            overlay.classList.add('open');
+            
+            setTimeout(() => { 
+                portal.style.opacity = '1'; 
+                rays.style.opacity = '1';
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            }, 300);
+
+            summonedCardsData.forEach((card, index) => {
+                var isDivine = (card.rarity || '').includes('Божест');
+                var delay = (index * 80) + (isDivine ? 200 : 0) + 600; 
+                setTimeout(() => { spawnSummonCard(card, index); }, delay);
+            });
+
+            var totalTime = (summonedCardsData.length * 80) + 1200;
+            setTimeout(() => {
+                document.querySelectorAll('.summon-card').forEach(c => c.classList.add('floating'));
+            }, totalTime);
+        }
+
+        function getCardBackImage(rarity) {
+            rarity = rarity || '';
+            if(rarity.includes('Божест')) return 'back_divine.png';
+            if(rarity.includes('Мифич')) return 'back_mythic.png';
+            if(rarity.includes('Легенд')) return 'back_legendary.png';
+            if(rarity.includes('Эпич')) return 'back_epic.png';
+            if(rarity.includes('Редк')) return 'back_rare.png';
+            return 'back_common.png';
+        }
+
+        function getRarityGlowColor(rarity) {
+            rarity = rarity || '';
+            if(rarity.includes('Божест')) return 'radial-gradient(circle, rgba(139,92,246,1) 0%, transparent 70%)';
+            if(rarity.includes('Мифич')) return 'radial-gradient(circle, rgba(239,68,68,1) 0%, transparent 70%)';
+            if(rarity.includes('Легенд')) return 'radial-gradient(circle, rgba(59,130,246,1) 0%, transparent 70%)';
+            if(rarity.includes('Эпич')) return 'radial-gradient(circle, rgba(168,85,247,1) 0%, transparent 70%)';
+            if(rarity.includes('Редк')) return 'radial-gradient(circle, rgba(250,204,21,1) 0%, transparent 70%)';
+            return 'radial-gradient(circle, rgba(255,255,255,1) 0%, transparent 70%)';
+        }
+
+        function spawnSummonCard(card, index) {
+            var grid = document.getElementById('summonGrid');
+            var cardEl = document.createElement('div');
+            cardEl.className = 'summon-card';
+            
+            var backImg = getCardBackImage(card.rarity);
+            var glow = getRarityGlowColor(card.rarity);
+            var isDivine = (card.rarity || '').includes('Божест');
+
+            cardEl.innerHTML = `
+                <div class="rarity-flash" style="background: ${glow}"></div>
+                <div class="summon-card-inner">
+                    <div class="summon-card-front" style="background-image: url('images/${backImg}'), linear-gradient(#333, #111);"></div>
+                    <div class="summon-card-back"><img src="images/${card.file}"></div>
+                </div>
+            `;
+            grid.appendChild(cardEl);
+            
+            setTimeout(() => { 
+                cardEl.classList.add('landed');
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }, 50);
+
+            cardEl.onclick = function() {
+                if (this.classList.contains('flipped')) return;
+                
+                this.classList.remove('floating');
+                this.classList.add('flipped');
+                flippedCardsCount++;
+
+                setTimeout(() => {
+                    if (isDivine) {
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+                        document.getElementById('summonOverlay').classList.remove('shake');
+                        void document.getElementById('summonOverlay').offsetWidth;
+                        document.getElementById('summonOverlay').classList.add('shake');
+                    } else {
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                    }
+                    
+                    if (flippedCardsCount >= selectedSummonAmount) {
+                        setTimeout(() => { document.getElementById('summonClaimBtn').classList.add('show'); }, 600);
+                    }
+                }, 300); 
+            };
+        }
+
+        function showQuickResults() {
+            var overlay = document.getElementById('summonOverlay');
+            var portal = document.getElementById('summonPortal');
+            var rays = document.getElementById('summonRays');
+            var grid = document.getElementById('summonGrid');
+            
+            portal.style.opacity = '0'; rays.style.opacity = '0';
+            overlay.classList.add('open');
+            grid.innerHTML = '';
+            
+            var cols = selectedSummonAmount <= 2 ? selectedSummonAmount : 4;
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            
+            summonedCardsData.forEach(card => {
+                var cardEl = document.createElement('div');
+                cardEl.className = 'summon-card landed flipped';
+                cardEl.style.transition = 'none';
+                cardEl.innerHTML = `<div class="summon-card-inner" style="transition: none;"><div class="summon-card-back"><img src="images/${card.file}"></div></div>`;
+                grid.appendChild(cardEl);
+            });
+            document.getElementById('summonClaimBtn').classList.add('show');
+        }
+
+        function closeSummonScene() {
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            document.getElementById('summonOverlay').classList.remove('open');
+            var claimBtn = document.getElementById('summonClaimBtn');
+            if(claimBtn) claimBtn.classList.remove('show');
+        }
     </script>
 </body>
 </html>
