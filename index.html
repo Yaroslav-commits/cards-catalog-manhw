@@ -1765,7 +1765,8 @@
         </div>
 
         <div class="tops-nav">
-            <button class="tops-nav-btn active" id="btnTopPvp" onclick="switchTopCategory('pvp', this)">PvP (Сезон)</button>
+            <button class="tops-nav-btn active" id="btnTopPvpSeason" onclick="switchTopCategory('pvp_season', this)">PvP (Сезон)</button>
+            <button class="tops-nav-btn" onclick="switchTopCategory('pvp', this)">PvP (Все)</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('rank', this)">Очки ранга</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('krw', this)">Баланс</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('cards', this)">Карты</button>
@@ -2446,7 +2447,7 @@
             // --- НОВОЕ: Загружаем топы только при первом переходе на вкладку ---
             if (tabId === 'tops' && !topsTimerInterval) {
                 loadTopsTimer();
-                switchTopCategory('pvp', document.getElementById('btnTopPvp'));
+                switchTopCategory('pvp_season', document.getElementById('btnTopPvpSeason'));
             }
         }
 
@@ -3967,7 +3968,7 @@ function closeProfileModal() {
             currentTopCategory = category;
             
             // Показываем таймер ТОЛЬКО для PvP сезона
-            document.getElementById('topsTimer').style.display = (category === 'pvp') ? 'inline-flex' : 'none';
+            document.getElementById('topsTimer').style.display = (category === 'pvp_season') ? 'inline-flex' : 'none';
 
             loadTops(category);
         }
@@ -4031,7 +4032,7 @@ function closeProfileModal() {
                     scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span> ' + player.score.replace(' 💎', '');
                 } else if (currentTopCategory === 'cards') {
                     scoreHtml = '<span class="top-score-ico">🃏</span> ' + player.score.replace(' шт.', '');
-                } else if (currentTopCategory === 'pvp') {
+                } else if (currentTopCategory === 'pvp' || currentTopCategory === 'pvp_season') {
                     scoreHtml = '<span class="top-score-ico">⚔️</span> ' + player.score.replace(' побед', '');
                 } else if (currentTopCategory === 'rank') {
                     scoreHtml = '<span class="top-score-ico">🏅</span> ' + player.score.replace(' RP', '');
