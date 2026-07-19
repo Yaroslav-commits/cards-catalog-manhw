@@ -978,12 +978,16 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    min-width: 0; /* Чтобы длинные имена могли обрезаться */
 }
 .top-name {
     font-weight: 800;
     font-size: 16px;
     color: #fff;
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Добавляет троеточие длинным именам */
 }
 .top-level-tag {
     font-size: 12px;
@@ -991,6 +995,8 @@
     color: #06b6d4;
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-align: left;
+    margin-left: -2px; /* Чуть влево, как просил */
 }
 .top-score {
     font-family: monospace;
@@ -998,6 +1004,9 @@
     font-weight: bold;
     color: #a855f7;
     text-align: right;
+    white-space: nowrap; /* Чтобы баланс в 1+ млн не переносился */
+    flex-shrink: 0; /* Чтобы баланс не сжимался */
+    padding-left: 10px;
 }
 /* ================= SYSTEM PACK ANIMATION ================= */
 /* === ОБНОВЛЕННЫЙ ЭКРАН ПАКОВ (ЭФФЕКТ СТЕНЫ ИЗ СТЕКЛА) === */
@@ -1761,7 +1770,7 @@
             <button class="tops-nav-btn" onclick="switchTopCategory('krw', this)">Баланс</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('cards', this)">Карты</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('diamond', this)">Алмазы</button>
-            <button class="top-nav-btn" onclick="loadLeaderboard('level')">Уровень</button>
+            <button class="tops-nav-btn" onclick="switchTopCategory('level', this)">Уровень</button>
         </div>
 
         <div class="tops-list" id="topsListContainer">
