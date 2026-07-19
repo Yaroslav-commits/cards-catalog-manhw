@@ -934,6 +934,71 @@
         }
         .top-score-ico { color: var(--accent-light); display: flex; align-items: center; }
         .top-score-ico svg { width: 16px; height: 16px; }
+/* МАНХВА-СТИЛЬ ДЛЯ ТОПА */
+.top-row {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, rgba(30, 30, 42, 0.8) 0%, rgba(20, 20, 30, 0.5) 100%);
+    border-left: 4px solid #333;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    transition: transform 0.2s;
+}
+.top-row:hover {
+    transform: translateX(5px);
+    border-left-color: #06b6d4;
+}
+.top-rank {
+    font-family: 'Russo One', sans-serif;
+    font-size: 20px;
+    font-style: italic;
+    width: 40px;
+    text-align: center;
+    color: #666;
+}
+/* Подсветка ТОП-3 */
+.top-row[data-rank="1"] { border-left-color: #fbbf24; background: linear-gradient(90deg, rgba(251, 191, 36, 0.15) 0%, transparent 100%); }
+.top-row[data-rank="1"] .top-rank { color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); font-size: 24px; }
+
+.top-row[data-rank="2"] { border-left-color: #94a3b8; }
+.top-row[data-rank="2"] .top-rank { color: #94a3b8; }
+
+.top-row[data-rank="3"] { border-left-color: #b45309; }
+.top-row[data-rank="3"] .top-rank { color: #b45309; }
+
+.top-avatar {
+    width: 45px; height: 45px;
+    border-radius: 12px;
+    margin: 0 15px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+.top-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.top-name {
+    font-weight: 800;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 2px;
+}
+.top-level-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: #06b6d4;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.top-score {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: bold;
+    color: #a855f7;
+    text-align: right;
+}
 /* ================= SYSTEM PACK ANIMATION ================= */
 /* === ОБНОВЛЕННЫЙ ЭКРАН ПАКОВ (ЭФФЕКТ СТЕНЫ ИЗ СТЕКЛА) === */
         .pack-overlay {
@@ -1692,10 +1757,11 @@
 
         <div class="tops-nav">
             <button class="tops-nav-btn active" id="btnTopPvp" onclick="switchTopCategory('pvp', this)">PvP (Сезон)</button>
+            <button class="tops-nav-btn" onclick="switchTopCategory('rank', this)">Очки ранга</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('krw', this)">Баланс</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('cards', this)">Карты</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('rank', this)">Очки ранга</button>
             <button class="tops-nav-btn" onclick="switchTopCategory('diamond', this)">Алмазы</button>
+            <button class="top-nav-btn" onclick="loadLeaderboard('level')">Уровень</button>
         </div>
 
         <div class="tops-list" id="topsListContainer">
@@ -3964,17 +4030,23 @@ function closeProfileModal() {
 
                 var clickAction = "openPublicProfile(" + player.id + ")";
                 
-                // ИСПРАВЛЕНО: Безопасная сборка картинки без конфликта кавычек!
+// Безопасная сборка картинки с подстраховкой (заглушкой)
                 var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
                 var avatarSrc = API_BASE + "/api/avatar/" + player.id;
                 var imgHtml = '<img src="' + avatarSrc + '" class="top-avatar" onerror="this.src=\'' + fallbackImg + '\'">';
-
-                var html = '<div class="top-row" onclick="' + clickAction + '">' +
-                    '<div class="top-rank ' + rankClass + '">' + rankContent + '</div>' +
-                    imgHtml +
-                    '<div class="top-name">' + cleanName + '</div>' +
-                    '<div class="top-score">' + scoreHtml + '</div>' +
-                '</div>';
+                
+                // Твой крутой шаблон в стиле Манхвы
+                var html = `
+                    <div class="top-row" data-rank="${rank}" onclick="openPublicProfile(${player.id})">
+                        <div class="top-rank">#${rank}</div>
+                        ${imgHtml}
+                        <div class="top-info">
+                            <div class="top-name">${cleanName}</div>
+                            <div class="top-level-tag">Lv. ${player.level || 1}</div>
+                        </div>
+                        <div class="top-score">${scoreHtml}</div>
+                    </div>
+                `;
 
                 container.innerHTML += html;
             });
