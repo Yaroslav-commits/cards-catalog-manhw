@@ -1615,7 +1615,260 @@
             0% { transform: rotate(-15deg) scale(3); opacity: 0; }
             100% { transform: rotate(-15deg) scale(1); opacity: 1; }
         }
-    </style>
+    
+/* === КОЛЛЕКЦИЯ (АЛЬБОМ) === */
+.col-header {
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.col-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: #fff;
+}
+.col-progress {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.col-progress-text {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+.col-progress-text span {
+    color: #fff;
+    font-weight: 700;
+}
+.col-progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.col-progress-bar div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.col-filters-wrap {
+    padding: 15px 0 5px 20px;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+}
+.col-filters-wrap::-webkit-scrollbar { display: none; }
+.col-filters {
+    display: flex;
+    gap: 10px;
+    padding-right: 20px;
+}
+.col-filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+.col-filter-btn.active {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+
+.col-accordion-list {
+    padding: 15px 20px 100px;
+}
+.col-acc-item {
+    margin-bottom: 12px;
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: 0.3s ease;
+}
+.col-acc-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.02);
+}
+.col-acc-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.col-acc-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.col-acc-arrow {
+    transition: transform 0.3s ease;
+    color: var(--text-muted);
+}
+.col-acc-item.open .col-acc-arrow {
+    transform: rotate(180deg);
+}
+.col-acc-item.open .col-acc-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.col-acc-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 0;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.3s ease;
+    /* Smooth rolling scrolling */
+}
+.col-acc-item.open .col-acc-body {
+    padding: 16px;
+    max-height: 2000px; /* Big enough */
+    opacity: 1;
+}
+
+/* CARDS IN COLLECTION */
+.col-card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    background: #111;
+    border: 2px solid transparent;
+}
+.col-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.3s;
+}
+.col-card.uncollected img {
+    filter: grayscale(100%) brightness(0.3);
+}
+.col-card.collected {
+    /* Shadow based on inline style var(--r-color) */
+    box-shadow: 0 0 12px var(--r-color), inset 0 0 8px var(--r-color);
+    border-color: var(--r-color);
+}
+.col-card-check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 20px;
+    height: 20px;
+    background: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    box-shadow: 0 0 8px #10b981;
+    z-index: 2;
+    opacity: 0;
+}
+.col-card.collected .col-card-check {
+    opacity: 1;
+}
+.col-card-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    padding: 15px 4px 4px;
+    font-size: 10px;
+    text-align: center;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 1;
+}
+
+        /* === КОЛЛЕКЦИЯ (АЛЬБОМ) === */
+        .collection-progress {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px; padding: 12px; margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .cp-text { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .cp-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .cp-fill { height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); width: 0%; transition: width 0.5s ease-out; }
+        
+        .collection-list { padding: 0 16px 80px 16px; overflow-y: auto; scroll-behavior: smooth; }
+        
+        .col-rarity-group { margin-bottom: 12px; }
+        .col-rarity-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 16px; background: var(--surface-light);
+            border-radius: 12px; border-left: 4px solid var(--r-color, #fff);
+            cursor: pointer; transition: 0.2s; user-select: none;
+        }
+        .col-rarity-header:active { transform: scale(0.98); }
+        .col-rarity-title { font-weight: 800; font-size: 16px; color: #fff; text-shadow: 0 0 10px var(--r-color); }
+        .col-rarity-count { font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 600; margin-right: 10px; }
+        .col-arrow { transition: transform 0.3s; color: rgba(255,255,255,0.5); }
+        .col-rarity-group.open .col-arrow { transform: rotate(180deg); color: #fff; }
+        
+        .col-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            padding: 12px 0; display: none;
+        }
+        .col-rarity-group.open .col-grid { display: grid; animation: fadeInGrid 0.3s ease; }
+        @keyframes fadeInGrid { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .col-card {
+            position: relative; border-radius: 10px; overflow: hidden;
+            aspect-ratio: 2/3; background: #000;
+            transition: 0.3s;
+        }
+        .col-card img { width: 100%; height: 100%; object-fit: cover; }
+        .col-card.owned {
+            border: 1px solid var(--r-color);
+            box-shadow: 0 0 12px rgba(0,0,0,0.5), inset 0 0 10px var(--r-color);
+            cursor: pointer;
+        }
+        .col-card.owned:active { transform: scale(0.92); }
+        .col-card.locked {
+            filter: grayscale(100%) brightness(0.25);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .col-check {
+            position: absolute; top: 6px; right: 6px;
+            width: 20px; height: 20px; background: var(--r-color);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 8px var(--r-color);
+        }
+        .col-series {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            color: rgba(255,255,255,0.7); font-size: 9px; text-align: center;
+            padding: 15px 2px 4px 2px; font-weight: 600; text-transform: uppercase;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+</style>
 </head>
 <body>
    <div id="splashScreen" class="splash-screen">
@@ -1755,7 +2008,28 @@
         </div>
     </div>
 
-    <div id="tab-tops" class="tab-content">
+    
+    <!-- === Вкладка: КОЛЛЕКЦИЯ === -->
+    <div id="tab-collection" class="tab-content">
+        <div class="section-hero" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(18, 18, 26, 0.8)); border-color: rgba(139, 92, 246, 0.3);">
+            <div class="hero-kicker" style="color: var(--accent-light);">Альбом Системы</div>
+            <div class="hero-title">Моя Коллекция</div>
+            <div class="hero-subtitle">Собери всех персонажей из разных вселенных.</div>
+            
+            <div class="collection-progress">
+                <div class="cp-text">
+                    <span>Собрано карт:</span>
+                    <span id="colProgressTxt">0 / 0</span>
+                </div>
+                <div class="cp-bar"><div class="cp-fill" id="colProgressFill"></div></div>
+            </div>
+        </div>
+
+        <div class="collection-list" id="collectionListContainer">
+            <!-- Сюда JS сгенерирует аккордеон редкостей -->
+        </div>
+    </div>
+<div id="tab-tops" class="tab-content">
         <div class="tops-header">
             <div class="tops-title">🏆 Рейтинг игроков</div>
             <div class="tops-timer" id="topsTimer" style="display: none;">
@@ -1779,7 +2053,26 @@
             </div>
     </div>
 
-    <div id="tab-shop" class="tab-content">
+    <div 
+    <div id="tab-collection" class="tab-content">
+        <div class="col-header">
+            <div class="col-title">Альбом Карт</div>
+            <div class="col-progress">
+                <div class="col-progress-text">Собрано: <span id="colProgressCount">0/0</span></div>
+                <div class="col-progress-bar"><div id="colProgressBarFill"></div></div>
+            </div>
+        </div>
+        
+        <div class="col-filters-wrap">
+            <div class="col-filters" id="colSeriesFilters">
+                <button class="col-filter-btn active" onclick="filterCollection('all', this)">Все</button>
+            </div>
+        </div>
+
+        <div class="col-accordion-list" id="colAccordionList">
+        </div>
+    </div>
+id="tab-shop" class="tab-content">
         <div class="section-hero" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(18, 18, 26, 0.8)); border-color: rgba(6,182,212,0.3);">
             <div class="hero-kicker" style="color: var(--accent-2);">Gacha Portal</div>
             <div class="hero-title">Призыв Карт</div>
@@ -2232,6 +2525,9 @@
         <button class="nav-btn" onclick="switchTab('tops', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
+        <button class="nav-btn" onclick="switchTab('collection', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        </button>
     </nav> <div class="pass-screen" id="passScreen">
         <div class="ps-head" style="position: absolute; top: 10px; left: 10px; z-index: 10; margin: 0;">
             <button class="ps-back" onclick="closePassModal()">
@@ -2616,7 +2912,8 @@
         }
 
         function openDailyModal() {
-            renderDailyGrid();
+                            renderCollection();
+                renderDailyGrid();
             document.getElementById('dailyModal').classList.add('open');
         }
         function closeDailyModal() {
@@ -4702,4 +4999,112 @@ async function openPublicProfile(targetId) {
         packWrapper.addEventListener('touchend', handleLeave);
 </script>
 </body>
-</html>
+</html
+        // ================= КОЛЛЕКЦИЯ (АЛЬБОМ) =================
+        var rarityColors = {
+            'Обычная ⚪️': '#94a3b8',
+            'Редкая 🟡': '#fde047',
+            'Эпическая 🟢': '#4ade80',
+            'Легендарная 🔵': '#3b82f6',
+            'Мифическая 🔴': '#ef4444',
+            'Божественная ⚫️': '#a8a29e', // серебристый/тёмный
+            'Лимитированная ✨': '#f472b6',
+            'Ивентовая 🪎': '#fb923c'
+        };
+        var rarityOrder = ['Божественная ⚫️', 'Мифическая 🔴', 'Легендарная 🔵', 'Эпическая 🟢', 'Редкая 🟡', 'Обычная ⚪️', 'Лимитированная ✨', 'Ивентовая 🪎'];
+
+        function renderCollection() {
+            if (!allCards || !profileData) return;
+            
+            var ownedSet = new Set(profileData.owned_cards || []);
+            var totalCards = allCards.length;
+            var ownedCount = 0;
+            
+            // Группируем карты
+            var grouped = {};
+            allCards.forEach(c => {
+                if (ownedSet.has(c.id)) ownedCount++;
+                var r = c.rarity || 'Обычная ⚪️';
+                if (!grouped[r]) grouped[r] = [];
+                grouped[r].push(c);
+            });
+            
+            // Прогресс бар
+            document.getElementById('colProgressTxt').innerText = ownedCount + ' / ' + totalCards;
+            var pct = totalCards > 0 ? (ownedCount / totalCards * 100) : 0;
+            document.getElementById('colProgressFill').style.width = pct + '%';
+            
+            var container = document.getElementById('collectionListContainer');
+            container.innerHTML = '';
+            
+            rarityOrder.forEach(r => {
+                if (!grouped[r] || grouped[r].length === 0) return;
+                
+                var rCards = grouped[r];
+                var rOwned = rCards.filter(c => ownedSet.has(c.id)).length;
+                var color = rarityColors[r] || '#fff';
+                
+                var groupEl = document.createElement('div');
+                groupEl.className = 'col-rarity-group';
+                
+                // Шапка (Аккордеон)
+                var headerHtml = `
+                    <div class="col-rarity-header" style="--r-color: ${color};" onclick="toggleCollectionGroup(this)">
+                        <div class="col-rarity-title">${r}</div>
+                        <div style="display:flex; align-items:center;">
+                            <div class="col-rarity-count">${rOwned} / ${rCards.length}</div>
+                            <svg class="col-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="col-grid">
+                `;
+                
+                var gridHtml = '';
+                rCards.forEach(c => {
+                    var isOwned = ownedSet.has(c.id);
+                    var imgSrc = 'images/' + c.file;
+                    var fallbackSrc = imgSrc.replace(/\.jpe?g$/i, '.webp');
+                    
+                    if (isOwned) {
+                        var clickData = JSON.stringify(c).replace(/"/g, '&quot;');
+                        gridHtml += `
+                            <div class="col-card owned" style="--r-color: ${color};" onclick="openModal(${clickData})">
+                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                                <div class="col-check">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </div>
+                                <div class="col-series">${c.series || ''}</div>
+                            </div>
+                        `;
+                    } else {
+                        gridHtml += `
+                            <div class="col-card locked">
+                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                                <div class="col-series">${c.series || ''}</div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                groupEl.innerHTML = headerHtml + gridHtml + `</div>`;
+                container.appendChild(groupEl);
+            });
+        }
+
+        function toggleCollectionGroup(headerEl) {
+            var group = headerEl.parentElement;
+            var wasOpen = group.classList.contains('open');
+            
+            // Закрываем все остальные (rolling accordion effect)
+            document.querySelectorAll('.col-rarity-group').forEach(g => g.classList.remove('open'));
+            
+            // Если он не был открыт, открываем его и скроллим к нему
+            if (!wasOpen) {
+                group.classList.add('open');
+                setTimeout(() => {
+                    headerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+>
