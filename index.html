@@ -657,8 +657,8 @@
         .coll-rarity-right-info { display: flex; align-items: center; gap: 10px; }
         .coll-rarity-badge-pct { font-size: 11px; font-weight: 800; color: #fff; padding: 3px 8px; border-radius: 8px; background: var(--r-color); }
         
-        .coll-grid-anim-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.28s ease-out; }
-        .coll-rarity-section.open .coll-grid-anim-wrapper { grid-template-rows: 1fr; }
+        .coll-grid-anim-wrapper { display: none; }
+        .coll-rarity-section.open .coll-grid-anim-wrapper { display: block; animation: fadeIn 0.2s ease-out; }
         .coll-grid-overflow { overflow: hidden; }
         .coll-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px; }
         
@@ -4936,7 +4936,7 @@ async function openPublicProfile(targetId) {
                         var clickData = JSON.stringify(c).replace(/"/g, '&quot;');
                         sectionHtml += `
                             <div class="coll-mini-card owned" style="--r-color: ${rColor};" onclick="openModal(${clickData})">
-                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                                <img src="${imgSrc}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
                                 <div class="coll-card-check">
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </div>
@@ -4945,7 +4945,7 @@ async function openPublicProfile(targetId) {
                     } else {
                         sectionHtml += `
                             <div class="coll-mini-card locked">
-                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                                <img src="${imgSrc}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
                             </div>`;
                     }
                 });
