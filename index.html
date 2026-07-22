@@ -1615,75 +1615,6 @@
             0% { transform: rotate(-15deg) scale(3); opacity: 0; }
             100% { transform: rotate(-15deg) scale(1); opacity: 1; }
         }
-/* ================= АЛЬБОМ (КОЛЛЕКЦИЯ) ================= */
-        .collection-progress-box {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px; padding: 14px; margin-top: 15px;
-        }
-        .cp-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-        .cp-track { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
-        .cp-fill { height: 100%; background: linear-gradient(90deg, #06b6d4, #8b5cf6); width: 0%; transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-        
-        .collection-filters {
-            display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; margin: 0 -16px 10px;
-            scrollbar-width: none;
-        }
-        .collection-filters::-webkit-scrollbar { display: none; }
-        .col-filter-btn {
-            background: var(--surface-light); border: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-muted); padding: 6px 14px; border-radius: 20px;
-            font-size: 13px; font-weight: 600; white-space: nowrap; transition: 0.2s; cursor: pointer;
-        }
-        .col-filter-btn.active {
-            background: var(--accent); color: #fff; border-color: var(--accent-light);
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
-        }
-        
-        .collection-body { padding: 0 16px 80px 16px; }
-        
-        .col-rarity-group { margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); border-radius: 14px; overflow: hidden; background: rgba(28,28,40,0.3); }
-        .col-rarity-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px; background: var(--surface-light);
-            border-left: 4px solid var(--r-color, #fff);
-            cursor: pointer; user-select: none; transition: 0.2s;
-        }
-        .col-rarity-header:active { background: rgba(255,255,255,0.05); }
-        .col-r-title { font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 0 8px var(--r-color); }
-        .col-r-stats { display: flex; align-items: center; gap: 10px; }
-        .col-r-count { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.5); }
-        .col-arrow { transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); color: rgba(255,255,255,0.5); }
-        .col-rarity-group.open .col-arrow { transform: rotate(180deg); color: #fff; }
-        
-        /* Эффект плавного выпадающего списка */
-        .col-grid-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-        .col-rarity-group.open .col-grid-wrapper { grid-template-rows: 1fr; }
-        .col-grid-inner { overflow: hidden; }
-        .col-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px; }
-        
-        .col-card { position: relative; aspect-ratio: 2/3; border-radius: 8px; overflow: hidden; background: #000; transition: 0.2s; }
-        .col-card img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .col-card.owned {
-            border: 1px solid var(--r-color);
-            box-shadow: 0 0 15px rgba(0,0,0,0.6), inset 0 0 12px var(--r-color); cursor: pointer;
-        }
-        .col-card.owned:active { transform: scale(0.95); }
-        .col-card.locked { filter: grayscale(100%) brightness(0.2); border: 1px solid rgba(255,255,255,0.05); pointer-events: none; }
-        
-        .col-check {
-            position: absolute; top: 6px; right: 6px; width: 22px; height: 22px;
-            background: var(--r-color); border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 10px var(--r-color);
-        }
-        
-        .col-card-name {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
-            color: #fff; font-size: 10px; font-weight: 700; text-align: center;
-            padding: 20px 4px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
     </style>
 </head>
 <body>
@@ -1822,25 +1753,6 @@
                 <button class="shop-btn">Перейти в магазин</button>
             </div>
         </div>
-    </div>
-
-    <div id="tab-collection" class="tab-content">
-        <div class="section-hero" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 6, 12, 0.9)); border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
-            <div class="hero-kicker" style="color: #c4b5fd;">Галерея</div>
-            <div class="hero-title">Альбом Карт</div>
-            
-            <div class="collection-progress-box">
-                <div class="cp-header">
-                    <span>Собрано персонажей</span>
-                    <span id="colProgressTxt">0 / 0</span>
-                </div>
-                <div class="cp-track"><div class="cp-fill" id="colProgressFill"></div></div>
-            </div>
-            
-            <div class="collection-filters" id="colFilters"></div>
-        </div>
-
-        <div class="collection-body" id="colListContainer"></div>
     </div>
 
     <div id="tab-tops" class="tab-content">
@@ -2307,7 +2219,7 @@
         </div>
     </div>
 
-        <nav class="bottom-nav">
+    <nav class="bottom-nav">
         <button class="nav-btn" onclick="switchTab('catalog', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
         </button>
@@ -2319,9 +2231,6 @@
         </button>
         <button class="nav-btn" onclick="switchTab('tops', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
-        </button>
-        <button class="nav-btn" onclick="switchTab('collection', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
         </button>
     </nav> <div class="pass-screen" id="passScreen">
         <div class="ps-head" style="position: absolute; top: 10px; left: 10px; z-index: 10; margin: 0;">
@@ -2643,7 +2552,6 @@
                         renderPassQuests();
                     }
                     updateMainMenuPass();
-                    initCollection();
 
                 } else {
                     console.error("Профиль не загрузился, HTTP " + res.status);
@@ -4400,7 +4308,6 @@ async function openPublicProfile(targetId) {
             }
             
             updateMainMenuPass();
-                    initCollection();
         }
 
         function renderPassQuests() {
@@ -4523,7 +4430,6 @@ async function openPublicProfile(targetId) {
         // Инициализация интервалов
         setInterval(updatePassResetTimer, 60000);
         updateMainMenuPass();
-                    initCollection();
 // ================= ЛОГИКА ГАЧИ (МАГАЗИН) =================
         var selectedSummonAmount = 1;
         var summonedCardsData = [];
@@ -4794,134 +4700,6 @@ async function openPublicProfile(targetId) {
         
         packWrapper.addEventListener('touchmove', handleMove, {passive: true});
         packWrapper.addEventListener('touchend', handleLeave);
-// ================= АЛЬБОМ (КОЛЛЕКЦИЯ) =================
-        var colActiveSeries = 'All';
-        
-        function initCollection() {
-            // Безопасная проверка: если карт еще нет, не ломаем приложение
-            if (typeof allCards === 'undefined') return;
-            
-            var seriesSet = new Set();
-            allCards.forEach(c => { if(c.series) seriesSet.add(c.series); });
-            var seriesList = ['All', ...Array.from(seriesSet).sort()];
-            
-            var filterContainer = document.getElementById('colFilters');
-            if (!filterContainer) return;
-            filterContainer.innerHTML = '';
-            
-            seriesList.forEach(s => {
-                var btn = document.createElement('div');
-                btn.className = 'col-filter-btn' + (s === colActiveSeries ? ' active' : '');
-                btn.innerText = s === 'All' ? 'Все' : s;
-                btn.onclick = function() {
-                    colActiveSeries = s;
-                    document.querySelectorAll('.col-filter-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    renderCollection();
-                };
-                filterContainer.appendChild(btn);
-            });
-            
-            renderCollection();
-        }
-
-        function renderCollection() {
-            if (typeof allCards === 'undefined') return;
-            var container = document.getElementById('colListContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            // 🔥 ИСПРАВЛЕНИЕ ТУТ: Используем твою глобальную userOwnedCards 🔥
-            var ownedArray = (typeof userOwnedCards !== 'undefined') ? userOwnedCards : [];
-            var ownedSet = new Set(ownedArray);
-            
-            // Фильтруем по Вселенной
-            var filteredCards = allCards.filter(c => colActiveSeries === 'All' || c.series === colActiveSeries);
-            
-            var totalCount = filteredCards.length;
-            var ownedCount = filteredCards.filter(c => ownedSet.has(c.id)).length;
-            
-            // Заполняем Прогресс-бар безопасно
-            var progressTxt = document.getElementById('colProgressTxt');
-            if(progressTxt) progressTxt.innerText = ownedCount + ' / ' + totalCount;
-            
-            var progressFill = document.getElementById('colProgressFill');
-            var pct = totalCount > 0 ? (ownedCount / totalCount * 100) : 0;
-            if(progressFill) progressFill.style.width = pct + '%';
-            
-            // Группируем по редкости
-            var grouped = {};
-            filteredCards.forEach(c => {
-                var r = c.rarity || 'Обычная ⚪️';
-                if (!grouped[r]) grouped[r] = [];
-                grouped[r].push(c);
-            });
-            
-            var rarityOrder = ['Божественная ⚫️', 'Мифическая 🔴', 'Легендарная 🔵', 'Эпическая 🟢', 'Редкая 🟡', 'Обычная ⚪️', 'Лимитированная ✨', 'Ивентовая 🪎'];
-            var rarityColors = {
-                'Обычная ⚪️': '#94a3b8', 'Редкая 🟡': '#fde047', 'Эпическая 🟢': '#4ade80',
-                'Легендарная 🔵': '#3b82f6', 'Мифическая 🔴': '#ef4444', 'Божественная ⚫️': '#d6d3d1',
-                'Лимитированная ✨': '#f472b6', 'Ивентовая 🪎': '#fb923c'
-            };
-            
-            rarityOrder.forEach(r => {
-                if (!grouped[r] || grouped[r].length === 0) return;
-                
-                var rCards = grouped[r];
-                var rOwned = rCards.filter(c => ownedSet.has(c.id)).length;
-                var color = rarityColors[r] || '#fff';
-                
-                var groupHtml = `
-                    <div class="col-rarity-group">
-                        <div class="col-rarity-header" style="--r-color: ${color};" onclick="toggleColGroup(this)">
-                            <div class="col-r-title">${r}</div>
-                            <div class="col-r-stats">
-                                <div class="col-r-count">${rOwned} / ${rCards.length}</div>
-                                <svg class="col-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                            </div>
-                        </div>
-                        <div class="col-grid-wrapper"><div class="col-grid-inner"><div class="col-grid">`;
-                
-                rCards.forEach(c => {
-                    var isOwned = ownedSet.has(c.id);
-                    var imgSrc = 'images/' + c.file;
-                    var fallbackSrc = imgSrc.replace(/\.jpe?g$/i, '.webp');
-                    
-                    if (isOwned) {
-                        var clickData = JSON.stringify(c).replace(/"/g, '&quot;');
-                        groupHtml += `
-                            <div class="col-card owned" style="--r-color: ${color};" onclick="openModal(${clickData})">
-                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
-                                <div class="col-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                                <div class="col-card-name">${c.name || ''}</div>
-                            </div>`;
-                    } else {
-                        groupHtml += `
-                            <div class="col-card locked">
-                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
-                            </div>`;
-                    }
-                });
-                groupHtml += `</div></div></div></div>`;
-                container.insertAdjacentHTML('beforeend', groupHtml);
-            });
-        }
-        
-        function toggleColGroup(headerEl) {
-            var group = headerEl.closest('.col-rarity-group');
-            var wasOpen = group.classList.contains('open');
-            
-            document.querySelectorAll('.col-rarity-group').forEach(g => g.classList.remove('open'));
-            
-            if (!wasOpen) {
-                group.classList.add('open');
-                setTimeout(() => { group.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
-            }
-            // Безопасный вызов вибрации (haptic feedback)
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.selectionChanged();
-            }
-        }
 </script>
 </body>
 </html>
