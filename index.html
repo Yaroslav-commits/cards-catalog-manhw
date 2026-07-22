@@ -4798,9 +4798,9 @@ async function openPublicProfile(targetId) {
         var colActiveSeries = 'All';
         
         function initCollection() {
-            if (!allCards || !profileData) return;
+            // Безопасная проверка: если карт еще нет, не ломаем приложение
+            if (typeof allCards === 'undefined') return;
             
-            // Динамически собираем все уникальные серии из JSON
             var seriesSet = new Set();
             allCards.forEach(c => { if(c.series) seriesSet.add(c.series); });
             var seriesList = ['All', ...Array.from(seriesSet).sort()];
@@ -4826,12 +4826,14 @@ async function openPublicProfile(targetId) {
         }
 
         function renderCollection() {
-            if (!allCards || !profileData) return;
+            if (typeof allCards === 'undefined') return;
             var container = document.getElementById('colListContainer');
             if (!container) return;
             container.innerHTML = '';
             
-            var ownedSet = new Set(profileData.owned_cards || []);
+            // 🔥 ИСПРАВЛЕНИЕ ТУТ: Используем твою глобальную userOwnedCards 🔥
+            var ownedArray = (typeof userOwnedCards !== 'undefined') ? userOwnedCards : [];
+            var ownedSet = new Set(ownedArray);
             
             // Фильтруем по Вселенной
             var filteredCards = allCards.filter(c => colActiveSeries === 'All' || c.series === colActiveSeries);
@@ -4839,10 +4841,13 @@ async function openPublicProfile(targetId) {
             var totalCount = filteredCards.length;
             var ownedCount = filteredCards.filter(c => ownedSet.has(c.id)).length;
             
-            // Заполняем Прогресс-бар
-            document.getElementById('colProgressTxt').innerText = ownedCount + ' / ' + totalCount;
+            // Заполняем Прогресс-бар безопасно
+            var progressTxt = document.getElementById('colProgressTxt');
+            if(progressTxt) progressTxt.innerText = ownedCount + ' / ' + totalCount;
+            
+            var progressFill = document.getElementById('colProgressFill');
             var pct = totalCount > 0 ? (ownedCount / totalCount * 100) : 0;
-            document.getElementById('colProgressFill').style.width = pct + '%';
+            if(progressFill) progressFill.style.width = pct + '%';
             
             // Группируем по редкости
             var grouped = {};
@@ -4906,14 +4911,16 @@ async function openPublicProfile(targetId) {
             var group = headerEl.closest('.col-rarity-group');
             var wasOpen = group.classList.contains('open');
             
-            // Rolling accordion: закрываем все остальные вкладки редкости
             document.querySelectorAll('.col-rarity-group').forEach(g => g.classList.remove('open'));
             
             if (!wasOpen) {
                 group.classList.add('open');
                 setTimeout(() => { group.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
             }
-            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            // Безопасный вызов вибрации (haptic feedback)
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.selectionChanged();
+            }
         }
 </script>
 </body>
