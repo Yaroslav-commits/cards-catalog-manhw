@@ -675,9 +675,9 @@
         }
         .coll-card-stats-strip {
             position: absolute; bottom: 0; left: 0; right: 0;
-            background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
-            color: #fff; font-size: 9px; font-weight: 700; text-align: center; padding: 12px 2px 4px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+            color: #fff; font-size: 10px; font-weight: 800; text-align: center; padding: 18px 4px 6px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 /* ================= ПОЛНЫЙ ПРОФИЛЬ (ПО ФОТО) ================= */
 .profile-screen {
@@ -4935,7 +4935,7 @@ async function openPublicProfile(targetId) {
                                 <div class="coll-card-check">
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </div>
-                                <div class="coll-card-stats-strip">⚔ ${c.strength || 0}</div>
+                                <div class="coll-card-stats-strip">${c.name || ''}</div>
                             </div>`;
                     } else {
                         sectionHtml += `
