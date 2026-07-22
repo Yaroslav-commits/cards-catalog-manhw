@@ -597,26 +597,88 @@
         .toast-title { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
         .toast-text { font-size: 13px; opacity: 0.92; }
 
-        /* ================= ПАРЯЩАЯ НАВИГАЦИЯ ================= */
+/* ================= ПАРЯЩАЯ НАВИГАЦИЯ (ИДЕАЛЬНЫЙ ФИКС НА 5 КНОПОК) ================= */
         .bottom-nav {
             position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
             width: calc(100% - 32px); max-width: 420px;
             background: rgba(18, 18, 26, 0.96); backdrop-filter: blur(12px);
-            display: flex; justify-content: space-around; align-items: center; padding: 12px 14px;
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 26px; z-index: 500;
+            display: flex; justify-content: space-between; align-items: center; padding: 6px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; z-index: 500;
             box-shadow: 0 12px 40px rgba(0,0,0,0.55);
         }
         .nav-btn {
             background: none; border: none; color: var(--text-muted);
             display: flex; align-items: center; justify-content: center;
-            padding: 10px 26px; border-radius: 16px; transition: 0.2s;
+            flex: 1; padding: 10px 0; border-radius: 16px; transition: 0.2s;
+            max-width: 72px; margin: 0 auto;
         }
-        .nav-btn svg { width: 26px; height: 26px; }
-        .nav-btn.active { color: #fff; background: rgba(139,92,246,0.16); }
+        .nav-btn svg { width: 23px; height: 24px; }
+        .nav-btn.active { color: #fff; background: rgba(139, 92, 246, 0.16); }
         .nav-btn.active svg { filter: drop-shadow(0 0 8px rgba(196,181,253,0.6)); }
-        .nav-center svg { width: 32px; height: 26px; }
+        .nav-center svg { width: 28px; height: 24px; }
 
-        .empty-state { grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px;}
+        /* ================= ДВУХУРОВНЕВЫЙ АЛЬБОМ ВСЕЛЕННЫХ ================= */
+        .coll-universe-card {
+            background: linear-gradient(135deg, rgba(28, 28, 40, 0.45) 0%, rgba(16, 16, 24, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px;
+            padding: 16px; margin-bottom: 12px; cursor: pointer; transition: 0.2s;
+            position: relative; overflow: hidden; box-shadow: var(--shadow-soft);
+        }
+        .coll-universe-card:active { transform: scale(0.97); background: rgba(255,255,255,0.02); }
+        .coll-uni-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .coll-uni-title { font-size: 16px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .coll-uni-badge {
+            font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px; color: #fff;
+            background: var(--uni-color, var(--accent)); box-shadow: 0 0 10px var(--uni-color, var(--accent));
+        }
+        .coll-uni-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
+        .coll-uni-count { font-size: 14px; font-weight: 800; color: #fff; }
+        .coll-uni-bar { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 3px; overflow: hidden; }
+        .coll-uni-fill { height: 100%; background: var(--uni-color, var(--accent)); width: 0%; transition: width 0.6s ease-out; }
+
+        /* Внутренний детальный экран выбранной вселенной */
+        .coll-detail-header-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(18, 18, 26, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; padding: 18px; margin-bottom: 16px;
+        }
+        .coll-detail-back-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); color: #fff;
+            padding: 7px 14px; border-radius: 12px; font-size: 13px; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px; cursor: pointer;
+        }
+        .coll-detail-back-btn:active { transform: scale(0.95); }
+        
+        .coll-rarity-section { margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); border-radius: 14px; overflow: hidden; background: rgba(20,20,30,0.3); }
+        .coll-rarity-trigger {
+            display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;
+            background: var(--surface-light); border-left: 4px solid var(--r-color, #fff); cursor: pointer; user-select: none;
+        }
+        .coll-rarity-title-txt { font-size: 15px; font-weight: 800; color: #fff; text-shadow: 0 0 8px var(--r-color); }
+        .coll-rarity-right-info { display: flex; align-items: center; gap: 10px; }
+        .coll-rarity-badge-pct { font-size: 11px; font-weight: 800; color: #fff; padding: 3px 8px; border-radius: 8px; background: var(--r-color); }
+        
+        .coll-grid-anim-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.28s ease-out; }
+        .coll-rarity-section.open .coll-grid-anim-wrapper { grid-template-rows: 1fr; }
+        .coll-grid-overflow { overflow: hidden; }
+        .coll-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px; }
+        
+        .coll-mini-card { position: relative; aspect-ratio: 3/4; border-radius: 10px; overflow: hidden; background: #000; transition: 0.15s; }
+        .coll-mini-card img { width: 100%; height: 100%; object-fit: cover; }
+        .coll-mini-card.owned { border: 1.5px solid var(--r-color); box-shadow: inset 0 0 10px var(--r-color); cursor: pointer; }
+        .coll-mini-card.owned:active { transform: scale(0.94); }
+        .coll-mini-card.locked { filter: grayscale(100%) brightness(0.2); border: 1px solid rgba(255,255,255,0.04); pointer-events: none; }
+        
+        .coll-card-check {
+            position: absolute; top: 5px; right: 5px; width: 18px; height: 18px;
+            background: #4ade80; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 8px #4ade80; z-index: 5;
+        }
+        .coll-card-stats-strip {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+            color: #fff; font-size: 9px; font-weight: 700; text-align: center; padding: 12px 2px 4px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
 /* ================= ПОЛНЫЙ ПРОФИЛЬ (ПО ФОТО) ================= */
 .profile-screen {
     position: fixed; inset: 0; z-index: 1500;
@@ -1615,6 +1677,7 @@
             0% { transform: rotate(-15deg) scale(3); opacity: 0; }
             100% { transform: rotate(-15deg) scale(1); opacity: 1; }
         }
+
     </style>
 </head>
 <body>
@@ -1753,6 +1816,33 @@
                 <button class="shop-btn">Перейти в магазин</button>
             </div>
         </div>
+    </div>
+
+    <div id="tab-collection" class="tab-content" style="padding-bottom: 100px;">
+        
+        <div id="collUniversesView">
+            <div class="section-hero" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(6, 6, 12, 0.9)); margin-bottom: 20px;">
+                <div class="hero-kicker" style="color: #c4b5fd;">Архив Системы</div>
+                <div class="hero-title">Коллекции</div>
+                <div class="hero-subtitle">Выбери интересующую вселенную для просмотра собранных карт.</div>
+            </div>
+            <div id="collUniversesContainer">
+                </div>
+        </div>
+
+        <div id="collDetailView" style="display: none;">
+            <button class="coll-detail-back-btn" onclick="backToUniverses()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Назад к вселенным
+            </button>
+            
+            <div class="coll-detail-header-card" id="collDetailHeaderBox">
+                </div>
+            
+            <div id="collDetailRaritiesContainer">
+                </div>
+        </div>
+
     </div>
 
     <div id="tab-tops" class="tab-content">
@@ -2232,6 +2322,9 @@
         <button class="nav-btn" onclick="switchTab('tops', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
+        <button class="nav-btn" onclick="switchTab('collection', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        </button>
     </nav> <div class="pass-screen" id="passScreen">
         <div class="ps-head" style="position: absolute; top: 10px; left: 10px; z-index: 10; margin: 0;">
             <button class="ps-back" onclick="closePassModal()">
@@ -2552,6 +2645,7 @@
                         renderPassQuests();
                     }
                     updateMainMenuPass();
+                    initCollection();
 
                 } else {
                     console.error("Профиль не загрузился, HTTP " + res.status);
@@ -3463,8 +3557,9 @@
             var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
             var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); 
             var passOpen = document.getElementById('passScreen').classList.contains('open'); // НОВОЕ
-            
-            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen) tg.BackButton.show();
+            var detailOpen = document.getElementById('collDetailView').style.display === 'block';
+
+            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen) tg.BackButton.show();
             else tg.BackButton.hide();
         }
         if (tg.BackButton && tg.BackButton.onClick) {
@@ -3473,7 +3568,9 @@
                 else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
                 else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
                 else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile(); 
-                else if (document.getElementById('passScreen').classList.contains('open')) closePassModal(); // НОВОЕ
+                else if (document.getElementById('passScreen').classList.contains('open')) closePassModal();
+                // 🔥 Твоя строчка для Коллекции 🔥
+                else if (document.getElementById('collDetailView').style.display === 'block') backToUniverses();
             });
         }
 // Открытие профиля
@@ -4700,6 +4797,187 @@ async function openPublicProfile(targetId) {
         
         packWrapper.addEventListener('touchmove', handleMove, {passive: true});
         packWrapper.addEventListener('touchend', handleLeave);
+// ================= ДВУХУРОВНЕВЫЙ АЛЬБОМ СИСТЕМЫ =================
+        var collActiveUniverse = null;
+        var universeColors = {
+            'Поднятие уровня в одиночку': '#8b5cf6',
+            'ДжоДжо': '#f59e0b',
+            'Блич': '#ef4444',
+            'Код Гиас': '#d946ef',
+            'Наруто': '#a855f7',
+            'Клинок рассекающий демонов': '#06b6d4'
+        };
+
+        function initCollection() {
+            if (typeof allCards === 'undefined' || !allCards.length) return;
+            
+            // Если игрок зашел внутрь конкретной вселенной, не сбрасываем экран
+            if (collActiveUniverse) {
+                openUniverseDetail(collActiveUniverse);
+                return;
+            }
+            
+            var container = document.getElementById('collUniversesContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            var ownedSet = new Set(typeof userOwnedCards !== 'undefined' ? userOwnedCards : []);
+            
+            // Группируем все карты по сериям (вселенным)
+            var uniMap = {};
+            allCards.forEach(c => {
+                if (!c.series) return;
+                if (!uniMap[c.series]) uniMap[c.series] = { total: 0, owned: 0 };
+                uniMap[c.series].total++;
+                if (ownedSet.has(c.id)) uniMap[c.series].owned++;
+            });
+            
+            // Отрисовываем плашки вселенных ровно как на картинке
+            Object.keys(uniMap).sort().forEach(uniName => {
+                var stats = uniMap[uniName];
+                var pct = stats.total > 0 ? Math.round((stats.owned / stats.total) * 100) : 0;
+                var color = universeColors[uniName] || 'var(--accent)';
+                
+                var cardHtml = `
+                    <div class="coll-universe-card" onclick="openUniverseDetail('${uniName}')">
+                        <div class="coll-uni-top">
+                            <div class="coll-uni-title">${uniName}</div>
+                            <div class="coll-uni-badge" style="--uni-color: ${color};">${pct}%</div>
+                        </div>
+                        <div class="coll-uni-meta">
+                            <span>Карты</span>
+                            <span class="coll-uni-count">${stats.owned} / ${stats.total}</span>
+                        </div>
+                        <div class="coll-uni-bar">
+                            <div class="coll-uni-fill" style="--uni-color: ${color}; width: ${pct}%;"></div>
+                        </div>
+                    </div>`;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        function openUniverseDetail(uniName) {
+            collActiveUniverse = uniName;
+            document.getElementById('collUniversesView').style.display = 'none';
+            document.getElementById('collDetailView').style.display = 'block';
+            
+            var ownedSet = new Set(typeof userOwnedCards !== 'undefined' ? userOwnedCards : []);
+            var uniCards = allCards.filter(c => c.series === uniName);
+            var totalCount = uniCards.length;
+            var ownedCount = uniCards.filter(c => ownedSet.has(c.id)).length;
+            var totalPct = totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
+            var uniColor = universeColors[uniName] || 'var(--accent)';
+            
+            // Отрисовка верхней инфо-плашки вселенной (Окно 2)
+            var headerBox = document.getElementById('collDetailHeaderBox');
+            headerBox.innerHTML = `
+                <div class="coll-uni-top">
+                    <div class="coll-uni-title" style="font-size: 20px;">${uniName}</div>
+                    <div class="coll-uni-badge" style="--uni-color: ${uniColor}; padding: 6px 14px; font-size:13px;">${totalPct}%</div>
+                </div>
+                <div class="coll-uni-meta" style="margin-top: 15px;">
+                    <span>Карты вселенной</span>
+                    <span class="coll-uni-count">${ownedCount} / ${totalCount}</span>
+                </div>
+                <div class="coll-uni-bar" style="height: 8px; margin-top: 6px;">
+                    <div class="coll-uni-fill" style="--uni-color: ${uniColor}; width: ${totalPct}%; box-shadow: 0 0 10px ${uniColor};"></div>
+                </div>`;
+                
+            // Группируем карты внутри вселенной по редкости
+            var rarityMap = {};
+            uniCards.forEach(c => {
+                var r = c.rarity || 'Обычная ⚪️';
+                if (!rarityMap[r]) rarityMap[r] = [];
+                rarityMap[r].push(c);
+            });
+            
+            var rContainer = document.getElementById('collDetailRaritiesContainer');
+            rContainer.innerHTML = '';
+            
+            var rarityOrder = ['Божественная ⚫️', 'Мифическая 🔴', 'Легендарная 🔵', 'Эпическая 🟢', 'Редкая 🟡', 'Обычная ⚪️', 'Лимитированная ✨', 'Ивентовая 🪎'];
+            var rarityColors = {
+                'Обычная ⚪️': '#94a3b8', 'Редкая 🟡': '#fde047', 'Эпическая 🟢': '#4ade80',
+                'Легендарная 🔵': '#3b82f6', 'Мифическая 🔴': '#ef4444', 'Божественная ⚫️': '#d6d3d1',
+                'Лимитированная ✨': '#f472b6', 'Ивентовая 🪎': '#fb923c'
+            };
+            
+            rarityOrder.forEach(r => {
+                if (!rarityMap[r] || rarityMap[r].length === 0) return;
+                
+                var rCards = rarityMap[r];
+                var rOwned = rCards.filter(c => ownedSet.has(c.id)).length;
+                var rPct = Math.round((rOwned / rCards.length) * 100);
+                var rColor = rarityColors[r] || '#fff';
+                
+                var sectionHtml = `
+                    <div class="coll-rarity-section">
+                        <div class="coll-rarity-trigger" style="--r-color: ${rColor};" onclick="toggleCollRarity(this)">
+                            <div class="coll-rarity-title-txt">${r}</div>
+                            <div class="coll-rarity-right-info">
+                                <span style="font-size:13px; color:rgba(255,255,255,0.5); font-weight:600;">${rOwned} / ${rCards.length}</span>
+                                <div class="coll-rarity-badge-pct" style="--r-color: ${rColor};">${rPct}%</div>
+                            </div>
+                        </div>
+                        <div class="coll-grid-anim-wrapper">
+                            <div class="coll-grid-overflow">
+                                <div class="coll-cards-grid">`;
+                                
+                rCards.forEach(c => {
+                    var isOwned = ownedSet.has(c.id);
+                    var imgSrc = 'images/' + c.file;
+                    var fallbackSrc = imgSrc.replace(/\.jpe?g$/i, '.webp');
+                    
+                    if (isOwned) {
+                        var clickData = JSON.stringify(c).replace(/"/g, '&quot;');
+                        sectionHtml += `
+                            <div class="coll-mini-card owned" style="--r-color: ${rColor};" onclick="openModal(${clickData})">
+                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                                <div class="coll-card-check">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </div>
+                                <div class="coll-card-stats-strip">⚔ ${c.strength || 0}</div>
+                            </div>`;
+                    } else {
+                        sectionHtml += `
+                            <div class="coll-mini-card locked">
+                                <img src="${imgSrc}" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                            </div>`;
+                    }
+                });
+                
+                sectionHtml += `</div></div></div></div>`;
+                rContainer.insertAdjacentHTML('beforeend', sectionHtml);
+            });
+            manageBack();
+        }
+
+        function backToUniverses() {
+            collActiveUniverse = null;
+            document.getElementById('collDetailView').style.display = 'none';
+            document.getElementById('collUniversesView').style.display = 'block';
+            initCollection();
+            manageBack();
+        }
+
+        function toggleCollRarity(triggerEl) {
+            var section = triggerEl.closest('.coll-rarity-section');
+            var wasOpen = section.classList.contains('open');
+            
+            // Rolling accordion: закрываем открытую редкость перед открытием новой
+            document.querySelectorAll('.coll-rarity-section').forEach(s => section !== s && s.classList.remove('open'));
+            
+            if (!wasOpen) {
+                section.classList.add('open');
+                setTimeout(() => {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+            } else {
+                section.classList.remove('open');
+            }
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.selectionChanged();
+            }
+        }
 </script>
 </body>
 </html>
