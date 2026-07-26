@@ -1677,12 +1677,44 @@
             0% { transform: rotate(-15deg) scale(3); opacity: 0; }
             100% { transform: rotate(-15deg) scale(1); opacity: 1; }
         }
-
+/* ================= ВЕРХНЯЯ ПАНЕЛЬ (FULLSCREEN FIX) ================= */
+        .top-safe-header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px; /* Для ПК */
+            height: calc(50px + var(--tg-viewport-safe-area-inset-top, env(safe-area-inset-top, 0px)));
+            background: rgba(18, 18, 26, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 9999;
+            display: flex;
+            align-items: flex-end; /* Чтобы текст был внизу панели, если есть челка */
+            justify-content: center;
+            padding-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .top-safe-logo {
+            font-size: 15px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #e2e8f0, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+        }
     </style>
 </head>
 <body>
    <div id="splashScreen" class="splash-screen">
         <div class="splash-text">ManhwCard</div>
+    </div>
+   <div class="top-safe-header">
+        <div class="top-safe-logo">ManhwCard</div>
     </div>
     <div id="tab-catalog" class="tab-content">
         <div class="section-hero">
