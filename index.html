@@ -24,6 +24,67 @@
             --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
 
+        /* ================= MASSIVE DESIGN UPGRADE ================= */
+        :root {
+            --bg-gradient-1: #09090e;
+            --bg-gradient-2: #141421;
+            --glass-bg: rgba(20, 20, 32, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --neon-accent: #a855f7;
+            --neon-glow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2));
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Glassmorphism Bottom Nav */
+        .bottom-nav {
+            background: rgba(18, 18, 26, 0.7) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border-top: 1px solid var(--glass-border) !important;
+            padding-bottom: env(safe-area-inset-bottom, 15px) !important;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5) !important;
+            border-radius: 24px 24px 0 0 !important;
+            margin: 0 auto;
+            max-width: 480px;
+        }
+
+        .nav-btn.active {
+            color: var(--neon-accent) !important;
+            text-shadow: 0 0 10px var(--neon-accent) !important;
+            transform: scale(1.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Modals and panels */
+        .modal-content, .profile-card, .stat-box {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 20px !important;
+            box-shadow: var(--glass-shadow) !important;
+        }
+
+        /* Buttons with Neon */
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4) !important;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4) !important;
+            border-radius: 12px !important;
+            border: none !important;
+            transition: all 0.3s ease !important;
+        }
+        .btn-primary:active {
+            transform: scale(0.95) !important;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.6) !important;
+        }
+
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
