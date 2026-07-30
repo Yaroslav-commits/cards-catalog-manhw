@@ -1964,15 +1964,15 @@
                 <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени..." oninput="updateCards()">
                 
 <select class="filter-select" id="styleFilter" onchange="currentCatalogPage=1; updateCards()">
-        <option value="all">Все навыки</option>
-        <option value="Базовый">Базовый</option>
-        <option value="👁 Копирование">👁 Копирование</option>
-        <option value="🌑 Boccтaниe">🌑 Boccтaниe</option>
-        <option value="🩸 Бepcepк">🩸 Бepcepк</option>
-        <option value="🌊 Пространство">🌊 Пространство</option>
-        <option value="⚔️ Пpoбивaниe">⚔️ Пpoбивaниe</option>
-        <option value="🌪 Уклoнeниe">🌪 Уклoнeниe</option>
-    </select>
+    <option value="all">Все навыки</option>
+    <option value="Базовый">Базовый</option>
+    <option value="👁 Копирование">👁 Копирование</option>
+    <option value="🌑 Восстание">🌑 Восстание</option>
+    <option value="🩸 Берсерк">🩸 Берсерк</option>
+    <option value="🌊 Пространство">🌊 Пространство</option>
+    <option value="⚔️ Пробивание">⚔️ Пробивание</option>
+    <option value="🌪 Уклонение">🌪 Уклонение</option>
+</select>
                 
                 <select id="seriesFilter" onchange="updateCards()">
                     <option value="all">Все вселенные</option>
@@ -3264,9 +3264,14 @@
 var currentCatalogTab = 'cards'; // По умолчанию смотрим Карты
 var isExclusiveFilterActive = false; // Эксклюзив выключен
 
+// Объявляем глобальные переменные вкладки и страницы
+if (typeof window.currentCatalogTab === 'undefined') window.currentCatalogTab = 'cards';
+if (typeof window.currentCatalogPage === 'undefined') window.currentCatalogPage = 1;
+
 // Переключение вкладок «Карты / Скины»
 function toggleCatalogTab(tab) {
     window.currentCatalogTab = tab;
+    window.currentCatalogPage = 1;
     
     var btnCards = document.getElementById('btnTabCards');
     var btnSkins = document.getElementById('btnTabSkins');
@@ -3278,22 +3283,17 @@ function toggleCatalogTab(tab) {
         if (btnCards) btnCards.classList.add('active');
         if (btnSkins) btnSkins.classList.remove('active');
         if (slider) slider.style.transform = 'translateX(0%)';
-        if (sortFilter) sortFilter.style.display = 'block';
-        if (styleFilter) styleFilter.style.display = 'block';
+        if (sortFilter) sortFilter.style.display = '';
+        if (styleFilter) styleFilter.style.display = '';
     } else {
         if (btnSkins) btnSkins.classList.add('active');
         if (btnCards) btnCards.classList.remove('active');
         if (slider) slider.style.transform = 'translateX(100%)';
         if (sortFilter) sortFilter.style.display = 'none';
-        if (styleFilter) styleFilter.style.display = 'none'; // У скинов нет навыков
+        if (styleFilter) styleFilter.style.display = 'none';
     }
     
-    window.currentCatalogPage = 1;
     updateCards();
-}
-    
-    currentCatalogPage = 1;
-    updateCards(); 
 }
 
 // Переключатель Эксклюзивных карт
@@ -3320,60 +3320,62 @@ function updateCards() {
         var sortEl = document.getElementById('sortFilter');
         var styleEl = document.getElementById('styleFilter');
 
-        var search = searchEl ? searchEl.value.toLowerCase() : '';
+        var search = searchEl ? searchEl.value.toLowerCase().trim() : '';
         var rarity = rarityEl ? rarityEl.value : 'all';
         var series = seriesEl ? seriesEl.value : 'all';
-        var sort = sortEl && sortEl.style.display !== 'none' ? sortEl.value : 'default';
-        var style = styleEl && styleEl.style.display !== 'none' ? styleEl.value : 'all';
+        var sort = (sortEl && sortEl.style.display !== 'none') ? sortEl.value : 'default';
+        var style = (styleEl && styleEl.style.display !== 'none') ? styleEl.value : 'all';
         
         var filtered = [];
         var cardsDb = window.allCards || window.CARDS || {}; 
         var profile = window.userProfile || {};
         var stylesMap = profile.styles_map || {};
+        var eventCards = profile.event_cards || [];
 
-        // =====================================
-        // ЛОГИКА ФИЛЬТРАЦИИ КАРТ
-        // =====================================
-        if (typeof currentCatalogTab === 'undefined' || currentCatalogTab === 'cards') {
+        var tab = window.currentCatalogTab || 'cards';
+
+        if (tab === 'cards') {
+            // === ЛОГИКА ФИЛЬТРАЦИИ КАРТ ===
             var allCardIds = Object.keys(cardsDb); 
             
-            filtered = allCardIds.filter(function(cid) {
+            allCardIds.forEach(function(cid) {
                 var c = cardsDb[cid];
-                if (!c) return false;
+                if (!c) return;
                 
-                if (search && !(c.name && c.name.toLowerCase().includes(search))) return false;
-                if (rarity !== 'all' && c.rarity !== rarity) return false;
-                if (series !== 'all' && c.series !== series) return false;
+                if (search && (!c.name || !c.name.toLowerCase().includes(search))) return;
+                if (rarity !== 'all' && c.rarity !== rarity) return;
+                if (series !== 'all' && c.series !== series) return;
                 
+                // Фильтр по навыку
                 if (style !== 'all') {
                     var cardStyle = stylesMap[cid] || 'Базовый';
-                    if (cardStyle !== style) return false;
+                    if (cardStyle !== style) return;
                 }
                 
+                // Эксклюзивы
                 if (typeof isExclusiveFilterActive !== 'undefined' && isExclusiveFilterActive) {
-                    var eventCards = profile.event_cards || [];
                     var isEvent = eventCards.includes(cid) || eventCards.includes(Number(cid));
                     var isExcl = c.exclusive === true;
-                    if (!isEvent && !isExcl) return false;
+                    if (!isEvent && !isExcl) return;
                 }
-                return true;
+                
+                var cardObj = Object.assign({}, c, { id: cid, isSkin: false });
+                filtered.push(cardObj);
             });
             
+            // Сортировка статов
             filtered.sort(function(a, b) {
-                var ca = cardsDb[a], cb = cardsDb[b];
-                if (sort === 'str_desc') return (cb.strength || 0) - (ca.strength || 0);
-                if (sort === 'str_asc') return (ca.strength || 0) - (cb.strength || 0);
-                if (sort === 'spd_desc') return (cb.speed || 0) - (ca.speed || 0);
-                if (sort === 'spd_asc') return (ca.speed || 0) - (cb.speed || 0);
-                if (sort === 'int_desc') return (cb.intellect || 0) - (ca.intellect || 0);
-                if (sort === 'int_asc') return (ca.intellect || 0) - (cb.intellect || 0);
+                if (sort === 'str_desc') return (b.strength || 0) - (a.strength || 0);
+                if (sort === 'str_asc') return (a.strength || 0) - (b.strength || 0);
+                if (sort === 'spd_desc') return (b.speed || 0) - (a.speed || 0);
+                if (sort === 'spd_asc') return (a.speed || 0) - (b.speed || 0);
+                if (sort === 'int_desc') return (b.intellect || 0) - (a.intellect || 0);
+                if (sort === 'int_asc') return (a.intellect || 0) - (b.intellect || 0);
                 return 0; 
             });
 
-        // =====================================
-        // ЛОГИКА ФИЛЬТРАЦИИ СКИНОВ
-        // =====================================
         } else {
+            // === ЛОГИКА ФИЛЬТРАЦИИ СКИНОВ ===
             var allSkinsData = profile.all_skins_data || { awakened: {}, absolute: {} };
             var skinTypes = ['awakened', 'absolute'];
             
@@ -3382,109 +3384,32 @@ function updateCards() {
                 Object.keys(skinsOfThisType).forEach(function(cid) {
                     var c = cardsDb[cid]; 
                     if (!c) return;
-                    if (search && !(c.name && c.name.toLowerCase().includes(search))) return;
+                    
+                    if (search && (!c.name || !c.name.toLowerCase().includes(search))) return;
                     if (rarity !== 'all' && c.rarity !== rarity) return;
                     if (series !== 'all' && c.series !== series) return;
                     
-                    filtered.push({ cid: cid, type: sType, data: skinsOfThisType[cid], card: c });
+                    filtered.push({ 
+                        isSkin: true, 
+                        cid: cid, 
+                        type: sType, 
+                        data: skinsOfThisType[cid], 
+                        card: c 
+                    });
                 });
             });
         }
 
-        // =====================================
-        // РЕНДЕР В DOM
-        // =====================================
-        var cardsPerPage = 12; 
-        var totalPages = Math.ceil(filtered.length / cardsPerPage) || 1;
-        if (typeof currentCatalogPage === 'undefined') window.currentCatalogPage = 1;
-        if (currentCatalogPage > totalPages) currentCatalogPage = totalPages;
-        if (currentCatalogPage < 1) currentCatalogPage = 1;
-        
-        var start = (currentCatalogPage - 1) * cardsPerPage;
-        var pageItems = filtered.slice(start, start + cardsPerPage);
-        
-        // ТВОЙ ОРИГИНАЛЬНЫЙ КОНТЕЙНЕР
-        var container = document.querySelector('.catalog-grid') || document.getElementById('cardsContainer');
-        if (!container) return; 
-        container.innerHTML = ''; 
-        
-        var ownedCards = profile.owned_cards || [];
-        var ownedSkins = profile.owned_skins || {};
-
-        pageItems.forEach(function(item) {
-            var cardDiv = document.createElement('div');
-            
-            if (typeof currentCatalogTab === 'undefined' || currentCatalogTab === 'cards') {
-                var cid = item;
-                var c = cardsDb[cid];
-                var isOwned = ownedCards.includes(cid) || ownedCards.includes(Number(cid)); 
-                
-                // ТВОИ КЛАССЫ
-                cardDiv.className = 'catalog-card ' + (isOwned ? 'owned' : 'locked');
-                cardDiv.onclick = function() { if (typeof openModal === 'function') openModal(c); };
-                
-                var styleName = stylesMap[cid];
-                var styleHtml = (styleName && styleName !== "Базовый") ? `<div class="style-badge">${styleName}</div>` : '';
-                var fileName = c.file ? c.file.replace(/\.(png|jpg|jpeg)$/i, '.webp') : 'default.webp';
-                
-                cardDiv.innerHTML = `
-                    <div class="catalog-card-img-wrapper">
-                        <img src="images/${fileName}" class="catalog-card-img" loading="lazy" onerror="this.src='images/default.webp'">
-                    </div>
-                    <div class="catalog-card-info">
-                        <div class="catalog-card-name">${c.name || 'Неизвестно'}</div>
-                        ${styleHtml}
-                        <div class="catalog-card-rarity">${c.rarity || ''}</div>
-                    </div>
-                    <div class="lock-overlay"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="currentColor"/></svg></div>
-                `;
-            } else {
-                var skin = item;
-                var c = skin.card;
-                var isOwned = ownedSkins[skin.type] && (ownedSkins[skin.type].includes(skin.cid) || ownedSkins[skin.type].includes(Number(skin.cid)));
-                
-                cardDiv.className = 'catalog-card ' + (isOwned ? 'owned' : 'locked');
-                
-                var badgeHtml = skin.type === 'awakened' 
-                    ? '<div class="skin-badge awakened">💠 Пробужденный</div>' 
-                    : '<div class="skin-badge absolute">🔮 Абсолютный</div>';
-                    
-                var mediaHtml = '';
-                // ТВОИ РАСШИРЕНИЯ WEBM И WEBP
-                if (skin.type === 'absolute' && skin.data.skin_video_file) {
-                    var vidName = skin.data.skin_video_file.replace(/\.mp4$/i, '.webm');
-                    mediaHtml = `<video src="images/skins/${vidName}" autoplay loop muted playsinline class="catalog-card-img"></video>`;
-                } else if (skin.type === 'awakened' && skin.data.skin_art_file) {
-                    var imgName = skin.data.skin_art_file.replace(/\.(png|jpg|jpeg)$/i, '.webp');
-                    mediaHtml = `<img src="images/skins/${imgName}" class="catalog-card-img" loading="lazy" onerror="this.src='images/default.webp'">`;
-                }
-                
-                cardDiv.innerHTML = `
-                    ${badgeHtml}
-                    <div class="catalog-card-img-wrapper">${mediaHtml}</div>
-                    <div class="catalog-card-info">
-                        <div class="catalog-card-name">${c.name || 'Неизвестно'}</div>
-                        <div class="catalog-card-rarity">${c.rarity || ''}</div>
-                    </div>
-                    <div class="lock-overlay"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="currentColor"/></svg></div>
-                `;
-            }
-            container.appendChild(cardDiv);
-        });
-
-        var totalEl = document.getElementById('catalogTotal');
-        if (totalEl) totalEl.innerText = filtered.length + (typeof currentCatalogTab !== 'undefined' && currentCatalogTab === 'skins' ? " скинов" : " карт");
-        
-        if (typeof renderCatalogPagination === 'function') renderCatalogPagination(totalPages);
+        renderCards(filtered);
 
     } catch (error) {
-        console.error("🔥 Ошибка при рендере каталога: ", error);
+        console.error("Ошибка при фильтрации:", error);
     }
 }
 
-// Рендеринг карт и скинов
+// Рендеринг элементов в сетку
 function renderCards(items) {
-    var container = document.getElementById('cardsContainer') || document.querySelector('.catalog-grid');
+    var container = document.querySelector('.catalog-grid') || document.getElementById('cardsContainer');
     var pagContainer = document.getElementById('catalogPagination');
     
     if (!container) return; 
@@ -3493,12 +3418,12 @@ function renderCards(items) {
     
     var totalEl = document.getElementById('catalogTotal');
     if (totalEl) {
-        var isSkinsTab = (window.currentCatalogTab === 'skins');
-        totalEl.innerText = items.length + (isSkinsTab ? " скинов" : " карт");
+        var isSkins = (window.currentCatalogTab === 'skins');
+        totalEl.innerText = items.length + (isSkins ? " скинов" : " карт");
     }
     
-    if (!items.length) {
-        container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Ничего не найдено</div>';
+    if (!items || !items.length) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #8b8b9e;">Ничего не найдено</div>';
         return;
     }
     
@@ -3518,42 +3443,35 @@ function renderCards(items) {
     var ownedSkins = profile.owned_skins || {};
     
     pageItems.forEach(function(item) {
-        var div = document.createElement('div');
+        var cardDiv = document.createElement('div');
         
         if (!item.isSkin) {
             // === ОТРИСОВКА КАРТЫ ===
             var card = item;
             var cid = card.id;
-            var cleanRarity = (card.rarity || '').split(' ')[0];
             var isOwned = ownedCards.includes(cid) || ownedCards.includes(Number(cid));
             
-            div.className = 'card' + (!isOwned && ownedCards.length > 0 ? ' is-locked' : '');
-            div.dataset.rarity = cleanRarity;
-            div.onclick = function() { if (typeof openModal === 'function') openModal(card); };
+            cardDiv.className = 'catalog-card ' + (isOwned ? 'owned' : 'locked');
+            cardDiv.onclick = function() { if (typeof openModal === 'function') openModal(card); };
             
-            var badgeHtml = '';
-            if (isOwned) badgeHtml = '<div class="owned-badge">МОЯ</div>';
-            else if (ownedCards.length > 0) badgeHtml = '<div class="locked-badge">LOCK</div>';
-
             var styleName = stylesMap[cid];
             var styleHtml = (styleName && styleName !== "Базовый") 
-                ? '<div class="style-badge" style="position:absolute; top:8px; right:8px; z-index:10; background:rgba(0,0,0,0.6); padding:2px 6px; border-radius:4px; font-size:10px;">✨ ' + styleName + '</div>' 
+                ? '<div class="style-badge">' + styleName + '</div>' 
                 : '';
 
             var fileName = card.file ? card.file.replace(/\.(png|jpg|jpeg)$/i, '.webp') : 'default.webp';
 
-            div.innerHTML = badgeHtml + styleHtml +
-                '<div class="img-wrap">' +
-                    '<div class="spinner-ring"></div>' +
-                    '<img src="images/' + fileName + '" loading="lazy" onload="window.cardImageLoaded && window.cardImageLoaded(this)" onerror="this.src=\'images/default.webp\'">' +
-                '</div>' +
-                '<h3>' + (card.name || 'Неизвестно') + '</h3>' +
-                '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
-                '<div class="card-meta">' +
-                    '<div class="mini-stat">⚡ ' + (card.speed || 0) + '</div>' +
-                    '<div class="mini-stat">💪 ' + (card.strength || 0) + '</div>' +
-                    '<div class="mini-stat">🧠 ' + (card.intellect || 0) + '</div>' +
-                '</div>';
+            cardDiv.innerHTML = `
+                <div class="catalog-card-img-wrapper">
+                    <img src="images/${fileName}" class="catalog-card-img" loading="lazy" onerror="this.src='images/default.webp'">
+                </div>
+                <div class="catalog-card-info">
+                    <div class="catalog-card-name">${card.name || 'Неизвестно'}</div>
+                    ${styleHtml}
+                    <div class="catalog-card-rarity">${card.rarity || ''}</div>
+                </div>
+                <div class="lock-overlay"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="currentColor"/></svg></div>
+            `;
                 
         } else {
             // === ОТРИСОВКА СКИНА ===
@@ -3561,30 +3479,33 @@ function renderCards(items) {
             var c = skin.card;
             var isOwned = ownedSkins[skin.type] && (ownedSkins[skin.type].includes(skin.cid) || ownedSkins[skin.type].includes(Number(skin.cid)));
             
-            div.className = 'card' + (!isOwned ? ' is-locked' : '');
+            cardDiv.className = 'catalog-card ' + (isOwned ? 'owned' : 'locked');
             
-            var sBadge = skin.type === 'awakened' 
-                ? '<div class="owned-badge" style="background:#38bdf8;">💠 Пробужденный</div>' 
-                : '<div class="owned-badge" style="background:#c084fc;">🔮 Абсолютный</div>';
+            var badgeHtml = skin.type === 'awakened' 
+                ? '<div class="skin-badge awakened">💠 Пробужденный</div>' 
+                : '<div class="skin-badge absolute">🔮 Абсолютный</div>';
             var mediaHtml = '';
             
-            if (skin.type === 'absolute' && skin.data.skin_video_file) {
-                // Преобразуем .mp4 в .webm
+            if (skin.type === 'absolute' && skin.data && skin.data.skin_video_file) {
                 var vidName = skin.data.skin_video_file.replace(/\.mp4$/i, '.webm');
-                mediaHtml = '<video src="images/skins/' + vidName + '" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover; border-radius:8px;"></video>';
-            } else if (skin.type === 'awakened' && skin.data.skin_art_file) {
-                // Преобразуем .jpeg / .jpg / .png в .webp
+                mediaHtml = `<video src="images/skins/${vidName}" autoplay loop muted playsinline class="catalog-card-img"></video>`;
+            } else if (skin.type === 'awakened' && skin.data && skin.data.skin_art_file) {
                 var imgName = skin.data.skin_art_file.replace(/\.(png|jpg|jpeg)$/i, '.webp');
-                mediaHtml = '<img src="images/skins/' + imgName + '" loading="lazy" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" onerror="this.src=\'images/default.webp\'">';
+                mediaHtml = `<img src="images/skins/${imgName}" class="catalog-card-img" loading="lazy" onerror="this.src='images/default.webp'">`;
             }
             
-            div.innerHTML = (!isOwned ? '<div class="locked-badge">LOCK</div>' : sBadge) +
-                '<div class="img-wrap" style="padding:0; overflow:hidden;">' + mediaHtml + '</div>' +
-                '<h3>' + (c.name || 'Неизвестно') + '</h3>' +
-                '<div class="rarity-badge">' + (c.rarity || '') + '</div>';
+            cardDiv.innerHTML = `
+                ${badgeHtml}
+                <div class="catalog-card-img-wrapper">${mediaHtml}</div>
+                <div class="catalog-card-info">
+                    <div class="catalog-card-name">${c ? (c.name || 'Неизвестно') : 'Скин'}</div>
+                    <div class="catalog-card-rarity">${c ? (c.rarity || '') : ''}</div>
+                </div>
+                <div class="lock-overlay"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="currentColor"/></svg></div>
+            `;
         }
         
-        container.appendChild(div);
+        container.appendChild(cardDiv);
     });
 
     // === ПАГИНАЦИЯ ===
@@ -5287,14 +5208,25 @@ async function openPublicProfile(targetId) {
             var claimBtn = document.getElementById('summonClaimBtn');
             if(claimBtn) claimBtn.classList.remove('show');
         }
-// ================= СПЛЭШ-ЭКРАН (ЗАГРУЗКА) =================
-        setTimeout(function() {
-            var splash = document.getElementById('splashScreen');
-            if (splash) {
-                splash.classList.add('hidden');
-                setTimeout(() => splash.remove(), 500); 
-            }
-        }, 2500); // Строго 2.5 секунды независимо от скорости интернета
+// ================= ГАРАНТИРОВАННОЕ СКРЫТИЕ СПЛЕШ-ЭКРАНА =================
+(function() {
+    function hideSplash() {
+        var splash = document.getElementById('splashScreen');
+        if (splash) {
+            splash.classList.add('hidden');
+            setTimeout(function() {
+                if (splash && splash.parentNode) {
+                    splash.parentNode.removeChild(splash);
+                }
+            }, 500);
+        }
+    }
+    // Скрываем через 2.5 секунды В ЛЮБОМ СЛУЧАЕ
+    setTimeout(hideSplash, 2500);
+    window.addEventListener('load', function() {
+        setTimeout(hideSplash, 1000);
+    });
+})();
     
         // ================= 3D ИНТЕРАКТИВ КАРТЫ (ПАКИ) =================
         var packWrapper = document.getElementById('packCardWrapper');
