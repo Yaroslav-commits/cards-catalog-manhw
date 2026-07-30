@@ -1738,6 +1738,160 @@
             0% { transform: rotate(-15deg) scale(3); opacity: 0; }
             100% { transform: rotate(-15deg) scale(1); opacity: 1; }
         }
+/* ================= КАТАЛОГ И СКИНЫ (GLASSMORPHISM + NEON) ================= */
+.catalog-tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+/* Капсула переключателя */
+.catalog-toggle {
+    display: flex;
+    background: rgba(18, 18, 26, 0.6);
+    border-radius: 16px;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    width: 100%;
+    max-width: 320px;
+    position: relative;
+}
+
+/* Неоновый ползунок */
+.catalog-toggle-slider {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: calc(50% - 6px);
+    height: calc(100% - 12px);
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    border-radius: 12px;
+    z-index: 1;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* Кнопки переключателя */
+.catalog-toggle-btn {
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #8b8b9e;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.catalog-toggle-btn.active {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.catalog-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transition: all 0.4s ease;
+}
+
+.catalog-toggle-btn.active svg {
+    filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* Второй ряд фильтров */
+.filters-grid-row-2 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    margin-top: 12px;
+    width: 100%;
+}
+
+/* Кнопка "Эксклюзив" */
+.exclusive-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(18, 18, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 48px;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    user-select: none;
+}
+
+.exclusive-switch-wrapper.active {
+    background: rgba(251, 191, 36, 0.15);
+    border-color: rgba(251, 191, 36, 0.5);
+    color: #fbbf24;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+}
+
+.exclusive-switch-wrapper svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.exclusive-switch-wrapper.active svg {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px #fbbf24);
+}
+
+/* Бэджи для скинов и навыков */
+.skin-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 900;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.skin-badge.awakened { color: #38bdf8; border-color: rgba(56, 189, 248, 0.5); }
+.skin-badge.absolute { color: #c084fc; border-color: rgba(192, 132, 252, 0.5); }
+
+.style-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    margin-top: 6px;
+    color: #e2e8f0;
+    font-weight: 600;
+}
     </style>
 </head>
 <body>
@@ -1755,9 +1909,35 @@
             </div>
         </div>
 
+        <svg style="display: none;">
+            <symbol id="icon-cards" viewBox="0 0 24 24">
+                <path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </symbol>
+            <symbol id="icon-skins" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </symbol>
+            <symbol id="icon-star" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+            </symbol>
+        </svg>
+
+        <div class="catalog-tabs-wrapper">
+            <div class="catalog-toggle">
+                <div class="catalog-toggle-slider" id="catalogToggleSlider"></div>
+                <div class="catalog-toggle-btn active" id="btnTabCards" onclick="toggleCatalogTab('cards')">
+                    <svg><use href="#icon-cards"></use></svg> Карты
+                </div>
+                <div class="catalog-toggle-btn" id="btnTabSkins" onclick="toggleCatalogTab('skins')">
+                    <svg><use href="#icon-skins"></use></svg> Скины
+                </div>
+            </div>
+        </div>
+
         <div class="filters-wrapper">
             <div class="filters-grid">
                 <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени..." oninput="updateCards()">
+                
                 <select id="rarityFilter" onchange="updateCards()">
                     <option value="all">Все редкости</option>
                     <option value="Божественная">⚫ Божественная</option>
@@ -1767,24 +1947,44 @@
                     <option value="Редкая">🟡 Редкая</option>
                     <option value="Обычная">⚪️ Обычная</option>
                 </select>
+                
                 <select id="seriesFilter" onchange="updateCards()">
                     <option value="all">Все вселенные</option>
                 </select>
+
                 <select id="sortFilter" class="filter-full" onchange="updateCards()">
                     <option value="default">Сортировка: По умолчанию</option>
                     <optgroup label="Сила 💪">
-                        <option value="str_desc">От сильных к слабым</option>
-                        <option value="str_asc">От слабых к сильным</option>
+                        <option value="str_desc">💪Сила ⬆️</option>
+                        <option value="str_asc">💪Сила ⬇️</option>
                     </optgroup>
                     <optgroup label="Скорость ⚡️">
-                        <option value="spd_desc">От быстрых к медленным</option>
-                        <option value="spd_asc">От медленных к быстрым</option>
+                        <option value="spd_desc">⚡️Скорость ⬆️</option>
+                        <option value="spd_asc">⚡️Скорость ⬇️</option>
                     </optgroup>
                     <optgroup label="Интеллект 🧠">
-                        <option value="int_desc">От умных к глупым</option>
-                        <option value="int_asc">От глупых к умным</option>
+                        <option value="int_desc">🧠Интеллект ⬆️</option>
+                        <option value="int_asc">🧠Интеллект ⬇️</option>
                     </optgroup>
                 </select>
+            </div>
+            
+            <div class="filters-grid-row-2">
+                <select id="styleFilter" onchange="updateCards()">
+                    <option value="all">Все навыки</option>
+                    <option value="Копирование">👁️ Копирование</option>
+                    <option value="Восстание">🌑 Восстание</option>
+                    <option value="Берсерк">🩸 Берсерк</option>
+                    <option value="Пространство">🌊 Пространство</option>
+                    <option value="Пробивание">⚔️ Пробивание</option>
+                    <option value="Уклонение">🌪 Уклонение</option>
+                    <option value="Базовый">⚪ Базовые (Без навыка)</option>
+                </select>
+                
+                <div class="exclusive-switch-wrapper" id="exclusiveFilterBtn" onclick="toggleExclusive()">
+                    <svg><use href="#icon-star"></use></svg>
+                    Эксклюзив
+                </div>
             </div>
         </div>
 
@@ -2620,17 +2820,37 @@
         }
 
         async function fetchProfile() {
-            try {
-                var res = await fetch(API_BASE + '/api/profile/' + userId, { headers: authHeaders() });
-                if (res.ok) {
-                    var data = await res.json();
-                    
-                    document.getElementById('valKrw').innerText = data.krw;
-                    document.getElementById('valDiamond').innerText = data.diamond;
-                    document.getElementById('valBc').innerText = data.battlecoin;
-                    if (document.getElementById('shopAttemptsBal')) {
-                        document.getElementById('shopAttemptsBal').innerText = data.attempts || 0;
-                    }
+    try {
+        var res = await fetch(API_BASE + '/api/profile/' + userId, { headers: authHeaders() });
+        if (res.ok) {
+            var data = await res.json();
+            
+            // 🔥 ПРОВЕРКА НА ТЕХНИЧЕСКИЕ РАБОТЫ (ДЛЯ ОБЫЧНЫХ ИГРОКОВ)
+            if (data.maintenance) {
+                document.body.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 24px; background: #06060c; color: #ffffff; font-family: 'Inter', sans-serif;">
+                        <div style="font-size: 50px; margin-bottom: 16px;">🛠️</div>
+                        <h1 style="font-size: 22px; font-weight: 800; color: #fbbf24; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Технические работы</h1>
+                        <p style="font-size: 14px; color: #8b8b9e; max-width: 320px; line-height: 1.5; margin-bottom: 24px;">
+                            ${data.message || 'Прямо сейчас мы устанавливаем обновление приложения. Скоро вернемся!'}
+                        </p>
+                        <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); padding: 10px 18px; border-radius: 12px; font-size: 12px; color: #fbbf24; font-weight: 600;">
+                            ⚡️ Скоро всё заработает
+                        </div>
+                    </div>
+                `;
+                return; // Полностью останавливаем загрузку остального Web App
+            }
+
+            // ==========================================
+            // ДАЛЬШЕ ИДЕТ ТВОЙ СТАНДАРТНЫЙ КОД ЗАГРУЗКИ
+            // ==========================================
+            document.getElementById('valKrw').innerText = data.krw;
+            document.getElementById('valDiamond').innerText = data.diamond;
+            document.getElementById('valBc').innerText = data.battlecoin;
+            if (document.getElementById('shopAttemptsBal')) {
+                document.getElementById('shopAttemptsBal').innerText = data.attempts || 0;
+            }
                     
                     userOwnedCards = data.owned_cards || [];
                     document.getElementById('valCards').innerText = userOwnedCards.length;
@@ -3012,7 +3232,58 @@
                 img.parentElement.classList.add('loaded');
             }
         };
+// ==========================================
+// ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ КАТАЛОГА
+// ==========================================
+var currentCatalogTab = 'cards'; // По умолчанию смотрим Карты
+var isExclusiveFilterActive = false; // Эксклюзив выключен
 
+// Переключение вкладок: Карты / Скины
+function toggleCatalogTab(tab) {
+    if (currentCatalogTab === tab) return; 
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    
+    currentCatalogTab = tab;
+    var slider = document.getElementById('catalogToggleSlider');
+    var btnCards = document.getElementById('btnTabCards');
+    var btnSkins = document.getElementById('btnTabSkins');
+    
+    if (tab === 'skins') {
+        slider.style.transform = 'translateX(100%)';
+        btnCards.classList.remove('active');
+        btnSkins.classList.add('active');
+        
+        // Прячем фильтры стилей и эксклюзива (не нужны для скинов)
+        document.getElementById('styleFilter').style.display = 'none';
+        document.getElementById('exclusiveFilterBtn').style.display = 'none';
+        document.getElementById('sortFilter').style.display = 'none'; 
+    } else {
+        slider.style.transform = 'translateX(0)';
+        btnSkins.classList.remove('active');
+        btnCards.classList.add('active');
+        
+        // Возвращаем фильтры
+        document.getElementById('styleFilter').style.display = 'block';
+        document.getElementById('exclusiveFilterBtn').style.display = 'flex';
+        document.getElementById('sortFilter').style.display = 'block';
+    }
+    
+    currentCatalogPage = 1;
+    updateCards(); 
+}
+
+// Переключатель Эксклюзивных карт
+function toggleExclusive() {
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    isExclusiveFilterActive = !isExclusiveFilterActive;
+    
+    var btn = document.getElementById('exclusiveFilterBtn');
+    if (isExclusiveFilterActive) btn.classList.add('active');
+    else btn.classList.remove('active');
+    
+    currentCatalogPage = 1;
+    updateCards();
+}
         var currentCatalogPage = 1;
         var lastCatalogFilterKey = "";
 
@@ -3121,35 +3392,174 @@
         }
 
         function updateCards() {
-            var search = document.getElementById('searchInput').value.toLowerCase();
-            var rarity = document.getElementById('rarityFilter').value;
-            var series = document.getElementById('seriesFilter').value;
-            var sortType = document.getElementById('sortFilter').value;
-
-            // СБРОС на 1 страницу при новом поиске или фильтре
-            var currentFilterKey = search + "_" + rarity + "_" + series + "_" + sortType;
-            if (lastCatalogFilterKey !== currentFilterKey) {
-                currentCatalogPage = 1;
-                lastCatalogFilterKey = currentFilterKey;
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var rarity = document.getElementById('rarityFilter').value;
+    var series = document.getElementById('seriesFilter').value;
+    
+    // Элементы, которые прячем на скинах
+    var sort = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'default';
+    var style = document.getElementById('styleFilter') ? document.getElementById('styleFilter').value : 'all';
+    
+    var filtered = [];
+    
+    // =====================================
+    // 🃏 ЛОГИКА ФИЛЬТРАЦИИ КАРТ
+    // =====================================
+    if (currentCatalogTab === 'cards') {
+        var allCardIds = Object.keys(window.allCards); // Берем базу карт
+        
+        filtered = allCardIds.filter(function(cid) {
+            var c = window.allCards[cid];
+            if (search && !c.name.toLowerCase().includes(search)) return false;
+            if (rarity !== 'all' && c.rarity !== rarity) return false;
+            if (series !== 'all' && c.series !== series) return false;
+            
+            // Фильтр по навыку (стилю)
+            if (style !== 'all') {
+                var cardStyle = window.userProfile.styles_map[cid] || 'Базовый';
+                if (cardStyle !== style) return false;
             }
+            
+            // Фильтр по эксклюзиву
+            if (isExclusiveFilterActive) {
+                var isEvent = window.userProfile.event_cards.includes(cid);
+                var isExcl = c.exclusive === true;
+                if (!isEvent && !isExcl) return false;
+            }
+            return true;
+        });
+        
+        // Мощная сортировка статов
+        filtered.sort(function(a, b) {
+            var ca = window.allCards[a], cb = window.allCards[b];
+            if (sort === 'str_desc') return (cb.strength || 0) - (ca.strength || 0);
+            if (sort === 'str_asc') return (ca.strength || 0) - (cb.strength || 0);
+            if (sort === 'spd_desc') return (cb.speed || 0) - (ca.speed || 0);
+            if (sort === 'spd_asc') return (ca.speed || 0) - (cb.speed || 0);
+            if (sort === 'int_desc') return (cb.intellect || 0) - (ca.intellect || 0);
+            if (sort === 'int_asc') return (ca.intellect || 0) - (cb.intellect || 0);
+            
+            // По умолчанию (по редкости и мощи)
+            var rarityOrder = {"Божественная":6, "Мифическая":5, "Легендарная":4, "Эпическая":3, "Редкая":2, "Обычная":1};
+            var ra = rarityOrder[ca.rarity.split(" ")[0]] || 0;
+            var rb = rarityOrder[cb.rarity.split(" ")[0]] || 0;
+            if (ra !== rb) return rb - ra;
+            var pa = (ca.speed||0) + (ca.strength||0) + (ca.intellect||0);
+            var pb = (cb.speed||0) + (cb.strength||0) + (cb.intellect||0);
+            return pb - pa;
+        });
 
-            var filtered = allCards.filter(function(card) {
-                var cleanRarity = (card.rarity || '').split(' ')[0];
-                var matchName = String(card.name || '').toLowerCase().includes(search);
-                var matchRarity = rarity === 'all' || cleanRarity === rarity;
-                var matchSeries = series === 'all' || card.series === series;
-                return matchName && matchRarity && matchSeries;
+    // =====================================
+    // 🎭 ЛОГИКА ФИЛЬТРАЦИИ СКИНОВ
+    // =====================================
+    } else {
+        var allSkinsData = window.userProfile.all_skins_data;
+        var skinTypes = ['awakened', 'absolute'];
+        
+        skinTypes.forEach(function(sType) {
+            var skinsOfThisType = allSkinsData[sType] || {};
+            Object.keys(skinsOfThisType).forEach(function(cid) {
+                var c = window.allCards[cid]; // Базовая карта скина
+                if (!c) return;
+                
+                // Скины тоже фильтруются по имени, редкости и вселенной
+                if (search && !c.name.toLowerCase().includes(search)) return;
+                if (rarity !== 'all' && c.rarity !== rarity) return;
+                if (series !== 'all' && c.series !== series) return;
+                
+                filtered.push({ cid: cid, type: sType, data: skinsOfThisType[cid], card: c });
             });
+        });
+    }
 
-            if (sortType === 'str_desc') filtered.sort(function(a, b) { return b.strength - a.strength; });
-            else if (sortType === 'str_asc') filtered.sort(function(a, b) { return a.strength - b.strength; });
-            else if (sortType === 'spd_desc') filtered.sort(function(a, b) { return b.speed - a.speed; });
-            else if (sortType === 'spd_asc') filtered.sort(function(a, b) { return a.speed - b.speed; });
-            else if (sortType === 'int_desc') filtered.sort(function(a, b) { return b.intellect - a.intellect; });
-            else if (sortType === 'int_asc') filtered.sort(function(a, b) { return a.intellect - b.intellect; });
-
-            renderCards(filtered);
+    // =====================================
+    // 🖼 РЕНДЕР И ПАГИНАЦИЯ (ОБНОВЛЕНО)
+    // =====================================
+    var cardsPerPage = 12; // Сколько показываем на 1 странице
+    var totalPages = Math.ceil(filtered.length / cardsPerPage);
+    if (currentCatalogPage > totalPages) currentCatalogPage = totalPages;
+    if (currentCatalogPage < 1) currentCatalogPage = 1;
+    
+    var start = (currentCatalogPage - 1) * cardsPerPage;
+    var pageItems = filtered.slice(start, start + cardsPerPage);
+    
+    var container = document.querySelector('.catalog-grid'); // Убедись, что класс контейнера верный!
+    container.innerHTML = '';
+    
+    var ownedCount = 0;
+    
+    pageItems.forEach(function(item) {
+        var cardDiv = document.createElement('div');
+        
+        if (currentCatalogTab === 'cards') {
+            // Отрисовка КАРТЫ
+            var cid = item;
+            var c = window.allCards[cid];
+            var isOwned = window.userProfile.owned_cards.includes(cid);
+            if(isOwned) ownedCount++;
+            
+            cardDiv.className = 'catalog-card ' + (isOwned ? 'owned' : 'locked');
+            
+            var styleName = window.userProfile.styles_map[cid];
+            var styleHtml = (styleName && styleName !== "Базовый") 
+                ? `<div class="style-badge">✨ ${styleName}</div>` : '';
+                
+            // Формат карт - .webp, папка images/
+            cardDiv.innerHTML = `
+                <div class="catalog-card-img-wrapper">
+                    <img src="images/${c.file.replace(/\.(png|jpg|jpeg)$/, '.webp')}" class="catalog-card-img">
+                </div>
+                <div class="catalog-card-info">
+                    <div class="catalog-card-name">${c.name}</div>
+                    ${styleHtml}
+                    <div class="catalog-card-rarity">${c.rarity}</div>
+                </div>
+                <div class="lock-overlay"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="currentColor"/></svg></div>
+            `;
+            
+        } else {
+            // Отрисовка СКИНА
+            var skin = item;
+            var c = skin.card;
+            var isOwned = window.userProfile.owned_skins[skin.type] && window.userProfile.owned_skins[skin.type].includes(skin.cid);
+            if(isOwned) ownedCount++;
+            
+            cardDiv.className = 'catalog-card ' + (isOwned ? 'owned' : 'locked');
+            
+            var badgeHtml = skin.type === 'awakened' 
+                ? '<div class="skin-badge awakened">💠 Пробужденный</div>' 
+                : '<div class="skin-badge absolute">🔮 Абсолютный</div>';
+                
+            var mediaHtml = '';
+            // Форматы скинов - .webm или .webp, папка images/skins/
+            if (skin.type === 'absolute' && skin.data.skin_video_file) {
+                mediaHtml = `<video src="images/skins/${skin.data.skin_video_file.replace(/\.mp4$/, '.webm')}" autoplay loop muted playsinline class="catalog-card-img"></video>`;
+            } else if (skin.type === 'awakened' && skin.data.skin_art_file) {
+                mediaHtml = `<img src="images/skins/${skin.data.skin_art_file.replace(/\.(png|jpg|jpeg)$/, '.webp')}" class="catalog-card-img">`;
+            }
+            
+            cardDiv.innerHTML = `
+                ${badgeHtml}
+                <div class="catalog-card-img-wrapper">${mediaHtml}</div>
+                <div class="catalog-card-info">
+                    <div class="catalog-card-name">${c.name}</div>
+                    <div class="catalog-card-rarity">${c.rarity}</div>
+                </div>
+                <div class="lock-overlay"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="currentColor"/></svg></div>
+            `;
         }
+        
+        container.appendChild(cardDiv);
+    });
+
+    // Обновляем счетчики сверху
+    document.getElementById('catalogTotal').innerText = filtered.length + (currentCatalogTab === 'cards' ? " карт" : " скинов");
+    
+    // Рендерим кнопки пагинации (вызови тут свою функцию рендера кнопок страниц)
+    if(typeof renderCatalogPagination === 'function') {
+        renderCatalogPagination(totalPages);
+    }
+}
 
         async function openModal(card) {
             var cleanRarity = (card.rarity || '').split(' ')[0];
