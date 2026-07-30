@@ -1,33 +1,32 @@
 import os
 from PIL import Image
 
-# Указываем папку с картинками
-folder_path = 'images'
+# 📂 Теперь здесь список папок, с которыми мы работаем
+folders = ['images', 'images/skins']
 
-# Проверяем, существует ли папка
-if not os.path.exists(folder_path):
-    print(f"Папка '{folder_path}' не найдена!")
-else:
-    # Перебираем все файлы в папке
+# Перебираем каждую папку из списка
+for folder_path in folders:
+    print(f"\n🔍 Проверяем папку: {folder_path}")
+
+    if not os.path.exists(folder_path):
+        print(f"⚠️ Папка '{folder_path}' не найдена, пропускаем.")
+        continue  # Переходим к следующей папке
+
+    # Перебираем все файлы в текущей папке
     for filename in os.listdir(folder_path):
-        # Ищем файлы, которые заканчиваются на .jpeg или .jpg
         if filename.lower().endswith(('.jpeg', '.jpg')):
-            # Создаем полные пути к файлам
             old_path = os.path.join(folder_path, filename)
 
-            # Меняем расширение на .webp для нового файла
             new_filename = filename.rsplit('.', 1)[0] + '.webp'
             new_path = os.path.join(folder_path, new_filename)
 
-            # 🆕 ПРОВЕРКА: если файл .webp уже существует, пропускаем конвертацию
             if os.path.exists(new_path):
-                print(f"⏭️ Пропущено (уже конвертировано): {new_filename}")
+                print(f"⏭️ Пропущено (уже есть): {new_path}")
                 continue
 
             try:
-                # Открываем оригинальную картинку и сохраняем как WebP
                 with Image.open(old_path) as img:
                     img.save(new_path, 'webp')
-                print(f"✅ Успешно конвертировано: {filename} -> {new_filename}")
+                print(f"✅ Конвертировано: {old_path} -> {new_filename}")
             except Exception as e:
-                print(f"❌ Ошибка при конвертации {filename}: {e}")
+                print(f"❌ Ошибка с {old_path}: {e}")

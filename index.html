@@ -1892,6 +1892,18 @@
     color: #e2e8f0;
     font-weight: 600;
 }
+#styleFilter {
+    background: rgba(18, 18, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    height: 48px;
+    border-radius: 14px;
+    padding: 0 16px;
+    font-size: 14px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
     </style>
 </head>
 <body>
@@ -1969,24 +1981,23 @@
                 </select>
             </div>
             
-            <div class="filters-grid-row-2">
-                <select id="styleFilter" onchange="updateCards()">
-                    <option value="all">Все навыки</option>
-                    <option value="Копирование">👁️ Копирование</option>
-                    <option value="Восстание">🌑 Восстание</option>
-                    <option value="Берсерк">🩸 Берсерк</option>
-                    <option value="Пространство">🌊 Пространство</option>
-                    <option value="Пробивание">⚔️ Пробивание</option>
-                    <option value="Уклонение">🌪 Уклонение</option>
-                    <option value="Базовый">⚪ Базовые (Без навыка)</option>
-                </select>
-                
-                <div class="exclusive-switch-wrapper" id="exclusiveFilterBtn" onclick="toggleExclusive()">
-                    <svg><use href="#icon-star"></use></svg>
-                    Эксклюзив
-                </div>
-            </div>
-        </div>
+<div class="filters-grid-row-2">
+    <select id="styleFilter" class="filter-full" onchange="updateCards()">
+        <option value="all">✨ Все навыки</option>
+        <option value="Копирование">👁️ Копирование</option>
+        <option value="Восстание">🌑 Восстание</option>
+        <option value="Берсерк">🩸 Берсерк</option>
+        <option value="Пространство">🌊 Пространство</option>
+        <option value="Пробивание">⚔️ Пробивание</option>
+        <option value="Уклонение">🌪 Уклонение</option>
+        <option value="Базовый">⚪ Базовые (Без навыка)</option>
+    </select>
+    
+    <div class="exclusive-switch-wrapper" id="exclusiveFilterBtn" onclick="toggleExclusive()">
+        <svg><use href="#icon-star"></use></svg>
+        Эксклюзив
+    </div>
+</div>
 
         <div class="collection-line">
             <span id="cardsResultText">Загружаю...</span>
@@ -3393,23 +3404,32 @@ function toggleExclusive() {
 
 function updateCards() {
     try {
-        var search = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
-        var rarity = document.getElementById('rarityFilter') ? document.getElementById('rarityFilter').value : 'all';
-        var series = document.getElementById('seriesFilter') ? document.getElementById('seriesFilter').value : 'all';
-        
-        // Фильтры, которые могут быть скрыты
+        var searchEl = document.getElementById('searchInput');
+        var rarityEl = document.getElementById('rarityFilter');
+        var seriesEl = document.getElementById('seriesFilter');
         var sortEl = document.getElementById('sortFilter');
-        var sort = sortEl && sortEl.style.display !== 'none' ? sortEl.value : 'default';
-        
         var styleEl = document.getElementById('styleFilter');
+
+        var search = searchEl ? searchEl.value.toLowerCase() : '';
+        var rarity = rarityEl ? rarityEl.value : 'all';
+        var series = seriesEl ? seriesEl.value : 'all';
+        var sort = sortEl && sortEl.style.display !== 'none' ? sortEl.value : 'default';
         var style = styleEl && styleEl.style.display !== 'none' ? styleEl.value : 'all';
         
         var filtered = [];
         
-        // ⚠️ ПОДСТРАХОВКА: Ищем глобальную переменную с картами (подставь свою, если она называется иначе)
-        var cardsDb = window.allCards || window.CARDS || {}; 
+        // Надежно цепляем базы данных
+        var cardsDb = window.allCards || window.CARDS; 
+        if (!cardsDb) {
+            console.error("База карт не найдена! Проверь переменную allCards.");
+            return;
+        }
+
         var profile = window.userProfile || {};
         var stylesMap = profile.styles_map || {};
+        var ownedCards = profile.owned_cards || [];
+        var ownedSkins = profile.owned_skins || {};
+        var eventCards = profile.event_cards || [];
 
         // =====================================
         // 🃏 ЛОГИКА ФИЛЬТРАЦИИ КАРТ
@@ -3419,22 +3439,18 @@ function updateCards() {
             
             filtered = allCardIds.filter(function(cid) {
                 var c = cardsDb[cid];
-                if (!c) return false; // Защита от пустых ID
+                if (!c) return false;
                 
-                if (search && !(c.name && c.name.toLowerCase().includes(search))) return false;
+                if (search && (!c.name || !c.name.toLowerCase().includes(search))) return false;
                 if (rarity !== 'all' && c.rarity !== rarity) return false;
                 if (series !== 'all' && c.series !== series) return false;
                 
-                // 🔥 ИСПРАВЛЕННЫЙ ФИЛЬТР ПО НАВЫКУ
                 if (style !== 'all') {
-                    // Если навыка нет в словаре бэкенда, считаем его "Базовым"
                     var cardStyle = stylesMap[cid] || 'Базовый';
                     if (cardStyle !== style) return false;
                 }
                 
-                // Фильтр по эксклюзиву
                 if (typeof isExclusiveFilterActive !== 'undefined' && isExclusiveFilterActive) {
-                    var eventCards = profile.event_cards || [];
                     var isEvent = eventCards.includes(cid) || eventCards.includes(Number(cid));
                     var isExcl = c.exclusive === true;
                     if (!isEvent && !isExcl) return false;
@@ -3442,7 +3458,6 @@ function updateCards() {
                 return true;
             });
             
-            // Сортировка статов
             filtered.sort(function(a, b) {
                 var ca = cardsDb[a], cb = cardsDb[b];
                 if (sort === 'str_desc') return (cb.strength || 0) - (ca.strength || 0);
@@ -3451,8 +3466,7 @@ function updateCards() {
                 if (sort === 'spd_asc') return (ca.speed || 0) - (cb.speed || 0);
                 if (sort === 'int_desc') return (cb.intellect || 0) - (ca.intellect || 0);
                 if (sort === 'int_asc') return (ca.intellect || 0) - (cb.intellect || 0);
-                
-                return 0; // По умолчанию оставляем как есть
+                return 0; 
             });
 
         // =====================================
@@ -3468,7 +3482,7 @@ function updateCards() {
                     var c = cardsDb[cid]; 
                     if (!c) return;
                     
-                    if (search && !(c.name && c.name.toLowerCase().includes(search))) return;
+                    if (search && (!c.name || !c.name.toLowerCase().includes(search))) return;
                     if (rarity !== 'all' && c.rarity !== rarity) return;
                     if (series !== 'all' && c.series !== series) return;
                     
@@ -3489,20 +3503,20 @@ function updateCards() {
         var start = (currentCatalogPage - 1) * cardsPerPage;
         var pageItems = filtered.slice(start, start + cardsPerPage);
         
-        var container = document.querySelector('.catalog-grid');
-        if (!container) return; // Если контейнера нет, выходим
-        container.innerHTML = ''; // Очищаем старые карты
+        // Ищем контейнер по классу или по ID
+        var container = document.querySelector('.catalog-grid') || document.getElementById('catalogGrid');
+        if (!container) {
+            console.error("Контейнер каталога не найден! Проверь HTML.");
+            return; 
+        }
+        container.innerHTML = ''; 
         
-        var ownedCards = profile.owned_cards || [];
-        var ownedSkins = profile.owned_skins || {};
-
         pageItems.forEach(function(item) {
             var cardDiv = document.createElement('div');
             
             if (currentCatalogTab === 'cards') {
                 var cid = item;
                 var c = cardsDb[cid];
-                // Проверяем наличие (как число или строку)
                 var isOwned = ownedCards.includes(cid) || ownedCards.includes(Number(cid)); 
                 
                 cardDiv.className = 'catalog-card ' + (isOwned ? 'owned' : 'locked');
@@ -3511,11 +3525,14 @@ function updateCards() {
                 var styleHtml = (styleName && styleName !== "Базовый") 
                     ? `<div class="style-badge">✨ ${styleName}</div>` : '';
                     
-                var fileName = c.file ? c.file.replace(/\.(png|jpg|jpeg)$/, '.webp') : 'default.webp';
+                // БЕЗОПАСНАЯ замена формата файла (защита от краша, если file undefined)
+                var fileName = (c.file && typeof c.file === 'string') 
+                    ? c.file.replace(/\.(png|jpg|jpeg)$/i, '.webp') 
+                    : 'default.webp';
                 
                 cardDiv.innerHTML = `
                     <div class="catalog-card-img-wrapper">
-                        <img src="images/${fileName}" class="catalog-card-img" loading="lazy">
+                        <img src="images/${fileName}" class="catalog-card-img" loading="lazy" onerror="this.src='images/default.webp'">
                     </div>
                     <div class="catalog-card-info">
                         <div class="catalog-card-name">${c.name || 'Неизвестно'}</div>
@@ -3538,11 +3555,11 @@ function updateCards() {
                     
                 var mediaHtml = '';
                 if (skin.type === 'absolute' && skin.data.skin_video_file) {
-                    var vidName = skin.data.skin_video_file.replace(/\.mp4$/, '.webm');
+                    var vidName = skin.data.skin_video_file.replace(/\.mp4$/i, '.webm');
                     mediaHtml = `<video src="images/skins/${vidName}" autoplay loop muted playsinline class="catalog-card-img"></video>`;
                 } else if (skin.type === 'awakened' && skin.data.skin_art_file) {
-                    var imgName = skin.data.skin_art_file.replace(/\.(png|jpg|jpeg)$/, '.webp');
-                    mediaHtml = `<img src="images/skins/${imgName}" class="catalog-card-img" loading="lazy">`;
+                    var imgName = skin.data.skin_art_file.replace(/\.(png|jpg|jpeg)$/i, '.webp');
+                    mediaHtml = `<img src="images/skins/${imgName}" class="catalog-card-img" loading="lazy" onerror="this.src='images/default.webp'">`;
                 }
                 
                 cardDiv.innerHTML = `
@@ -3559,14 +3576,12 @@ function updateCards() {
             container.appendChild(cardDiv);
         });
 
-        // Обновляем счетчики сверху (если элемент существует)
         var totalEl = document.getElementById('catalogTotal');
         if (totalEl) {
             totalEl.innerText = filtered.length + (currentCatalogTab === 'cards' ? " карт" : " скинов");
         }
         
-        // Рендерим кнопки пагинации
-        if(typeof renderCatalogPagination === 'function') {
+        if (typeof renderCatalogPagination === 'function') {
             renderCatalogPagination(totalPages);
         }
 
