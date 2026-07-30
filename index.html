@@ -5364,7 +5364,11 @@ async function openPublicProfile(targetId) {
             var splash = document.getElementById('splashScreen');
             if (splash) {
                 splash.classList.add('hidden');
-                setTimeout(() => splash.remove(), 500); 
+                setTimeout(function() {
+                    if (splash && splash.parentNode) {
+                        splash.parentNode.removeChild(splash);
+                    }
+                }, 500); 
             }
         }, 2500); // Строго 2.5 секунды независимо от скорости интернета
     
