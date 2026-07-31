@@ -2754,6 +2754,52 @@
     </div>
 
     <script>
+// === ТОЧНЫЙ МАППИНГ НАВЫКОВ ПО ID КАРТ ===
+var SKILLS_MAP = {
+    "Копирование": [
+        "kerri_roana", "kafka", "jae_hyen", "yu_hobin_pass", "samdak", 
+        "yu_hobin", "hyeonseok_pt", "yohan_son", "park_jinyeong", 
+        "park_hyeonsok_vt", "kang_dagyeom", "eun_gel", "han_jig_wol", "premium_card_1"
+    ],
+    "Восстание": [
+        "kim_u_dzhin", "isaak_ivanov", "ioann_georg", "letniy_dzhin_vu", 
+        "sanless", "lee_jin_ho", "son_jin_woo", "ashborn", "absolute_being", 
+        "igris", "bellion", "ber", "red_igris", "tang_gi_mun", "exclusive_card_1"
+    ],
+    "Берсерк": [
+        "uayt", "hell_dzho", "yubin", "han_wanguk", "ji_gonsop", 
+        "lee_jinson", "kim_gapryeon", "beakcheon", "antares", 
+        "choi_jong_in", "moyeong_yul_cheon", "jo_uk_kun", "yunsu"
+    ],
+    "Пространство": [
+        "premium_card_2", "aheron", "enryu", "zahard", "urek_mazino", 
+        "garam_zahard", "han_son_yu", "baam", "yu_son", "han_ga_yun", 
+        "yu_cha_ryeon", "deung_yu_myeong"
+    ],
+    "Пробивание": [
+        "lim_sae_jun", "nabirose", "ronan", "mortenaks_bleyd", "seong_han_su", 
+        "logan_gracie", "hwang_man_gi", "gun_park", "kim_kimyeon", "kwak_jichan", 
+        "ma_tesu", "shingen_yamazaki", "lee_dogyu", "manager_kim", "jangsu", 
+        "gu_kim", "kim_gitae", "shintaro_yamazaki", "choi_diyav", "im_jae_hwan", 
+        "liu_zhigang", "cha_hae_in", "jin_mu_won", "jin_gwan_ho", "eum_han_sol", 
+        "seo_mu_san", "excluzive_card_jaehwan"
+    ],
+    "Уклонение": [
+        "letnyaya_cha_he_in", "letniy_gu_kim", "kun_mashenni_zahard", "ouen", 
+        "seong_tae_hun1", "lee_ji_hoon", "lineman", "na_jaegyeon", "yoojae_son", 
+        "choi_dongsu", "gyeong_mu_saeng"
+    ]
+};
+
+// Функция определения навыка карты по её ID
+function getCardSkill(cardId) {
+    for (var skillName in SKILLS_MAP) {
+        if (SKILLS_MAP[skillName].includes(cardId)) {
+            return skillName;
+        }
+    }
+    return "Базовый";
+}
         var tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
@@ -2791,6 +2837,11 @@
             tg.showAlert((name || 'Раздел') + ' в разработке 🚧');
         }
 
+// === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ КАТАЛОГА И СКИНОВ ===
+        var currentCatalogTab = 'cards';
+        var isExclusiveFilterActive = false;
+        var allSkins = [];       // Все скины из базы
+        var userOwnedSkins = []; // Скины, которые есть у юзера
         var allCards = [];
         var userOwnedCards = [];
         var allTitles = [];
@@ -2860,6 +2911,11 @@
                     
                     userOwnedCards = data.owned_cards || [];
                     document.getElementById('valCards').innerText = userOwnedCards.length;
+
+                    // === НОВОЕ: СИНХРОНИЗАЦИЯ СКИНОВ ===
+                    userOwnedSkins = data.owned_skins || [];
+                    allSkins = data.all_skins_data || [];
+                    // ===================================
 
                     var statusEmojiEl = document.getElementById('userStatusEmoji');
                     if (data.is_premium) {
@@ -3242,183 +3298,299 @@
         var currentCatalogPage = 1;
         var lastCatalogFilterKey = "";
 
-        function renderCards(cards) {
-            var container = document.getElementById('cardsContainer');
-            var pagContainer = document.getElementById('catalogPagination');
-            
-            container.innerHTML = '';
-            if (pagContainer) pagContainer.innerHTML = '';
-            
-            updateCollectionInfo(cards.length);
-            
-            if (!cards.length) {
-                container.innerHTML = '<div class="empty-state">Ничего не найдено<br><span style="font-size:11px; opacity:0.6;">Измените фильтры</span></div>';
-                return;
-            }
-            
-            // МАТЕМАТИКА: 12 карт на страницу
-            var cardsPerPage = 12;
-            var totalPages = Math.ceil(cards.length / cardsPerPage) || 1;
-            
-            if (currentCatalogPage > totalPages) currentCatalogPage = totalPages;
-            if (currentCatalogPage < 1) currentCatalogPage = 1;
+        // === ЛОГИКА ПЕРЕКЛЮЧАТЕЛЕЙ ===
+function toggleCatalogTab(tab) {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+    currentCatalogTab = tab;
+    
+    var btnCards = document.getElementById('btnTabCards');
+    var btnSkins = document.getElementById('btnTabSkins');
+    var slider = document.getElementById('catalogToggleSlider');
+    
+    if (tab === 'cards') {
+        btnCards.classList.add('active');
+        btnSkins.classList.remove('active');
+        slider.style.transform = 'translateX(0)';
+        
+        document.getElementById('sortFilter').style.display = 'block';
+        document.getElementById('styleFilter').style.display = 'block';
+        document.getElementById('exclusiveFilterBtn').style.display = 'flex';
+    } else {
+        btnCards.classList.remove('active');
+        btnSkins.classList.add('active');
+        slider.style.transform = 'translateX(100%)';
+    }
+    
+    currentCatalogPage = 1;
+    updateCards();
+}
 
-            var start = (currentCatalogPage - 1) * cardsPerPage;
-            var end = start + cardsPerPage;
-            var pageCards = cards.slice(start, end);
-            
-            // Отрисовка твоих карт (ОРИГИНАЛЬНЫЙ ДИЗАЙН)
-            pageCards.forEach(function(card) {
-                var cleanRarity = (card.rarity || '').split(' ')[0];
-                var isOwned = userOwnedCards.includes(card.id);
-                var div = document.createElement('div');
-                div.className = 'card' + (!isOwned && userOwnedCards.length > 0 ? ' is-locked' : '');
-                div.dataset.rarity = cleanRarity;
-                
-                div.onclick = function() { openModal(card); };
-                
-                var badgeHtml = '';
-                if (isOwned) badgeHtml = '<div class="owned-badge">МОЯ</div>';
-                else if (userOwnedCards.length > 0) badgeHtml = '<div class="locked-badge">LOCK</div>';
+function toggleExclusive() {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+    isExclusiveFilterActive = !isExclusiveFilterActive;
+    var btn = document.getElementById('exclusiveFilterBtn');
+    
+    if (isExclusiveFilterActive) btn.classList.add('active');
+    else btn.classList.remove('active');
+    
+    currentCatalogPage = 1;
+    updateCards();
+}
 
-                div.innerHTML = badgeHtml + 
-                    '<div class="img-wrap">' +
-                        '<div class="spinner-ring"></div>' +
-                        '<img src="images/' + (card.file || '') + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)">' +
-                    '</div>' +
-                    '<h3>' + (card.name || '') + '</h3>' +
-                    '<div class="rarity-badge">' + (card.rarity || '') + '</div>' +
-                    '<div class="card-meta">' +
-                        '<div class="mini-stat">⚡ ' + (card.speed || 0) + '</div>' +
-                        '<div class="mini-stat">💪 ' + (card.strength || 0) + '</div>' +
-                        '<div class="mini-stat">🧠 ' + (card.intellect || 0) + '</div>' +
-                    '</div>';
-                
-                container.appendChild(div);
-            });
+// === ОБНОВЛЕННЫЙ ФИЛЬТР КАРТ И СКИНОВ ===
+function updateCards() {
+    var search = document.getElementById('searchInput').value.toLowerCase().trim();
+    var rarity = document.getElementById('rarityFilter').value;
+    var series = document.getElementById('seriesFilter').value;
+    var sortType = document.getElementById('sortFilter').value;
+    var style = document.getElementById('styleFilter').value;
 
-            // ГЕНЕРАЦИЯ КНОПОК ПАГИНАЦИИ
-            if (totalPages > 1 && pagContainer) {
-                var prevBtn = document.createElement('button');
-                prevBtn.className = 'catalog-page-btn';
-                prevBtn.innerHTML = '◀';
-                prevBtn.disabled = (currentCatalogPage === 1);
-                prevBtn.onclick = function() {
-                    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
-                    currentCatalogPage--;
-                    renderCards(cards);
-                    document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"}); // Автоскролл наверх
-                };
-                pagContainer.appendChild(prevBtn);
+    var currentFilterKey = currentCatalogTab + "_" + search + "_" + rarity + "_" + series + "_" + sortType + "_" + style + "_" + isExclusiveFilterActive;
+    if (lastCatalogFilterKey !== currentFilterKey) {
+        currentCatalogPage = 1;
+        lastCatalogFilterKey = currentFilterKey;
+    }
 
-                var startPage = Math.max(1, currentCatalogPage - 2);
-                var endPage = Math.min(totalPages, startPage + 4);
-                if (endPage - startPage < 4) {
-                    startPage = Math.max(1, endPage - 4);
-                }
+    var filtered = [];
 
-                for (var p = startPage; p <= endPage; p++) {
-                    (function(pageNum) {
-                        var pageBtn = document.createElement('button');
-                        pageBtn.className = 'catalog-page-btn' + (pageNum === currentCatalogPage ? ' active' : '');
-                        pageBtn.innerText = pageNum;
-                        pageBtn.onclick = function() {
-                            if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
-                            currentCatalogPage = pageNum;
-                            renderCards(cards);
-                            document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"});
-                        };
-                        pagContainer.appendChild(pageBtn);
-                    })(p);
-                }
-
-                var nextBtn = document.createElement('button');
-                nextBtn.className = 'catalog-page-btn';
-                nextBtn.innerHTML = '▶';
-                nextBtn.disabled = (currentCatalogPage === totalPages);
-                nextBtn.onclick = function() {
-                    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
-                    currentCatalogPage++;
-                    renderCards(cards);
-                    document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"});
-                };
-                pagContainer.appendChild(nextBtn);
-            }
-        }
-
-        function updateCards() {
-            var search = document.getElementById('searchInput').value.toLowerCase();
-            var rarity = document.getElementById('rarityFilter').value;
-            var series = document.getElementById('seriesFilter').value;
-            var sortType = document.getElementById('sortFilter').value;
-
-            // СБРОС на 1 страницу при новом поиске или фильтре
-            var currentFilterKey = search + "_" + rarity + "_" + series + "_" + sortType;
-            if (lastCatalogFilterKey !== currentFilterKey) {
-                currentCatalogPage = 1;
-                lastCatalogFilterKey = currentFilterKey;
-            }
-
-            var filtered = allCards.filter(function(card) {
-                var cleanRarity = (card.rarity || '').split(' ')[0];
-                var matchName = String(card.name || '').toLowerCase().includes(search);
-                var matchRarity = rarity === 'all' || cleanRarity === rarity;
-                var matchSeries = series === 'all' || card.series === series;
-                return matchName && matchRarity && matchSeries;
-            });
-
-            if (sortType === 'str_desc') filtered.sort(function(a, b) { return b.strength - a.strength; });
-            else if (sortType === 'str_asc') filtered.sort(function(a, b) { return a.strength - b.strength; });
-            else if (sortType === 'spd_desc') filtered.sort(function(a, b) { return b.speed - a.speed; });
-            else if (sortType === 'spd_asc') filtered.sort(function(a, b) { return a.speed - b.speed; });
-            else if (sortType === 'int_desc') filtered.sort(function(a, b) { return b.intellect - a.intellect; });
-            else if (sortType === 'int_asc') filtered.sort(function(a, b) { return a.intellect - b.intellect; });
-
-            renderCards(filtered);
-        }
-
-        async function openModal(card) {
+    if (currentCatalogTab === 'cards') {
+        filtered = allCards.filter(function(card) {
+            if (!card) return false;
             var cleanRarity = (card.rarity || '').split(' ')[0];
-            var modalImg = document.getElementById('modalImg');
-            modalImg.src = 'images/' + (card.file || '');
-            modalImg.className = 'modal-img glow-' + cleanRarity; 
+            var matchName = String(card.name || '').toLowerCase().includes(search);
+            var matchRarity = rarity === 'all' || cleanRarity === rarity;
+            var matchSeries = series === 'all' || card.series === series;
+            var matchExclusive = isExclusiveFilterActive ? (card.exclusive === true) : true;
 
-            document.getElementById('modalNameTop').innerText = card.name || '';
-            document.getElementById('modalName').innerText = card.name || '';
-            document.getElementById('modalRarity').innerText = card.rarity || '';
-            document.getElementById('modalStyle').innerText = card.style || '';
-            document.getElementById('modalSeries').innerText = card.series || 'Неизвестно';
-            document.getElementById('modalSpeed').innerText = card.speed || 0;
-            document.getElementById('modalStrength').innerText = card.strength || 0;
-            document.getElementById('modalIntellect').innerText = card.intellect || 0;
+            // Внутри updateCards():
+            var selectedStyle = document.getElementById('styleFilter').value;
 
-            var statEls = [document.getElementById('modalSpeed'), document.getElementById('modalStrength'), document.getElementById('modalIntellect')];
-            if((card.rarity || '').includes('Мифическая') || (card.rarity || '').includes('Божественная')) {
-                statEls.forEach(function(el) { el.classList.add('mythic'); });
-            } else {
-                statEls.forEach(function(el) { el.classList.remove('mythic'); });
-            }
+            var matchStyle = true;
+            if (selectedStyle !== 'all') {
+               var cardSkill = getCardSkill(card.id);
+               if (selectedStyle === 'Базовый') {
+               matchStyle = (cardSkill === 'Базовый');
+         } else {
+               matchStyle = (cardSkill === selectedStyle);
+           }
+         }
+            return matchName && matchRarity && matchSeries && matchExclusive && matchStyle;
+        });
 
-            document.getElementById('modalCount').innerText = "⏳";
-            
-            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
-            
-            document.getElementById('cardModal').classList.add('open');
+        filtered = filtered.map(c => Object.assign({}, c, { isSkin: false }));
+    } else {
+        // Логика поиска по скинам
+        allSkins.forEach(function(skinDef) {
+            var baseCard = allCards.find(c => c.id === skinDef.card_id);
+            if (!baseCard) return;
 
-            try {
-                var res = await fetch(API_BASE + '/api/card_count/' + card.id);
-                if(res.ok) {
-                    var data = await res.json();
-                    document.getElementById('modalCount').innerText = data.count;
+            var cleanRarity = (baseCard.rarity || '').split(' ')[0];
+            var matchName = String(baseCard.name || '').toLowerCase().includes(search);
+            var matchRarity = rarity === 'all' || cleanRarity === rarity;
+            var matchSeries = series === 'all' || baseCard.series === series;
+            var matchExclusive = isExclusiveFilterActive ? (baseCard.exclusive === true) : true;
+
+            var matchStyle = true;
+            if (style !== 'all') {
+                var cardStyle = baseCard.style || '';
+                if (style === 'Базовый') {
+                    matchStyle = !cardStyle.includes('Копирование') && !cardStyle.includes('Восстание') && !cardStyle.includes('Берсерк') && !cardStyle.includes('Пространство') && !cardStyle.includes('Пробивание') && !cardStyle.includes('Уклонение');
                 } else {
-                    document.getElementById('modalCount').innerText = "?";
+                    matchStyle = cardStyle.includes(style);
                 }
-            } catch(e) {
-                document.getElementById('modalCount').innerText = "Ошибка";
             }
+
+            if (matchName && matchRarity && matchSeries && matchExclusive && matchStyle) {
+                filtered.push(Object.assign({}, baseCard, { 
+                    isSkin: true, 
+                    skinType: skinDef.type, 
+                    skinFile: skinDef.file,
+                    skinIdKey: skinDef.card_id + "_" + skinDef.type
+                }));
+            }
+        });
+    }
+
+    // Универсальная сортировка статов
+    if (sortType === 'str_desc') filtered.sort((a, b) => (b.strength||0) - (a.strength||0));
+    else if (sortType === 'str_asc') filtered.sort((a, b) => (a.strength||0) - (b.strength||0));
+    else if (sortType === 'spd_desc') filtered.sort((a, b) => (b.speed||0) - (a.speed||0));
+    else if (sortType === 'spd_asc') filtered.sort((a, b) => (a.speed||0) - (b.speed||0));
+    else if (sortType === 'int_desc') filtered.sort((a, b) => (b.intellect||0) - (a.intellect||0));
+    else if (sortType === 'int_asc') filtered.sort((a, b) => (a.intellect||0) - (b.intellect||0));
+
+    renderCards(filtered);
+}
+
+// === РЕНДЕР КАРТ (ПОДДЕРЖКА WEBM И БЕЙДЖЕЙ) ===
+function renderCards(cards) {
+    var container = document.getElementById('cardsContainer');
+    var pagContainer = document.getElementById('catalogPagination');
+    container.innerHTML = '';
+    if (pagContainer) pagContainer.innerHTML = '';
+    
+    if (currentCatalogTab === 'cards') {
+        document.getElementById('catalogTotal').innerText = allCards.length + " карт";
+        document.getElementById('catalogOwned').innerText = "Собрано " + userOwnedCards.length;
+    } else {
+        document.getElementById('catalogTotal').innerText = allSkins.length + " скинов";
+        document.getElementById('catalogOwned').innerText = "Собрано " + userOwnedSkins.length;
+    }
+    
+    document.getElementById('cardsResultText').innerText = cards.length > 0 ? ("Показано " + cards.length) : "Загрузка...";
+    
+    var totalItems = currentCatalogTab === 'cards' ? allCards.length : allSkins.length;
+    var ownedItems = currentCatalogTab === 'cards' ? userOwnedCards.length : userOwnedSkins.length;
+    document.getElementById('collectionProgress').innerText = totalItems > 0 ? (Math.round((ownedItems / totalItems) * 100) + "%") : "0%";
+
+    if (!cards.length) {
+        container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1; text-align:center; padding:40px 10px; color:var(--text-muted);">Ничего не найдено<br><span style="font-size:11px; opacity:0.6;">Измените фильтры</span></div>';
+        return;
+    }
+    
+    var cardsPerPage = 12;
+    var totalPages = Math.ceil(cards.length / cardsPerPage) || 1;
+    if (currentCatalogPage > totalPages) currentCatalogPage = totalPages;
+
+    var start = (currentCatalogPage - 1) * cardsPerPage;
+    var pageCards = cards.slice(start, start + cardsPerPage);
+    
+    pageCards.forEach(function(item) {
+        var cleanRarity = (item.rarity || '').split(' ')[0];
+        var isOwned = item.isSkin ? userOwnedSkins.includes(item.skinIdKey) : userOwnedCards.includes(item.id);
+        var hasAnyOwned = item.isSkin ? (userOwnedSkins.length > 0) : (userOwnedCards.length > 0);
+
+        var div = document.createElement('div');
+        div.className = 'card' + (!isOwned && hasAnyOwned ? ' is-locked' : '');
+        div.dataset.rarity = cleanRarity;
+        div.onclick = function() { openModal(item); };
+        
+        var badgeHtml = isOwned ? '<div class="owned-badge">МОЙ</div>' : (hasAnyOwned ? '<div class="locked-badge">LOCK</div>' : '');
+        var mediaHtml = '';
+        
+        if (item.isSkin) {
+            var skinBadge = item.skinType === 'awakened' ? '<div class="skin-badge awakened">💠 Пробужденный</div>' : '<div class="skin-badge absolute">🔮 Абсолютный</div>';
+            var webFileName = (item.skinFile || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
+            
+            if (item.skinType === 'absolute') {
+                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><video src="images/' + webFileName + '" autoplay loop muted playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:12px; z-index:2; pointer-events:none;" onloadeddata="this.parentElement.classList.add(\'loaded\')"></video></div>';
+            } else {
+                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/' + webFileName + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="this.onerror=null; this.src=\'images/default.webp\';"></div>';
+            }
+            badgeHtml += skinBadge;
+        } else {
+            var fallbackSrc = (item.file || '').replace(/\.jpe?g$/i, '.webp');
+            mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/' + fallbackSrc + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)"></div>';
         }
+
+       var styleHtml = '';
+        var cardSkill = getCardSkill(item.id);
+        if (cardSkill !== 'Базовый') {
+            var sIcon = cardSkill === 'Копирование' ? '👁️' : 
+                       cardSkill === 'Восстание' ? '🌑' : 
+                       cardSkill === 'Берсерк' ? '🩸' : 
+                       cardSkill === 'Пространство' ? '🌊' : 
+                       cardSkill === 'Пробивание' ? '⚔️' : 
+                       cardSkill === 'Уклонение' ? '🌪' : '✨';
+                       
+            styleHtml = '<div class="style-badge">' + sIcon + ' ' + cardSkill + '</div>';
+        }
+
+        div.innerHTML = badgeHtml + mediaHtml + 
+            '<h3>' + (item.name || '') + '</h3>' +
+            '<div class="rarity-badge">' + (item.rarity || '') + '</div>' +
+            '<div class="card-meta">' +
+                '<div class="mini-stat">⚡ ' + (item.speed || 0) + '</div>' +
+                '<div class="mini-stat">💪 ' + (item.strength || 0) + '</div>' +
+                '<div class="mini-stat">🧠 ' + (item.intellect || 0) + '</div>' +
+            '</div>' + styleHtml;
+        
+        container.appendChild(div);
+    });
+
+    // Пагинация (оставил твою красивую реализацию)
+    if (totalPages > 1 && pagContainer) {
+        var prevBtn = document.createElement('button');
+        prevBtn.className = 'catalog-page-btn';
+        prevBtn.innerHTML = '◀';
+        prevBtn.disabled = (currentCatalogPage === 1);
+        prevBtn.onclick = function() { if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); currentCatalogPage--; renderCards(cards); document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"}); };
+        pagContainer.appendChild(prevBtn);
+
+        var startPage = Math.max(1, currentCatalogPage - 2);
+        var endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+        for (var p = startPage; p <= endPage; p++) {
+            (function(pageNum) {
+                var pageBtn = document.createElement('button');
+                pageBtn.className = 'catalog-page-btn' + (pageNum === currentCatalogPage ? ' active' : '');
+                pageBtn.innerText = pageNum;
+                pageBtn.onclick = function() { if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); currentCatalogPage = pageNum; renderCards(cards); document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"}); };
+                pagContainer.appendChild(pageBtn);
+            })(p);
+        }
+
+        var nextBtn = document.createElement('button');
+        nextBtn.className = 'catalog-page-btn';
+        nextBtn.innerHTML = '▶';
+        nextBtn.disabled = (currentCatalogPage === totalPages);
+        nextBtn.onclick = function() { if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); currentCatalogPage++; renderCards(cards); document.getElementById('tab-catalog').scrollIntoView({behavior: "smooth"}); };
+        pagContainer.appendChild(nextBtn);
+    }
+}
+
+// === МОДАЛКА (ДОБАВЛЕНА ПОДДЕРЖКА ВИДЕО) ===
+async function openModal(item) {
+    var cleanRarity = (item.rarity || '').split(' ')[0];
+    var modalImgWrapper = document.querySelector('.modal-img-wrapper');
+    modalImgWrapper.innerHTML = ''; 
+
+    if (item.isSkin) {
+        var webFileName = (item.skinFile || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
+        if (item.skinType === 'absolute') {
+            modalImgWrapper.innerHTML = '<video src="images/' + webFileName + '" class="modal-img glow-' + cleanRarity + '" autoplay loop muted playsinline></video>';
+        } else {
+            modalImgWrapper.innerHTML = '<img src="images/' + webFileName + '" class="modal-img glow-' + cleanRarity + '">';
+        }
+        document.getElementById('modalNameTop').innerText = item.name + (item.skinType === 'awakened' ? ' [💠]' : ' [🔮]');
+        document.getElementById('modalName').innerText = item.name;
+        document.getElementById('modalCount').innerText = "—"; 
+    } else {
+        var fallbackSrc = (item.file || '').replace(/\.jpe?g$/i, '.webp');
+        modalImgWrapper.innerHTML = '<img src="images/' + fallbackSrc + '" class="modal-img glow-' + cleanRarity + '">';
+        document.getElementById('modalNameTop').innerText = item.name || '';
+        document.getElementById('modalName').innerText = item.name || '';
+        
+        document.getElementById('modalCount').innerText = "⏳";
+        try {
+            var res = await fetch(API_BASE + '/api/card_count/' + item.id);
+            if(res.ok) {
+                var data = await res.json();
+                document.getElementById('modalCount').innerText = data.count;
+            } else {
+                document.getElementById('modalCount').innerText = "?";
+            }
+        } catch(e) { document.getElementById('modalCount').innerText = "Ошибка"; }
+    }
+
+    document.getElementById('modalRarity').innerText = item.rarity || '';
+    document.getElementById('modalStyle').innerText = item.style || '';
+    document.getElementById('modalSeries').innerText = item.series || 'Неизвестно';
+    document.getElementById('modalSpeed').innerText = item.speed || 0;
+    document.getElementById('modalStrength').innerText = item.strength || 0;
+    document.getElementById('modalIntellect').innerText = item.intellect || 0;
+
+    var statEls = [document.getElementById('modalSpeed'), document.getElementById('modalStrength'), document.getElementById('modalIntellect')];
+    if((item.rarity || '').includes('Мифическая') || (item.rarity || '').includes('Божественная')) {
+        statEls.forEach(el => el.classList.add('mythic'));
+    } else {
+        statEls.forEach(el => el.classList.remove('mythic'));
+    }
+
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
+    document.getElementById('cardModal').classList.add('open');
+}
 
         function closeModal() {
             document.getElementById('cardModal').classList.remove('open');
