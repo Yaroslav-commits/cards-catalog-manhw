@@ -1858,29 +1858,6 @@
     filter: drop-shadow(0 0 5px #fbbf24);
 }
 
-/* Бэджи для скинов и навыков */
-.skin-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 900;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-
-.skin-badge.awakened { color: #38bdf8; border-color: rgba(56, 189, 248, 0.5); }
-.skin-badge.absolute { color: #c084fc; border-color: rgba(192, 132, 252, 0.5); }
-
 .style-badge {
     display: inline-flex;
     align-items: center;
@@ -3469,23 +3446,20 @@ function renderCards(cards) {
         var mediaHtml = '';
         
         if (item.isSkin) {
-            var skinBadge = item.skinType === 'awakened' ? '<div class="skin-badge awakened">💠 Пробужденный</div>' : '<div class="skin-badge absolute">🔮 Абсолютный</div>';
+            // УБРАЛИ ГРОМОЗДКИЙ БЕЙДЖ ОТСЮДА
             var webFileName = (item.skinFile || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
             
             if (item.skinType === 'absolute') {
-                // ДОБАВЛЕНО skins/
-                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><video src="images/skins/' + webFileName + '" autoplay loop muted playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:12px; z-index:2; pointer-events:none;" onloadeddata="window.cardImageLoaded(this)"></video></div>';
+                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><video src="images/skins/' + webFileName + '" autoplay loop muted playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:12px; z-index:2; pointer-events:none;" onloadeddata="this.parentElement.classList.add(\'loaded\')"></video></div>';
             } else {
-                // ДОБАВЛЕНО skins/
-                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/skins/' + webFileName + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)"></div>';
+                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/skins/' + webFileName + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="this.onerror=null; this.src=\'images/default.webp\';"></div>';
             }
-            badgeHtml += skinBadge;
         } else {
             var fallbackSrc = (item.file || '').replace(/\.jpe?g$/i, '.webp');
             mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/' + fallbackSrc + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)"></div>';
         }
 
-       var styleHtml = '';
+        var styleHtml = '';
         var cardSkill = getCardSkill(item.id);
         if (cardSkill !== 'Базовый') {
             var sIcon = cardSkill === 'Копирование' ? '👁️' : 
@@ -3498,8 +3472,14 @@ function renderCards(cards) {
             styleHtml = '<div class="style-badge">' + sIcon + ' ' + cardSkill + '</div>';
         }
 
+        // ДОБАВЛЯЕМ ЭМОДЗИ СКИНА ПРЯМО К ИМЕНИ
+        var displayName = item.name || '';
+        if (item.isSkin) {
+            displayName += item.skinType === 'awakened' ? ' 💠' : ' 🔮';
+        }
+
         div.innerHTML = badgeHtml + mediaHtml + 
-            '<h3>' + (item.name || '') + '</h3>' +
+            '<h3>' + displayName + '</h3>' +
             '<div class="rarity-badge">' + (item.rarity || '') + '</div>' +
             '<div class="card-meta">' +
                 '<div class="mini-stat">⚡ ' + (item.speed || 0) + '</div>' +
