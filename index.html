@@ -5425,6 +5425,18 @@ async function openPublicProfile(targetId) {
                 window.Telegram.WebApp.HapticFeedback.selectionChanged();
             }
         }
+// === РЕГИСТРАЦИЯ SERVICE WORKER (КЭШ ДЖЕДАЯ) ===
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js')
+            .then(function(reg) {
+                console.log('⚡ Service Worker зарегистрирован в зоне:', reg.scope);
+            })
+            .catch(function(err) {
+                console.error('❌ Ошибка регистрации Service Worker:', err);
+            });
+    });
+}
 </script>
 </body>
 </html>
