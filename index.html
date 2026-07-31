@@ -3473,9 +3473,11 @@ function renderCards(cards) {
             var webFileName = (item.skinFile || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
             
             if (item.skinType === 'absolute') {
-                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><video src="images/' + webFileName + '" autoplay loop muted playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:12px; z-index:2; pointer-events:none;" onloadeddata="this.parentElement.classList.add(\'loaded\')"></video></div>';
+                // ДОБАВЛЕНО skins/
+                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><video src="images/skins/' + webFileName + '" autoplay loop muted playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:12px; z-index:2; pointer-events:none;" onloadeddata="window.cardImageLoaded(this)"></video></div>';
             } else {
-                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/' + webFileName + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="this.onerror=null; this.src=\'images/default.webp\';"></div>';
+                // ДОБАВЛЕНО skins/
+                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/skins/' + webFileName + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)"></div>';
             }
             badgeHtml += skinBadge;
         } else {
@@ -3549,9 +3551,11 @@ async function openModal(item) {
     if (item.isSkin) {
         var webFileName = (item.skinFile || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
         if (item.skinType === 'absolute') {
-            modalImgWrapper.innerHTML = '<video src="images/' + webFileName + '" class="modal-img glow-' + cleanRarity + '" autoplay loop muted playsinline></video>';
+            // ДОБАВЛЕНО skins/
+            modalImgWrapper.innerHTML = '<video src="images/skins/' + webFileName + '" class="modal-img glow-' + cleanRarity + '" autoplay loop muted playsinline></video>';
         } else {
-            modalImgWrapper.innerHTML = '<img src="images/' + webFileName + '" class="modal-img glow-' + cleanRarity + '">';
+            // ДОБАВЛЕНО skins/
+            modalImgWrapper.innerHTML = '<img src="images/skins/' + webFileName + '" class="modal-img glow-' + cleanRarity + '">';
         }
         document.getElementById('modalNameTop').innerText = item.name + (item.skinType === 'awakened' ? ' [💠]' : ' [🔮]');
         document.getElementById('modalName').innerText = item.name;
