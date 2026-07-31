@@ -1738,6 +1738,186 @@
             0% { transform: rotate(-15deg) scale(3); opacity: 0; }
             100% { transform: rotate(-15deg) scale(1); opacity: 1; }
         }
+
+/* ================= КАТАЛОГ И СКИНЫ (GLASSMORPHISM + NEON) ================= */
+.catalog-tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+/* Капсула переключателя */
+.catalog-toggle {
+    display: flex;
+    background: rgba(18, 18, 26, 0.6);
+    border-radius: 16px;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    width: 100%;
+    max-width: 320px;
+    position: relative;
+}
+
+/* Неоновый ползунок */
+.catalog-toggle-slider {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: calc(50% - 6px);
+    height: calc(100% - 12px);
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    border-radius: 12px;
+    z-index: 1;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* Кнопки переключателя */
+.catalog-toggle-btn {
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #8b8b9e;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.catalog-toggle-btn.active {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.catalog-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transition: all 0.4s ease;
+}
+
+.catalog-toggle-btn.active svg {
+    filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* Второй ряд фильтров */
+.filters-grid-row-2 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    margin-top: 12px;
+    width: 100%;
+}
+
+/* Кнопка "Эксклюзив" */
+.exclusive-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(18, 18, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 48px;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    user-select: none;
+}
+
+.exclusive-switch-wrapper.active {
+    background: rgba(251, 191, 36, 0.15);
+    border-color: rgba(251, 191, 36, 0.5);
+    color: #fbbf24;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+}
+
+.exclusive-switch-wrapper svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.exclusive-switch-wrapper.active svg {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px #fbbf24);
+}
+
+/* Бэджи для скинов и навыков */
+.skin-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 900;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.skin-badge.awakened { color: #38bdf8; border-color: rgba(56, 189, 248, 0.5); }
+.skin-badge.absolute { color: #c084fc; border-color: rgba(192, 132, 252, 0.5); }
+
+.style-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    margin-top: 6px;
+    color: #e2e8f0;
+    font-weight: 600;
+}
+#styleFilter {
+    background: rgba(18, 18, 26, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    height: 48px !important;
+    border-radius: 14px !important;
+    padding: 0 16px !important;
+    font-size: 14px !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    /* Рисуем белую стрелочку, раз отключили стандартный стиль */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 16px top 50% !important;
+    background-size: 12px auto !important;
+}
+
+#styleFilter option {
+    background: #12121a !important;
+    color: #ffffff !important;
+}
     </style>
 </head>
 <body>
@@ -1755,9 +1935,35 @@
             </div>
         </div>
 
+        <svg style="display: none;">
+            <symbol id="icon-cards" viewBox="0 0 24 24">
+                <path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </symbol>
+            <symbol id="icon-skins" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </symbol>
+            <symbol id="icon-star" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+            </symbol>
+        </svg>
+
+<div class="catalog-tabs-wrapper">
+    <div class="catalog-toggle">
+        <div class="catalog-toggle-slider" id="catalogToggleSlider"></div>
+        <div class="catalog-toggle-btn active" id="btnTabCards" onclick="toggleCatalogTab('cards')">
+            <svg><use href="#icon-skins"></use></svg> Карты
+        </div>
+        <div class="catalog-toggle-btn" id="btnTabSkins" onclick="toggleCatalogTab('skins')">
+            <svg><use href="#icon-cards"></use></svg> Скины
+        </div>
+    </div>
+</div>
+
         <div class="filters-wrapper">
             <div class="filters-grid">
                 <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени..." oninput="updateCards()">
+                
                 <select id="rarityFilter" onchange="updateCards()">
                     <option value="all">Все редкости</option>
                     <option value="Божественная">⚫ Божественная</option>
@@ -1767,24 +1973,44 @@
                     <option value="Редкая">🟡 Редкая</option>
                     <option value="Обычная">⚪️ Обычная</option>
                 </select>
+                
                 <select id="seriesFilter" onchange="updateCards()">
                     <option value="all">Все вселенные</option>
                 </select>
+
                 <select id="sortFilter" class="filter-full" onchange="updateCards()">
                     <option value="default">Сортировка: По умолчанию</option>
                     <optgroup label="Сила 💪">
-                        <option value="str_desc">От сильных к слабым</option>
-                        <option value="str_asc">От слабых к сильным</option>
+                        <option value="str_desc">💪Сила ⬆️</option>
+                        <option value="str_asc">💪Сила ⬇️</option>
                     </optgroup>
                     <optgroup label="Скорость ⚡️">
-                        <option value="spd_desc">От быстрых к медленным</option>
-                        <option value="spd_asc">От медленных к быстрым</option>
+                        <option value="spd_desc">⚡️Скорость ⬆️</option>
+                        <option value="spd_asc">⚡️Скорость ⬇️</option>
                     </optgroup>
                     <optgroup label="Интеллект 🧠">
-                        <option value="int_desc">От умных к глупым</option>
-                        <option value="int_asc">От глупых к умным</option>
+                        <option value="int_desc">🧠Интеллект ⬆️</option>
+                        <option value="int_asc">🧠Интеллект ⬇️</option>
                     </optgroup>
                 </select>
+            </div>
+            
+            <div class="filters-grid-row-2">
+                <select id="styleFilter" onchange="updateCards()">
+                    <option value="all">Все навыки</option>
+                    <option value="Копирование">👁️ Копирование</option>
+                    <option value="Восстание">🌑 Восстание</option>
+                    <option value="Берсерк">🩸 Берсерк</option>
+                    <option value="Пространство">🌊 Пространство</option>
+                    <option value="Пробивание">⚔️ Пробивание</option>
+                    <option value="Уклонение">🌪 Уклонение</option>
+                    <option value="Базовый">⚪ Базовые (Без навыка)</option>
+                </select>
+                
+                <div class="exclusive-switch-wrapper" id="exclusiveFilterBtn" onclick="toggleExclusive()">
+                    <svg><use href="#icon-star"></use></svg>
+                    Эксклюзив
+                </div>
             </div>
         </div>
 
