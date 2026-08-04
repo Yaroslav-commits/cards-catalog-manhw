@@ -1,5 +1,17 @@
 [
     {
+        "name": "Джу Дже Гён и Ким Дан",
+        "rarity": "Эпическая 🟢",
+        "style": "ММА [🌪 Уклонение]",
+        "series": "Джинкс",
+        "speed": 80,
+        "strength": 80,
+        "intellect": 80,
+        "file": "jinx.webp",
+        "exclusive": true,
+        "id": "jinx"
+    },
+    {
         "name": "Ю Соль Ха",
         "rarity": "Легендарная 🔵",
         "style": "Грозовой бес [🌊 Пространство]",
