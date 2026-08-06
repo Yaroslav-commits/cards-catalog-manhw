@@ -1,0 +1,10 @@
+name: Local Action
+description: A simple local composite action used by the workflow to avoid remote action resolution failures.
+runs:
+  using: "composite"
+  steps:
+    - name: Show info
+      run: |
+        echo "Running local action: $GITHUB_ACTION"
+        echo "Repository: $GITHUB_REPOSITORY"
+        echo "Workflow: $GITHUB_WORKFLOW"
