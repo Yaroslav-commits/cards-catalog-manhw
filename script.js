@@ -7,18 +7,18 @@ var SKILLS_MAP = {
     ],
     "Восстание": [
         "kim_u_dzhin", "isaak_ivanov", "ioann_georg", "letniy_dzhin_vu", 
-        "sanless", "lee_jin_ho", "son_jin_woo", "ashborn", "absolute_being", 
-        "igris", "bellion", "ber", "red_igris", "tang_gi_mun", "exclusive_card_1"
+        "sanless", "lee_jin_ho", "son_jin_woo", "ashborn", "absolute_being", "moyon_hvi",
+        "igris", "bellion", "ber", "red_igris", "tang_gi_mun", "exclusive_card_1", "demonicheskiy_bog"
     ],
     "Берсерк": [
         "uayt", "hell_dzho", "yubin", "han_wanguk", "ji_gonsop", 
         "lee_jinson", "kim_gapryeon", "beakcheon", "antares", 
-        "choi_jong_in", "moyeong_yul_cheon", "jo_uk_kun", "yunsu"
+        "choi_jong_in", "moyeong_yul_cheon", "jo_uk_kun", "yunsu", "li_dzhagang"
     ],
     "Пространство": [
         "premium_card_2", "aheron", "enryu", "zahard", "urek_mazino", 
         "garam_zahard", "han_son_yu", "baam", "yu_son", "han_ga_yun", 
-        "yu_cha_ryeon", "deung_yu_myeong", "yoo_seol_ha"
+        "yu_cha_ryeon", "deung_yu_myeong", "yoo_seol_ha", "dzhin_soyi"
     ],
     "Пробивание": [
         "lim_sae_jun", "nabirose", "ronan", "mortenaks_bleyd", "seong_han_su", 
@@ -26,12 +26,12 @@ var SKILLS_MAP = {
         "ma_tesu", "shingen_yamazaki", "lee_dogyu", "manager_kim", "jangsu", 
         "gu_kim", "kim_gitae", "shintaro_yamazaki", "choi_diyav", "im_jae_hwan", 
         "liu_zhigang", "cha_hae_in", "jin_mu_won", "jin_gwan_ho", "eum_han_sol", 
-        "seo_mu_san", "excluzive_card_jaehwan"
+        "seo_mu_san", "excluzive_card_jaehwan", "dang_hevon", "eon_ganvu", "dzhegal_hi"
     ],
     "Уклонение": [
         "letnyaya_cha_he_in", "letniy_gu_kim", "kun_mashenni_zahard", "ouen", 
         "seong_tae_hun1", "lee_ji_hoon", "lineman", "na_jaegyeon", "yoojae_son", 
-        "choi_dongsu", "gyeong_mu_saeng"
+        "choi_dongsu", "gyeong_mu_saeng", "jinx"
     ]
 };
 
