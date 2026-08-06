@@ -10,6 +10,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
+            --r-color: transparent;
+            --uni-color: transparent;
+            --rot: 0deg;
             --bg: #06060c;
             --surface: #12121a;
             --surface-light: #1c1c28;
@@ -1936,6 +1939,82 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     background: #12121a !important;
     color: #ffffff !important;
 }
+/* ================= 3D МОДАЛКА ПОКУПКИ КРУТОК (СТВОРКИ) ================= */
+.gacha-buy-overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    display: none; align-items: center; justify-content: center;
+    perspective: 1200px; overflow: hidden;
+    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+    opacity: 0; transition: opacity 0.4s ease;
+}
+.gacha-buy-overlay.open { display: flex; opacity: 1; }
+
+/* Тёмные неоновые створки по бокам */
+.gacha-gate {
+    position: absolute; top: 0; bottom: 0; width: 28px; z-index: 2;
+    background: linear-gradient(180deg, #12121a 0%, #06060c 50%, #12121a 100%);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.6), inset 0 0 10px rgba(139, 92, 246, 0.4);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+}
+.gate-left { left: 0; border-left: none; transform: translateX(-100%); }
+.gate-right { right: 0; border-right: none; transform: translateX(100%); }
+
+.gacha-buy-overlay.open .gate-left { transform: translateX(0); }
+.gacha-buy-overlay.open .gate-right { transform: translateX(0); }
+
+/* Центральное прозрачное окно */
+.gacha-buy-window {
+    position: relative; z-index: 3;
+    width: calc(100% - 70px); max-width: 400px;
+    background: rgba(18, 18, 26, 0.75);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 24px; padding: 24px 18px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(139, 92, 246, 0.25);
+
+    transform: scale(0.8) translateZ(-100px);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+.gacha-buy-overlay.open .gacha-buy-window {
+    transform: scale(1) translateZ(0);
+}
+
+.gacha-buy-close {
+    position: absolute; right: 16px; top: 16px;
+    background: rgba(255,255,255,0.08); border: none; color: #fff;
+    width: 32px; height: 32px; border-radius: 50%; font-size: 14px;
+    cursor: pointer; transition: 0.2s;
+}
+.gacha-buy-close:active { transform: scale(0.9); }
+
+.gacha-buy-header { text-align: center; margin-bottom: 18px; }
+.gacha-buy-subtitle { color: var(--accent-2); font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; }
+.gacha-buy-title { font-size: 22px; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(139,92,246,0.5); margin-top: 2px; }
+
+.gacha-buy-tabs { display: flex; background: rgba(0,0,0,0.4); border-radius: 14px; padding: 4px; gap: 6px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05); }
+.gacha-buy-tab { flex: 1; padding: 10px 0; border: none; background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: 0.25s; }
+.gacha-buy-tab.active { background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+
+.gacha-packs-grid { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; padding-right: 2px; }
+
+.gacha-pack-card {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px; padding: 12px 16px; transition: 0.2s; cursor: pointer;
+}
+.gacha-pack-card:active { transform: scale(0.97); background: rgba(139, 92, 246, 0.15); border-color: var(--accent); }
+
+.gacha-pack-left { display: flex; align-items: center; gap: 12px; }
+.gacha-pack-icon { width: 38px; height: 38px; border-radius: 12px; background: rgba(139,92,246,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 10px rgba(139,92,246,0.3); }
+.gacha-pack-amt { font-size: 16px; font-weight: 800; color: #fff; }
+.gacha-pack-sub { font-size: 11px; color: var(--text-muted); }
+
+.gacha-pack-btn {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff;
+    border: none; border-radius: 12px; padding: 8px 14px; font-size: 13px; font-weight: 800;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
     </style>
 </head>
 <body>
@@ -2194,7 +2273,7 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
                             <div class="gacha-t-val" id="shopAttemptsBal">0</div>
                         </div>
                     </div>
-                    <button class="gacha-plus-btn" onclick="wip('Покупка круток')">+</button>
+                    <button class="gacha-plus-btn" onclick="openBuyAttemptsModal()">+</button>
                 </div>
             </div>
         </div>
@@ -5549,6 +5628,116 @@ if ('serviceWorker' in navigator) {
                 console.error('❌ Ошибка регистрации Service Worker:', err);
             });
     });
+}
+      <div class="gacha-buy-overlay" id="buyAttemptsModal">
+        <div class="gacha-gate gate-left"></div>
+        <div class="gacha-gate gate-right"></div>
+
+        <div class="gacha-buy-window">
+            <button class="gacha-buy-close" onclick="closeBuyAttemptsModal()">✖</button>
+            <div class="gacha-buy-header">
+                <div class="gacha-buy-subtitle">PORTAL STORE</div>
+                <div class="gacha-buy-title">ПОКУПКА КРУТОК</div>
+            </div>
+
+            <div class="gacha-buy-tabs">
+                <button class="gacha-buy-tab active" id="tabBuyKrw" onclick="switchBuyCurrency('krw')">💴 за KRW</button>
+                <button class="gacha-buy-tab" id="tabBuyDia" onclick="switchBuyCurrency('dia')">💎 за Алмазы</button>
+            </div>
+
+            <div class="gacha-packs-grid" id="buyPacksGrid">
+                </div>
+        </div>
+    </div>
+
+    // ================= СИСТЕМА ПОКУПКИ КРУТОК В WEB APP =================
+var currentBuyCurrency = 'krw';
+
+var BUY_PACKS_KRW_DATA = [
+    { price: 75,   attempts: 1 },
+    { price: 375,  attempts: 6 },
+    { price: 750,  attempts: 13 },
+    { price: 1500, attempts: 28 },
+    { price: 3750, attempts: 75 }
+];
+
+var BUY_PACKS_DIA_DATA = [
+    { price: 50,   attempts: 15 },
+    { price: 100,  attempts: 33 },
+    { price: 250,  attempts: 90 },
+    { price: 500,  attempts: 210 },
+    { price: 1000, attempts: 475 }
+];
+
+function openBuyAttemptsModal() {
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
+    document.getElementById('buyAttemptsModal').classList.add('open');
+    switchBuyCurrency('krw');
+}
+
+function closeBuyAttemptsModal() {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+    document.getElementById('buyAttemptsModal').classList.remove('open');
+}
+
+function switchBuyCurrency(curr) {
+    currentBuyCurrency = curr;
+    document.getElementById('tabBuyKrw').classList.toggle('active', curr === 'krw');
+    document.getElementById('tabBuyDia').classList.toggle('active', curr === 'dia');
+    renderBuyPacks();
+}
+
+function renderBuyPacks() {
+    var grid = document.getElementById('buyPacksGrid');
+    grid.innerHTML = '';
+
+    var packs = currentBuyCurrency === 'krw' ? BUY_PACKS_KRW_DATA : BUY_PACKS_DIA_DATA;
+
+    packs.forEach((p, index) => {
+        var priceStr = currentBuyCurrency === 'krw' ? (p.price + ' 💴') : (p.price + ' 💎');
+        var packHtml = `
+            <div class="gacha-pack-card" onclick="executeBuyAttempts('${currentBuyCurrency}', ${index})">
+                <div class="gacha-pack-left">
+                    <div class="gacha-pack-icon">🎟</div>
+                    <div>
+                        <div class="gacha-pack-amt">+${p.attempts} круток</div>
+                        <div class="gacha-pack-sub">Набор попыток</div>
+                    </div>
+                </div>
+                <button class="gacha-pack-btn">${priceStr}</button>
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', packHtml);
+    });
+}
+
+async function executeBuyAttempts(currency, packIndex) {
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
+
+    try {
+        var res = await fetch(API_BASE + '/api/buy_attempts/' + userId, {
+            method: 'POST',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+            body: JSON.stringify({ currency: currency, pack_index: packIndex })
+        });
+        var data = await res.json();
+
+        if (data.success) {
+            showToast('Успешно!', 'Приобретено +' + data.bought_attempts + ' круток!');
+
+            // Моментально обновляем балансы в Web App
+            document.getElementById('valKrw').innerText = data.new_krw;
+            document.getElementById('valDiamond').innerText = data.new_diamond;
+            document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
+
+            closeBuyAttemptsModal();
+            fetchProfile(); // Фоновая синхронизация
+        } else {
+            tg.showAlert(data.error);
+        }
+    } catch (e) {
+        tg.showAlert('Ошибка соединения с сервером');
+    }
 }
 </script>
 </body>
