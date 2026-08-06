@@ -1,0 +1,110 @@
+name: Pages Build and Deployment
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    name: Build and deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node (for common JS-based site builds)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Build site (detect common build systems)
+        run: |
+          set -e
+          echo "Detecting project type and running build if applicable..."
+
+          if [ -f package.json ]; then
+            echo "package.json found -> running npm install and npm run build if available"
+            npm ci
+            if npm run | sed -n '1,200p' | grep -q "build"; then
+              npm run build
+            else
+              echo "No npm build script detected"
+            fi
+          fi
+
+          # Try common static site generators if package.json not present or didn't produce output
+          # After build, normalize output into ./public by copying known output dirs there
+
+          OUT_DIRS=(public dist out _site)
+          FOUND=0
+          for d in "${OUT_DIRS[@]}"; do
+            if [ -d "$d" ]; then
+              echo "Found output directory: $d"
+              mkdir -p ./public
+              cp -r "$d"/. ./public/ || true
+              FOUND=1
+              break
+            fi
+          done
+
+          if [ "$FOUND" -eq 0 ]; then
+            echo "No common output directory (public, dist, out, _site) found after build."
+            echo "Listing repository root for debugging:" && ls -la
+            exit 1
+          fi
+
+      - name: Show upload directory (debug)
+        run: |
+          echo "Files to be uploaded to Pages (./public):"
+          ls -la ./public || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v1
+
+      - name: Wait for Pages build to finish
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const maxAttempts = 60;        // attempts
+            const delayMs = 15_000;        // 15 seconds
+            const wait = ms => new Promise(r => setTimeout(r, ms));
+
+            for (let i = 0; i < maxAttempts; i++) {
+              let status = 'unknown';
+              try {
+                const res = await github.rest.repos.getLatestPagesBuild({ owner, repo });
+                status = res?.data?.status || 'unknown';
+              } catch (e) {
+                console.log(`Attempt ${i+1}: getLatestPagesBuild error: ${e.message}`);
+              }
+
+              console.log(`Pages build status (attempt ${i+1}/${maxAttempts}): ${status}`);
+
+              if (status === 'built') {
+                console.log('Pages build completed successfully.');
+                return;
+              }
+
+              if (status === 'errored') {
+                throw new Error('Pages build errored. Check Pages build logs in repository Settings → Pages → Build history.');
+              }
+
+              await wait(delayMs);
+            }
+
+            throw new Error('Timeout waiting for Pages build to finish.');
