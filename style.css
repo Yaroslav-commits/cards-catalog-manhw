@@ -1311,10 +1311,14 @@
     position: relative;
     padding: 50px 20px 30px;
     margin-bottom: 16px;
-    /* Заменили заглушку на неонового Джинву */
     background: linear-gradient(to right, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%),
-                url('https://c4.wallpaperflare.com/wallpaper/256/981/302/anime-solo-leveling-sung-jin-woo-hd-wallpaper-preview.jpg') center/cover;
+                url('https://4kwallpapers.com/images/wallpapers/sung-jinwoo-neon-1920x1200-15598.jpg') center/cover;
     border-bottom: 1px solid rgba(255,255,255,0.05);
+
+    /* Добавленные фиксы: */
+    overflow: hidden;
+    background-clip: padding-box;
+    border-radius: 0 0 24px 24px; /* Мягкое скругление снизу, чтобы смотрелось еще дороже (по желанию можешь убрать) */
 }
         .pass-top-banner::after {
             content: ''; position: absolute; inset: 0;
