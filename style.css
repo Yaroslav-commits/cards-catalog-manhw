@@ -1311,14 +1311,26 @@
     position: relative;
     padding: 50px 20px 30px;
     margin-bottom: 16px;
-    background: linear-gradient(to right, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%),
-                url('https://4kwallpapers.com/images/wallpapers/sung-jinwoo-neon-1920x1200-15598.jpg') center/cover;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-
-    /* Добавленные фиксы: */
     overflow: hidden;
-    background-clip: padding-box;
-    border-radius: 0 0 24px 24px; /* Мягкое скругление снизу, чтобы смотрелось еще дороже (по желанию можешь убрать) */
+    border-radius: 0 0 24px 24px;
+    z-index: 1; /* Убеждаемся, что текст будет поверх фона */
+}
+
+/* Создаем отдельный слой для фона и отзеркаливаем его */
+.pass-top-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* Растягиваем на весь баннер */
+    z-index: -1; /* Прячем под текст */
+
+    /* Вот эта магия зеркалит картинку слева направо! */
+    transform: scaleX(-1);
+
+    /* Градиент сделали "to left", чтобы после отзеркаливания
+       он снова стал правильным (тёмным слева под аватарку) */
+    background: linear-gradient(to left, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%),
+                url('https://www.desktophut.com/images/D3w9FE08yr-SoloLeveling-BlueLiveWallpaper.jpg') center/cover;
 }
         .pass-top-banner::after {
             content: ''; position: absolute; inset: 0;
