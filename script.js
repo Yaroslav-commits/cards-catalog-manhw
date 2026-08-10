@@ -2835,3 +2835,149 @@ async function executeBuyAttempts(currency, packIndex) {
         tg.showAlert('Ошибка соединения с сервером');
     }
 }
+// ================= ЛОГИКА РАМОК ПРОФИЛЯ =================
+var userOwnedFrames = ['none'];
+var equippedFrameId = 'none';
+var selectedFrameForPreview = 'none';
+var allFramesData = {};
+
+// Загрузка рамок пользователя с сервера
+async function loadUserFrames() {
+    try {
+        var res = await fetch(API_BASE + '/api/user_frames/' + userId, {
+            headers: authHeaders()
+        });
+        var data = await res.json();
+        if (data.success) {
+            userOwnedFrames = data.owned_frames || ['none'];
+            equippedFrameId = data.equipped_frame || 'none';
+            allFramesData = data.all_frames || {};
+
+            updateProfileFramesUI(equippedFrameId);
+        }
+    } catch (e) {
+        console.error('Ошибка загрузки рамок:', e);
+    }
+}
+
+// Отображение/скрытие рамок на всех аватарках
+function updateProfileFramesUI(frameId) {
+    equippedFrameId = frameId;
+    var frameData = allFramesData[frameId];
+
+    var frameElements = [
+        document.getElementById('userAvatarFrame'),
+        document.getElementById('psAvatarFrame'),
+        document.getElementById('pubAvatarFrame')
+    ];
+
+    frameElements.forEach(el => {
+        if (!el) return;
+        if (frameId !== 'none' && frameData && frameData.url) {
+            el.src = frameData.url;
+            el.style.display = 'block'; // Показываем рамку
+        } else {
+            el.src = '';
+            el.style.display = 'none'; // Полностью скрываем рамку, если её нет!
+        }
+    });
+}
+
+// Открытие шторки выбора рамки
+function openFrameSystem() {
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
+
+    selectedFrameForPreview = equippedFrameId;
+
+    // Переносим текущую аватарку в предпросмотр
+    var userAvatarSrc = document.getElementById('userAvatar').src;
+    document.getElementById('framePreviewAvatar').src = userAvatarSrc;
+
+    updateFramePreview(selectedFrameForPreview);
+    renderFrameGrid();
+
+    document.getElementById('frameSystemSheet').classList.add('open');
+}
+
+function closeFrameSystem() {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+    document.getElementById('frameSystemSheet').classList.remove('open');
+}
+
+// Изменение предпросмотра при клике на рамку в шторке
+function updateFramePreview(frameId) {
+    selectedFrameForPreview = frameId;
+    var prevImg = document.getElementById('framePreviewImg');
+    var prevTitle = document.getElementById('framePreviewTitle');
+
+    if (frameId !== 'none' && allFramesData[frameId]) {
+        prevImg.src = allFramesData[frameId].url;
+        prevImg.style.display = 'block';
+        prevTitle.innerText = allFramesData[frameId].name;
+    } else {
+        prevImg.src = '';
+        prevImg.style.display = 'none';
+        prevTitle.innerText = 'Без рамки';
+    }
+}
+
+// Отрисовка доступных рамок
+function renderFrameGrid() {
+    var container = document.getElementById('frameListContainer');
+    container.innerHTML = '';
+    var userAvatarSrc = document.getElementById('userAvatar').src;
+
+    userOwnedFrames.forEach(frameId => {
+        var isNone = frameId === 'none';
+        var frameInfo = allFramesData[frameId] || { name: 'Без рамки', url: '' };
+        var isActive = (selectedFrameForPreview === frameId) ? 'active' : '';
+
+        var frameImgHtml = (isNone || !frameInfo.url)
+            ? ''
+            : `<img src="${frameInfo.url}" class="avatar-frame">`;
+
+        var html = `
+            <div class="frame-item-card ${isActive}" onclick="selectFrameItem('${frameId}')">
+                <div class="frame-item-icon">
+                    <img src="${userAvatarSrc}" class="mini-avatar">
+                    ${frameImgHtml}
+                </div>
+                <div class="frame-item-name">${isNone ? 'Без рамки' : frameInfo.name}</div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    });
+}
+
+function selectFrameItem(frameId) {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+    updateFramePreview(frameId);
+    renderFrameGrid();
+}
+
+// Сохранение выбранной рамки на сервере
+async function applySelectedFrame() {
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
+
+    try {
+        var res = await fetch(API_BASE + '/api/equip_frame/' + userId, {
+            method: 'POST',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+            body: JSON.stringify({ frame_id: selectedFrameForPreview })
+        });
+        var data = await res.json();
+
+        if (data.success) {
+            updateProfileFramesUI(data.equipped_frame);
+            showToast('Успешно!', 'Рамка обновлена');
+            closeFrameSystem();
+        } else {
+            tg.showAlert(data.error);
+        }
+    } catch (e) {
+        tg.showAlert('Ошибка сохранения рамки');
+    }
+}
+
+// Автоматически вызов при старте приложения (добавить в функцию инициализации)
+loadUserFrames();

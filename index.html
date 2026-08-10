@@ -118,7 +118,10 @@
 
         <div class="profile-card" onclick="openProfileModal()">
             <div class="profile-head">
-                <img src="https://placehold.co/150x150/1c1c28/8b5cf6?text=U" id="userAvatar" class="profile-avatar">
+                <div class="avatar-wrapper" onclick="openFrameSystem()">
+                    <img src="https://placehold.co/150x150/1c1c28/8b5cf6?text=U" id="userAvatar" class="profile-avatar">
+                    <img id="userAvatarFrame" class="avatar-frame" src="" style="display: none;">
+                </div>
                 <div class="profile-name">
                     <span id="userName">Игрок</span>
                     <span class="puzzle" id="userStatusEmoji">🧩</span>
@@ -395,6 +398,7 @@
         <div class="ps-user-info">
             <div class="ps-avatar-wrap">
                 <img src="" id="pubAvatar" class="ps-avatar">
+                <img id="pubAvatarFrame" class="avatar-frame" src="" style="display: none;">
             </div>
             <div class="ps-user-texts">
                 <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
@@ -434,8 +438,9 @@
         </div>
 
         <div class="ps-user-info">
-            <div class="ps-avatar-wrap">
+            <div class="ps-avatar-wrap" onclick="openFrameSystem()">
                 <img src="" id="psAvatar" class="ps-avatar">
+                <img id="psAvatarFrame" class="avatar-frame" src="" style="display: none;">
             </div>
             <div class="ps-user-texts">
                 <div class="ps-name" id="psName">Ярик <span id="psStatusEmoji" style="font-size: 20px;">🧩</span></div>
@@ -505,10 +510,10 @@
         <div class="ps-box">
             <div class="ps-box-title">НАСТРОЙКИ ОБЛИКА</div>
             <div class="ps-settings-grid">
-<button class="ps-setting-btn" onclick="wip('Выбор рамки')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
-                    <span class="ps-setting-lbl">ВЫБРАТЬ<br>РАМКУ</span>
-                </button>
+     <button class="ps-setting-btn" onclick="openFrameSystem()">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+         <span class="ps-setting-lbl">ВЫБРАТЬ<br>РАМКУ</span>
+            </button>
                 <button class="ps-setting-btn" onclick="openTitleSystem()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     <span class="ps-setting-lbl">ВЫБРАТЬ<br>ТИТУЛ</span>
@@ -897,6 +902,33 @@
                 </div>
         </div>
     </div>
+
+   <div class="sheet-overlay" id="frameSystemSheet">
+    <div class="sheet frame-sheet">
+        <div class="sheet-grabber"></div>
+        <div class="sys-head">
+            <button class="sys-close" onclick="closeFrameSystem()">✖</button>
+            <div class="sys-kicker">SYSTEM NOTIFICATION</div>
+            <div class="sys-title">ВЫБОР РАМКИ</div>
+        </div>
+
+        <div class="frame-preview-area">
+            <div class="avatar-wrapper preview-wrapper">
+                <img src="" id="framePreviewAvatar" class="profile-avatar">
+                <img src="" id="framePreviewImg" class="avatar-frame" style="display: none;">
+            </div>
+            <div class="frame-preview-title" id="framePreviewTitle">Без рамки</div>
+        </div>
+
+        <div class="frame-grid" id="frameListContainer">
+            </div>
+
+        <button class="sys-btn" id="btnApplyFrame" onclick="applySelectedFrame()" style="width: 100%; margin-top: 15px;">
+            ПРИМЕНИТЬ
+        </button>
+    </div>
+</div>
+
     <script src="script.js"></script>
 
 </body>
