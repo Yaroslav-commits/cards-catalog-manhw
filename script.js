@@ -1816,65 +1816,64 @@ function closeProfileModal() {
             return colors[charCode % colors.length];
         }
 
-        function renderTops(list) {
-            var container = document.getElementById('topsListContainer');
-            container.innerHTML = '';
+function renderTops(list) {
+    var container = document.getElementById('topsListContainer');
+    container.innerHTML = '';
 
-            if (!list || list.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Список пуст</div>';
-                return;
-            }
+    if (!list || list.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Список пуст</div>';
+        return;
+    }
 
-            list.forEach(function(player, index) {
-                var rank = index + 1;
-                var rankClass = '';
-                var rankContent = rank;
+    list.forEach(function(player, index) {
+        var rank = index + 1;
+        var rankClass = '';
 
-                if (rank === 1) { rankClass = 'rank-1'; rankContent = '👑'; }
-                else if (rank === 2) { rankClass = 'rank-2'; }
-                else if (rank === 3) { rankClass = 'rank-3'; }
+        if (rank === 1) rankClass = 'rank-1';
+        else if (rank === 2) rankClass = 'rank-2';
+        else if (rank === 3) rankClass = 'rank-3';
 
-                var cleanName = (player.name || 'Игрок').trim();
-                var initial = cleanName.charAt(0).toUpperCase();
+        var cleanName = (player.name || 'Игрок').trim();
+        var initial = cleanName.charAt(0).toUpperCase();
 
-                var scoreHtml = player.score;
-                if (currentTopCategory === 'krw') {
-                    scoreHtml = '<span class="top-score-ico">₩</span> ' + player.score.replace(' ₩', '');
-                } else if (currentTopCategory === 'diamond') {
-                    scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span> ' + player.score.replace(' 💎', '');
-                } else if (currentTopCategory === 'cards') {
-                    scoreHtml = '<span class="top-score-ico">🃣</span> ' + player.score.replace(' шт.', '');
-                } else if (currentTopCategory === 'pvp' || currentTopCategory === 'pvp_season') {
-                    scoreHtml = '<span class="top-score-ico">⚔</span> ' + player.score.replace(' побед', '');
-                } else if (currentTopCategory === 'rank') {
-                    scoreHtml = '<span class="top-score-ico">✪</span> ' + player.score.replace(' RP', '');
-                } else if (currentTopCategory === 'bc') {
-                    scoreHtml = '<span class="top-score-ico">Ⓑ</span> ' + player.score.replace(' 🪙', '');
-                }
+        var scoreHtml = player.score;
+        if (currentTopCategory === 'krw') scoreHtml = '<span class="top-score-ico">₩</span> ' + player.score.replace(' ₩', '');
+        else if (currentTopCategory === 'diamond') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span> ' + player.score.replace(' 💎', '');
+        else if (currentTopCategory === 'cards') scoreHtml = '<span class="top-score-ico">🃣</span> ' + player.score.replace(' шт.', '');
+        else if (currentTopCategory === 'pvp' || currentTopCategory === 'pvp_season') scoreHtml = '<span class="top-score-ico">⚔</span> ' + player.score.replace(' побед', '');
+        else if (currentTopCategory === 'rank') scoreHtml = '<span class="top-score-ico">✪</span> ' + player.score.replace(' RP', '');
+        else if (currentTopCategory === 'bc') scoreHtml = '<span class="top-score-ico">Ⓑ</span> ' + player.score.replace(' 🪙', '');
 
-                var clickAction = "openPublicProfile(" + player.id + ")";
-                
-// Безопасная сборка картинки с подстраховкой (заглушкой)
-                var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
-                var avatarSrc = API_BASE + "/api/avatar/" + player.id;
-                var imgHtml = '<img src="' + avatarSrc + '" class="top-avatar" onerror="this.src=\'' + fallbackImg + '\'">';
-                
-                // Твой крутой шаблон в стиле Манхвы
-                var html = `
-                    <div class="top-row" data-rank="${rank}" onclick="openPublicProfile(${player.id})">
-                        <div class="top-rank">#${rank}</div>
-                        ${imgHtml}
-                        <div class="top-info">
-                            <div class="top-name">${cleanName}</div>
-                            <div class="top-level-tag">Lv. ${player.level || 1}</div>
-                        </div>
-                        <div class="top-score">${scoreHtml}</div>
-                    </div>
-                `;
+        var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
+        var avatarSrc = API_BASE + "/api/avatar/" + player.id;
 
-                container.innerHTML += html;
-            });
-        }
+        // === МАГИЯ РАМОК В ТОПЕ ===
+        var frameHtml = player.frame_url
+            ? `<img src="${player.frame_url}" class="avatar-frame">`
+            : '';
+
+        var imgHtml = `
+            <div class="top-avatar-wrap">
+                <img src="${avatarSrc}" class="top-avatar" onerror="this.src='${fallbackImg}'">
+                ${frameHtml}
+            </div>
+        `;
+
+        var html = `
+            <div class="top-row" data-rank="${rank}" onclick="openPublicProfile(${player.id})">
+                <div class="top-rank ${rankClass}">#${rank}</div>
+                ${imgHtml}
+                <div class="top-info">
+                    <div class="top-name">${cleanName}</div>
+                    <div class="top-level-tag">Lv. ${player.level || 1}</div>
+                </div>
+                <div class="top-score">${scoreHtml}</div>
+            </div>
+        `;
+
+        container.innerHTML += html;
+    });
+}
 
         // ================= ТАЙМЕР PVP СЕЗОНА =================
         async function loadTopsTimer() {
@@ -1922,81 +1921,91 @@ function closePublicProfile() {
 }
 
 async function openPublicProfile(targetId) {
-            if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
-            
-            document.getElementById('publicProfileScreen').classList.add('open');
-            manageBack();
-            
-            try {
-                var res = await fetch(API_BASE + '/api/public_profile/' + targetId);
-                var data = await res.json();
-                
-                if (data.success) {
-                    var p = data.profile;
-                    var dispName = p.nickname || p.username || 'Игрок ' + p.id;
-                    
-                    document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
-                    
-                    // Аватарка чужого игрока из ТГ
-                    document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id;
-                    
-                    if (p.is_premium) {
-                        document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)"; 
-                        document.getElementById('pubAvatar').style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.4)"; 
-                    } else {
-                        document.getElementById('pubAvatar').style.borderColor = "var(--accent)"; 
-                        document.getElementById('pubAvatar').style.boxShadow = "0 0 18px rgba(139,92,246,0.55)"; 
-                    }
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
 
-                    var titleText = "ТИТУЛ: НЕ ВЫБРАН";
-                    if (p.active_title) {
-                        var foundTitle = allTitles.find(t => t.id === p.active_title);
-                        if (foundTitle) titleText = "ТИТУЛ: " + foundTitle.name.toUpperCase();
-                    }
-                    document.getElementById('pubTitle').innerText = titleText;
-                    
-                    document.getElementById('pubWins').innerText = p.wins;
-                    document.getElementById('pubLosses').innerText = p.losses;
-                    document.getElementById('pubWinrate').innerText = p.winrate + '%';
-                    document.getElementById('pubMaxStreak').innerText = p.max_streak;
-                    
-                    var mediaContainer = document.getElementById('pubBgMedia');
-                    var bgData = allBgs.find(b => b.id === p.active_bg) || allBgs.find(b => b.id === 'default');
-                    if (bgData) {
-                        var ext = (bgData.file || '').split('.').pop().toLowerCase();
-                        if (ext === 'mp4' || ext === 'webm') {
-                            mediaContainer.innerHTML = '<video src="images/backgrounds/' + bgData.file + '" autoplay loop muted playsinline></video>';
-                        } else {
-                            mediaContainer.innerHTML = '<img src="images/backgrounds/' + bgData.file + '">';
-                        }
-                    }
-                    
-                    var favGrid = document.getElementById('pubFavGrid');
-                    favGrid.innerHTML = '';
-                    var pubFavs = p.fav_cards || {};
-                    
-                    for (let i = 0; i < 3; i++) {
-                        var cardId = pubFavs[i] || pubFavs[String(i)];
-                        if (cardId && cardId !== 'none') {
-                            var card = allCards.find(c => c.id === cardId);
-                            if (card) {
-                                favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
-                                continue;
-                            }
-                        }
-                        favGrid.innerHTML += '<div class="ps-fav-slot" style="cursor:default; opacity:0.15;">+</div>';
-                    }
-                    
-                } else {
-                    tg.showAlert("Ошибка: " + data.error);
-                    closePublicProfile();
-                }
-            } catch (e) {
-                console.error("Ошибка в функции openPublicProfile:", e);
-                tg.showAlert("Ошибка соединения с сервером");
-                closePublicProfile();
+    document.getElementById('publicProfileScreen').classList.add('open');
+    manageBack();
+
+    try {
+        var res = await fetch(API_BASE + '/api/public_profile/' + targetId);
+        var data = await res.json();
+
+        if (data.success) {
+            var p = data.profile;
+            var dispName = p.nickname || p.username || 'Игрок ' + p.id;
+
+            document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
+
+            document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id;
+
+            if (p.is_premium) {
+                document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)";
+                document.getElementById('pubAvatar').style.boxShadow = "0 0 15px rgba(245, 158, 11, 0.4)";
+            } else {
+                document.getElementById('pubAvatar').style.borderColor = "var(--accent)";
+                document.getElementById('pubAvatar').style.boxShadow = "0 0 18px rgba(139,92,246,0.55)";
             }
+
+            // === ОТОБРАЖЕНИЕ РАМКИ ЧУЖОГО ИГРОКА ===
+            var pubFrameEl = document.getElementById('pubAvatarFrame');
+            if (pubFrameEl) {
+                if (p.frame_url) {
+                    pubFrameEl.src = p.frame_url;
+                    pubFrameEl.style.display = 'block';
+                } else {
+                    pubFrameEl.src = '';
+                    pubFrameEl.style.display = 'none';
+                }
+            }
+
+            var titleText = "ТИТУЛ: НЕ ВЫБРАН";
+            if (p.active_title) {
+                var foundTitle = allTitles.find(t => t.id === p.active_title);
+                if (foundTitle) titleText = "ТИТУЛ: " + foundTitle.name.toUpperCase();
+            }
+            document.getElementById('pubTitle').innerText = titleText;
+
+            document.getElementById('pubWins').innerText = p.wins;
+            document.getElementById('pubLosses').innerText = p.losses;
+            document.getElementById('pubWinrate').innerText = p.winrate + '%';
+            document.getElementById('pubMaxStreak').innerText = p.max_streak;
+
+            var mediaContainer = document.getElementById('pubBgMedia');
+            var bgData = allBgs.find(b => b.id === p.active_bg) || allBgs.find(b => b.id === 'default');
+            if (bgData) {
+                var ext = (bgData.file || '').split('.').pop().toLowerCase();
+                if (ext === 'mp4' || ext === 'webm') {
+                    mediaContainer.innerHTML = '<video src="images/backgrounds/' + bgData.file + '" autoplay loop muted playsinline></video>';
+                } else {
+                    mediaContainer.innerHTML = '<img src="images/backgrounds/' + bgData.file + '">';
+                }
+            }
+
+            var favGrid = document.getElementById('pubFavGrid');
+            favGrid.innerHTML = '';
+            var pubFavs = p.fav_cards || {};
+
+            for (let i = 0; i < 3; i++) {
+                var cardId = pubFavs[i] || pubFavs[String(i)];
+                if (cardId && cardId !== 'none') {
+                    var card = allCards.find(c => c.id === cardId);
+                    if (card) {
+                        favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
+                        continue;
+                    }
+                }
+                favGrid.innerHTML += '<div class="ps-fav-slot" style="cursor:default; opacity:0.15;">+</div>';
+            }
+
+        } else {
+            tg.showAlert("Ошибка: " + data.error);
+            closePublicProfile();
         }
+    } catch (e) {
+        tg.showAlert("Ошибка соединения с сервером");
+        closePublicProfile();
+    }
+}
 // ================= ЛОГИКА MANHWCARD PASS =================
         var realPassLevel = 1;
         var claimedPassLevels = 1;
