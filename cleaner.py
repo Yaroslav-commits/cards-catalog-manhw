@@ -12,7 +12,7 @@ for folder_path in folders:
         continue
 
     for filename in os.listdir(folder_path):
-        if filename.lower().endswith(('.jpeg', '.jpg')):
+        if filename.lower().endswith(('.jpeg', '.jpg', '.mp4')):
             file_path = os.path.join(folder_path, filename)
 
             try:
