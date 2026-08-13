@@ -2019,16 +2019,15 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     cursor: pointer;
 }
 
-/* Элемент рамки поверх аватарки */
 .avatar-frame {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 140%;
-    height: 140%;
-    z-index: 5;
+    width: 115%;  /* БЫЛО 140%, СТАЛО 120% */
+    height: 115%; /* БЫЛО 140%, СТАЛО 120% */
     pointer-events: none;
+    z-index: 5;
     object-fit: contain;
 }
 
@@ -2136,8 +2135,8 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 
 /* Рамка в списке ТОПа */
 .top-avatar-wrap .avatar-frame {
-    width: 140%;
-    height: 140%;
+    width: 135%;
+    height: 135%;
 }
 /* Магазин рамок */
 .shop-frame-price-box {
