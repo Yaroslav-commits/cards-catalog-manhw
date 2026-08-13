@@ -2916,31 +2916,12 @@ function closeFrameSystem() {
 }
 
 // Изменение предпросмотра при клике на рамку в шторке
-function updateFramePreview(frameId) {
-
-    selectedFrameForPreview = frameId;
-    var prevImg = document.getElementById('framePreviewImg');
-    var prevTitle = document.getElementById('framePreviewTitle');
-    var badge = document.getElementById('previewCheckBadge');
-    
-    if (frameId !== 'none' && allFramesData[frameId]) {
-        prevImg.src = allFramesData[frameId].url;
-        prevImg.style.display = 'block';
-        prevTitle.innerText = allFramesData[frameId].name;
-    } else {
+ else {
         prevImg.src = '';
         prevImg.style.display = 'none';
-        prevTitle.innerText = 'Нет';
-    }
-    
-    // Show badge only if this is the currently equipped frame
-    if (frameId === equippedFrameId) {
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
+        prevTitle.innerText = 'Без рамки';
     }
 }
-
 
 // Отрисовка доступных рамок
 function renderFrameGrid() {
@@ -2979,8 +2960,19 @@ function renderFrameGrid() {
     });
 }
 
-
-
+ else {
+        prevImg.src = '';
+        prevImg.style.display = 'none';
+        prevTitle.innerText = 'Нет';
+    }
+    
+    // Show badge only if this is the currently equipped frame
+    if (frameId === equippedFrameId) {
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
 function selectFrameItem(frameId) {
     if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
     updateFramePreview(frameId);
@@ -3090,21 +3082,30 @@ function openFrameShopPreview(frameId) {
     var btnBuy = document.getElementById('btnBuyFrame');
 
     if (isOwned) {
-        priceBox.innerHTML = '<div class="premium-discount-banner" style="color:#4ade80; background:rgba(74, 222, 128, 0.1); border-color:#4ade80;">Уже в вашей коллекции ✓</div>';
+        priceBox.innerHTML = '<div style="color:#4ade80; font-weight:800; font-size:16px;">Уже в вашей коллекции ✓</div>';
         btnBuy.style.display = 'none';
     } else {
         var finalPrice = isUserPremium ? Math.floor(selectedShopFrame.price * 0.8) : selectedShopFrame.price;
-        var currIcon = selectedShopFrame.currency === 'krw' ? '💴' : '💎';
+        var currIcon = selectedShopFrame.currency === 'krw' ? '💴 KRW' : '💎 Алмазов';
 
+        var html = `<div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Стоимость:</div>`;
         if (isUserPremium) {
-            priceBox.innerHTML = `<div class="premium-discount-banner">👑 С Premium вы экономите 20%</div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} ${currIcon} <span style="font-size:18px">👑</span>`;
+            html += `<div style="font-size:20px; font-weight:900; color:#fff;">
+                        <s style="font-size:14px; color:#ef4444; margin-right:8px;">${selectedShopFrame.price}</s>
+                        <span style="color:#fbbf24;">${finalPrice} ${currIcon}</span>
+                     </div>
+                     <div style="font-size:11px; color:#fbbf24; margin-top:4px;">Скидка Premium 20% применена! ✨</div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} 👑`;
         } else {
-            priceBox.innerHTML = `<div class="premium-discount-banner" style="color: #6e6e73; background: transparent; border: 1px solid rgba(255,255,255,0.1);">👑 С Premium вы бы сэкономили здесь 20%</div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} ${currIcon}`;
+            html += `<div style="font-size:20px; font-weight:900; color:#fff;">${finalPrice} ${currIcon}</div>
+                     <div style="font-size:12px; font-weight:700; color:#fbbf24; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:4px;">
+                        👑 С Premium вы бы сэкономили здесь 20%
+                     </div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice}`;
         }
+        priceBox.innerHTML = html;
 
-        btnBuy.style.display = 'flex';
+        btnBuy.style.display = 'block';
     }
 
     document.getElementById('frameShopPreviewSheet').classList.add('open');
@@ -3154,4 +3155,102 @@ async function executeBuyFrame() {
         btn.innerText = 'КУПИТЬ';
     }
     btn.disabled = false;
+}
+
+function renderFrameGrid() {
+    var container = document.getElementById('frameListContainer');
+    container.innerHTML = '';
+    var userAvatarSrc = document.getElementById('userAvatar').src;
+
+    if (!userOwnedFrames || userOwnedFrames.length === 0 || (userOwnedFrames.length === 1 && userOwnedFrames[0] === 'none')) {
+        container.innerHTML = '<div class="no-frames-msg">Нет доступных рамок</div>';
+        return;
+    }
+
+    userOwnedFrames.forEach(frameId => {
+        var isNone = frameId === 'none';
+        var frameInfo = allFramesData[frameId] || { name: 'Нет', url: '' };
+        var isActive = (selectedFrameForPreview === frameId);
+        var activeClass = isActive ? 'active' : '';
+        
+        var frameImgHtml = (isNone || !frameInfo.url) 
+            ? '' 
+            : `<img src="${frameInfo.url}" class="preview-frame-img" style="width: 130%; height: 130%;">`;
+
+        var badgeHtml = isActive ? `<div class="frame-card-badge">✓</div>` : '';
+
+        var html = `
+            <div class="frame-card-item ${activeClass}" onclick="selectFrameItem('${frameId}')">
+                <div class="frame-card-icon-wrap">
+                    <img src="${userAvatarSrc}" class="frame-card-avatar">
+                    ${frameImgHtml}
+                    ${badgeHtml}
+                </div>
+                <div class="frame-card-label">${isNone ? 'Нет' : frameInfo.name}</div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    });
+}
+
+function updateFramePreview(frameId) {
+    selectedFrameForPreview = frameId;
+    var prevImg = document.getElementById('framePreviewImg');
+    var prevTitle = document.getElementById('framePreviewTitle');
+    var badge = document.getElementById('previewCheckBadge');
+    
+    if (frameId !== 'none' && allFramesData[frameId]) {
+        prevImg.src = allFramesData[frameId].url;
+        prevImg.style.display = 'block';
+        prevTitle.innerText = allFramesData[frameId].name;
+    } else {
+        prevImg.src = '';
+        prevImg.style.display = 'none';
+        prevTitle.innerText = 'Нет';
+    }
+    
+    // Show badge only if this is the currently equipped frame
+    if (frameId === equippedFrameId) {
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+
+function openFrameShopPreview(frameId) {
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
+
+    selectedShopFrame = SHOP_FRAMES_DATA.find(f => f.id === frameId);
+    if (!selectedShopFrame) return;
+
+    var isOwned = userOwnedFrames.includes(frameId);
+
+    // Моментально примеряем рамку на аватарку
+    document.getElementById('shopPreviewAvatar').src = document.getElementById('userAvatar').src;
+    document.getElementById('shopPreviewFrame').src = selectedShopFrame.url;
+    document.getElementById('shopPreviewTitle').innerText = selectedShopFrame.name;
+
+    var priceBox = document.getElementById('shopPreviewPriceBox');
+    var btnBuy = document.getElementById('btnBuyFrame');
+
+    if (isOwned) {
+        priceBox.innerHTML = '<div class="premium-discount-banner" style="color:#4ade80; background:rgba(74, 222, 128, 0.1); border-color:#4ade80;">Уже в вашей коллекции ✓</div>';
+        btnBuy.style.display = 'none';
+    } else {
+        var finalPrice = isUserPremium ? Math.floor(selectedShopFrame.price * 0.8) : selectedShopFrame.price;
+        var currIcon = selectedShopFrame.currency === 'krw' ? '💴' : '💎';
+
+        if (isUserPremium) {
+            priceBox.innerHTML = `<div class="premium-discount-banner">👑 С Premium вы экономите 20%</div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} ${currIcon} <span style="font-size:18px">👑</span>`;
+        } else {
+            priceBox.innerHTML = `<div class="premium-discount-banner" style="color: #6e6e73; background: transparent; border: 1px solid rgba(255,255,255,0.1);">👑 С Premium вы бы сэкономили здесь 20%</div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} ${currIcon}`;
+        }
+
+        btnBuy.style.display = 'flex';
+    }
+
+    document.getElementById('frameShopPreviewSheet').classList.add('open');
 }
