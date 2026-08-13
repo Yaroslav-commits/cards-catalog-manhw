@@ -2915,11 +2915,49 @@ function closeFrameSystem() {
     document.getElementById('frameSystemSheet').classList.remove('open');
 }
 
-// Изменение предпросмотра при клике на рамку в шторке
+// Отрисовка доступных рамок
+// === ВЕКТОРНЫЕ ИКОНКИ ВАЛЮТ ВМЕСТО ЭМОДЗИ ===
+var ICON_KRW_HTML = '<span class="b-ico" style="font-size:15px; margin-right:2px;">₩</span>';
+var ICON_DIA_HTML = '<svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px; height:16px; display:inline-block; vertical-align:middle; margin-right:2px; color:#06b6d4;"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>';
+
+function renderFrameGrid() {
+    var container = document.getElementById('frameListContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    var userAvatarSrc = document.getElementById('userAvatar') ? document.getElementById('userAvatar').src : '';
+
+    userOwnedFrames.forEach(frameId => {
+        var isNone = frameId === 'none';
+        var frameInfo = allFramesData[frameId] || { name: 'Нет', url: '' };
+        var isActive = (selectedFrameForPreview === frameId);
+        var activeClass = isActive ? 'active' : '';
+
+        var frameImgHtml = (isNone || !frameInfo.url)
+            ? ''
+            : `<img src="${frameInfo.url}" class="preview-frame-img" style="width: 130%; height: 130%;">`;
+
+        var badgeHtml = isActive ? `<div class="frame-card-badge">✓</div>` : '';
+
+        var html = `
+            <div class="frame-card-item ${activeClass}" onclick="selectFrameItem('${frameId}')">
+                <div class="frame-card-icon-wrap">
+                    <img src="${userAvatarSrc}" class="frame-card-avatar">
+                    ${frameImgHtml}
+                    ${badgeHtml}
+                </div>
+                <div class="frame-card-label">${isNone ? 'Нет' : frameInfo.name}</div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    });
+}
+
 function updateFramePreview(frameId) {
     selectedFrameForPreview = frameId;
     var prevImg = document.getElementById('framePreviewImg');
     var prevTitle = document.getElementById('framePreviewTitle');
+    var badge = document.getElementById('previewCheckBadge');
 
     if (frameId !== 'none' && allFramesData[frameId]) {
         prevImg.src = allFramesData[frameId].url;
@@ -2928,36 +2966,13 @@ function updateFramePreview(frameId) {
     } else {
         prevImg.src = '';
         prevImg.style.display = 'none';
-        prevTitle.innerText = 'Без рамки';
+        prevTitle.innerText = 'Нет';
     }
-}
 
-// Отрисовка доступных рамок
-function renderFrameGrid() {
-    var container = document.getElementById('frameListContainer');
-    container.innerHTML = '';
-    var userAvatarSrc = document.getElementById('userAvatar').src;
-
-    userOwnedFrames.forEach(frameId => {
-        var isNone = frameId === 'none';
-        var frameInfo = allFramesData[frameId] || { name: 'Без рамки', url: '' };
-        var isActive = (selectedFrameForPreview === frameId) ? 'active' : '';
-
-        var frameImgHtml = (isNone || !frameInfo.url)
-            ? ''
-            : `<img src="${frameInfo.url}" class="avatar-frame">`;
-
-        var html = `
-            <div class="frame-item-card ${isActive}" onclick="selectFrameItem('${frameId}')">
-                <div class="frame-item-icon">
-                    <img src="${userAvatarSrc}" class="mini-avatar">
-                    ${frameImgHtml}
-                </div>
-                <div class="frame-item-name">${isNone ? 'Без рамки' : frameInfo.name}</div>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', html);
-    });
+    // Показывать бейдж с галочкой, если эта рамка сейчас надета на игрока
+    if (badge) {
+        badge.style.display = (frameId === equippedFrameId) ? 'flex' : 'none';
+    }
 }
 
 function selectFrameItem(frameId) {
@@ -3023,7 +3038,7 @@ function renderShopFrames() {
     if (!grid) return;
     grid.innerHTML = '';
 
-    var userAvatarSrc = document.getElementById('userAvatar').src;
+    var userAvatarSrc = document.getElementById('userAvatar') ? document.getElementById('userAvatar').src : '';
 
     SHOP_FRAMES_DATA.forEach(frame => {
         var isOwned = userOwnedFrames.includes(frame.id);
@@ -3033,9 +3048,9 @@ function renderShopFrames() {
             priceHtml = '<div class="shop-frame-status owned">КУПЛЕНО ✓</div>';
         } else {
             var finalPrice = isUserPremium ? Math.floor(frame.price * 0.8) : frame.price;
-            var currIcon = frame.currency === 'krw' ? '💴' : '💎';
+            var currIcon = frame.currency === 'krw' ? ICON_KRW_HTML : ICON_DIA_HTML;
             var discountHtml = isUserPremium ? `<s style="font-size:10px; color:var(--text-muted); margin-right:4px;">${frame.price}</s>` : '';
-            priceHtml = `<div class="shop-frame-status price">${discountHtml}${finalPrice} ${currIcon}</div>`;
+            priceHtml = `<div class="shop-frame-status price">${discountHtml}${currIcon}${finalPrice}</div>`;
         }
 
         var html = `
@@ -3060,7 +3075,6 @@ function openFrameShopPreview(frameId) {
 
     var isOwned = userOwnedFrames.includes(frameId);
 
-    // Моментально примеряем рамку на аватарку
     document.getElementById('shopPreviewAvatar').src = document.getElementById('userAvatar').src;
     document.getElementById('shopPreviewFrame').src = selectedShopFrame.url;
     document.getElementById('shopPreviewTitle').innerText = selectedShopFrame.name;
@@ -3069,30 +3083,21 @@ function openFrameShopPreview(frameId) {
     var btnBuy = document.getElementById('btnBuyFrame');
 
     if (isOwned) {
-        priceBox.innerHTML = '<div style="color:#4ade80; font-weight:800; font-size:16px;">Уже в вашей коллекции ✓</div>';
+        priceBox.innerHTML = '<div class="premium-discount-banner" style="color:#4ade80; background:rgba(74, 222, 128, 0.1); border-color:#4ade80;">Уже в вашей коллекции ✓</div>';
         btnBuy.style.display = 'none';
     } else {
         var finalPrice = isUserPremium ? Math.floor(selectedShopFrame.price * 0.8) : selectedShopFrame.price;
-        var currIcon = selectedShopFrame.currency === 'krw' ? '💴 KRW' : '💎 Алмазов';
+        var currIcon = selectedShopFrame.currency === 'krw' ? ICON_KRW_HTML : ICON_DIA_HTML;
 
-        var html = `<div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Стоимость:</div>`;
         if (isUserPremium) {
-            html += `<div style="font-size:20px; font-weight:900; color:#fff;">
-                        <s style="font-size:14px; color:#ef4444; margin-right:8px;">${selectedShopFrame.price}</s>
-                        <span style="color:#fbbf24;">${finalPrice} ${currIcon}</span>
-                     </div>
-                     <div style="font-size:11px; color:#fbbf24; margin-top:4px;">Скидка Premium 20% применена! ✨</div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} 👑`;
+            priceBox.innerHTML = `<div class="premium-discount-banner">👑 С Premium вы экономите 20%</div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${currIcon} ${finalPrice} 👑`;
         } else {
-            html += `<div style="font-size:20px; font-weight:900; color:#fff;">${finalPrice} ${currIcon}</div>
-                     <div style="font-size:12px; font-weight:700; color:#fbbf24; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:4px;">
-                        👑 С Premium вы бы сэкономили здесь 20%
-                     </div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice}`;
+            priceBox.innerHTML = `<div class="premium-discount-banner no-prem">👑 С Premium вы бы сэкономили здесь 20%</div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${currIcon} ${finalPrice}`;
         }
-        priceBox.innerHTML = html;
 
-        btnBuy.style.display = 'block';
+        btnBuy.style.display = 'flex';
     }
 
     document.getElementById('frameShopPreviewSheet').classList.add('open');
