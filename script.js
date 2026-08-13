@@ -2935,7 +2935,7 @@ function renderFrameGrid() {
 
         var frameImgHtml = (isNone || !frameInfo.url)
             ? ''
-            : `<img src="${frameInfo.url}" class="preview-frame-img" style="width: 115%; height: 115%;">`;
+            : `<img src="${frameInfo.url}" class="preview-frame-img" style="width: 120%; height: 120%;">`;
 
         var badgeHtml = isActive ? `<div class="frame-card-badge">✓</div>` : '';
 
