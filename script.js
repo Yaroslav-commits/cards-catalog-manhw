@@ -2990,3 +2990,150 @@ async function applySelectedFrame() {
 
 // Автоматически вызов при старте приложения (добавить в функцию инициализации)
 loadUserFrames();
+// ================= МАГАЗИН РАМОК =================
+
+// База рамок магазина (совпадает с бэкендом)
+var SHOP_FRAMES_DATA = [
+    { id: "fire", name: "Fire", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_a065206df7b011a5510e4e5bca7d49be.png?size=240&passthrough=true", currency: "krw", price: 1500 },
+    { id: "water", name: "Water", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_250640ab00a8837a1d56f35879138177.png?size=240&passthrough=true", currency: "krw", price: 1500 },
+    { id: "lightning", name: "Lightning", url: "⁠https://cdn.discordapp.com/avatar-decoration-presets/a_365eed4178528fe8293c4212e8e2d5cb.png?size=240&passthrough=true", currency: "krw", price: 1500 },
+    { id: "glitch", name: "Glitch", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_e90ebc0114e7bdc30353c8b11953ea41.png?size=240&passthrough=true", currency: "dia", price: 50 }
+];
+
+var selectedShopFrame = null;
+
+function switchShopSubTab(tab) {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+
+    document.getElementById('tabShopGachaBtn').classList.toggle('active', tab === 'gacha');
+    document.getElementById('tabShopFramesBtn').classList.toggle('active', tab === 'frames');
+
+    document.getElementById('shopGachaContent').style.display = tab === 'gacha' ? 'block' : 'none';
+    document.getElementById('shopFramesContent').style.display = tab === 'frames' ? 'block' : 'none';
+
+    if (tab === 'frames') {
+        renderShopFrames();
+    }
+}
+
+function renderShopFrames() {
+    var grid = document.getElementById('shopFramesGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    var userAvatarSrc = document.getElementById('userAvatar').src;
+
+    SHOP_FRAMES_DATA.forEach(frame => {
+        var isOwned = userOwnedFrames.includes(frame.id);
+        var priceHtml = '';
+
+        if (isOwned) {
+            priceHtml = '<div class="shop-frame-status owned">КУПЛЕНО ✓</div>';
+        } else {
+            var finalPrice = isUserPremium ? Math.floor(frame.price * 0.8) : frame.price;
+            var currIcon = frame.currency === 'krw' ? '💴' : '💎';
+            var discountHtml = isUserPremium ? `<s style="font-size:10px; color:var(--text-muted); margin-right:4px;">${frame.price}</s>` : '';
+            priceHtml = `<div class="shop-frame-status price">${discountHtml}${finalPrice} ${currIcon}</div>`;
+        }
+
+        var html = `
+            <div class="frame-item-card" onclick="openFrameShopPreview('${frame.id}')">
+                <div class="frame-item-icon">
+                    <img src="${userAvatarSrc}" class="mini-avatar">
+                    <img src="${frame.url}" class="avatar-frame">
+                </div>
+                <div class="frame-item-name">${frame.name}</div>
+                ${priceHtml}
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', html);
+    });
+}
+
+function openFrameShopPreview(frameId) {
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
+
+    selectedShopFrame = SHOP_FRAMES_DATA.find(f => f.id === frameId);
+    if (!selectedShopFrame) return;
+
+    var isOwned = userOwnedFrames.includes(frameId);
+
+    // Моментально примеряем рамку на аватарку
+    document.getElementById('shopPreviewAvatar').src = document.getElementById('userAvatar').src;
+    document.getElementById('shopPreviewFrame').src = selectedShopFrame.url;
+    document.getElementById('shopPreviewTitle').innerText = selectedShopFrame.name;
+
+    var priceBox = document.getElementById('shopPreviewPriceBox');
+    var btnBuy = document.getElementById('btnBuyFrame');
+
+    if (isOwned) {
+        priceBox.innerHTML = '<div style="color:#4ade80; font-weight:800; font-size:16px;">Уже в вашей коллекции ✓</div>';
+        btnBuy.style.display = 'none';
+    } else {
+        var finalPrice = isUserPremium ? Math.floor(selectedShopFrame.price * 0.8) : selectedShopFrame.price;
+        var currIcon = selectedShopFrame.currency === 'krw' ? '💴 KRW' : '💎 Алмазов';
+
+        var html = `<div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Стоимость:</div>`;
+        if (isUserPremium) {
+            html += `<div style="font-size:20px; font-weight:900; color:#fff;">
+                        <s style="font-size:14px; color:#ef4444; margin-right:8px;">${selectedShopFrame.price}</s>
+                        <span style="color:#fbbf24;">${finalPrice} ${currIcon}</span>
+                     </div>
+                     <div style="font-size:11px; color:#fbbf24; margin-top:4px;">Скидка Premium 20% применена! ✨</div>`;
+        } else {
+            html += `<div style="font-size:20px; font-weight:900; color:#fff;">${finalPrice} ${currIcon}</div>`;
+        }
+        priceBox.innerHTML = html;
+
+        btnBuy.style.display = 'block';
+        btnBuy.innerText = 'КУПИТЬ ЗА ' + finalPrice;
+    }
+
+    document.getElementById('frameShopPreviewSheet').classList.add('open');
+}
+
+function closeFrameShopPreview() {
+    document.getElementById('frameShopPreviewSheet').classList.remove('open');
+}
+
+async function executeBuyFrame() {
+    if (!selectedShopFrame) return;
+    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
+
+    var btn = document.getElementById('btnBuyFrame');
+    btn.innerText = 'ОБРАБОТКА...';
+    btn.disabled = true;
+
+    try {
+        var res = await fetch(API_BASE + '/api/buy_frame/' + userId, {
+            method: 'POST',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+            body: JSON.stringify({ frame_id: selectedShopFrame.id })
+        });
+        var data = await res.json();
+
+        if (data.success) {
+            showToast('Успешно!', 'Рамка добавлена в коллекцию!');
+
+            // Моментально обновляем баланс
+            document.getElementById('valKrw').innerText = data.new_krw;
+            document.getElementById('valDiamond').innerText = data.new_dia;
+
+            // Добавляем в инвентарь без перезагрузки
+            userOwnedFrames.push(selectedShopFrame.id);
+
+            closeFrameShopPreview();
+            renderShopFrames(); // Перерисовываем магаз (появится галочка "КУПЛЕНО")
+
+            // Если открыто окно выбора рамок в профиле - обновляем и его
+            if(document.getElementById('frameListContainer')) renderFrameGrid();
+        } else {
+            tg.showAlert(data.error);
+            btn.innerText = 'КУПИТЬ';
+        }
+    } catch (e) {
+        tg.showAlert('Ошибка соединения с сервером');
+        btn.innerText = 'КУПИТЬ';
+    }
+    btn.disabled = false;
+}
