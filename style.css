@@ -1309,7 +1309,7 @@
 
         .pass-top-banner {
             position: relative; padding: 50px 20px 30px; margin-bottom: 16px;
-            background: linear-gradient(to right, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%), url('https://placehold.co/800x400/12121a/4c1d95?text=Bg') center/cover;
+            background: linear-gradient(to right, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%), url('https://cdn-jpr.jawapos.com/images/12/2025/03/24/Mengungkap-Rahasia-Siapa-yang-Menciptakan-Sistem-Sung-Jin-Woo-di-Solo-Leveling-1299620422.png') center/cover;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .pass-top-banner::after {
@@ -1567,7 +1567,7 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 .gacha-quick-btn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px rgba(139,92,246,0.5); }
 
 .gacha-cost-box {
-    background: url('https://placehold.co/800x200/12121a/2e1065?text=Space') center/cover;
+    background: url('https://static.wikia.nocookie.net/omniscient-readers-viewpoint/images/3/36/Constellations.png/revision/latest?cb=20251220195134') center/cover;
     border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
