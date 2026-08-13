@@ -1,3 +1,4 @@
+var isUserPremium = false;
 // === ТОЧНЫЙ МАППИНГ НАВЫКОВ ПО ID КАРТ ===
 var SKILLS_MAP = {
     "Копирование": [
@@ -162,6 +163,7 @@ function getCardSkill(cardId) {
                     // ===================================
 
                     var statusEmojiEl = document.getElementById('userStatusEmoji');
+                    isUserPremium = data.is_premium || false;
                     if (data.is_premium) {
                         statusEmojiEl.innerText = "👑"; 
                         avatarEl.style.borderColor = "var(--premium-gold)"; 
@@ -2996,7 +2998,7 @@ loadUserFrames();
 var SHOP_FRAMES_DATA = [
     { id: "fire", name: "Fire", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_a065206df7b011a5510e4e5bca7d49be.png?size=240&passthrough=true", currency: "krw", price: 1500 },
     { id: "water", name: "Water", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_250640ab00a8837a1d56f35879138177.png?size=240&passthrough=true", currency: "krw", price: 1500 },
-    { id: "lightning", name: "Lightning", url: "⁠https://cdn.discordapp.com/avatar-decoration-presets/a_365eed4178528fe8293c4212e8e2d5cb.png?size=240&passthrough=true", currency: "krw", price: 1500 },
+    { id: "lightning", name: "Lightning", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_365eed4178528fe8293c4212e8e2d5cb.png?size=240&passthrough=true", currency: "krw", price: 1500 },
     { id: "glitch", name: "Glitch", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_e90ebc0114e7bdc30353c8b11953ea41.png?size=240&passthrough=true", currency: "dia", price: 50 }
 ];
 
@@ -3080,13 +3082,17 @@ function openFrameShopPreview(frameId) {
                         <span style="color:#fbbf24;">${finalPrice} ${currIcon}</span>
                      </div>
                      <div style="font-size:11px; color:#fbbf24; margin-top:4px;">Скидка Premium 20% применена! ✨</div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} 👑`;
         } else {
-            html += `<div style="font-size:20px; font-weight:900; color:#fff;">${finalPrice} ${currIcon}</div>`;
+            html += `<div style="font-size:20px; font-weight:900; color:#fff;">${finalPrice} ${currIcon}</div>
+                     <div style="font-size:12px; font-weight:700; color:#fbbf24; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:4px;">
+                        👑 С Premium вы бы сэкономили здесь 20%
+                     </div>`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice}`;
         }
         priceBox.innerHTML = html;
 
         btnBuy.style.display = 'block';
-        btnBuy.innerText = 'КУПИТЬ ЗА ' + finalPrice;
     }
 
     document.getElementById('frameShopPreviewSheet').classList.add('open');
