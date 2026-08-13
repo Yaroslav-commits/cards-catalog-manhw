@@ -2916,7 +2916,16 @@ function closeFrameSystem() {
 }
 
 // Изменение предпросмотра при клике на рамку в шторке
- else {
+function updateFramePreview(frameId) {
+    selectedFrameForPreview = frameId;
+    var prevImg = document.getElementById('framePreviewImg');
+    var prevTitle = document.getElementById('framePreviewTitle');
+
+    if (frameId !== 'none' && allFramesData[frameId]) {
+        prevImg.src = allFramesData[frameId].url;
+        prevImg.style.display = 'block';
+        prevTitle.innerText = allFramesData[frameId].name;
+    } else {
         prevImg.src = '';
         prevImg.style.display = 'none';
         prevTitle.innerText = 'Без рамки';
@@ -2929,50 +2938,28 @@ function renderFrameGrid() {
     container.innerHTML = '';
     var userAvatarSrc = document.getElementById('userAvatar').src;
 
-    if (!userOwnedFrames || userOwnedFrames.length === 0 || (userOwnedFrames.length === 1 && userOwnedFrames[0] === 'none')) {
-        container.innerHTML = '<div class="no-frames-msg">Нет доступных рамок</div>';
-        return;
-    }
-
     userOwnedFrames.forEach(frameId => {
         var isNone = frameId === 'none';
-        var frameInfo = allFramesData[frameId] || { name: 'Нет', url: '' };
-        var isActive = (selectedFrameForPreview === frameId);
-        var activeClass = isActive ? 'active' : '';
-        
-        var frameImgHtml = (isNone || !frameInfo.url) 
-            ? '' 
-            : `<img src="${frameInfo.url}" class="preview-frame-img" style="width: 130%; height: 130%;">`;
+        var frameInfo = allFramesData[frameId] || { name: 'Без рамки', url: '' };
+        var isActive = (selectedFrameForPreview === frameId) ? 'active' : '';
 
-        var badgeHtml = isActive ? `<div class="frame-card-badge">✓</div>` : '';
+        var frameImgHtml = (isNone || !frameInfo.url)
+            ? ''
+            : `<img src="${frameInfo.url}" class="avatar-frame">`;
 
         var html = `
-            <div class="frame-card-item ${activeClass}" onclick="selectFrameItem('${frameId}')">
-                <div class="frame-card-icon-wrap">
-                    <img src="${userAvatarSrc}" class="frame-card-avatar">
+            <div class="frame-item-card ${isActive}" onclick="selectFrameItem('${frameId}')">
+                <div class="frame-item-icon">
+                    <img src="${userAvatarSrc}" class="mini-avatar">
                     ${frameImgHtml}
-                    ${badgeHtml}
                 </div>
-                <div class="frame-card-label">${isNone ? 'Нет' : frameInfo.name}</div>
+                <div class="frame-item-name">${isNone ? 'Без рамки' : frameInfo.name}</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', html);
     });
 }
 
- else {
-        prevImg.src = '';
-        prevImg.style.display = 'none';
-        prevTitle.innerText = 'Нет';
-    }
-    
-    // Show badge only if this is the currently equipped frame
-    if (frameId === equippedFrameId) {
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
-    }
-}
 function selectFrameItem(frameId) {
     if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
     updateFramePreview(frameId);
@@ -3155,102 +3142,4 @@ async function executeBuyFrame() {
         btn.innerText = 'КУПИТЬ';
     }
     btn.disabled = false;
-}
-
-function renderFrameGrid() {
-    var container = document.getElementById('frameListContainer');
-    container.innerHTML = '';
-    var userAvatarSrc = document.getElementById('userAvatar').src;
-
-    if (!userOwnedFrames || userOwnedFrames.length === 0 || (userOwnedFrames.length === 1 && userOwnedFrames[0] === 'none')) {
-        container.innerHTML = '<div class="no-frames-msg">Нет доступных рамок</div>';
-        return;
-    }
-
-    userOwnedFrames.forEach(frameId => {
-        var isNone = frameId === 'none';
-        var frameInfo = allFramesData[frameId] || { name: 'Нет', url: '' };
-        var isActive = (selectedFrameForPreview === frameId);
-        var activeClass = isActive ? 'active' : '';
-        
-        var frameImgHtml = (isNone || !frameInfo.url) 
-            ? '' 
-            : `<img src="${frameInfo.url}" class="preview-frame-img" style="width: 130%; height: 130%;">`;
-
-        var badgeHtml = isActive ? `<div class="frame-card-badge">✓</div>` : '';
-
-        var html = `
-            <div class="frame-card-item ${activeClass}" onclick="selectFrameItem('${frameId}')">
-                <div class="frame-card-icon-wrap">
-                    <img src="${userAvatarSrc}" class="frame-card-avatar">
-                    ${frameImgHtml}
-                    ${badgeHtml}
-                </div>
-                <div class="frame-card-label">${isNone ? 'Нет' : frameInfo.name}</div>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', html);
-    });
-}
-
-function updateFramePreview(frameId) {
-    selectedFrameForPreview = frameId;
-    var prevImg = document.getElementById('framePreviewImg');
-    var prevTitle = document.getElementById('framePreviewTitle');
-    var badge = document.getElementById('previewCheckBadge');
-    
-    if (frameId !== 'none' && allFramesData[frameId]) {
-        prevImg.src = allFramesData[frameId].url;
-        prevImg.style.display = 'block';
-        prevTitle.innerText = allFramesData[frameId].name;
-    } else {
-        prevImg.src = '';
-        prevImg.style.display = 'none';
-        prevTitle.innerText = 'Нет';
-    }
-    
-    // Show badge only if this is the currently equipped frame
-    if (frameId === equippedFrameId) {
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
-    }
-}
-
-
-function openFrameShopPreview(frameId) {
-    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
-
-    selectedShopFrame = SHOP_FRAMES_DATA.find(f => f.id === frameId);
-    if (!selectedShopFrame) return;
-
-    var isOwned = userOwnedFrames.includes(frameId);
-
-    // Моментально примеряем рамку на аватарку
-    document.getElementById('shopPreviewAvatar').src = document.getElementById('userAvatar').src;
-    document.getElementById('shopPreviewFrame').src = selectedShopFrame.url;
-    document.getElementById('shopPreviewTitle').innerText = selectedShopFrame.name;
-
-    var priceBox = document.getElementById('shopPreviewPriceBox');
-    var btnBuy = document.getElementById('btnBuyFrame');
-
-    if (isOwned) {
-        priceBox.innerHTML = '<div class="premium-discount-banner" style="color:#4ade80; background:rgba(74, 222, 128, 0.1); border-color:#4ade80;">Уже в вашей коллекции ✓</div>';
-        btnBuy.style.display = 'none';
-    } else {
-        var finalPrice = isUserPremium ? Math.floor(selectedShopFrame.price * 0.8) : selectedShopFrame.price;
-        var currIcon = selectedShopFrame.currency === 'krw' ? '💴' : '💎';
-
-        if (isUserPremium) {
-            priceBox.innerHTML = `<div class="premium-discount-banner">👑 С Premium вы экономите 20%</div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} ${currIcon} <span style="font-size:18px">👑</span>`;
-        } else {
-            priceBox.innerHTML = `<div class="premium-discount-banner" style="color: #6e6e73; background: transparent; border: 1px solid rgba(255,255,255,0.1);">👑 С Premium вы бы сэкономили здесь 20%</div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${finalPrice} ${currIcon}`;
-        }
-
-        btnBuy.style.display = 'flex';
-    }
-
-    document.getElementById('frameShopPreviewSheet').classList.add('open');
 }

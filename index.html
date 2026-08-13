@@ -912,58 +912,56 @@
         </div>
     </div>
 
-      <div class="sheet-overlay" id="frameSystemSheet">
+   <div class="sheet-overlay" id="frameSystemSheet">
     <div class="sheet frame-sheet">
         <div class="sheet-grabber"></div>
-        <div class="sheet-header-clean">
-            <div class="sheet-title-clean">Выбрать рамку аватара</div>
-            <button class="sheet-close-btn" onclick="closeFrameSystem()">✕</button>
+        <div class="sys-head">
+            <button class="sys-close" onclick="closeFrameSystem()">✖</button>
+            <div class="sys-kicker">SYSTEM NOTIFICATION</div>
+            <div class="sys-title">ВЫБОР РАМКИ</div>
         </div>
 
-        <div class="frame-preview-clean">
-            <div class="avatar-wrapper-clean">
-                <img src="" id="framePreviewAvatar" class="preview-avatar-img">
-                <img src="" id="framePreviewImg" class="preview-frame-img" style="display: none;">
-                <div class="preview-check-badge" id="previewCheckBadge" style="display: none;">✓</div>
+        <div class="frame-preview-area">
+            <div class="avatar-wrapper preview-wrapper">
+                <img src="" id="framePreviewAvatar" class="profile-avatar">
+                <img src="" id="framePreviewImg" class="avatar-frame" style="display: none;">
             </div>
-            <div class="preview-frame-name" id="framePreviewTitle">Нет</div>
+            <div class="frame-preview-title" id="framePreviewTitle">Без рамки</div>
         </div>
 
-        <div class="frame-card-box">
-            <div class="frame-grid-clean" id="frameListContainer">
-                <!-- Генерируется из JS -->
+        <div class="frame-grid" id="frameListContainer">
             </div>
-        </div>
 
-        <button class="btn-primary-clean" id="btnApplyFrame" onclick="applySelectedFrame()">
-            ПРИМЕНИТЬ
+        <button class="sys-btn show" id="btnApplyFrame" onclick="applySelectedFrame()" style="width: 100%; margin-top: 15px;">
+    ПРИМЕНИТЬ
         </button>
     </div>
 </div>
 
     
     <!-- ШТОРКА ПРЕДПРОСМОТРА И ПОКУПКИ РАМКИ -->
-        <div class="sheet-overlay" id="frameShopPreviewSheet">
+    <div class="sheet-overlay" id="frameShopPreviewSheet">
         <div class="sheet frame-sheet">
             <div class="sheet-grabber"></div>
-            <div class="sheet-header-clean">
-                <div class="sheet-title-clean">Предпросмотр</div>
-                <button class="sheet-close-btn" onclick="closeFrameShopPreview()">✕</button>
+            <div class="sys-head">
+                <button class="sys-close" onclick="closeFrameShopPreview()">✖</button>
+                <div class="sys-kicker">PORTAL STORE</div>
+                <div class="sys-title">ПРЕДПРОСМОТР</div>
             </div>
 
-            <div class="frame-preview-clean">
-                <div class="avatar-wrapper-clean">
-                    <img src="" id="shopPreviewAvatar" class="preview-avatar-img">
-                    <img src="" id="shopPreviewFrame" class="preview-frame-img">
+            <div class="frame-preview-area">
+                <div class="avatar-wrapper preview-wrapper">
+                    <img src="" id="shopPreviewAvatar" class="profile-avatar">
+                    <img src="" id="shopPreviewFrame" class="avatar-frame">
                 </div>
-                <div class="preview-frame-name" id="shopPreviewTitle">Название рамки</div>
+                <div class="frame-preview-title" id="shopPreviewTitle">Название рамки</div>
             </div>
 
-            <div id="shopPreviewPriceBox">
+            <div class="shop-frame-price-box" id="shopPreviewPriceBox">
                 <!-- Цена и скидка рендерятся тут -->
             </div>
 
-            <button class="btn-primary-clean" id="btnBuyFrame" onclick="executeBuyFrame()">
+            <button class="sys-btn show" id="btnBuyFrame" onclick="executeBuyFrame()" style="width: 100%; margin-top: 15px;">
                 КУПИТЬ
             </button>
         </div>
