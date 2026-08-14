@@ -2376,3 +2376,227 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     background: rgba(255, 255, 255, 0.03);
     border-color: rgba(255, 255, 255, 0.08);
 }
+/* ================= НОВЫЕ КНОПКИ МЕНЮ (Заработок, Бонус, Ачивки, Саппорт) ================= */
+.action-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Две колонки для 4 кнопок */
+    gap: 12px;
+    margin: 15px 10px 25px 10px;
+}
+
+.action-btn-modern {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 14px 10px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn-modern:active {
+    transform: scale(0.94);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.action-btn-modern .btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+}
+
+.action-btn-modern .btn-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: #ffffff; /* Цвет иконок (белый) */
+    filter: drop-shadow(0 2px 6px rgba(255, 255, 255, 0.2)); /* Легкое премиум-свечение */
+    transition: 0.2s;
+}
+
+.action-btn-modern:active .btn-icon svg {
+    transform: scale(0.9);
+}
+/* ================= ДИЗАЙН ДОСТИЖЕНИЙ ================= */
+.achiev-sheet {
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Вкладки навигации */
+.achiev-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.achiev-tabs::-webkit-scrollbar { display: none; }
+
+.achiev-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #8e8e93;
+    background: rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.achiev-tab.active {
+    background: #ffffff;
+    color: #000000;
+}
+
+/* Список достижений */
+.achiev-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 4px;
+    padding-bottom: 20px;
+}
+
+/* Карточка достижения */
+.achiev-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Иконка */
+.achiev-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(0, 0, 0, 0));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    flex-shrink: 0;
+}
+
+/* Центральная часть с текстом и прогрессом */
+.achiev-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.achiev-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+}
+.achiev-desc {
+    font-size: 12px;
+    color: #8e8e93;
+    line-height: 1.2;
+}
+
+/* Награда */
+.achiev-reward {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Полоса прогресса */
+.achiev-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+.achiev-progress-bar {
+    flex-grow: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.achiev-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #d946ef);
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+}
+.achiev-progress-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ffffff;
+    min-width: 35px;
+    text-align: right;
+}
+
+/* Кнопка Claim */
+.achiev-btn {
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.achiev-btn.locked {
+    background: rgba(255, 255, 255, 0.08);
+    color: #6e6e73;
+    pointer-events: none;
+}
+.achiev-btn.ready {
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+.achiev-btn.ready:active {
+    transform: scale(0.92);
+}
+.achiev-btn.claimed {
+    background: transparent;
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    pointer-events: none;
+}
+/* Выравнивание и размер SVG иконок в наградах */
+.reward-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.reward-svg-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}

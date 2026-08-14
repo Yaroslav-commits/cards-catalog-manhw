@@ -3150,3 +3150,122 @@ async function executeBuyFrame() {
     }
     btn.disabled = false;
 }
+// ================= ДОСТИЖЕНИЯ (С ОРИГИНАЛЬНЫМИ SVG-ИКОНКАМИ) =================
+
+// Коллекция SVG-иконок для наград и кубка
+const ACHIEV_SVGS = {
+    trophy: `<svg class="achiev-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>`,
+
+    krw: `<svg class="reward-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`,
+
+    battlecoin: `<svg class="reward-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v12M9 9h6M9 15h6"></path></svg>`,
+
+    diamond: `<svg class="reward-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"></path><path d="M11 3 8 9l4 12 4-12-3-6"></path><path d="M2 9h20"></path></svg>`,
+
+    attempts: `<svg class="reward-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"></path><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>`,
+
+    frame: `<svg class="reward-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`
+};
+
+function openAchievements() {
+    // Открываем модальное окно
+    document.getElementById('achievementsModal').style.display = 'flex';
+
+    // Подгружаем достижения
+    fetch(`/api/achievements?user_id=${USER_ID}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                renderAchievementsList(data.achievements);
+            }
+        })
+        .catch(err => console.error("Ошибка загрузки достижений:", err));
+}
+
+function closeAchievements() {
+    document.getElementById('achievementsModal').style.display = 'none';
+}
+
+function renderAchievementsList(achievements) {
+    const container = document.getElementById('achievementsContainer');
+    container.innerHTML = ''; // Очищаем индикатор загрузки
+
+    achievements.forEach(ach => {
+        // Вычисляем процент для прогресс-бара
+        let percent = Math.min((ach.progress / ach.req) * 100, 100);
+
+        // Генерация стильных карточек наград с SVG-иконками
+        let rewardTags = [];
+        if (ach.rewards.krw) {
+            rewardTags.push(`<span class="reward-tag">${ACHIEV_SVGS.krw} ${ach.rewards.krw} KRW</span>`);
+        }
+        if (ach.rewards.battlecoin) {
+            rewardTags.push(`<span class="reward-tag">${ACHIEV_SVGS.battlecoin} ${ach.rewards.battlecoin} BC</span>`);
+        }
+        if (ach.rewards.diamond) {
+            rewardTags.push(`<span class="reward-tag">${ACHIEV_SVGS.diamond} ${ach.rewards.diamond}</span>`);
+        }
+        if (ach.rewards.attempts) {
+            rewardTags.push(`<span class="reward-tag">${ACHIEV_SVGS.attempts} ${ach.rewards.attempts} Круток</span>`);
+        }
+        if (ach.rewards.frame_id) {
+            rewardTags.push(`<span class="reward-tag">${ACHIEV_SVGS.frame} Рамка</span>`);
+        }
+
+        // Кнопка статуса
+        let btnHtml = '';
+        if (ach.is_claimed) {
+            btnHtml = `<button class="achiev-btn claimed">✓ Забрано</button>`;
+        } else if (ach.is_completed) {
+            btnHtml = `<button class="achiev-btn ready" onclick="claimAchievement('${ach.id}')">Забрать</button>`;
+        } else {
+            btnHtml = `<button class="achiev-btn locked">Заблокировано</button>`;
+        }
+
+        // Создаем карточку достижения
+        const card = document.createElement('div');
+        card.className = 'achiev-card';
+        card.innerHTML = `
+            <div class="achiev-icon-wrap">
+                ${ACHIEV_SVGS.trophy}
+            </div>
+            <div class="achiev-info">
+                <div class="achiev-title">${ach.title}</div>
+                <div class="achiev-desc">${ach.desc}</div>
+                
+                <div class="achiev-reward" style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;">
+                    ${rewardTags.join('')}
+                </div>
+                
+                <div class="achiev-progress-wrap">
+                    <div class="achiev-progress-bar">
+                        <div class="achiev-progress-fill" style="width: ${percent}%;"></div>
+                    </div>
+                    <div class="achiev-progress-text">${ach.progress} / ${ach.req}</div>
+                </div>
+            </div>
+            <div>
+                ${btnHtml}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function claimAchievement(achievId) {
+    fetch('/api/claim_achievement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: USER_ID, achiev_id: achievId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            tg.showAlert(data.message);
+            openAchievements(); // Обновляем список достижений
+            if (typeof fetchProfile === "function") fetchProfile(); // Обновляем профиль/баланс
+        } else {
+            tg.showAlert(data.message);
+        }
+    });
+}
