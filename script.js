@@ -3168,18 +3168,27 @@ const ACHIEV_SVGS = {
 };
 
 function openAchievements() {
-    // Открываем модальное окно
+    // 1. Безопасно достаем ID игрока (чтобы скрипт не крашился)
+    let myUserId = 0;
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+        myUserId = window.Telegram.WebApp.initDataUnsafe.user.id;
+    }
+
+    // 2. Открываем темный фон и саму шторку
     document.getElementById('achievementsModal').style.display = 'flex';
 
-    // Подгружаем достижения
-    fetch(`/api/achievements?user_id=${USER_ID}`)
+    // 3. Делаем запрос к твоему Python-серверу
+    fetch(`/api/achievements?user_id=${myUserId}`)
         .then(res => res.json())
         .then(data => {
             if (data.success) {
                 renderAchievementsList(data.achievements);
             }
         })
-        .catch(err => console.error("Ошибка загрузки достижений:", err));
+        .catch(err => {
+            console.error("Ошибка загрузки достижений:", err);
+            document.getElementById('achievementsContainer').innerHTML = '<div style="text-align:center; color:#ff453a; margin-top: 20px;">Ошибка загрузки. Проверьте соединение.</div>';
+        });
 }
 
 function closeAchievements() {

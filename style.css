@@ -2429,16 +2429,6 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     transform: scale(0.9);
 }
 /* ================= ДИЗАЙН ДОСТИЖЕНИЙ ================= */
-.achiev-sheet {
-    background: #1c1c1e; /* Жесткий темный цвет фона! */
-    border-radius: 20px 20px 0 0;
-    padding: 16px;
-    width: 100%;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-}
 
 /* Вкладки навигации */
 .achiev-tabs {
@@ -2605,13 +2595,42 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     height: 14px;
     flex-shrink: 0;
 }
-/* ================= ОРИГИНАЛЬНЫЕ КНОПКИ (Сетка 2x2) ================= */
 .quad-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin: 15px; /* Отступы по краям */
+    margin: 0 16px 16px 16px; /* 16px по бокам — выровняет их ровно с Магазином и Бандами */
 }
+
+/* ================= ФИКС ПРОЗРАЧНОЙ ШТОРКИ ================= */
+.achiev-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7); /* Плотное затемнение заднего фона */
+    z-index: 9999; /* Поверх вообще всего */
+    display: flex;
+    align-items: flex-end; /* Прижимает шторку к самому низу */
+    justify-content: center;
+}
+
+.achiev-sheet {
+    background: #1c1c1e; /* Темно-серый жесткий фон самой шторки */
+    border-radius: 20px 20px 0 0;
+    padding: 20px 16px;
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
+    animation: slideUp 0.3s ease-out; /* Плавный выезд снизу */
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
 
 .action-card {
     background: rgba(255, 255, 255, 0.05); /* Легкий прозрачный фон */
