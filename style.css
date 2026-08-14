@@ -2595,11 +2595,14 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     height: 14px;
     flex-shrink: 0;
 }
+/* ================= ФИКС СЕТКИ КНОПОК ================= */
 .quad-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin: 0 16px 16px 16px; /* 16px по бокам — выровняет их ровно с Магазином и Бандами */
+    margin: 15px 0; /* Ноль по бокам, чтобы встало вровень с остальными блоками! */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* ================= ФИКС ПРОЗРАЧНОЙ ШТОРКИ ================= */
