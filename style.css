@@ -2430,9 +2430,14 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 }
 /* ================= ДИЗАЙН ДОСТИЖЕНИЙ ================= */
 .achiev-sheet {
+    background: #1c1c1e; /* Жесткий темный цвет фона! */
+    border-radius: 20px 20px 0 0;
+    padding: 16px;
+    width: 100%;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 /* Вкладки навигации */
@@ -2600,3 +2605,89 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     height: 14px;
     flex-shrink: 0;
 }
+/* ================= ОРИГИНАЛЬНЫЕ КНОПКИ (Сетка 2x2) ================= */
+.quad-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 15px; /* Отступы по краям */
+}
+
+.action-card {
+    background: rgba(255, 255, 255, 0.05); /* Легкий прозрачный фон */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 12px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.2s;
+}
+
+.action-card:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Цветные квадраты для иконок */
+.action-ico {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.action-ico svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Текст посередине */
+.action-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-grow: 1; /* Занимает всё свободное место, выталкивая стрелочку вправо */
+    overflow: hidden;
+}
+
+.action-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.action-sub {
+    font-size: 11px;
+    color: #8e8e93;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* Стрелочка с правого края */
+.action-arrow {
+    color: #6e6e73;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.action-arrow svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Цвета иконок */
+.ico-earn { background: rgba(52, 199, 89, 0.15); color: #34c759; }
+.ico-bonus { background: rgba(0, 122, 255, 0.15); color: #007aff; }
+.ico-achiev { background: rgba(175, 82, 222, 0.15); color: #af52de; }
+.ico-support { background: rgba(255, 149, 0, 0.15); color: #ff9500; }
