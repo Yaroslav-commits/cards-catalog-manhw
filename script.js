@@ -1847,7 +1847,7 @@ function renderTops(list) {
         else if (currentTopCategory === 'bc') scoreHtml = '<span class="top-score-ico">Ⓑ</span> ' + player.score.replace(' 🪙', '');
 
         var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
-        var avatarSrc = API_BASE + "/api/avatar/" + player.id;
+        var avatarSrc = API_BASE + "/api/avatar/" + player.id + "?name=" + encodeURIComponent(cleanName);
 
         // === МАГИЯ РАМОК В ТОПЕ ===
         var frameHtml = player.frame_url
@@ -1938,7 +1938,7 @@ async function openPublicProfile(targetId) {
 
             document.getElementById('pubName').innerHTML = dispName + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
 
-            document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id;
+            document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id + "?name=" + encodeURIComponent(dispName);
 
             if (p.is_premium) {
                 document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)";
