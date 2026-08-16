@@ -90,5 +90,11 @@
         "file": "evil_ring.jpeg",
         "price": 1500,
         "id": "evil_ring"
+    },
+    {
+        "name": "Yu",
+        "file": "yu_bg.jpeg",
+        "price": 99999,
+        "id": "yu_bg"
     }
 ]

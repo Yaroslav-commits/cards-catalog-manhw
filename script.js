@@ -3172,13 +3172,17 @@ function openAchievements() {
     let myUserId = 0;
     if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
         myUserId = window.Telegram.WebApp.initDataUnsafe.user.id;
+    } else {
+        myUserId = userId; // Подстраховка из глобальной переменной
     }
 
     // 2. Открываем темный фон и саму шторку
     document.getElementById('achievementsModal').style.display = 'flex';
 
-    // 3. Делаем запрос к твоему Python-серверу
-    fetch(`/api/achievements?user_id=${myUserId}`)
+    // 3. Делаем запрос к твоему Python-серверу (добавлен API_BASE и заголовки)
+    fetch(API_BASE + '/api/achievements?user_id=' + myUserId, {
+        headers: authHeaders()
+    })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -3262,10 +3266,11 @@ function renderAchievementsList(achievements) {
 }
 
 function claimAchievement(achievId) {
-    fetch('/api/claim_achievement', {
+    // Добавлен API_BASE, объединенные заголовки и исправлен USER_ID на userId
+    fetch(API_BASE + '/api/claim_achievement', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: USER_ID, achiev_id: achievId })
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+        body: JSON.stringify({ user_id: userId, achiev_id: achievId })
     })
     .then(res => res.json())
     .then(data => {
@@ -3274,7 +3279,11 @@ function claimAchievement(achievId) {
             openAchievements(); // Обновляем список достижений
             if (typeof fetchProfile === "function") fetchProfile(); // Обновляем профиль/баланс
         } else {
-            tg.showAlert(data.message);
+            tg.showAlert(data.message || "Произошла ошибка");
         }
+    })
+    .catch(err => {
+        console.error("Ошибка при получении награды:", err);
+        tg.showAlert("Ошибка соединения с сервером");
     });
 }
