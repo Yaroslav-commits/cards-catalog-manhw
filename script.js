@@ -14,7 +14,7 @@ var SKILLS_MAP = {
     "Берсерк": [
         "uayt", "hell_dzho", "yubin", "han_wanguk", "ji_gonsop", 
         "lee_jinson", "kim_gapryeon", "beakcheon", "antares", 
-        "choi_jong_in", "moyeong_yul_cheon", "jo_uk_kun", "yunsu", "li_dzhagang"
+        "choi_jong_in", "moyeong_yul_cheon", "jo_uk_kun", "yunsu", "li_dzhagang", "yu"
     ],
     "Пространство": [
         "premium_card_2", "aheron", "enryu", "zahard", "urek_mazino", 
