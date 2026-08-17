@@ -3266,7 +3266,6 @@ function renderAchievementsList(achievements) {
 }
 
 function claimAchievement(achievId) {
-    // Добавлен API_BASE, объединенные заголовки и исправлен USER_ID на userId
     fetch(API_BASE + '/api/claim_achievement', {
         method: 'POST',
         headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
@@ -3275,9 +3274,13 @@ function claimAchievement(achievId) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            tg.showAlert(data.message);
+            tg.showAlert(data.message); // Теперь покажет название рамки
             openAchievements(); // Обновляем список достижений
+
             if (typeof fetchProfile === "function") fetchProfile(); // Обновляем профиль/баланс
+
+            // 🔥 ИСПРАВЛЕНИЕ: Синхронизируем инвентарь рамок, чтобы она сразу появилась в профиле
+            if (typeof loadUserFrames === "function") loadUserFrames();
         } else {
             tg.showAlert(data.message || "Произошла ошибка");
         }
