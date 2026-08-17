@@ -2171,6 +2171,7 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     align-items: center;
     margin-bottom: 18px;
     padding: 0 4px;
+    flex-shrink: 0; /* 🔥 ФИКС: Защищаем шапку от сплющивания */
 }
 .sheet-title-clean {
     font-size: 19px;
@@ -2437,6 +2438,7 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     margin-bottom: 16px;
     overflow-x: auto;
     padding-bottom: 4px;
+    flex-shrink: 0; /* 🔥 ФИКС: Не даем вкладкам сжиматься при наложении списка */
 }
 .achiev-tabs::-webkit-scrollbar { display: none; }
 
@@ -2464,6 +2466,8 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     overflow-y: auto;
     padding-right: 4px;
     padding-bottom: 20px;
+    flex: 1; /* 🔥 ФИКС: Список занимает только оставшееся свободное место */
+    min-height: 0; /* 🔥 ФИКС: Разрешаем скроллу работать внутри флекса */
 }
 
 /* Карточка достижения */
