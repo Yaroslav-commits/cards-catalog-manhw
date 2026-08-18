@@ -7,7 +7,7 @@ var SKILLS_MAP = {
         "park_hyeonsok_vt", "kang_dagyeom", "eun_gel", "han_jig_wol", "premium_card_1"
     ],
     "Восстание": [
-        "kim_u_dzhin", "isaak_ivanov", "ioann_georg", "letniy_dzhin_vu", 
+        "kim_u_dzhin", "isaak_ivanov", "ioann_georg", "letniy_dzhin_vu", "reinhard",
         "sanless", "lee_jin_ho", "son_jin_woo", "ashborn", "absolute_being", "moyon_hvi",
         "igris", "bellion", "ber", "red_igris", "tang_gi_mun", "exclusive_card_1", "demonicheskiy_bog"
     ],
@@ -32,7 +32,7 @@ var SKILLS_MAP = {
     "Уклонение": [
         "letnyaya_cha_he_in", "letniy_gu_kim", "kun_mashenni_zahard", "ouen", 
         "seong_tae_hun1", "lee_ji_hoon", "lineman", "na_jaegyeon", "yoojae_son", 
-        "choi_dongsu", "gyeong_mu_saeng", "jinx"
+        "choi_dongsu", "gyeong_mu_saeng", "jinx", "jang_ancheol"
     ]
 };
 
@@ -3155,7 +3155,7 @@ async function executeBuyFrame() {
 // Коллекция SVG-иконок для наград и кубка
 const ACHIEV_SVGS = {
     trophy: `<svg class="achiev-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>`,
-    
+
     krw: `<svg class="reward-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M3 15h18M4 5l4 14l4-10l4 10l4-14"></path></svg>`,
 
     battlecoin: `<svg class="reward-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 6h4.5a3 3 0 0 1 0 6H8V6z M8 12h5.5a3 3 0 0 1 0 6H8v-6z"></path></svg>`,

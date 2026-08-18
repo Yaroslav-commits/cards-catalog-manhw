@@ -1,5 +1,29 @@
 [
     {
+        "name": "Рейнхард",
+        "rarity": "Эпическая 🟢",
+        "style": "Безграничная магия [🌑 Восстание]",
+        "series": "Я так и не смогла усмирить эту злую натуру",
+        "speed": 80,
+        "strength": 80,
+        "intellect": 80,
+        "file": "reinhard.webp",
+        "exclusive": true,
+        "id": "reinhard"
+    },
+    {
+        "name": "Кан Анчхоль",
+        "rarity": "Эпическая 🟢",
+        "style": "ММА [🌪 Уклонение]",
+        "series": "Жизнь неудачника",
+        "speed": 80,
+        "strength": 80,
+        "intellect": 80,
+        "file": "jang_ancheol.webp",
+        "exclusive": true,
+        "id": "jang_ancheol"
+    },
+    {
         "name": "Ю",
         "rarity": "Мифическая 🔴",
         "style": "Бокс [🩸 Берсерк]",

@@ -1,5 +1,8 @@
 import os
-from PIL import Image
+from PIL import Image, ImageFile
+
+# 🔥 МАГИЧЕСКАЯ СТРОКА: заставляет скрипт игнорировать битые концы файлов
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # 📂 Теперь здесь список папок, с которыми мы работаем
 folders = ['images', 'images/skins']
