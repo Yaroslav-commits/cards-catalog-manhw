@@ -3173,7 +3173,7 @@ function openAchievements() {
     if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
         myUserId = window.Telegram.WebApp.initDataUnsafe.user.id;
     } else {
-        myUserId = userId; // Подстраховка из глобальной переменной
+        myUserId = userId; 
     }
 
     // 2. Открываем темный фон и саму шторку
