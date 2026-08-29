@@ -803,9 +803,11 @@ function renderCards(cards) {
 
 // === МОДАЛКА (ДОБАВЛЕНА ПОДДЕРЖКА ВИДЕО) ===
 async function openModal(item) {
+    currentModalCard = item;
+
     var cleanRarity = (item.rarity || '').split(' ')[0];
     var modalImgWrapper = document.querySelector('.modal-img-wrapper');
-    modalImgWrapper.innerHTML = ''; 
+    modalImgWrapper.innerHTML = '';
 
     if (item.isSkin) {
         var webFileName = (item.skinFile || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
@@ -1282,20 +1284,22 @@ async function openModal(item) {
             var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
             var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
             var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); 
-            var passOpen = document.getElementById('passScreen').classList.contains('open'); // НОВОЕ
+            var passOpen = document.getElementById('passScreen').classList.contains('open');
             var detailOpen = document.getElementById('collDetailView').style.display === 'block';
+            var ownersOpen = document.getElementById('ownersScreen').classList.contains('open'); // <-- ДОБАВЛЕНО
 
-            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen) tg.BackButton.show();
+            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen || ownersOpen) tg.BackButton.show(); // <-- ДОБАВЛЕНО ownersOpen
             else tg.BackButton.hide();
         }
+
         if (tg.BackButton && tg.BackButton.onClick) {
             tg.BackButton.onClick(function() {
                 if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
                 else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
                 else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
-                else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile(); 
+                else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile();
                 else if (document.getElementById('passScreen').classList.contains('open')) closePassModal();
-                // 🔥 Твоя строчка для Коллекции 🔥
+                else if (document.getElementById('ownersScreen').classList.contains('open')) closeOwnersScreen(); // <-- ДОБАВЛЕНО
                 else if (document.getElementById('collDetailView').style.display === 'block') backToUniverses();
             });
         }
@@ -3339,4 +3343,151 @@ async function toggleUsernameVisibility() {
         tg.showAlert('Ошибка соединения');
     }
     btn.disabled = false;
+}
+var currentModalCard = null;
+
+// ВАЖНО: В твоей функции openModal(item) добавь в самом начале эту строку:
+// currentModalCard = item;
+
+const RARITY_COLORS = {
+    'Обычная ⚪️': 'rgba(148,163,184,1)', 'Редкая 🟡': 'rgba(253,224,71,1)',
+    'Эпическая 🟢': 'rgba(74,222,128,1)', 'Легендарная 🔵': 'rgba(59,130,246,1)',
+    'Мифическая 🔴': 'rgba(239,68,68,1)', 'Божественная ⚫️': 'rgba(168,85,247,1)'
+};
+
+async function openOwnersScreen(page = 0) {
+    if (!currentModalCard) return;
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+    var c = currentModalCard;
+    var rName = c.rarity || 'Обычная ⚪️';
+    var cleanRarity = rName.split(' ')[0];
+    var rColor = RARITY_COLORS[rName] || '#fff';
+
+    // 1. Заполняем статику (Шапка и Характеристики)
+    document.getElementById('osCardName').innerText = c.name;
+
+    var pill = document.getElementById('osRarityPill');
+    pill.innerText = cleanRarity;
+    pill.style.setProperty('--r-color', rColor);
+
+    var wrap = document.getElementById('osCardWrap');
+    wrap.style.setProperty('--r-color', rColor);
+
+    var fallbackSrc = (c.file || '').replace(/\.jpe?g$/i, '.webp');
+    document.getElementById('osCardImg').src = 'images/' + fallbackSrc;
+    document.getElementById('osCardStrip').innerText = c.name + '  💥 ' + (c.speed + c.strength + c.intellect);
+
+    document.getElementById('osStatRarity').innerText = cleanRarity;
+    document.getElementById('osStatRarity').style.color = rColor;
+    document.getElementById('osStatSpd').innerText = c.speed || 0;
+    document.getElementById('osStatStr').innerText = c.strength || 0;
+    document.getElementById('osStatInt').innerText = c.intellect || 0;
+
+    // Скины
+    var cardSkins = allSkins.filter(s => s.card_id === c.id);
+    var skinsBlock = document.getElementById('osSkinsBlock');
+    if (cardSkins.length > 0) {
+        skinsBlock.style.display = 'block';
+        document.getElementById('osSkinsCount').innerText = cardSkins.length;
+        var sList = document.getElementById('osSkinsList');
+        sList.innerHTML = '';
+        cardSkins.forEach(s => {
+            var sFile = (s.file || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
+            sList.innerHTML += `<img src="images/skins/${sFile}">`;
+        });
+    } else {
+        skinsBlock.style.display = 'none';
+    }
+
+    // 2. Открываем экран и грузим игроков
+    document.getElementById('ownersScreen').classList.add('open');
+    manageBack(); // Чтобы работала системная кнопка "Назад"
+
+    var container = document.getElementById('osListContent');
+    var pag = document.getElementById('osPagination');
+    container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><span class="spinner-ring" style="position:relative; margin: 0 auto 10px; border-color:rgba(255,255,255,0.1); border-top-color:var(--accent); width:30px; height:30px;"></span><br>Поиск владельцев...</div>';
+    pag.style.display = 'none';
+    document.getElementById('osTotalOwners').innerText = '...';
+
+    try {
+        var res = await fetch(API_BASE + '/api/card_owners/' + c.id + '?page=' + page);
+        var data = await res.json();
+
+        if (data.success) {
+            document.getElementById('osTotalOwners').innerText = data.total_unique;
+            renderOwnersList(data);
+        } else {
+            container.innerHTML = '<div style="text-align:center; color:#ef4444; padding:20px;">Ошибка загрузки</div>';
+        }
+    } catch (e) {
+        container.innerHTML = '<div style="text-align:center; color:#ef4444; padding:20px;">Ошибка соединения</div>';
+    }
+}
+
+function closeOwnersScreen() {
+    document.getElementById('ownersScreen').classList.remove('open');
+    manageBack();
+}
+
+function renderOwnersList(data) {
+    var container = document.getElementById('osListContent');
+    container.innerHTML = '';
+
+    if (!data.owners || data.owners.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Этой карты ни у кого нет</div>';
+        return;
+    }
+
+    data.owners.forEach(function(player) {
+        var cleanName = (player.name || 'Игрок').trim();
+        var initial = cleanName.charAt(0).toUpperCase();
+        var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
+        var avatarSrc = API_BASE + "/api/avatar/" + player.id + "?name=" + encodeURIComponent(cleanName);
+
+        var frameHtml = player.frame_url ? `<img src="${player.frame_url}" class="avatar-frame" style="width:135%; height:135%;">` : '';
+        var badgeHtml = player.count > 1 ? `<div class="os-badge">×${player.count}</div>` : '';
+
+        var html = `
+            <div class="os-owner-row" onclick="openPublicProfile(${player.id})">
+                <div class="top-avatar-wrap" style="margin:0;">
+                    <img src="${avatarSrc}" class="os-avatar" onerror="this.src='${fallbackImg}'">
+                    ${frameHtml}
+                </div>
+                <div class="os-name">${cleanName}</div>
+                ${badgeHtml}
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    });
+
+    var pag = document.getElementById('osPagination');
+    var totalPages = Math.ceil(data.total_unique / data.limit);
+
+    if (totalPages > 1) {
+        pag.style.display = 'flex';
+        pag.innerHTML = '';
+
+        var btnPrev = document.createElement('button');
+        btnPrev.className = 'page-btn';
+        btnPrev.innerText = '◀ Назад';
+        btnPrev.disabled = (data.page === 0);
+        btnPrev.onclick = () => openOwnersScreen(data.page - 1);
+
+        var ind = document.createElement('div');
+        ind.className = 'page-indicator';
+        ind.innerText = (data.page + 1) + ' / ' + totalPages;
+
+        var btnNext = document.createElement('button');
+        btnNext.className = 'page-btn';
+        btnNext.innerText = 'Вперед ▶';
+        btnNext.disabled = (data.page >= totalPages - 1);
+        btnNext.onclick = () => openOwnersScreen(data.page + 1);
+
+        pag.appendChild(btnPrev);
+        pag.appendChild(ind);
+        pag.appendChild(btnNext);
+    } else {
+        pag.style.display = 'none';
+    }
 }

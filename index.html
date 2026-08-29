@@ -437,6 +437,11 @@
                     <span style="color: var(--text-muted); font-size: 13px;">📚 В боте:</span>
                     <span style="font-size:16px; font-weight:700; color:#fff;" id="modalCount">...</span>
                 </div>
+
+                <button class="sheet-btn ghost" style="margin-top: 15px;" onclick="openOwnersScreen()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 18px; height: 18px; margin-right: 4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Владельцы карты
+                </button>
             </div>
         </div>
     </div>
@@ -1022,6 +1027,68 @@
             </button>
         </div>
     </div>
+
+<!-- ЭКРАН ВЛАДЕЛЬЦЕВ (КАК НА СКРИНШОТЕ) -->
+    <div class="owners-screen" id="ownersScreen">
+        <div class="os-header">
+            <button class="os-back" onclick="closeOwnersScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="os-title-wrap">
+                <div class="os-title">Владельцы карты</div>
+                <div class="os-sub" id="osCardName">Имя карты</div>
+            </div>
+            <div class="os-rarity-pill" id="osRarityPill">Редкость</div>
+        </div>
+
+        <div class="os-top-grid">
+            <div class="os-card-wrap" id="osCardWrap">
+                <img src="" id="osCardImg">
+                <div class="os-card-stats-strip" id="osCardStrip">Имя</div>
+            </div>
+
+            <div class="os-stats-box">
+                <div class="os-stat-row" style="margin-bottom: 12px;">
+                    <span style="color:#8e8e93; display:flex; align-items:center; gap:6px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Владельцев
+                    </span>
+                    <span style="font-size:18px; font-weight:800; color:#fff;" id="osTotalOwners">...</span>
+                </div>
+
+                <div class="os-stat-row">
+                    <span style="color:#8e8e93">Редкость</span>
+                    <span style="font-weight:700;" id="osStatRarity">...</span>
+                </div>
+                <div class="os-stat-row">
+                    <span style="color:#8e8e93">Скорость</span>
+                    <span style="font-weight:700; color:#fff;" id="osStatSpd">0</span>
+                </div>
+                <div class="os-stat-row">
+                    <span style="color:#8e8e93">Сила</span>
+                    <span style="font-weight:700; color:#fff;" id="osStatStr">0</span>
+                </div>
+                <div class="os-stat-row">
+                    <span style="color:#8e8e93">Интеллект</span>
+                    <span style="font-weight:700; color:#fff;" id="osStatInt">0</span>
+                </div>
+
+                <div id="osSkinsBlock" style="display:none; margin-top:12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top:12px;">
+                    <div class="os-stat-row">
+                        <span style="color:#8e8e93">Скины</span>
+                        <span style="font-weight:700; color:#fff;" id="osSkinsCount">1</span>
+                    </div>
+                    <div class="os-skins-list" id="osSkinsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="os-list-container">
+            <div id="osListContent"></div>
+            <div class="pagination-bar" id="osPagination" style="padding: 15px 0; display: none; border: none;"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 
 </body>
