@@ -202,6 +202,16 @@ function getCardSkill(cardId) {
                         if (foundTitle) titleText = "ТИТУЛ: " + foundTitle.name.toUpperCase();
                     }
                     document.getElementById('psTitle').innerText = titleText;
+                    // --- ОТОБРАЖЕНИЕ ЮЗЕРНЕЙМА И СТАТУСА КНОПКИ ---
+                    document.getElementById('psUsername').innerText = data.username ? '@' + data.username : 'Нет юзернейма';
+                    var hideBtn = document.getElementById('psHideUserBtn');
+                    if (data.hide_username) {
+                        hideBtn.classList.add('active');
+                        hideBtn.innerText = 'Скрыто';
+                    } else {
+                        hideBtn.classList.remove('active');
+                        hideBtn.innerText = 'Скрыть';
+                    }
                     
                     // --- ОБНОВЛЕНИЕ СТАТИСТИКИ, КАРТ И ФОНА ---
                     userFavCards = data.fav_cards || {};
@@ -1966,6 +1976,18 @@ async function openPublicProfile(targetId) {
                 if (foundTitle) titleText = "ТИТУЛ: " + foundTitle.name.toUpperCase();
             }
             document.getElementById('pubTitle').innerText = titleText;
+            // --- ОТОБРАЖЕНИЕ ЮЗЕРНЕЙМА (ЕСЛИ ОН НЕ СКРЫТ) ---
+            var pubUserEl = document.getElementById('pubUsername');
+            if (p.username) {
+                pubUserEl.style.display = 'inline-block';
+                pubUserEl.innerText = '@' + p.username;
+                pubUserEl.onclick = function(e) {
+                    e.preventDefault();
+                    tg.openTelegramLink('https://t.me/' + p.username);
+                };
+            } else {
+                pubUserEl.style.display = 'none';
+            }
 
             document.getElementById('pubWins').innerText = p.wins;
             document.getElementById('pubLosses').innerText = p.losses;
@@ -3289,4 +3311,32 @@ function claimAchievement(achievId) {
         console.error("Ошибка при получении награды:", err);
         tg.showAlert("Ошибка соединения с сервером");
     });
+}
+async function toggleUsernameVisibility() {
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    var btn = document.getElementById('psHideUserBtn');
+    btn.disabled = true;
+
+    try {
+        var res = await fetch(API_BASE + '/api/toggle_username/' + userId, {
+            method: 'POST',
+            headers: authHeaders()
+        });
+        var data = await res.json();
+
+        if (data.success) {
+            if (data.hidden) {
+                btn.classList.add('active');
+                btn.innerText = 'Скрыто';
+                showToast('Конфиденциальность', 'Ваш username скрыт от других игроков');
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = 'Скрыть';
+                showToast('Конфиденциальность', 'Ваш username теперь виден всем');
+            }
+        }
+    } catch (e) {
+        tg.showAlert('Ошибка соединения');
+    }
+    btn.disabled = false;
 }

@@ -2719,3 +2719,34 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 .ico-bonus { background: rgba(0, 122, 255, 0.15); color: #007aff; }
 .ico-achiev { background: rgba(175, 82, 222, 0.15); color: #af52de; }
 .ico-support { background: rgba(255, 149, 0, 0.15); color: #ff9500; }
+/* ================= ЮЗЕРНЕЙМ И КНОПКА СКРЫТИЯ ================= */
+.ps-username {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-light);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 4px;
+    transition: 0.2s;
+}
+.ps-username:active { opacity: 0.7; }
+
+.hide-user-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.hide-user-btn:active { transform: scale(0.92); }
+.hide-user-btn.active {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}

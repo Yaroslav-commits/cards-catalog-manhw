@@ -461,10 +461,11 @@
                 <img id="pubAvatarFrame" class="avatar-frame" src="" style="display: none;">
             </div>
             <div class="ps-user-texts">
-                <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
-                <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
-            </div>
+            <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
+            <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            <a href="#" class="ps-username" id="pubUsername" style="display: none;">@username</a>
         </div>
+    </div>
 
         <div class="ps-box">
             <div class="ps-box-title">ЛЮБИМЫЕ КАРТЫ</div>
@@ -503,10 +504,14 @@
                 <img id="psAvatarFrame" class="avatar-frame" src="" style="display: none;">
             </div>
             <div class="ps-user-texts">
-                <div class="ps-name" id="psName">Ярик <span id="psStatusEmoji" style="font-size: 20px;">🧩</span></div>
-                <div class="ps-title-text" id="psTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            <div class="ps-name" id="psName">Ярик <span id="psStatusEmoji" style="font-size: 20px;">🧩</span></div>
+            <div class="ps-title-text" id="psTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <div class="ps-username" id="psUsername">@username</div>
+                <button class="hide-user-btn" id="psHideUserBtn" onclick="toggleUsernameVisibility()">Скрыть 👁️</button>
             </div>
         </div>
+    </div>
 
         <div class="ps-box">
             <div class="ps-box-title">ЛЮБИМЫЕ КАРТЫ</div>
