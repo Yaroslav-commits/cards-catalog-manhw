@@ -2766,6 +2766,10 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
 }
 .os-back:active { transform: scale(0.92); }
+.os-back svg {
+    width: 24px;
+    height: 24px;
+}
 .os-title-wrap { flex: 1; min-width: 0; }
 .os-title { font-size: 20px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .os-sub { font-size: 13px; color: var(--text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -2809,7 +2813,7 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 .os-owner-row:last-child { border-bottom: none; }
 
 .os-avatar {
-    width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+    width: 47px; height: 47px; border-radius: 50%; object-fit: cover;
     background: rgba(139,92,246,0.15); display: flex; align-items: center;
     justify-content: center; font-size: 18px; font-weight: 800; color: #fff;
 }
