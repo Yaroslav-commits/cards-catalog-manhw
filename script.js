@@ -1286,20 +1286,32 @@ async function openModal(item) {
             var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); 
             var passOpen = document.getElementById('passScreen').classList.contains('open');
             var detailOpen = document.getElementById('collDetailView').style.display === 'block';
-            var ownersOpen = document.getElementById('ownersScreen').classList.contains('open'); // <-- ДОБАВЛЕНО
+            var ownersOpen = document.getElementById('ownersScreen').classList.contains('open');
+            var favSystemOpen = document.getElementById('favSystemSheet').classList.contains('open'); // Для любимых карт
+            var titleSystemOpen = document.getElementById('titleSystemSheet').classList.contains('open'); // Для титулов
+            var bgSystemOpen = document.getElementById('bgSystemSheet').classList.contains('open'); // Для фонов
+            var frameSystemOpen = document.getElementById('frameSystemSheet').classList.contains('open'); // Для рамок
 
-            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen || ownersOpen) tg.BackButton.show(); // <-- ДОБАВЛЕНО ownersOpen
-            else tg.BackButton.hide();
+            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen || ownersOpen || favSystemOpen || titleSystemOpen || bgSystemOpen || frameSystemOpen) {
+                tg.BackButton.show();
+            } else {
+                tg.BackButton.hide();
+            }
         }
 
         if (tg.BackButton && tg.BackButton.onClick) {
             tg.BackButton.onClick(function() {
+                // ПОРЯДОК ВАЖЕН: Закрываем окна от верхних к нижним
                 if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
-                else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
-                else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
+                else if (document.getElementById('favSystemSheet').classList.contains('open')) closeFavSystem();
+                else if (document.getElementById('titleSystemSheet').classList.contains('open')) closeTitleSystem();
+                else if (document.getElementById('bgSystemSheet').classList.contains('open')) closeBgSystem();
+                else if (document.getElementById('frameSystemSheet').classList.contains('open')) closeFrameSystem();
+                else if (document.getElementById('ownersScreen').classList.contains('open')) closeOwnersScreen();
                 else if (document.getElementById('publicProfileScreen').classList.contains('open')) closePublicProfile();
+                else if (document.getElementById('fullProfileScreen').classList.contains('open')) closeProfileModal();
+                else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
                 else if (document.getElementById('passScreen').classList.contains('open')) closePassModal();
-                else if (document.getElementById('ownersScreen').classList.contains('open')) closeOwnersScreen(); // <-- ДОБАВЛЕНО
                 else if (document.getElementById('collDetailView').style.display === 'block') backToUniverses();
             });
         }
@@ -1939,8 +1951,11 @@ function closePublicProfile() {
 async function openPublicProfile(targetId) {
     if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
 
+    // 🔥 ФИКС: Закрываем экран владельцев, чтобы не наслаивалось!
+    document.getElementById('ownersScreen').classList.remove('open');
+
     document.getElementById('publicProfileScreen').classList.add('open');
-    manageBack();
+    manageBack()
 
     try {
         var res = await fetch(API_BASE + '/api/public_profile/' + targetId);

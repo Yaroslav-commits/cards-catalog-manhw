@@ -2135,8 +2135,8 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 
 /* Рамка в списке ТОПа */
 .top-avatar-wrap .avatar-frame {
-    width: 135%;
-    height: 135%;
+    width: 128%;
+    height: 128%;
 }
 /* Магазин рамок */
 .shop-frame-price-box {
