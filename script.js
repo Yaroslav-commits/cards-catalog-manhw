@@ -1951,11 +1951,15 @@ function closePublicProfile() {
 async function openPublicProfile(targetId) {
     if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('light');
 
-    // 🔥 ФИКС: Закрываем экран владельцев, чтобы не наслаивалось!
-    document.getElementById('ownersScreen').classList.remove('open');
+    // 🔥 ФИКС: Убираем оба мешающих слоя (и список владельцев, и саму карточку), чтобы профиль открылся идеально!
+    var ownersScr = document.getElementById('ownersScreen');
+    if (ownersScr) ownersScr.classList.remove('open');
+
+    var cModal = document.getElementById('cardModal');
+    if (cModal) cModal.classList.remove('open');
 
     document.getElementById('publicProfileScreen').classList.add('open');
-    manageBack()
+    manageBack();
 
     try {
         var res = await fetch(API_BASE + '/api/public_profile/' + targetId);
