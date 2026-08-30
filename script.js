@@ -3445,7 +3445,7 @@ function renderOwnersList(data) {
         var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
         var avatarSrc = API_BASE + "/api/avatar/" + player.id + "?name=" + encodeURIComponent(cleanName);
 
-        var frameHtml = player.frame_url ? `<img src="${player.frame_url}" class="avatar-frame" style="width:135%; height:135%;">` : '';
+        var frameHtml = player.frame_url ? `<img src="${player.frame_url}" class="avatar-frame" style="width:130%; height:130%;">` : '';
         var badgeHtml = player.count > 1 ? `<div class="os-badge">×${player.count}</div>` : '';
 
         var html = `

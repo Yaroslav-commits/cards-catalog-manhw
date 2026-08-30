@@ -2813,7 +2813,7 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 .os-owner-row:last-child { border-bottom: none; }
 
 .os-avatar {
-    width: 47px; height: 47px; border-radius: 50%; object-fit: cover;
+    width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
     background: rgba(139,92,246,0.15); display: flex; align-items: center;
     justify-content: center; font-size: 18px; font-weight: 800; color: #fff;
 }
