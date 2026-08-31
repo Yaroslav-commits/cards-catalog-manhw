@@ -13,7 +13,7 @@ var SKILLS_MAP = {
     ],
     "Берсерк": [
         "uayt", "hell_dzho", "yubin", "han_wanguk", "ji_gonsop", 
-        "lee_jinson", "kim_gapryeon", "beakcheon", "antares", 
+        "lee_jinson", "kim_gapryeon", "beakcheon", "antares", "antares_woo",
         "choi_jong_in", "moyeong_yul_cheon", "jo_uk_kun", "yunsu", "li_dzhagang", "yu"
     ],
     "Пространство": [
