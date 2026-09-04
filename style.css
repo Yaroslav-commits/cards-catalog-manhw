@@ -2026,8 +2026,8 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 120%;  /* БЫЛО 140%, СТАЛО 120% */
-    height: 120%; /* БЫЛО 140%, СТАЛО 120% */
+    width: 120%;
+    height: 120%;
     pointer-events: none;
     z-index: 5;
     object-fit: contain;
@@ -2137,8 +2137,8 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 
 /* Рамка в списке ТОПа */
 .top-avatar-wrap .avatar-frame {
-    width: 128%;
-    height: 128%;
+    width: 122%;
+    height: 122%;
 }
 /* Магазин рамок */
 .shop-frame-price-box {
