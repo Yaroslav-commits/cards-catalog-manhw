@@ -96,5 +96,13 @@
         "file": "yu_bg.jpeg",
         "price": 99999,
         "id": "yu_bg"
+    },
+    {
+        "name": "The Boxer",
+        "file": "boxer.mp4",
+        "width": 1280,
+        "height": 720,
+        "price": 99999,
+        "id": "boxer"
     }
 ]
