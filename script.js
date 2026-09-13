@@ -2607,187 +2607,222 @@ async function openPublicProfile(targetId) {
         
         packWrapper.addEventListener('touchmove', handleMove, {passive: true});
         packWrapper.addEventListener('touchend', handleLeave);
-// ================= ДВУХУРОВНЕВЫЙ АЛЬБОМ СИСТЕМЫ =================
-        var collActiveUniverse = null;
-        var universeColors = {
-            'Поднятие уровня в одиночку': '#8b5cf6',
-            'ДжоДжо': '#f59e0b',
-            'Блич': '#ef4444',
-            'Код Гиас': '#d946ef',
-            'Наруто': '#a855f7',
-            'Клинок рассекающий демонов': '#06b6d4'
-        };
+// ================= Альбом системы коллекции ==================
+var collActiveUniverse = null;
+var universeColors = {
+    'Башня Бога': '#f43f5e', // Розово-красный
+    'Лукизм': '#f59e0b', // Золотой
+    'Легенда о северном клинке': '#3b82f6', // Ледяной синий
+    'Поднятие уровня в одиночку': '#8b5cf6', // Теневой фиолетовый
+    'Система всемогущего дизайнера': '#10b981', // Изумрудный
+    'Борьба в прямом эфире': '#ef4444', // Красный
+    'Я злодейка в романе о боевых искусствах, но я сильнейшая!': '#ec4899', // Маджента
+    'Убить Героя': '#7c3aed', // Темно-фиолетовый
+    'Факультет зачистки подземелий': '#06b6d4', // Бирюзовый
+    'Honkai: Star Rail': '#6366f1', // Космический индиго
+    'Ветролом': '#14b8a6', // Бирюзово-зеленый
+    'Мир после падения': '#94a3b8', // Серебряный (Светло-серый)
+    'Гениальный мечник академии': '#2563eb', // Насыщенный синий
+    'Я так и не смогла усмирить эту злую натуру': '#e11d48', // Карминный
+    'Жизнь неудачника': '#84cc16', // Токсично-зеленый
+    'Джинкс': '#d946ef', // Яркая фуксия
+    'Проход защиты': '#ea580c', // Оранжевый
+    'Агенты времени': '#0ea5e9', // Небесно-голубой
+    'Теневой раб': '#4f46e5', // Темный индиго
+    'Петля': '#f97316', // Ярко-оранжевый
+    'Я прокачиваюсь во сне, убивая монстров': '#c084fc', // Лавандовый
+    'Боксёр': '#dc2626' // Кроваво-красный
+};
 
-        function initCollection() {
-            if (typeof allCards === 'undefined' || !allCards.length) return;
-            
-            // Если игрок зашел внутрь конкретной вселенной, не сбрасываем экран
-            if (collActiveUniverse) {
-                openUniverseDetail(collActiveUniverse);
-                return;
-            }
-            
-            var container = document.getElementById('collUniversesContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            var ownedSet = new Set(typeof userOwnedCards !== 'undefined' ? userOwnedCards : []);
-            
-            // Группируем все карты по сериям (вселенным)
-            var uniMap = {};
-            allCards.forEach(c => {
-                if (!c.series) return;
-                if (!uniMap[c.series]) uniMap[c.series] = { total: 0, owned: 0 };
-                uniMap[c.series].total++;
-                if (ownedSet.has(c.id)) uniMap[c.series].owned++;
-            });
-            
-            // Отрисовываем плашки вселенных ровно как на картинке
-            Object.keys(uniMap).sort().forEach(uniName => {
-                var stats = uniMap[uniName];
-                var pct = stats.total > 0 ? Math.round((stats.owned / stats.total) * 100) : 0;
-                var color = universeColors[uniName] || 'var(--accent)';
-                
-                var cardHtml = `
-                    <div class="coll-universe-card" onclick="openUniverseDetail('${uniName}')">
-                        <div class="coll-uni-top">
-                            <div class="coll-uni-title">${uniName}</div>
-                            <div class="coll-uni-badge" style="--uni-color: ${color};">${pct}%</div>
-                        </div>
-                        <div class="coll-uni-meta">
-                            <span>Карты</span>
-                            <span class="coll-uni-count">${stats.owned} / ${stats.total}</span>
-                        </div>
-                        <div class="coll-uni-bar">
-                            <div class="coll-uni-fill" style="--uni-color: ${color}; width: ${pct}%;"></div>
-                        </div>
-                    </div>`;
-                container.insertAdjacentHTML('beforeend', cardHtml);
-            });
-        }
+function initCollection() {
+    if (typeof allCards === 'undefined' || !allCards.length) return;
 
-        function openUniverseDetail(uniName) {
-            collActiveUniverse = uniName;
-            document.getElementById('collUniversesView').style.display = 'none';
-            document.getElementById('collDetailView').style.display = 'block';
-            
-            var ownedSet = new Set(typeof userOwnedCards !== 'undefined' ? userOwnedCards : []);
-            var uniCards = allCards.filter(c => c.series === uniName);
-            var totalCount = uniCards.length;
-            var ownedCount = uniCards.filter(c => ownedSet.has(c.id)).length;
-            var totalPct = totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
-            var uniColor = universeColors[uniName] || 'var(--accent)';
-            
-            // Отрисовка верхней инфо-плашки вселенной (Окно 2)
-            var headerBox = document.getElementById('collDetailHeaderBox');
-            headerBox.innerHTML = `
+    // Если игрок зашел внутрь конкретной вселенной, не сбрасываем экран
+    if (collActiveUniverse) {
+        openUniverseDetail(collActiveUniverse);
+        return;
+    }
+
+    var container = document.getElementById('collUniversesContainer');
+    if (!container) return;
+
+    var ownedSet = new Set(typeof userOwnedCards !== 'undefined' ? userOwnedCards : []);
+    var uniMap = {};
+
+    // Подсчет карт
+    allCards.forEach(c => {
+        if (!c.series) return;
+        if (!uniMap[c.series]) uniMap[c.series] = { total: 0, owned: 0 };
+        uniMap[c.series].total++;
+        if (ownedSet.has(c.id)) uniMap[c.series].owned++;
+    });
+
+    // 🔥 ОПТИМИЗАЦИЯ: Буферизация для скорости
+    var htmlBuffer = '';
+    var delayIndex = 0; // Для красивой каскадной анимации
+
+    Object.keys(uniMap).sort().forEach(uniName => {
+        var stats = uniMap[uniName];
+        var pct = stats.total > 0 ? Math.round((stats.owned / stats.total) * 100) : 0;
+        var color = universeColors[uniName] || 'var(--accent)';
+
+        htmlBuffer += `
+            <div class="coll-universe-card" onclick="openUniverseDetail('${uniName}')" style="--uni-color: ${color}; animation-delay: ${delayIndex * 0.1}s;">
                 <div class="coll-uni-top">
-                    <div class="coll-uni-title" style="font-size: 20px;">${uniName}</div>
-                    <div class="coll-uni-badge" style="--uni-color: ${uniColor}; padding: 6px 14px; font-size:13px;">${totalPct}%</div>
+                    <div class="coll-uni-title">${uniName}</div>
+                    <div class="coll-uni-badge">${pct}%</div>
                 </div>
-                <div class="coll-uni-meta" style="margin-top: 15px;">
-                    <span>Карты вселенной</span>
-                    <span class="coll-uni-count">${ownedCount} / ${totalCount}</span>
+                <div class="coll-uni-meta">
+                    <span>Собрано карт</span>
+                    <span class="coll-uni-count">${stats.owned} / ${stats.total}</span>
                 </div>
-                <div class="coll-uni-bar" style="height: 8px; margin-top: 6px;">
-                    <div class="coll-uni-fill" style="--uni-color: ${uniColor}; width: ${totalPct}%; box-shadow: 0 0 10px ${uniColor};"></div>
-                </div>`;
-                
-            // Группируем карты внутри вселенной по редкости
-            var rarityMap = {};
-            uniCards.forEach(c => {
-                var r = c.rarity || 'Обычная ⚪️';
-                if (!rarityMap[r]) rarityMap[r] = [];
-                rarityMap[r].push(c);
-            });
-            
-            var rContainer = document.getElementById('collDetailRaritiesContainer');
-            rContainer.innerHTML = '';
-            
-            var rarityOrder = ['Божественная ⚫️', 'Мифическая 🔴', 'Легендарная 🔵', 'Эпическая 🟢', 'Редкая 🟡', 'Обычная ⚪️', 'Лимитированная ✨', 'Ивентовая 🪎'];
-            var rarityColors = {
-                'Обычная ⚪️': '#94a3b8', 'Редкая 🟡': '#fde047', 'Эпическая 🟢': '#4ade80',
-                'Легендарная 🔵': '#3b82f6', 'Мифическая 🔴': '#ef4444', 'Божественная ⚫️': '#d6d3d1',
-                'Лимитированная ✨': '#f472b6', 'Ивентовая 🪎': '#fb923c'
-            };
-            
-            rarityOrder.forEach(r => {
-                if (!rarityMap[r] || rarityMap[r].length === 0) return;
-                
-                var rCards = rarityMap[r];
-                var rOwned = rCards.filter(c => ownedSet.has(c.id)).length;
-                var rPct = Math.round((rOwned / rCards.length) * 100);
-                var rColor = rarityColors[r] || '#fff';
-                
-                var sectionHtml = `
-                    <div class="coll-rarity-section">
-                        <div class="coll-rarity-trigger" style="--r-color: ${rColor};" onclick="toggleCollRarity(this)">
-                            <div class="coll-rarity-title-txt">${r}</div>
-                            <div class="coll-rarity-right-info">
-                                <span style="font-size:13px; color:rgba(255,255,255,0.5); font-weight:600;">${rOwned} / ${rCards.length}</span>
-                                <div class="coll-rarity-badge-pct" style="--r-color: ${rColor};">${rPct}%</div>
-                            </div>
-                        </div>
-                        <div class="coll-grid-anim-wrapper">
-                            <div class="coll-grid-overflow">
-                                <div class="coll-cards-grid">`;
-                                
-                rCards.forEach(c => {
-                    var isOwned = ownedSet.has(c.id);
-                    var imgSrc = 'images/' + c.file;
-                    var fallbackSrc = imgSrc.replace(/\.jpe?g$/i, '.webp');
-                    
-                    if (isOwned) {
-                        var clickData = JSON.stringify(c).replace(/"/g, '&quot;');
-                        sectionHtml += `
-                            <div class="coll-mini-card owned" style="--r-color: ${rColor};" onclick="openModal(${clickData})">
-                                <img src="${imgSrc}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
-                                <div class="coll-card-check">
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                </div>
-                                <div class="coll-card-stats-strip">${c.name || ''}</div>
-                            </div>`;
-                    } else {
-                        sectionHtml += `
-                            <div class="coll-mini-card locked">
-                                <img src="${imgSrc}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
-                            </div>`;
-                    }
-                });
-                
-                sectionHtml += `</div></div></div></div>`;
-                rContainer.insertAdjacentHTML('beforeend', sectionHtml);
-            });
-            manageBack();
-        }
+                <div class="coll-uni-bar">
+                    <div class="coll-uni-fill" style="width: ${pct}%;"></div>
+                </div>
+            </div>`;
+        delayIndex++;
+    });
 
-        function backToUniverses() {
-            collActiveUniverse = null;
-            document.getElementById('collDetailView').style.display = 'none';
-            document.getElementById('collUniversesView').style.display = 'block';
-            initCollection();
-            manageBack();
-        }
+    container.innerHTML = htmlBuffer; // Вставляем 1 раз! Работает со скоростью света.
+}
 
-        function toggleCollRarity(triggerEl) {
-            var section = triggerEl.closest('.coll-rarity-section');
-            var wasOpen = section.classList.contains('open');
-            
-            // Rolling accordion: закрываем открытую редкость перед открытием новой
-            document.querySelectorAll('.coll-rarity-section').forEach(s => section !== s && s.classList.remove('open'));
-            
-            if (!wasOpen) {
-                section.classList.add('open');
-                setTimeout(() => {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 150);
-            } else {
-                section.classList.remove('open');
-            }
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.selectionChanged();
-            }
-        }
+function openUniverseDetail(uniName) {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+
+    collActiveUniverse = uniName;
+    document.getElementById('collUniversesView').style.display = 'none';
+    document.getElementById('collDetailView').style.display = 'block';
+
+    // Сброс скролла наверх
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    var ownedSet = new Set(typeof userOwnedCards !== 'undefined' ? userOwnedCards : []);
+    var uniCards = allCards.filter(c => c.series === uniName);
+    var totalCount = uniCards.length;
+    var ownedCount = uniCards.filter(c => ownedSet.has(c.id)).length;
+    var totalPct = totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
+    var uniColor = universeColors[uniName] || 'var(--accent)';
+
+    // Липкая шапка
+    var headerBox = document.getElementById('collDetailHeaderBox');
+    headerBox.innerHTML = `
+        <div class="coll-uni-top">
+            <div class="coll-uni-title" style="font-size: 20px;">${uniName}</div>
+            <div class="coll-uni-badge" style="--uni-color: ${uniColor}; padding: 6px 14px; font-size:13px; color:#000;">${totalPct}%</div>
+        </div>
+        <div class="coll-uni-meta" style="margin-top: 12px; color:rgba(255,255,255,0.6);">
+            <span>Прогресс архива</span>
+            <span class="coll-uni-count" style="color:#fff;">${ownedCount} / ${totalCount}</span>
+        </div>
+        <div class="coll-uni-bar" style="height: 8px; margin-top: 8px; background: rgba(0,0,0,0.5);">
+            <div class="coll-uni-fill" style="--uni-color: ${uniColor}; width: ${totalPct}%; box-shadow: 0 0 15px ${uniColor};"></div>
+        </div>`;
+
+    var rarityMap = {};
+    uniCards.forEach(c => {
+        var r = c.rarity || 'Обычная ⚪️';
+        if (!rarityMap[r]) rarityMap[r] = [];
+        rarityMap[r].push(c);
+    });
+
+    var rContainer = document.getElementById('collDetailRaritiesContainer');
+
+    var rarityOrder = ['Божественная ⚫️', 'Мифическая 🔴', 'Легендарная 🔵', 'Эпическая 🟢', 'Редкая 🟡', 'Обычная ⚪️', 'Лимитированная ✨', 'Ивентовая 🪎'];
+    var rarityColors = {
+        'Обычная ⚪️': '#94a3b8', 'Редкая 🟡': '#fde047', 'Эпическая 🟢': '#4ade80',
+        'Легендарная 🔵': '#3b82f6', 'Мифическая 🔴': '#ef4444', 'Божественная ⚫️': '#c4b5fd'
+    };
+
+    // 🔥 ОПТИМИЗАЦИЯ: Буферизация секций
+    var sectionsBuffer = '';
+
+    rarityOrder.forEach(r => {
+        if (!rarityMap[r] || rarityMap[r].length === 0) return;
+
+        var rCards = rarityMap[r];
+        var rOwned = rCards.filter(c => ownedSet.has(c.id)).length;
+        var rPct = Math.round((rOwned / rCards.length) * 100);
+        var rColor = rarityColors[r] || '#fff';
+
+        sectionsBuffer += `
+            <div class="coll-rarity-section">
+                <div class="coll-rarity-trigger" style="--r-color: ${rColor};" onclick="toggleCollRarity(this)">
+                    <div class="coll-rarity-title-txt">${r}</div>
+                    <div class="coll-rarity-right-info">
+                        <span style="font-size:14px; color:rgba(255,255,255,0.7); font-weight:700; margin-right:8px;">${rOwned} / ${rCards.length}</span>
+                        <div class="coll-rarity-badge-pct" style="--r-color: ${rColor};">${rPct}%</div>
+                    </div>
+                </div>
+                <div class="coll-grid-anim-wrapper">
+                    <div class="coll-grid-overflow">
+                        <div class="coll-cards-grid">`;
+
+rCards.forEach(c => {
+    var isOwned = ownedSet.has(c.id);
+    var imgSrc = 'images/' + c.file;
+    var fallbackSrc = imgSrc.replace(/\.jpe?g$/i, '.webp');
+
+    if (isOwned) {
+        sectionsBuffer += `
+            <div class="coll-mini-card owned" style="--r-color: ${rColor};" onclick="openModalById('${c.id}')">
+                <img src="${imgSrc}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+                <div class="coll-card-check">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="4"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="coll-card-stats-strip">${c.name || ''}</div>
+            </div>`;
+    } else {
+        sectionsBuffer += `
+            <div class="coll-mini-card locked">
+                <img src="${imgSrc}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackSrc}';">
+            </div>`;
+    }
+});
+
+        sectionsBuffer += `</div></div></div></div>`;
+    });
+
+    rContainer.innerHTML = sectionsBuffer;
+    manageBack();
+}
+
+function backToUniverses() {
+    collActiveUniverse = null;
+    document.getElementById('collDetailView').style.display = 'none';
+    document.getElementById('collUniversesView').style.display = 'block';
+
+    initCollection();
+    manageBack();
+}
+
+function toggleCollRarity(triggerEl) {
+    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
+
+    var section = triggerEl.closest('.coll-rarity-section');
+    var wasOpen = section.classList.contains('open');
+
+    // Схема "Аккордеон": закрываем остальные открытые вкладки
+    document.querySelectorAll('.coll-rarity-section').forEach(s => {
+        if (section !== s) s.classList.remove('open');
+    });
+
+    if (!wasOpen) {
+        section.classList.add('open');
+        // Плавная прокрутка с учетом нашей высокой "липкой" шапки
+        setTimeout(() => {
+            var headerOffset = 150;
+            var elementPosition = section.getBoundingClientRect().top;
+            var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                 top: offsetPosition,
+                 behavior: "smooth"
+            });
+        }, 150);
+    } else {
+        section.classList.remove('open');
+    }
+}
 // === РЕГИСТРАЦИЯ SERVICE WORKER (КЭШ ДЖЕДАЯ) ===
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
