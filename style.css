@@ -91,12 +91,37 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ================= КАТАЛОГ ================= */
-        .section-hero {
-    background: linear-gradient(135deg, rgba(20, 20, 32, 0.85), rgba(10, 10, 15, 0.95));
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+/* ================= ОБНОВЛЕННЫЕ ШАПКИ КАТАЛОГА И КОЛЛЕКЦИИ ================= */
+.section-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px; /* Идеальные плавные скругления */
+    padding: 22px 20px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(20, 20, 32, 0.85), rgba(10, 10, 15, 0.95)) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(139, 92, 246, 0.3);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 0 20px rgba(139, 92, 246, 0.1);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+/* Красивый неоновый разлом с левого края (как у карточек вселенных) */
+.section-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 25px var(--accent);
+    z-index: 1;
+}
+
+/* Чтобы контент не перекрывался бликом */
+.section-hero > * {
+    position: relative;
+    z-index: 2;
 }
         .hero-kicker {
             color: var(--accent-light); font-size: 10px; font-weight: 800;
