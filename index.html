@@ -12,19 +12,33 @@
 
 </head>
 <body>
-   <div id="splashScreen" class="splash-screen">
+    <div id="splashScreen" class="splash-screen">
         <div class="splash-text">ManhwCard</div>
     </div>
+
     <div id="tab-catalog" class="tab-content">
         <div class="section-hero">
             <div class="hero-kicker">ManhwCard Archive</div>
             <div class="hero-title">Каталог карточек</div>
             <div class="hero-subtitle">Собирай коллекцию, фильтруй по редкости и вселенным.</div>
+
             <div class="hero-pills">
-                <span class="hero-pill">🃏 <span id="catalogTotal">0 карт</span></span>
-                <span class="hero-pill">✨ <span id="catalogOwned">Собрано 0</span></span>
+                <span class="hero-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <rect x="7" y="7" width="3" height="9" rx="1"></rect>
+                        <rect x="14" y="7" width="3" height="5" rx="1"></rect>
+                    </svg>
+                    <span id="catalogTotal">0 карт</span>
+                </span>
+                <span class="hero-pill">
+                    <svg viewBox="0 0 24 24" fill="var(--premium-gold)" stroke="var(--premium-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span id="catalogOwned">Собрано 0</span>
+                </span>
             </div>
-        </div>
+        </div> <!-- ✅ ВАЖНО: Закрывающий тег для section-hero -->
 
         <svg style="display: none;">
             <symbol id="icon-cards" viewBox="0 0 24 24">

@@ -1187,79 +1187,133 @@
         }
         .top-score-ico { color: var(--accent-light); display: flex; align-items: center; }
         .top-score-ico svg { width: 16px; height: 16px; }
-/* МАНХВА-СТИЛЬ ДЛЯ ТОПА */
+/* ================= ТОПЫ: MEGA BEAUTIFUL STYLE ================= */
 .top-row {
     display: flex;
     align-items: center;
-    background: linear-gradient(90deg, rgba(30, 30, 42, 0.8) 0%, rgba(20, 20, 30, 0.5) 100%);
-    border-left: 4px solid #333;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    backdrop-filter: blur(5px);
-    transition: transform 0.2s;
+    background: linear-gradient(145deg, rgba(30, 30, 42, 0.9) 0%, rgba(16, 16, 24, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
 }
-.top-row:hover {
-    transform: translateX(5px);
-    border-left-color: #06b6d4;
-}
-.top-rank {
-    font-family: 'Russo One', sans-serif;
-    font-size: 20px;
-    font-style: italic;
-    width: 40px;
-    text-align: center;
-    color: #666;
-}
-/* Подсветка ТОП-3 */
-.top-row[data-rank="1"] { border-left-color: #fbbf24; background: linear-gradient(90deg, rgba(251, 191, 36, 0.15) 0%, transparent 100%); }
-.top-row[data-rank="1"] .top-rank { color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); font-size: 24px; }
 
-.top-row[data-rank="2"] { border-left-color: #94a3b8; }
-.top-row[data-rank="2"] .top-rank { color: #94a3b8; }
+.top-row:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+}
 
-.top-row[data-rank="3"] { border-left-color: #b45309; }
-.top-row[data-rank="3"] .top-rank { color: #b45309; }
+/* Светящаяся неоновая полоса слева в зависимости от места */
+.top-row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--rank-color, #333);
+    box-shadow: 0 0 15px var(--rank-color, transparent);
+    transition: 0.3s;
+}
+
+/* Круглые аватарки и идеальная центровка рамок */
+.top-avatar-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0 16px 0 12px;
+    width: 50px;
+    height: 50px;
+}
 
 .top-avatar {
-    width: 45px; height: 45px;
-    border-radius: 12px;
-    margin: 0 15px;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* 🔥 Идеальный круг */
+    object-fit: cover;
     border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
+
+.top-avatar-wrap .avatar-frame {
+    position: absolute;
+    width: 130%; /* Рамка чуть больше аватарки для идеального облегания */
+    height: 130%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Оформление мест (1, 2, 3 и остальные) */
+.top-rank {
+    font-family: 'Russo One', sans-serif;
+    font-size: 18px;
+    width: 35px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    z-index: 2;
+}
+
+.top-row[data-rank="1"] { --rank-color: #fbbf24; background: linear-gradient(145deg, rgba(251, 191, 36, 0.1), rgba(16, 16, 24, 0.95)); }
+.top-row[data-rank="1"] .top-rank { color: #fbbf24; text-shadow: 0 0 15px rgba(251, 191, 36, 0.6); font-size: 24px; }
+
+.top-row[data-rank="2"] { --rank-color: #e2e8f0; background: linear-gradient(145deg, rgba(226, 232, 240, 0.08), rgba(16, 16, 24, 0.95)); }
+.top-row[data-rank="2"] .top-rank { color: #e2e8f0; text-shadow: 0 0 10px rgba(226, 232, 240, 0.5); font-size: 22px; }
+
+.top-row[data-rank="3"] { --rank-color: #ea580c; background: linear-gradient(145deg, rgba(234, 88, 12, 0.08), rgba(16, 16, 24, 0.95)); }
+.top-row[data-rank="3"] .top-rank { color: #ea580c; text-shadow: 0 0 10px rgba(234, 88, 12, 0.5); font-size: 20px; }
+
+/* Текстовая информация */
 .top-info {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Чтобы длинные имена могли обрезаться */
+    min-width: 0;
+    z-index: 2;
 }
+
 .top-name {
     font-weight: 800;
     font-size: 16px;
-    color: #fff;
+    color: #ffffff;
     margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Добавляет троеточие длинным именам */
+    text-overflow: ellipsis;
 }
+
 .top-level-tag {
-    font-size: 12px;
-    font-weight: 700;
-    color: #06b6d4;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--accent-light);
     text-transform: uppercase;
     letter-spacing: 1px;
-    text-align: left;
-    margin-left: -2px; /* Чуть влево, как просил */
+    opacity: 0.8;
 }
+
 .top-score {
-    font-family: monospace;
     font-size: 16px;
-    font-weight: bold;
-    color: #a855f7;
+    font-weight: 900;
+    color: #fff;
     text-align: right;
-    white-space: nowrap; /* Чтобы баланс в 1+ млн не переносился */
-    flex-shrink: 0; /* Чтобы баланс не сжимался */
+    white-space: nowrap;
+    flex-shrink: 0;
     padding-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
 }
 /* ================= SYSTEM PACK ANIMATION ================= */
 /* === ОБНОВЛЕННЫЙ ЭКРАН ПАКОВ (ЭФФЕКТ СТЕНЫ ИЗ СТЕКЛА) === */
