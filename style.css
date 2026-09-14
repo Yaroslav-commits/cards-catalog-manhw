@@ -3058,3 +3058,163 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 .card:active::before, .coll-mini-card.owned:active::before {
     transform: translateX(150%);
 }
+/* ================= МАГАЗИН РАМОК: PREMIUM SHOWCASE ================= */
+
+/* Новая сетка для магазина (по 2 крупные карточки в ряд) */
+.premium-frames-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 10px 5px 30px;
+}
+
+/* Карточка товара (Витрина с подиумом) */
+.premium-frame-card {
+    background: linear-gradient(180deg, rgba(30, 30, 42, 0.4) 0%, rgba(10, 10, 15, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 24px 10px 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+
+/* Эффект нажатия */
+.premium-frame-card:active {
+    transform: translateY(6px) scale(0.95);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2), inset 0 0 15px rgba(139, 92, 246, 0.15);
+}
+
+/* Неоновый подиум на дне карточки */
+.premium-frame-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    right: 15%;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 3px 3px 0 0;
+    box-shadow: 0 -5px 20px var(--accent);
+    transition: 0.3s;
+}
+.premium-frame-card:active::before { height: 5px; box-shadow: 0 -10px 30px var(--accent); }
+
+/* Левитирующая аватарка */
+@keyframes floatArtifact {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.pf-icon-wrap {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: floatArtifact 4s ease-in-out infinite;
+}
+
+.pf-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.pf-frame {
+    position: absolute;
+    width: 135%;
+    height: 135%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Тексты */
+.pf-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 0 10px;
+}
+
+/* Ценник в стиле кибер-пилюли */
+.pf-price-tag {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.pf-price-tag.owned {
+    color: #4ade80;
+    border-color: rgba(74,222,128,0.3);
+    background: rgba(74,222,128,0.1);
+    box-shadow: 0 0 15px rgba(74,222,128,0.15);
+}
+
+/* Премиум-бейдж скидки */
+.pf-discount {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--premium-gold);
+    color: #000;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transform: rotate(12deg);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    z-index: 5;
+    border: 1px solid #fff;
+}
+
+/* ================= АНИМАЦИЯ БЛИКА ДЛЯ ГЛАВНОЙ КНОПКИ ГАЧИ ================= */
+@keyframes buttonShine {
+    0% { left: -100%; }
+    20% { left: 200%; }
+    100% { left: 200%; }
+}
+
+.gacha-btn-main {
+    position: relative;
+    overflow: hidden; /* Скрываем вылезающий блик */
+}
+.gacha-btn-main::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: buttonShine 4s infinite ease-in-out;
+    transform: skewX(-20deg);
+}

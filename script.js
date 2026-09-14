@@ -3124,35 +3124,52 @@ function switchShopSubTab(tab) {
 function renderShopFrames() {
     var grid = document.getElementById('shopFramesGrid');
     if (!grid) return;
+
+    // Переключаем класс сетки на новую, чтобы карточки стали большими (по 2 в ряд)
+    grid.className = 'premium-frames-grid';
     grid.innerHTML = '';
 
     var userAvatarSrc = document.getElementById('userAvatar') ? document.getElementById('userAvatar').src : '';
 
+    var htmlBuffer = ''; // Оптимизация!
+
     SHOP_FRAMES_DATA.forEach(frame => {
         var isOwned = userOwnedFrames.includes(frame.id);
         var priceHtml = '';
+        var discountBadge = '';
+
+        // Векторные иконки под размер ценников
+        var iconKrw = `<span style="color:#c4b5fd; font-weight:900; margin-right:2px; font-size:15px;">₩</span>`;
+        var iconDia = `<svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" style="width:16px;height:16px; margin-right:2px;"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>`;
 
         if (isOwned) {
-            priceHtml = '<div class="shop-frame-status owned">КУПЛЕНО ✓</div>';
+            priceHtml = '<div class="pf-price-tag owned">КУПЛЕНО ✓</div>';
         } else {
             var finalPrice = isUserPremium ? Math.floor(frame.price * 0.8) : frame.price;
-            var currIcon = frame.currency === 'krw' ? ICON_KRW_HTML : ICON_DIA_HTML;
-            var discountHtml = isUserPremium ? `<s style="font-size:10px; color:var(--text-muted); margin-right:4px;">${frame.price}</s>` : '';
-            priceHtml = `<div class="shop-frame-status price">${discountHtml}${currIcon}${finalPrice}</div>`;
+            var currIcon = frame.currency === 'krw' ? iconKrw : iconDia;
+
+            if (isUserPremium) {
+                discountBadge = '<div class="pf-discount">-20%</div>';
+                priceHtml = `<div class="pf-price-tag"><s style="font-size:11px; color:var(--text-muted); margin-right:4px;">${frame.price}</s> ${currIcon} ${finalPrice}</div>`;
+            } else {
+                priceHtml = `<div class="pf-price-tag">${currIcon} ${frame.price}</div>`;
+            }
         }
 
-        var html = `
-            <div class="frame-item-card" onclick="openFrameShopPreview('${frame.id}')">
-                <div class="frame-item-icon">
-                    <img src="${userAvatarSrc}" class="mini-avatar">
-                    <img src="${frame.url}" class="avatar-frame">
+        htmlBuffer += `
+            <div class="premium-frame-card" onclick="openFrameShopPreview('${frame.id}')">
+                ${discountBadge}
+                <div class="pf-icon-wrap">
+                    <img src="${userAvatarSrc}" class="pf-avatar">
+                    <img src="${frame.url}" class="pf-frame">
                 </div>
-                <div class="frame-item-name">${frame.name}</div>
+                <div class="pf-name">${frame.name}</div>
                 ${priceHtml}
             </div>
         `;
-        grid.insertAdjacentHTML('beforeend', html);
     });
+
+    grid.innerHTML = htmlBuffer;
 }
 
 function openFrameShopPreview(frameId) {
