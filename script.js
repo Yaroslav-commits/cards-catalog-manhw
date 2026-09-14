@@ -1846,17 +1846,20 @@ function closeProfileModal() {
 
 function renderTops(list) {
     var container = document.getElementById('topsListContainer');
-    container.innerHTML = '';
 
     if (!list || list.length === 0) {
         container.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Список пуст</div>';
         return;
     }
 
+    // 🚀 ОПТИМИЗАЦИЯ: Собираем весь HTML в буфер, чтобы не дергать DOM и убрать лаги
+    var htmlBuffer = '';
+
     list.forEach(function(player, index) {
         var rank = index + 1;
         var rankClass = '';
 
+        // Возвращаем на место твою логику классов
         if (rank === 1) rankClass = 'rank-1';
         else if (rank === 2) rankClass = 'rank-2';
         else if (rank === 3) rankClass = 'rank-3';
@@ -1864,22 +1867,22 @@ function renderTops(list) {
         var cleanName = (player.name || 'Игрок').trim();
         var initial = cleanName.charAt(0).toUpperCase();
 
+        // Апгрейд: красивые SVG-иконки вместо текста
         var scoreHtml = player.score;
-        if (currentTopCategory === 'krw') scoreHtml = '<span class="top-score-ico">₩</span> ' + player.score.replace(' ₩', '');
-        else if (currentTopCategory === 'diamond') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span> ' + player.score.replace(' 💎', '');
-        else if (currentTopCategory === 'cards') scoreHtml = '<span class="top-score-ico">🃣</span> ' + player.score.replace(' шт.', '');
-        else if (currentTopCategory === 'pvp' || currentTopCategory === 'pvp_season') scoreHtml = '<span class="top-score-ico">⚔</span> ' + player.score.replace(' побед', '');
-        else if (currentTopCategory === 'rank') scoreHtml = '<span class="top-score-ico">✪</span> ' + player.score.replace(' RP', '');
-        else if (currentTopCategory === 'bc') scoreHtml = '<span class="top-score-ico">Ⓑ</span> ' + player.score.replace(' 🪙', '');
+        if (currentTopCategory === 'krw') scoreHtml = '<span class="top-score-ico" style="color:#a855f7;">₩</span> ' + player.score.replace(' ₩', '');
+        else if (currentTopCategory === 'diamond') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" style="width:16px;height:16px;"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span> ' + player.score.replace(' 💎', '');
+        else if (currentTopCategory === 'cards') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"></path></svg></span> ' + player.score.replace(' шт.', '');
+        else if (currentTopCategory === 'pvp' || currentTopCategory === 'pvp_season') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="width:16px;height:16px;"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M14.5 6.5L18 3h3v3l-3.5 3.5"/><path d="M10 5L4 11"/></svg></span> ' + player.score.replace(' побед', '');
+        else if (currentTopCategory === 'rank') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="2" style="width:16px;height:16px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span> ' + player.score.replace(' RP', '');
+        else if (currentTopCategory === 'bc') scoreHtml = '<span class="top-score-ico" style="color:#fbbf24;">Ⓑ</span> ' + player.score.replace(' 🪙', '');
 
         var fallbackImg = "https://placehold.co/150x150/1c1c28/8b5cf6?text=" + initial;
         var avatarSrc = API_BASE + "/api/avatar/" + player.id + "?name=" + encodeURIComponent(cleanName);
 
-        // === МАГИЯ РАМОК В ТОПЕ ===
-        var frameHtml = player.frame_url
-            ? `<img src="${player.frame_url}" class="avatar-frame">`
-            : '';
+        var frameHtml = player.frame_url ? `<img src="${player.frame_url}" class="avatar-frame">` : '';
+        var premiumIcon = player.is_premium ? '<span style="font-size:14px; margin-left:4px;">👑</span>' : '';
 
+        // Формируем блок картинки, как в твоем оригинале
         var imgHtml = `
             <div class="top-avatar-wrap">
                 <img src="${avatarSrc}" class="top-avatar" onerror="this.src='${fallbackImg}'">
@@ -1887,20 +1890,24 @@ function renderTops(list) {
             </div>
         `;
 
+        // Формируем финальную карточку и кидаем в буфер
         var html = `
             <div class="top-row" data-rank="${rank}" onclick="openPublicProfile(${player.id})">
                 <div class="top-rank ${rankClass}">#${rank}</div>
                 ${imgHtml}
                 <div class="top-info">
-                    <div class="top-name">${cleanName}</div>
+                    <div class="top-name">${cleanName}${premiumIcon}</div>
                     <div class="top-level-tag">Lv. ${player.level || 1}</div>
                 </div>
                 <div class="top-score">${scoreHtml}</div>
             </div>
         `;
 
-        container.innerHTML += html;
+        htmlBuffer += html;
     });
+
+    // Вставляем все собранные карточки за 1 раз
+    container.innerHTML = htmlBuffer;
 }
 
         // ================= ТАЙМЕР PVP СЕЗОНА =================
