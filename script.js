@@ -1852,14 +1852,17 @@ function renderTops(list) {
         return;
     }
 
-    // 🚀 ОПТИМИЗАЦИЯ: Собираем весь HTML в буфер, чтобы не дергать DOM и убрать лаги
     var htmlBuffer = '';
+
+    // Вшиваем твои крутые SVG иконки с правильными цветами и свечением
+    var swordSvg = `<svg viewBox="0 0 100 100" fill="currentColor" style="width:16px;height:16px; color:#ef4444; filter:drop-shadow(0 0 5px rgba(239,68,68,0.5)); margin-right:4px;"><path d="M37.6,62.3c-0.3,0-0.5-0.1-0.8-0.3c-0.4-0.4-0.4-1.1,0-1.5l9.2-9.2c0.4-0.4,1.1-0.4,1.5,0 c0.4,0.4,0.4,1.1,0,1.5L38.4,62C38.2,62.2,37.9,62.3,37.6,62.3z"/><path d="M55.1,44.7c-0.3,0-0.5-0.1-0.8-0.3c-0.4-0.4-0.4-1.1,0-1.5l8.5-8.5c0.4-0.4,1.1-0.4,1.5,0 c0.4,0.4,0.4,1.1,0,1.5l-8.5,8.5C55.7,44.6,55.4,44.7,55.1,44.7z"/><path d="M27.8,72.1c-0.3,0-0.5-0.1-0.8-0.3c-0.4-0.4-0.4-1.1,0-1.5l2-2c0.4-0.4,1.1-0.4,1.5,0 c0.4,0.4,0.4,1.1,0,1.5l-2,2C28.3,72,28.1,72.1,27.8,72.1z"/><path d="M31.4,71.7c-0.3,0-0.5-0.1-0.8-0.3l-3.2-3.2c-0.4-0.4-0.4-1.1,0-1.5c0.4-0.4,1.1-0.4,1.5,0l3.2,3.2 c0.4,0.4,0.4,1.1,0,1.5C31.9,71.6,31.7,71.7,31.4,71.7z"/><path d="M39.2,63.9c-0.3,0-0.5-0.1-0.8-0.3l-3.2-3.2c-0.4-0.4-0.4-1.1,0-1.5c0.4-0.4,1.1-0.4,1.5,0L40,62 c0.4,0.4,0.4,1.1,0,1.5C39.8,63.8,39.5,63.9,39.2,63.9z"/><path d="M33.7,69.2c-0.6,0-1.1-0.5-1.1-1.1v-6c0-0.6,0.5-1.1,1.1-1.1c0.6,0,1.1,0.5,1.1,1.1v6 C34.8,68.7,34.3,69.2,33.7,69.2z"/><path d="M36.7,66.2h-6c-0.6,0-1.1-0.5-1.1-1.1c0-0.6,0.5-1.1,1.1-1.1h6c0.6,0,1.1,0.5,1.1,1.1 C37.8,65.7,37.3,66.2,36.7,66.2z"/><path d="M64.1,62.3c-0.3,0-0.5-0.1-0.8-0.3l-26-26c-0.4-0.4-0.4-1.1,0-1.5c0.4-0.4,1.1-0.4,1.5,0l26,26 c0.4,0.4,0.4,1.1,0,1.5C64.6,62.2,64.4,62.3,64.1,62.3z"/><path d="M73.9,72.1c-0.3,0-0.5-0.1-0.8-0.3l-2-2c-0.4-0.4-0.4-1.1,0-1.5c0.4-0.4,1.1-0.4,1.5,0l2,2 c0.4,0.4,0.4,1.1,0,1.5C74.5,72,74.2,72.1,73.9,72.1z"/><path d="M70.3,71.7c-0.3,0-0.5-0.1-0.8-0.3c-0.4-0.4-0.4-1.1,0-1.5l3.2-3.2c0.4-0.4,1.1-0.4,1.5,0 c0.4,0.4,0.4,1.1,0,1.5l-3.2,3.2C70.9,71.6,70.6,71.7,70.3,71.7z"/><path d="M62.5,63.9c-0.3,0-0.5-0.1-0.8-0.3c-0.4-0.4-0.4-1.1,0-1.5l3.2-3.2c0.4-0.4,1.1-0.4,1.5,0 c0.4,0.4,0.4,1.1,0,1.5l-3.2,3.2C63,63.8,62.8,63.9,62.5,63.9z"/><path d="M71,66.2h-6c-0.6,0-1.1-0.5-1.1-1.1c0-0.6,0.5-1.1,1.1-1.1h6c0.6,0,1.1,0.5,1.1,1.1 C72.1,65.7,71.6,66.2,71,66.2z"/><path d="M68,69.2c-0.6,0-1.1-0.5-1.1-1.1v-6c0-0.6,0.5-1.1,1.1-1.1c0.6,0,1.1,0.5,1.1,1.1v6 C69.1,68.7,68.6,69.2,68,69.2z"/><path d="M59.2,64.7c-0.3,0-0.5-0.1-0.8-0.3L33,38.8c-0.2-0.2-0.3-0.3-0.3-0.6L31,29.4c-0.1-0.3,0-0.7,0.3-1 c0.2-0.2,0.6-0.4,1-0.3l8.9,1.7c0.2,0,0.4,0.1,0.6,0.3l25.5,25.5c0.4,0.4,0.4,1.1,0,1.5L60,64.4C59.8,64.6,59.5,64.7,59.2,64.7z M34.7,37.6l24.5,24.5l5.8-5.8L40.5,31.8l-7.1-1.3L34.7,37.6z"/><path d="M42.5,64.7c-0.3,0-0.6-0.1-0.8-0.3l-7.3-7.3c-0.4-0.4-0.4-1.1,0-1.5l8.4-8.4c0.4-0.4,1.1-0.4,1.5,0 l7.3,7.3c0.4,0.4,0.4,1.1,0,1.5l-8.4,8.4C43,64.6,42.8,64.7,42.5,64.7z M36.7,56.3l5.8,5.8l6.9-6.9l-5.8-5.8L36.7,56.3z"/><path d="M58.1,49c-0.3,0-0.5-0.1-0.8-0.3l-7.3-7.3c-0.2-0.2-0.3-0.5-0.3-0.8c0-0.3,0.1-0.6,0.3-0.8l9.9-9.9 c0.2-0.2,0.3-0.3,0.6-0.3l8.9-1.7c0.3-0.1,0.7,0,1,0.3c0.2,0.2,0.4,0.6,0.3,1l-1.7,8.9c0,0.2-0.1,0.4-0.3,0.6l-9.9,9.9 C58.7,48.9,58.4,49,58.1,49z M52.4,40.7l5.8,5.8l8.9-8.9l1.3-7.1l-7.1,1.3L52.4,40.7z"/></svg>`;
+
+    var cardsSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px; color:var(--accent-light); filter:drop-shadow(0 0 5px rgba(196,181,253,0.5)); margin-right:4px;"><path d="M21.1935 16.793C20.8437 19.2739 20.6689 20.5143 19.7717 21.2572C18.8745 22 17.5512 22 14.9046 22H9.09536C6.44881 22 5.12553 22 4.22834 21.2572C3.33115 20.5143 3.15626 19.2739 2.80648 16.793L2.38351 13.793C1.93748 10.6294 1.71447 9.04765 2.66232 8.02383C3.61017 7 5.29758 7 8.67239 7H15.3276C18.7024 7 20.3898 7 21.3377 8.02383C22.0865 8.83268 22.1045 9.98979 21.8592 12"/><path d="M19.5617 7C19.7904 5.69523 18.7863 4.5 17.4617 4.5H6.53788C5.21323 4.5 4.20922 5.69523 4.43784 7"/><path d="M17.4999 4.5C17.5283 4.24092 17.5425 4.11135 17.5427 4.00435C17.545 2.98072 16.7739 2.12064 15.7561 2.01142C15.6497 2 15.5194 2 15.2588 2H8.74099C8.48035 2 8.35002 2 8.24362 2.01142C7.22584 2.12064 6.45481 2.98072 6.45704 4.00434C6.45727 4.11135 6.47146 4.2409 6.49983 4.5"/><circle cx="16.5" cy="11.5" r="1.5"/><path d="M19.9999 20L17.1157 17.8514C16.1856 17.1586 14.8004 17.0896 13.7766 17.6851L13.5098 17.8403C12.7984 18.2542 11.8304 18.1848 11.2156 17.6758L7.37738 14.4989C6.6113 13.8648 5.38245 13.8309 4.5671 14.4214L3.24316 15.3803"/></svg>`;
 
     list.forEach(function(player, index) {
         var rank = index + 1;
         var rankClass = '';
 
-        // Возвращаем на место твою логику классов
         if (rank === 1) rankClass = 'rank-1';
         else if (rank === 2) rankClass = 'rank-2';
         else if (rank === 3) rankClass = 'rank-3';
@@ -1867,12 +1870,11 @@ function renderTops(list) {
         var cleanName = (player.name || 'Игрок').trim();
         var initial = cleanName.charAt(0).toUpperCase();
 
-        // Апгрейд: красивые SVG-иконки вместо текста
         var scoreHtml = player.score;
         if (currentTopCategory === 'krw') scoreHtml = '<span class="top-score-ico" style="color:#a855f7;">₩</span> ' + player.score.replace(' ₩', '');
         else if (currentTopCategory === 'diamond') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" style="width:16px;height:16px;"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span> ' + player.score.replace(' 💎', '');
-        else if (currentTopCategory === 'cards') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"></path></svg></span> ' + player.score.replace(' шт.', '');
-        else if (currentTopCategory === 'pvp' || currentTopCategory === 'pvp_season') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="width:16px;height:16px;"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M14.5 6.5L18 3h3v3l-3.5 3.5"/><path d="M10 5L4 11"/></svg></span> ' + player.score.replace(' побед', '');
+        else if (currentTopCategory === 'cards') scoreHtml = '<span class="top-score-ico">' + cardsSvg + '</span> ' + player.score.replace(' шт.', '');
+        else if (currentTopCategory === 'pvp' || currentTopCategory === 'pvp_season') scoreHtml = '<span class="top-score-ico">' + swordSvg + '</span> ' + player.score.replace(' побед', '');
         else if (currentTopCategory === 'rank') scoreHtml = '<span class="top-score-ico"><svg viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="2" style="width:16px;height:16px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span> ' + player.score.replace(' RP', '');
         else if (currentTopCategory === 'bc') scoreHtml = '<span class="top-score-ico" style="color:#fbbf24;">Ⓑ</span> ' + player.score.replace(' 🪙', '');
 
@@ -1882,7 +1884,6 @@ function renderTops(list) {
         var frameHtml = player.frame_url ? `<img src="${player.frame_url}" class="avatar-frame">` : '';
         var premiumIcon = player.is_premium ? '<span style="font-size:14px; margin-left:4px;">👑</span>' : '';
 
-        // Формируем блок картинки, как в твоем оригинале
         var imgHtml = `
             <div class="top-avatar-wrap">
                 <img src="${avatarSrc}" class="top-avatar" onerror="this.src='${fallbackImg}'">
@@ -1890,7 +1891,6 @@ function renderTops(list) {
             </div>
         `;
 
-        // Формируем финальную карточку и кидаем в буфер
         var html = `
             <div class="top-row" data-rank="${rank}" onclick="openPublicProfile(${player.id})">
                 <div class="top-rank ${rankClass}">#${rank}</div>
@@ -1906,7 +1906,6 @@ function renderTops(list) {
         htmlBuffer += html;
     });
 
-    // Вставляем все собранные карточки за 1 раз
     container.innerHTML = htmlBuffer;
 }
 
