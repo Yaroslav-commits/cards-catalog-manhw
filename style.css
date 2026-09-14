@@ -1504,7 +1504,7 @@
 
         .pass-top-banner {
             position: relative; padding: 50px 20px 30px; margin-bottom: 16px;
-            background: linear-gradient(to right, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%), url('https://a-static.besthdwallpaper.com/solo-leveling-sung-jin-woo-shadows-wallpaper-2880x1800-88315_8.jpg') center/cover;
+            background: linear-gradient(to right, rgba(10,10,15,0.95) 10%, rgba(10,10,15,0.4) 100%), url('https://www.linkedin.com/pulse/from-webtoon-worldwide-phenomenon-how-solo-leveling-napier-mba-8r3me') center/cover;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .pass-top-banner::after {
@@ -1762,7 +1762,7 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 .gacha-quick-btn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px rgba(139,92,246,0.5); }
 
 .gacha-cost-box {
-    background: url('https://static.wikia.nocookie.net/omniscient-readers-viewpoint/images/3/36/Constellations.png/revision/latest?cb=20251220195134') center/cover;
+    background: url('https://starwalk.space/en/news/what-is-space') center/cover;
     border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
@@ -3133,8 +3133,8 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
 
 .pf-frame {
     position: absolute;
-    width: 135%;
-    height: 135%;
+    width: 110%;
+    height: 110%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
