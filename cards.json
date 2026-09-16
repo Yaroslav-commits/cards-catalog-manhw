@@ -1,5 +1,17 @@
 [
     {
+        "name": "Ли Хакхён",
+        "rarity": "Легендарная 🔵",
+        "style": "Манипуляция историями [👁️ Копирование] ",
+        "series": "Всеведущий читатель",
+        "speed": 89,
+        "strength": 88,
+        "intellect": 90,
+        "file": "lee_hakhyun.webp",
+        "exclusive": true,
+        "id": "lee_hakhyun"
+    },
+    {
         "name": "Халкарос",
         "rarity": "Мифическая 🔴",
         "style": "Универсал [🌑 Восстание]",

@@ -104,5 +104,19 @@
         "height": 720,
         "price": 99999,
         "id": "boxer"
+    },
+    {
+        "name": "Ли Хакхён",
+        "file": "hakhyun.mp4",
+        "width": 1280,
+        "height": 720,
+        "price": 99999,
+        "id": "hakhyun"
+    },
+    {
+        "name": "Lee Hakhyun",
+        "file": "hakhyun_bg.jpeg",
+        "price": 99999,
+        "id": "hakhyun_bg"
     }
 ]
