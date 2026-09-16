@@ -558,25 +558,34 @@ function getCardSkill(cardId) {
 function toggleCatalogTab(tab) {
     if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
     currentCatalogTab = tab;
-    
+
     var btnCards = document.getElementById('btnTabCards');
     var btnSkins = document.getElementById('btnTabSkins');
     var slider = document.getElementById('catalogToggleSlider');
-    
+
+    var sortFilter = document.getElementById('sortFilter');
+    var styleFilter = document.getElementById('styleFilter');
+    var exclusiveBtn = document.getElementById('exclusiveFilterBtn');
+
     if (tab === 'cards') {
         btnCards.classList.add('active');
         btnSkins.classList.remove('active');
         slider.style.transform = 'translateX(0)';
-        
-        document.getElementById('sortFilter').style.display = 'block';
-        document.getElementById('styleFilter').style.display = 'block';
-        document.getElementById('exclusiveFilterBtn').style.display = 'flex';
+
+        sortFilter.style.display = 'block';
+        styleFilter.style.display = 'block';
+        exclusiveBtn.style.display = 'flex';
     } else {
         btnCards.classList.remove('active');
         btnSkins.classList.add('active');
         slider.style.transform = 'translateX(100%)';
+
+        // Сила, скорость и навыки к скинам не относятся — прячем
+        sortFilter.style.display = 'none';
+        styleFilter.style.display = 'none';
+        exclusiveBtn.style.display = 'none';
     }
-    
+
     currentCatalogPage = 1;
     updateCards();
 }
