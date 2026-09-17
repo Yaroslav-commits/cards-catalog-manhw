@@ -1,10 +1,9 @@
 /* =====================================================================
-   CUSTOM SELECT — замена нативных дропдаунов
-   Подключать ПОСЛЕ style.css. Использует переменные из :root.
+   CUSTOM SELECT v2 — в эстетике системного окна
+   Подключать ПОСЛЕ style.css.
    ===================================================================== */
 
-/* Прячем нативный select, но оставляем его в DOM и доступным для форм.
-   display:none нельзя — ломает required и некоторые сценарии восстановления. */
+/* Прячем нативный select, но оставляем в DOM. */
 select.cs-native {
     position: absolute !important;
     width: 1px !important;
@@ -20,18 +19,21 @@ select.cs-native {
     opacity: 0;
 }
 
-/* ---------- Поле (то, что видно на месте селекта) ---------- */
+/* =====================  ПОЛЕ  ===================== */
 .cs-field {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
     width: 100%;
     box-sizing: border-box;
     min-height: 46px;
-    padding: 0 14px;
+    padding: 0 12px 0 14px;
     border-radius: 12px;
     border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-    background: var(--surface, #12121a);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+        var(--surface, #12121a);
     color: var(--text-main, #fff);
     font-family: inherit;
     font-size: 13px;
@@ -39,26 +41,41 @@ select.cs-native {
     text-align: left;
     cursor: pointer;
     outline: none;
+    overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-    transition: border-color 0.2s, background 0.2s, transform 0.12s;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.12s;
+}
+
+/* Светящаяся грань слева — вырастает при открытии */
+.cs-field::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 2px;
+    height: 0;
+    border-radius: 0 2px 2px 0;
+    background: var(--accent, #8b5cf6);
+    box-shadow: 0 0 10px var(--accent, #8b5cf6);
+    transform: translateY(-50%);
+    transition: height 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .cs-field:active { transform: scale(0.985); }
 
 .cs-field:focus-visible {
     border-color: var(--accent, #8b5cf6);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.22);
 }
 
 .cs-field[aria-expanded="true"] {
     border-color: var(--accent, #8b5cf6);
-    background: var(--surface-light, #1c1c28);
+    box-shadow: 0 0 22px rgba(139, 92, 246, 0.3), inset 0 0 18px rgba(139, 92, 246, 0.1);
 }
 
-.cs-field[aria-disabled="true"] {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
+.cs-field[aria-expanded="true"]::before { height: 58%; }
+
+.cs-field[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
 
 .cs-field-value {
     flex: 1;
@@ -70,131 +87,269 @@ select.cs-native {
 
 .cs-field-value.is-placeholder { color: var(--text-muted, #8b8b9e); }
 
-.cs-chevron {
-    width: 11px;
-    height: 11px;
+/* Шеврон в отдельной «клавише» */
+.cs-caret {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: background 0.25s, transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.cs-caret svg {
+    width: 10px;
+    height: 10px;
     color: var(--text-muted, #8b8b9e);
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s;
+    transition: color 0.25s;
 }
 
-.cs-field[aria-expanded="true"] .cs-chevron {
+.cs-field[aria-expanded="true"] .cs-caret {
+    background: rgba(139, 92, 246, 0.2);
     transform: rotate(180deg);
-    color: var(--accent-light, #c4b5fd);
 }
 
-/* Вариант под #styleFilter — повыше, поскруглее */
+.cs-field[aria-expanded="true"] .cs-caret svg { color: var(--accent-light, #c4b5fd); }
+
+/* Высокий вариант — под ряд с «Эксклюзивом» */
 .cs-field.cs-tall {
     min-height: 48px;
     border-radius: 14px;
-    padding: 0 16px;
-    font-size: 14px;
-    background: rgba(18, 18, 26, 0.9);
+    padding: 0 12px 0 16px;
+    font-size: 13px;
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ---------- Шторка ---------- */
+/* =====================  ФОН  ===================== */
 .cs-overlay {
     position: fixed;
     inset: 0;
-    z-index: 11000; /* выше гача-оверлея (10000) и шторки ачивок (9999) */
+    z-index: 11000;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.72);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    background:
+        radial-gradient(90% 55% at 50% 100%, rgba(139, 92, 246, 0.22), transparent 70%),
+        rgba(4, 4, 10, 0.78);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     opacity: 0;
-    transition: opacity 0.22s ease;
+    transition: opacity 0.25s ease;
 }
 
 .cs-overlay.is-open { opacity: 1; }
 
+/* =====================  ШТОРКА  ===================== */
 .cs-sheet {
+    position: relative;
     width: 100%;
     max-width: 480px;
     max-height: 78vh;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    padding: 8px 0 max(env(safe-area-inset-bottom, 12px), 12px);
-    background: var(--surface-light, #1c1c28);
-    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+    padding: 10px 0 max(env(safe-area-inset-bottom, 14px), 14px);
+    background: linear-gradient(180deg, #12121a 0%, #06060c 100%);
+    border: 1px solid var(--accent, #8b5cf6);
     border-bottom: none;
-    border-radius: 22px 22px 0 0;
-    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 24px 24px 0 0;
+    box-shadow:
+        0 0 50px rgba(139, 92, 246, 0.3),
+        inset 0 2px 24px rgba(139, 92, 246, 0.14),
+        0 -14px 44px rgba(0, 0, 0, 0.7);
     transform: translateY(100%);
-    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+    overflow: hidden;
 }
 
 .cs-overlay.is-open .cs-sheet { transform: translateY(0); }
 
+/* Тонкая «развёртка» поверх стекла */
+.cs-sheet::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.016) 0px,
+        rgba(255, 255, 255, 0.016) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+}
+
+/* Сканирующий луч по верхней кромке */
+.cs-scan {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 45%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-light, #c4b5fd), transparent);
+    animation: csScan 3.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes csScan {
+    0%   { transform: translateX(-110%); opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translateX(330%); opacity: 0; }
+}
+
+/* Угловые скобки HUD */
+.cs-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--accent, #8b5cf6);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.cs-corner.tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; border-radius: 6px 0 0 0; }
+.cs-corner.tr { top: 10px; right: 10px; border-left: 0; border-bottom: 0; border-radius: 0 6px 0 0; }
+.cs-corner.bl { bottom: 10px; left: 10px; border-right: 0; border-top: 0; border-radius: 0 0 0 6px; }
+.cs-corner.br { bottom: 10px; right: 10px; border-left: 0; border-top: 0; border-radius: 0 0 6px 0; }
+
 .cs-grabber {
-    width: 38px;
+    width: 40px;
     height: 4px;
-    margin: 4px auto 10px;
+    margin: 2px auto 12px;
     border-radius: 99px;
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(196, 181, 253, 0.35);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
     flex-shrink: 0;
+}
+
+/* ---------- Шапка ---------- */
+.cs-head {
+    padding: 0 26px 12px;
+    text-align: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.cs-kicker {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent-light, #c4b5fd);
+    opacity: 0.8;
+    margin-bottom: 5px;
 }
 
 .cs-title {
-    padding: 0 20px 12px;
-    font-size: 15px;
+    font-size: 19px;
     font-weight: 800;
-    color: var(--text-main, #fff);
-    flex-shrink: 0;
+    color: #fff;
+    text-shadow: 0 0 16px rgba(139, 92, 246, 0.65);
+    line-height: 1.2;
 }
 
-/* Поиск появляется только при большом списке */
-.cs-search {
-    padding: 0 16px 10px;
+.cs-count {
+    margin-top: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-muted, #8b8b9e);
+}
+
+/* Разделитель, гаснущий к краям */
+.cs-divider {
+    height: 1px;
+    margin: 0 20px 8px;
     flex-shrink: 0;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+}
+
+/* ---------- Поиск ---------- */
+.cs-search {
+    position: relative;
+    padding: 4px 16px 10px;
+    flex-shrink: 0;
+    z-index: 1;
 }
 
 .cs-search input {
     width: 100%;
     box-sizing: border-box;
-    padding: 11px 14px;
+    padding: 11px 14px 11px 38px;
     border-radius: 12px;
     border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.4);
     color: var(--text-main, #fff);
     font-family: inherit;
-    font-size: 14px; /* меньше 16px вызывает зум на iOS */
+    font-size: 14px;
     outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .cs-search input::placeholder { color: var(--text-muted, #8b8b9e); }
-.cs-search input:focus { border-color: var(--accent, #8b5cf6); }
 
+.cs-search input:focus {
+    border-color: var(--accent, #8b5cf6);
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.25);
+}
+
+.cs-search svg {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin-top: -9px;
+    color: var(--text-muted, #8b8b9e);
+    pointer-events: none;
+}
+
+/* ---------- Список ---------- */
 .cs-list {
+    position: relative;
+    z-index: 1;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    padding: 0 10px 4px;
+    padding: 0 12px 6px;
+}
+
+.cs-list::-webkit-scrollbar { width: 3px; }
+.cs-list::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.45);
+    border-radius: 99px;
 }
 
 .cs-group-label {
-    padding: 12px 12px 6px;
-    font-size: 11px;
+    padding: 14px 10px 6px;
+    font-size: 9px;
     font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     color: var(--text-muted, #8b8b9e);
 }
 
+/* ---------- Пункт ---------- */
 .cs-option {
+    --c: var(--accent, #8b5cf6);
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
     width: 100%;
     box-sizing: border-box;
-    padding: 13px 12px;
-    margin-bottom: 2px;
-    border: none;
-    border-radius: 12px;
-    background: transparent;
+    padding: 11px 12px;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.025);
     color: var(--text-main, #fff);
     font-family: inherit;
     font-size: 14px;
@@ -202,27 +357,76 @@ select.cs-native {
     text-align: left;
     cursor: pointer;
     outline: none;
+    overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-    transition: background 0.15s;
+    transition: background 0.18s, border-color 0.18s, transform 0.14s;
+    animation: csOptIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 24ms);
+}
+
+@keyframes csOptIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Цветная грань слева */
+.cs-option::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 0;
+    background: var(--c);
+    box-shadow: 0 0 12px var(--c);
+    border-radius: 0 3px 3px 0;
+    transform: translateY(-50%);
+    transition: height 0.24s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .cs-option:hover,
 .cs-option.is-active {
     background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
 }
 
-.cs-option:focus-visible {
-    box-shadow: inset 0 0 0 2px var(--accent, #8b5cf6);
-}
+.cs-option:active { transform: scale(0.98); }
+
+.cs-option:focus-visible { border-color: var(--c); }
 
 .cs-option[aria-selected="true"] {
-    background: rgba(139, 92, 246, 0.16);
-    color: var(--accent-light, #c4b5fd);
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--c) 22%, transparent),
+        rgba(255, 255, 255, 0.02) 65%);
+    border-color: color-mix(in srgb, var(--c) 40%, transparent);
 }
 
-.cs-option[aria-disabled="true"] {
-    opacity: 0.35;
-    cursor: not-allowed;
+.cs-option[aria-selected="true"]::before { height: 62%; }
+
+.cs-option[aria-disabled="true"] { opacity: 0.32; cursor: not-allowed; }
+
+/* Шар с эмодзи или буквой */
+.cs-orb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+    background: color-mix(in srgb, var(--c) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 42%, transparent);
+    color: var(--c);
+    transition: box-shadow 0.22s;
+}
+
+.cs-option[aria-selected="true"] .cs-orb,
+.cs-option.is-active .cs-orb {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--c) 55%, transparent);
 }
 
 .cs-option-label {
@@ -234,29 +438,36 @@ select.cs-native {
 }
 
 .cs-check {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
+    color: var(--c);
     opacity: 0;
-    color: var(--accent, #8b5cf6);
+    transform: scale(0.5);
+    transition: opacity 0.22s, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.cs-option[aria-selected="true"] .cs-check { opacity: 1; }
+.cs-option[aria-selected="true"] .cs-check { opacity: 1; transform: scale(1); }
 
 .cs-empty {
-    padding: 28px 12px;
+    padding: 34px 12px;
     text-align: center;
     font-size: 13px;
     color: var(--text-muted, #8b8b9e);
 }
 
-/* Блокировка скролла фона, пока шторка открыта */
-body.cs-lock {
-    overflow: hidden;
-    touch-action: none;
+body.cs-lock { overflow: hidden; touch-action: none; }
+
+/* Запасной вариант, если color-mix не поддерживается */
+@supports not (color: color-mix(in srgb, red 50%, transparent)) {
+    .cs-orb { background: rgba(139, 92, 246, 0.16); border-color: rgba(139, 92, 246, 0.42); }
+    .cs-option[aria-selected="true"] {
+        background: rgba(139, 92, 246, 0.18);
+        border-color: rgba(139, 92, 246, 0.4);
+    }
 }
 
-/* ---------- Десктоп: не шторка, а привязанное к полю меню ---------- */
+/* =====================  ДЕСКТОП  ===================== */
 @media (min-width: 700px) and (pointer: fine) {
     .cs-overlay {
         background: transparent;
@@ -268,36 +479,37 @@ body.cs-lock {
     .cs-sheet {
         position: absolute;
         width: auto;
-        min-width: var(--cs-anchor-width, 220px);
-        max-width: 360px;
-        max-height: 320px;
+        min-width: var(--cs-anchor-width, 240px);
+        max-width: 380px;
+        max-height: 340px;
         top: var(--cs-anchor-top, 0px);
         left: var(--cs-anchor-left, 0px);
-        padding: 6px 0;
-        border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
-        border-radius: 14px;
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
-        transform: translateY(-6px);
+        padding: 8px 0;
+        border-radius: 16px;
+        border-bottom: 1px solid var(--accent, #8b5cf6);
+        transform: translateY(-8px) scale(0.97);
         opacity: 0;
-        transition: transform 0.16s ease, opacity 0.16s ease;
+        transition: transform 0.18s ease, opacity 0.18s ease;
     }
 
-    .cs-overlay.is-open .cs-sheet {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    .cs-overlay.is-open .cs-sheet { transform: translateY(0) scale(1); opacity: 1; }
 
     .cs-grabber,
-    .cs-title { display: none; }
+    .cs-kicker,
+    .cs-count,
+    .cs-corner { display: none; }
 
-    .cs-option { padding: 10px 12px; font-size: 13px; }
+    .cs-head { padding: 4px 16px 8px; text-align: left; }
+    .cs-title { font-size: 13px; letter-spacing: 0.04em; }
+    .cs-option { padding: 9px 10px; font-size: 13px; }
+    .cs-orb { width: 24px; height: 24px; font-size: 12px; }
 
     body.cs-lock { overflow: hidden; touch-action: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .cs-overlay,
-    .cs-sheet,
-    .cs-chevron,
-    .cs-field { transition: none; }
+    .cs-overlay, .cs-sheet, .cs-caret, .cs-field,
+    .cs-option, .cs-option::before, .cs-check { transition: none; }
+    .cs-option { animation: none; }
+    .cs-scan { display: none; }
 }

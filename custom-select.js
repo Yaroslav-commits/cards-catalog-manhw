@@ -27,18 +27,66 @@
     'use strict';
 
     var SEARCH_THRESHOLD = 10;
+    var STAGGER_LIMIT = 14; // дальше задержку не наращиваем, иначе хвост списка «отстаёт»
     var instances = [];
     var openInstance = null;
 
-    var ICON_CHEVRON =
-        '<svg class="cs-chevron" viewBox="0 0 12 8" fill="none" aria-hidden="true">' +
-        '<path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2" ' +
-        'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    /* Цвета шаров по ведущему эмодзи. Палитра редкостей взята из script.js,
+       остальное подобрано под смысл: сила — красная, интеллект — циан и т.д. */
+    var ORB_COLORS = {
+        '⚪': '#94a3b8', '🟡': '#fde047', '🟢': '#4ade80', '🔵': '#3b82f6',
+        '🔴': '#ef4444', '⚫': '#c4b5fd', '✨': '#fbbf24', '🪎': '#22d3ee',
+        '💪': '#ef4444', '⚡': '#fbbf24', '🧠': '#06b6d4', '📅': '#38bdf8',
+        '👁': '#a855f7', '🌑': '#818cf8', '🩸': '#dc2626', '🌊': '#06b6d4',
+        '⚔': '#f59e0b', '🌪': '#4ade80', '⬆': '#4ade80', '⬇': '#f87171'
+    };
+
+    var EMOJI_RE = null;
+    try {
+        EMOJI_RE = new RegExp(
+            '^([\\u{1F000}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{2B00}-\\u{2BFF}\\u{2190}-\\u{21FF}]' +
+            '[\\uFE0F\\u200D\\u{1F3FB}-\\u{1F3FF}]*)+',
+            'u'
+        );
+    } catch (e) { EMOJI_RE = null; }
+
+    var ICON_CARET =
+        '<span class="cs-caret"><svg viewBox="0 0 12 8" fill="none" aria-hidden="true">' +
+        '<path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2.2" ' +
+        'stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 
     var ICON_CHECK =
         '<svg class="cs-check" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M2.5 8.5L6 12L13.5 4" stroke="currentColor" stroke-width="2.2" ' +
+        '<path d="M2.5 8.5L6 12L13.5 4" stroke="currentColor" stroke-width="2.4" ' +
         'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    var ICON_SEARCH =
+        '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+        '<circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="2"/>' +
+        '<path d="M11 11L14.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+    /* Отделяем ведущий эмодзи от подписи: он уезжает в шар слева,
+       а цвет шара берётся из палитры. */
+    function splitLabel(label) {
+        var text = String(label || '').trim();
+        var match = EMOJI_RE ? text.match(EMOJI_RE) : null;
+
+        if (match) {
+            var glyph = match[0];
+            var base = glyph.replace(/[\uFE0F\u200D]/g, '').charAt(0);
+            // Эмодзи вне BMP занимают две единицы — берём суррогатную пару целиком
+            if (glyph.charCodeAt(0) >= 0xD800 && glyph.charCodeAt(0) <= 0xDBFF) {
+                base = glyph.substr(0, 2);
+            }
+            return {
+                orb: glyph,
+                text: text.slice(glyph.length).trim() || text,
+                color: ORB_COLORS[base] || null
+            };
+        }
+
+        return { orb: text.charAt(0).toUpperCase(), text: text, color: null };
+    }
 
     function haptic(type) {
         try {
@@ -84,7 +132,7 @@
         if (select.dataset.csClass) field.className += ' ' + select.dataset.csClass;
         field.setAttribute('aria-haspopup', 'listbox');
         field.setAttribute('aria-expanded', 'false');
-        field.innerHTML = '<span class="cs-field-value"></span>' + ICON_CHEVRON;
+        field.innerHTML = '<span class="cs-field-value"></span>' + ICON_CARET;
 
         select.parentNode.insertBefore(field, select.nextSibling);
         this.field = field;
@@ -224,16 +272,26 @@
 
         overlay.innerHTML =
             '<div class="cs-sheet" role="dialog" aria-modal="true">' +
+            '<span class="cs-scan"></span>' +
+            '<span class="cs-corner tl"></span><span class="cs-corner tr"></span>' +
+            '<span class="cs-corner bl"></span><span class="cs-corner br"></span>' +
             '<div class="cs-grabber"></div>' +
+            '<div class="cs-head">' +
+            '<div class="cs-kicker">System</div>' +
             '<div class="cs-title"></div>' +
+            '<div class="cs-count"></div>' +
+            '</div>' +
+            '<div class="cs-divider"></div>' +
             (useSearch
-                ? '<div class="cs-search"><input type="text" inputmode="search" ' +
-                  'autocomplete="off" placeholder="Поиск"></div>'
+                ? '<div class="cs-search">' + ICON_SEARCH +
+                  '<input type="text" inputmode="search" autocomplete="off" placeholder="Поиск">' +
+                  '</div>'
                 : '') +
             '<div class="cs-list" role="listbox" tabindex="-1"></div>' +
             '</div>';
 
         overlay.querySelector('.cs-title').textContent = this.title();
+        overlay.querySelector('.cs-count').textContent = plural(this.items.length);
 
         this.overlay = overlay;
         this.sheet = overlay.querySelector('.cs-sheet');
@@ -314,12 +372,18 @@
                 lastGroup = item.group;
             }
 
+            var parts = splitLabel(item.label);
+            var delay = Math.min(shown, STAGGER_LIMIT);
+            var style = '--i:' + delay + (parts.color ? ';--c:' + parts.color : '');
+
             html +=
                 '<button type="button" class="cs-option" role="option"' +
+                ' style="' + style + '"' +
                 ' data-value="' + escapeHtml(item.value) + '"' +
                 ' aria-selected="' + (item.value === value ? 'true' : 'false') + '"' +
                 (item.disabled ? ' aria-disabled="true"' : '') + '>' +
-                '<span class="cs-option-label">' + escapeHtml(item.label) + '</span>' +
+                '<span class="cs-orb" aria-hidden="true">' + escapeHtml(parts.orb) + '</span>' +
+                '<span class="cs-option-label">' + escapeHtml(parts.text) + '</span>' +
                 ICON_CHECK +
                 '</button>';
             shown++;
@@ -329,9 +393,23 @@
             ? html
             : '<div class="cs-empty">Ничего не найдено</div>';
 
+        var countEl = this.overlay.querySelector('.cs-count');
+        if (countEl) countEl.textContent = plural(shown);
+
         this.buttons = Array.prototype.slice.call(this.listEl.querySelectorAll('.cs-option'));
         this.activeIndex = -1;
     };
+
+    function plural(n) {
+        var forms = ['вариант', 'варианта', 'вариантов'];
+        var mod100 = n % 100;
+        var mod10 = n % 10;
+        var form = (mod100 > 4 && mod100 < 20) ? 2
+            : (mod10 === 1) ? 0
+            : (mod10 > 1 && mod10 < 5) ? 1
+            : 2;
+        return n + ' ' + forms[form];
+    }
 
     CustomSelect.prototype.focusSelected = function () {
         for (var i = 0; i < this.buttons.length; i++) {
