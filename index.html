@@ -680,11 +680,11 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
                 Задания
             </button>
-        </div>
             <button class="earn-tab" id="earnTabDuel" onclick="switchEarnTab('duel')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
                 Дуэли
             </button>
+        </div>
 
         <!-- Пейн: Рефералы -->
         <div class="earn-pane active" id="earnRef">
@@ -1251,7 +1251,8 @@
 
       // Переходы из бота: открываем сразу нужный экран
       (function () {
-        var fromUrl = new URLSearchParams(location.search).get('tab');
+        var params = new URLSearchParams(location.search);
+        var fromUrl = params.get('tab');
         var fromTg = (tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
 
         if (fromUrl === 'spin' || fromTg === 'spin') {
@@ -1262,7 +1263,11 @@
         if (fromUrl === 'duel' || fromTg === 'duel') {
           openEarnModal();
           switchEarnTab('duel');
-          setTimeout(openDuelArena, 400);
+          // Арену открываем только по ссылке из бота после принятия вызова —
+          // там есть &id=. Из меню ставок попадаем просто в лобби.
+          if (params.get('id')) {
+            setTimeout(openDuelArena, 400);
+          }
         }
       })();
     </script>

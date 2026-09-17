@@ -704,3 +704,6 @@
     .duel-game-card::before, .duel-main-btn, .duel-rift::before,
     .duel-timer.urgent, .duel-ready, .duel-result-icon { animation: none; }
 }
+/* Три вкладки вместо двух — ужимаем подписи */
+.earn-tabs .earn-tab { font-size: 13px; gap: 6px; padding: 12px 4px; }
+.earn-tabs .earn-tab svg { width: 15px; height: 15px; }
