@@ -927,11 +927,21 @@ async function openModal(item) {
 
         function switchEarnTab(tab) {
             if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
-            var isRef = (tab === 'ref');
-            document.getElementById('earnTabRef').classList.toggle('active', isRef);
-            document.getElementById('earnTabTasks').classList.toggle('active', !isRef);
-            document.getElementById('earnRef').classList.toggle('active', isRef);
-            document.getElementById('earnTasks').classList.toggle('active', !isRef);
+
+            var panes = {
+                ref:   { btn: 'earnTabRef',   pane: 'earnRef'   },
+                tasks: { btn: 'earnTabTasks', pane: 'earnTasks' },
+                duel:  { btn: 'earnTabDuel',  pane: 'earnDuel'  }
+            };
+
+            Object.keys(panes).forEach(function (key) {
+                var btn = document.getElementById(panes[key].btn);
+                var pane = document.getElementById(panes[key].pane);
+                if (btn) btn.classList.toggle('active', key === tab);
+                if (pane) pane.classList.toggle('active', key === tab);
+            });
+
+            if (tab === 'duel' && typeof initDuelLobby === 'function') initDuelLobby();
         }
 
         // ---------- РЕФЕРАЛЫ ----------
@@ -1292,16 +1302,18 @@ async function openModal(item) {
             var earnOpen = document.getElementById('earnScreen').classList.contains('open');
             var sheetOpen = document.getElementById('taskSheet').classList.contains('open');
             var profileOpen = document.getElementById('fullProfileScreen').classList.contains('open');
-            var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open'); 
+            var pubProfileOpen = document.getElementById('publicProfileScreen').classList.contains('open');
             var passOpen = document.getElementById('passScreen').classList.contains('open');
             var detailOpen = document.getElementById('collDetailView').style.display === 'block';
             var ownersOpen = document.getElementById('ownersScreen').classList.contains('open');
-            var favSystemOpen = document.getElementById('favSystemSheet').classList.contains('open'); // Для любимых карт
-            var titleSystemOpen = document.getElementById('titleSystemSheet').classList.contains('open'); // Для титулов
-            var bgSystemOpen = document.getElementById('bgSystemSheet').classList.contains('open'); // Для фонов
-            var frameSystemOpen = document.getElementById('frameSystemSheet').classList.contains('open'); // Для рамок
+            var favSystemOpen = document.getElementById('favSystemSheet').classList.contains('open');
+            var titleSystemOpen = document.getElementById('titleSystemSheet').classList.contains('open');
+            var bgSystemOpen = document.getElementById('bgSystemSheet').classList.contains('open');
+            var frameSystemOpen = document.getElementById('frameSystemSheet').classList.contains('open');
+            var duelOpen = document.getElementById('duelArena').classList.contains('open');
 
-            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen || ownersOpen || favSystemOpen || titleSystemOpen || bgSystemOpen || frameSystemOpen) {
+            if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen ||
+                ownersOpen || favSystemOpen || titleSystemOpen || bgSystemOpen || frameSystemOpen || duelOpen) {
                 tg.BackButton.show();
             } else {
                 tg.BackButton.hide();
@@ -1311,7 +1323,9 @@ async function openModal(item) {
         if (tg.BackButton && tg.BackButton.onClick) {
             tg.BackButton.onClick(function() {
                 // ПОРЯДОК ВАЖЕН: Закрываем окна от верхних к нижним
-                if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
+                if (document.getElementById('duelArena').classList.contains('open')) closeDuelArena();
+                else if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
+                else if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
                 else if (document.getElementById('favSystemSheet').classList.contains('open')) closeFavSystem();
                 else if (document.getElementById('titleSystemSheet').classList.contains('open')) closeTitleSystem();
                 else if (document.getElementById('bgSystemSheet').classList.contains('open')) closeBgSystem();
@@ -2322,31 +2336,39 @@ async function openPublicProfile(targetId) {
             val = parseInt(val);
             if (val < 1) val = 1;
             if (val > 16) val = 16;
-            
+
             selectedSummonAmount = val;
-            
+
             // 1. Обновляем инпут (ползунок) и центральную цифру
             document.getElementById('gachaSlider').value = val;
             document.getElementById('gachaSliderVal').innerText = val;
-            
+
             // 2. Обновляем активную кнопку снизу
             document.querySelectorAll('.gacha-quick-btn').forEach(b => {
                 b.classList.remove('active');
                 if (parseInt(b.dataset.val) === val) b.classList.add('active');
             });
-            
+
             // 3. Обновляем текст на кнопке "Открыть"
             document.getElementById('btnFullSummon').innerText = 'Открыть ' + val;
-            
+
             // 4. Считаем правильное склонение слова "попыток"
             var textStr = ' попыток';
             if (val === 1) textStr = ' попытка';
             else if (val > 1 && val < 5) textStr = ' попытки';
             document.getElementById('summonCostText').innerText = val + textStr;
-            
-            // Закрашиваем линию слайдера (фиолетовый прогресс-бар)
+
+            // 5. Заливка дорожки — только процент, сам градиент живёт в shop.css
             var percentage = ((val - 1) / 15) * 100;
-            document.getElementById('gachaSlider').style.background = `linear-gradient(90deg, var(--accent) ${percentage}%, rgba(255,255,255,0.1) ${percentage}%)`;
+            document.getElementById('gachaSlider').style.setProperty('--fill', percentage + '%');
+
+            // 6. Подсвечиваем стоимость красным, если попыток не хватает
+            var balEl = document.getElementById('shopAttemptsBal');
+            var costBox = document.querySelector('.gacha-cost-box');
+            if (balEl && costBox) {
+                var have = parseInt(balEl.innerText.replace(/\D/g, '')) || 0;
+                costBox.classList.toggle('not-enough', have < val);
+            }
 
             if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
         }
@@ -3119,15 +3141,21 @@ var selectedShopFrame = null;
 function switchShopSubTab(tab) {
     if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
 
-    document.getElementById('tabShopGachaBtn').classList.toggle('active', tab === 'gacha');
-    document.getElementById('tabShopFramesBtn').classList.toggle('active', tab === 'frames');
+    var tabs = {
+        gacha:  { btn: 'tabShopGachaBtn',  box: 'shopGachaContent'  },
+        wheel:  { btn: 'tabShopWheelBtn',  box: 'shopWheelContent'  },
+        frames: { btn: 'tabShopFramesBtn', box: 'shopFramesContent' }
+    };
 
-    document.getElementById('shopGachaContent').style.display = tab === 'gacha' ? 'block' : 'none';
-    document.getElementById('shopFramesContent').style.display = tab === 'frames' ? 'block' : 'none';
+    Object.keys(tabs).forEach(function (key) {
+        var btn = document.getElementById(tabs[key].btn);
+        var box = document.getElementById(tabs[key].box);
+        if (btn) btn.classList.toggle('active', key === tab);
+        if (box) box.style.display = (key === tab) ? 'block' : 'none';
+    });
 
-    if (tab === 'frames') {
-        renderShopFrames();
-    }
+    if (tab === 'frames') renderShopFrames();
+    if (tab === 'wheel' && typeof initWheel === 'function') initWheel();
 }
 
 function renderShopFrames() {

@@ -1,0 +1,784 @@
+/* =====================================================================
+   SHOP UPGRADE — подключать ПОСЛЕ style.css (и после custom-select.css)
+   Перекрывает существующие .gacha-* правила, HTML почти не трогает.
+   ===================================================================== */
+
+#tab-shop { --shop-glow: rgba(139, 92, 246, 0.45); }
+
+/* =====================  ТАБЫ  ===================== */
+.gacha-tabs {
+    display: flex;
+    gap: 4px;
+    background: linear-gradient(180deg, rgba(18, 18, 26, 0.9), rgba(10, 10, 16, 0.9));
+    border-radius: 18px;
+    padding: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
+    margin-bottom: 18px;
+}
+
+.gacha-tab {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 10px 2px;
+    text-align: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text-muted);
+    border-radius: 14px;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.25s, background 0.25s, transform 0.14s;
+}
+
+.gacha-tab svg {
+    width: 17px;
+    height: 17px;
+    stroke-width: 1.9;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.gacha-tab:active { transform: scale(0.95); }
+
+.gacha-tab.active {
+    background: linear-gradient(160deg, #8b5cf6, #6d28d9 60%, #4c1d95);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.gacha-tab.active svg { transform: translateY(-1px) scale(1.08); }
+
+/* Светящаяся подчёркивающая грань у активного таба */
+.gacha-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 22%;
+    right: 22%;
+    bottom: 3px;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px #fff;
+}
+
+/* =====================  БАННЕР  ===================== */
+.gacha-banner {
+    position: relative;
+    border-radius: 24px;
+    padding: 26px 20px 22px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(139, 92, 246, 0.45);
+    background: linear-gradient(180deg, #14101f 0%, #07070d 100%);
+    box-shadow: 0 0 44px rgba(139, 92, 246, 0.22), inset 0 2px 26px rgba(139, 92, 246, 0.12);
+}
+
+/* Аурора: два конических градиента, медленно вращающихся в разные стороны */
+.gacha-bg {
+    position: absolute;
+    inset: -60%;
+    opacity: 0.85;
+    background:
+        conic-gradient(from 0deg at 35% 40%,
+            transparent 0deg, rgba(139, 92, 246, 0.5) 60deg,
+            transparent 150deg, rgba(6, 182, 212, 0.35) 240deg, transparent 330deg),
+        conic-gradient(from 180deg at 70% 65%,
+            transparent 0deg, rgba(217, 70, 239, 0.4) 80deg, transparent 200deg);
+    filter: blur(36px);
+    animation: shopAurora 22s linear infinite;
+}
+
+@keyframes shopAurora {
+    to { transform: rotate(360deg); }
+}
+
+/* Голографический блик, проходящий по баннеру */
+.gacha-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.13), transparent);
+    transform: skewX(-18deg);
+    animation: shopSheen 6.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes shopSheen {
+    0%, 62% { left: -60%; }
+    100%    { left: 130%; }
+}
+
+/* Угловые скобки — как у дропдауна, чтобы язык был один */
+.gacha-banner::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    pointer-events: none;
+    border-radius: 16px;
+    background:
+        linear-gradient(var(--accent-light), var(--accent-light)) left    top    / 14px 1px no-repeat,
+        linear-gradient(var(--accent-light), var(--accent-light)) left    top    / 1px 14px no-repeat,
+        linear-gradient(var(--accent-light), var(--accent-light)) right   top    / 14px 1px no-repeat,
+        linear-gradient(var(--accent-light), var(--accent-light)) right   top    / 1px 14px no-repeat,
+        linear-gradient(var(--accent-light), var(--accent-light)) left    bottom / 14px 1px no-repeat,
+        linear-gradient(var(--accent-light), var(--accent-light)) left    bottom / 1px 14px no-repeat,
+        linear-gradient(var(--accent-light), var(--accent-light)) right   bottom / 14px 1px no-repeat,
+        linear-gradient(var(--accent-light), var(--accent-light)) right   bottom / 1px 14px no-repeat;
+    opacity: 0.4;
+}
+
+.gacha-content { position: relative; z-index: 2; }
+
+.gacha-kicker {
+    color: var(--accent-2);
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    text-shadow: 0 0 14px rgba(6, 182, 212, 0.7);
+}
+
+.gacha-title {
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    color: #fff;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 26px rgba(139, 92, 246, 0.8), 0 2px 0 rgba(0, 0, 0, 0.4);
+}
+
+.gacha-desc {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.62);
+    max-width: 90%;
+}
+
+/* ---------- Пилюля баланса ---------- */
+.gacha-bal-wrap {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.gacha-bal-pill {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.gacha-t-icon {
+    font-size: 22px;
+    line-height: 1;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.6));
+}
+
+.gacha-t-lbl {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.gacha-t-val {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 0 16px rgba(139, 92, 246, 0.7);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Класс вешается из JS при изменении баланса */
+.gacha-t-val.bump { animation: shopBump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+@keyframes shopBump {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.28); color: var(--accent-light); }
+    100% { transform: scale(1); }
+}
+
+.gacha-plus-btn {
+    width: 52px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(160deg, #a855f7, #6d28d9);
+    color: #fff;
+    font-size: 26px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+    transition: transform 0.14s, box-shadow 0.25s;
+}
+
+.gacha-plus-btn:active {
+    transform: scale(0.93);
+    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
+}
+
+/* =====================  СЕЛЕКТОР КРУТОК  ===================== */
+.gacha-selector {
+    position: relative;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    padding: 20px 18px;
+    margin-bottom: 12px;
+}
+
+.gacha-sel-title {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.gacha-slider-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.gacha-step-btn {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.14s;
+}
+
+.gacha-step-btn:active {
+    transform: scale(0.9);
+    background: rgba(139, 92, 246, 0.25);
+    border-color: var(--accent);
+}
+
+.gacha-center-val { text-align: center; }
+
+#gachaSliderVal {
+    display: block;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 30px var(--shop-glow), 0 0 60px rgba(139, 92, 246, 0.35);
+}
+
+.gacha-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ---------- Ползунок ---------- */
+.gacha-range-wrap { padding: 6px 4px 16px; }
+
+#gachaSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 99px;
+    outline: none;
+    background: linear-gradient(90deg, var(--accent) 0%, #d946ef var(--fill, 50%), rgba(255, 255, 255, 0.09) var(--fill, 50%));
+}
+
+#gachaSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 18px var(--shop-glow);
+    cursor: pointer;
+    transition: transform 0.14s;
+}
+
+#gachaSlider::-webkit-slider-thumb:active { transform: scale(1.22); }
+
+#gachaSlider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 18px var(--shop-glow);
+    cursor: pointer;
+}
+
+/* ---------- Быстрый выбор ---------- */
+.gacha-quick-btns { display: flex; gap: 7px; }
+
+.gacha-quick-btn {
+    flex: 1;
+    padding: 11px 0;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 13px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.gacha-quick-btn:active { transform: scale(0.93); }
+
+.gacha-quick-btn.active {
+    background: linear-gradient(160deg, var(--accent), #6d28d9);
+    border-color: var(--accent-light);
+    color: #fff;
+    box-shadow: 0 0 18px var(--shop-glow);
+}
+
+/* =====================  СТОИМОСТЬ  ===================== */
+.gacha-cost-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    border-radius: 18px;
+    background: linear-gradient(100deg, rgba(139, 92, 246, 0.16), rgba(6, 182, 212, 0.09));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.gacha-cost-box .gacha-t-lbl { color: #a5b4fc; }
+
+.gacha-t-val-large {
+    font-size: 19px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Подсветка, когда попыток не хватает (класс вешается из JS) */
+.gacha-cost-box.not-enough {
+    background: linear-gradient(100deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.06));
+    border-color: rgba(239, 68, 68, 0.45);
+}
+
+.gacha-cost-box.not-enough .gacha-t-lbl { color: #fca5a5; }
+
+/* =====================  КНОПКИ ДЕЙСТВИЯ  ===================== */
+.gacha-actions { display: flex; gap: 10px; }
+
+.gacha-btn-quick {
+    flex: 0.35;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    color: var(--accent-light);
+    border-radius: 18px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.gacha-btn-quick:active { transform: scale(0.95); background: rgba(139, 92, 246, 0.22); }
+
+.gacha-btn-main {
+    position: relative;
+    flex: 0.65;
+    background: linear-gradient(135deg, #a855f7, #d946ef 55%, #8b5cf6);
+    background-size: 200% 200%;
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    padding: 19px 0;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    animation: shopBtnFlow 5s ease infinite;
+    transition: transform 0.14s, box-shadow 0.25s;
+}
+
+@keyframes shopBtnFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+}
+
+/* Бегущий блик по кнопке */
+.gacha-btn-main::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+    animation: shopSheen 4s ease-in-out infinite;
+}
+
+.gacha-btn-main:active {
+    transform: scale(0.96);
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5);
+}
+
+.gacha-btn-main:disabled,
+.gacha-btn-quick:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    filter: grayscale(0.8);
+    animation: none;
+}
+
+.gacha-btn-main:disabled::after { display: none; }
+
+/* =====================  ДОСТУПНОСТЬ  ===================== */
+@media (prefers-reduced-motion: reduce) {
+    .gacha-bg,
+    .gacha-banner::before,
+    .gacha-btn-main,
+    .gacha-btn-main::after { animation: none; }
+    .gacha-t-val.bump { animation: none; }
+}
+
+/* =====================================================================
+   КОЛЕСО УДАЧИ
+   ===================================================================== */
+.wheel-wrap {
+    position: relative;
+    border-radius: 24px;
+    padding: 22px 18px 20px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    background: linear-gradient(180deg, #1a1408 0%, #07070d 70%);
+    box-shadow: 0 0 44px rgba(251, 191, 36, 0.14), inset 0 2px 26px rgba(251, 191, 36, 0.08);
+}
+
+.wheel-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -60%;
+    background: conic-gradient(from 0deg at 50% 45%,
+        transparent 0deg, rgba(251, 191, 36, 0.28) 70deg,
+        transparent 160deg, rgba(168, 85, 247, 0.3) 260deg, transparent 350deg);
+    filter: blur(44px);
+    animation: shopAurora 26s linear infinite;
+    pointer-events: none;
+}
+
+.wheel-head { position: relative; z-index: 2; text-align: center; margin-bottom: 16px; }
+
+.wheel-kicker {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--premium-gold);
+    text-shadow: 0 0 14px rgba(251, 191, 36, 0.7);
+    margin-bottom: 5px;
+}
+
+.wheel-title {
+    font-size: 27px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 26px rgba(251, 191, 36, 0.55);
+}
+
+/* ---------- Само колесо ---------- */
+.wheel-stage {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 18px;
+    aspect-ratio: 1;
+}
+
+.wheel-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 12px 34px rgba(0, 0, 0, 0.75));
+}
+
+/* Группа секторов — её и вращаем */
+#wheelRotor {
+    transform-origin: 150px 150px;
+    transition: transform 5.6s cubic-bezier(0.16, 0.72, 0.11, 1);
+}
+
+.wheel-sector-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    fill: #fff;
+    paint-order: stroke;
+    stroke: rgba(0, 0, 0, 0.55);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.wheel-sector-icon { font-size: 13px; }
+
+/* Стрелка-указатель */
+.wheel-pointer {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    width: 30px;
+    height: 38px;
+    margin-left: -15px;
+    z-index: 4;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+    transform-origin: 50% 20%;
+}
+
+.wheel-pointer.tick { animation: wheelTick 0.09s ease-out; }
+
+@keyframes wheelTick {
+    0%   { transform: rotate(0deg); }
+    45%  { transform: rotate(-13deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Ступица */
+.wheel-hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 27%;
+    height: 27%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 35% 30%, #2a2438, #0b0b12 70%);
+    border: 2px solid rgba(251, 191, 36, 0.55);
+    box-shadow: 0 0 26px rgba(251, 191, 36, 0.35), inset 0 2px 12px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+.wheel-hub-icon { font-size: 22px; line-height: 1; }
+
+.wheel-wrap.spinning .wheel-hub {
+    animation: wheelHubPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes wheelHubPulse {
+    0%, 100% { box-shadow: 0 0 26px rgba(251, 191, 36, 0.35), inset 0 2px 12px rgba(0, 0, 0, 0.8); }
+    50%      { box-shadow: 0 0 44px rgba(251, 191, 36, 0.8), inset 0 2px 12px rgba(0, 0, 0, 0.8); }
+}
+
+/* ---------- Баланс и кнопка ---------- */
+.wheel-bal {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wheel-bal-val {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 16px rgba(251, 191, 36, 0.6);
+}
+
+.wheel-spin-btn {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 19px 0;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b 55%, #d97706);
+    background-size: 200% 200%;
+    color: #1a1005;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    animation: shopBtnFlow 5s ease infinite;
+    transition: transform 0.14s;
+}
+
+.wheel-spin-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    transform: skewX(-20deg);
+    animation: shopSheen 4s ease-in-out infinite;
+}
+
+.wheel-spin-btn:active { transform: scale(0.96); }
+
+.wheel-spin-btn:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    filter: grayscale(0.85);
+    animation: none;
+}
+
+.wheel-spin-btn:disabled::after { display: none; }
+
+.wheel-hint {
+    position: relative;
+    z-index: 2;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ---------- Окно выигрыша ---------- */
+.wheel-prize-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(60% 50% at 50% 50%, rgba(251, 191, 36, 0.18), transparent 70%),
+                rgba(4, 4, 10, 0.86);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.wheel-prize-overlay.open { opacity: 1; pointer-events: auto; }
+
+.wheel-prize-card {
+    width: calc(100% - 56px);
+    max-width: 340px;
+    padding: 34px 24px 26px;
+    text-align: center;
+    border-radius: 26px;
+    background: linear-gradient(180deg, #16121f 0%, #07070d 100%);
+    border: 1px solid var(--pc, #fbbf24);
+    box-shadow: 0 0 60px color-mix(in srgb, var(--pc, #fbbf24) 40%, transparent);
+    transform: scale(0.75) translateY(20px);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+}
+
+.wheel-prize-overlay.open .wheel-prize-card { transform: scale(1) translateY(0); opacity: 1; }
+
+.wheel-prize-icon {
+    font-size: 62px;
+    line-height: 1;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 22px var(--pc, #fbbf24));
+    animation: wheelPrizePop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s backwards;
+}
+
+@keyframes wheelPrizePop {
+    from { transform: scale(0.2) rotate(-25deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.wheel-prize-kicker {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--pc, #fbbf24);
+    margin-bottom: 6px;
+}
+
+.wheel-prize-amount {
+    font-size: 40px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0 28px var(--pc, #fbbf24);
+    margin-bottom: 18px;
+}
+
+.wheel-prize-btn {
+    width: 100%;
+    padding: 15px 0;
+    border: none;
+    border-radius: 15px;
+    background: var(--pc, #fbbf24);
+    color: #14100a;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.14s;
+}
+
+.wheel-prize-btn:active { transform: scale(0.95); }
+
+@media (prefers-reduced-motion: reduce) {
+    .wheel-wrap::before,
+    .wheel-spin-btn,
+    .wheel-spin-btn::after,
+    .wheel-prize-icon { animation: none; }
+    #wheelRotor { transition-duration: 1.2s; }
+}

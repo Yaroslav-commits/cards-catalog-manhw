@@ -35,7 +35,7 @@
        остальное подобрано под смысл: сила — красная, интеллект — циан и т.д. */
     var ORB_COLORS = {
         '⚪': '#94a3b8', '🟡': '#fde047', '🟢': '#4ade80', '🔵': '#3b82f6',
-        '🔴': '#ef4444', '⚫': '#c4b5fd', '✨': '#fbbf24', '🪎': '#22d3ee',
+        '🔴': '#ef4444', '⚫': '#000000', '✨': '#fbbf24', '🪎': '#22d3ee',
         '💪': '#ef4444', '⚡': '#fbbf24', '🧠': '#06b6d4', '📅': '#38bdf8',
         '👁': '#a855f7', '🌑': '#818cf8', '🩸': '#dc2626', '🌊': '#06b6d4',
         '⚔': '#f59e0b', '🌪': '#4ade80', '⬆': '#4ade80', '⬇': '#f87171'
@@ -326,11 +326,19 @@
         this._onDocKey = this.onDocKey.bind(this);
         document.addEventListener('keydown', this._onDocKey);
 
-        this._onReposition = function () {
-            if (isDesktop()) self.positionSheet(); else self.close();
+        // Реагируем только на прокрутку СТРАНИЦЫ и только на десктопе
+        this._onScroll = function (e) {
+            if (!isDesktop()) return;
+            if (self.overlay && e.target && self.overlay.contains(e.target)) return;
+            self.positionSheet();
         };
-        global.addEventListener('resize', this._onReposition);
-        global.addEventListener('scroll', this._onReposition, true);
+        global.addEventListener('scroll', this._onScroll, true);
+
+        // На телефоне resize — это выехавшая клавиатура, закрываться нельзя
+        this._onResize = function () {
+            if (isDesktop()) self.positionSheet();
+        };
+        global.addEventListener('resize', this._onResize);
 
         // Запускаем анимацию въезда в следующем кадре
         requestAnimationFrame(function () {
