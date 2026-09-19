@@ -578,3 +578,11 @@
 #tab-profile {
     animation: none !important;
 }
+#tab-profile {
+    overflow-x: clip;
+}
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
