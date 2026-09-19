@@ -1709,9 +1709,6 @@
         }
 /* ================= GACHA PORTAL (МАГАЗИН) ================= */
 .gacha-tabs { display: flex; background: rgba(18, 18, 26, 0.6); border-radius: 16px; padding: 6px; border: 1px solid var(--border-color); margin-bottom: 20px; }
-.gacha-tab { flex: 1; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 700; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; }
-.gacha-tab.active { background: linear-gradient(135deg, var(--accent), #6b21a8); color: #fff; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
-
 .gacha-banner {
     position: relative; border-radius: 24px; padding: 24px 20px; min-height: 220px;
     background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(18, 18, 26, 0.9));
@@ -1724,32 +1721,16 @@
     z-index: 1; filter: drop-shadow(0 0 20px rgba(139,92,246,0.5)); pointer-events: none;
 }
 .gacha-content { position: relative; z-index: 2; max-width: 65%; }
-.gacha-kicker { color: var(--accent-2); font-size: 10px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
-.gacha-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; color: #fff; }
 .gacha-desc { font-size: 12px; color: #cbd5e1; margin-bottom: 20px; line-height: 1.4; }
 
 .gacha-bal-wrap { display: flex; align-items: center; gap: 10px; }
-.gacha-bal-pill {
-    background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3);
-    padding: 8px 12px; border-radius: 14px; display: flex; align-items: center; gap: 10px;
-}
 .gacha-t-icon { background: #f43f5e; color: #fff; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 0 10px rgba(244, 63, 94, 0.5); }
 .gacha-t-info { display: flex; flex-direction: column; }
-.gacha-t-lbl { font-size: 10px; color: var(--text-muted); font-weight: 600; }
-.gacha-t-val { font-size: 15px; font-weight: 800; color: #fff; line-height: 1.1; }
-.gacha-t-val-large { font-size: 18px; font-weight: 800; color: #fff; line-height: 1.1; }
 .gacha-plus-btn { width: 38px; height: 38px; border-radius: 50%; background: transparent; border: 2px solid var(--accent); color: var(--accent); font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
 .gacha-plus-btn:active { background: var(--accent); color: #fff; transform: scale(0.9); }
 
 .gacha-selector { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 12px; }
-.gacha-sel-title { text-align: center; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 20px; }
-.gacha-slider-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.gacha-step-btn { background: rgba(255,255,255,0.05); border: none; color: #fff; width: 44px; height: 36px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; }
-.gacha-step-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
-.gacha-center-val { text-align: center; }
 .gacha-center-val span { font-size: 36px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
-.gacha-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
-
 /* Кастомный Range Slider */
 .gacha-range-wrap { margin-bottom: 24px; padding: 0 10px; }
 input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
@@ -1758,21 +1739,15 @@ input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cur
 input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 8px; background: #fff; cursor: pointer; -webkit-appearance: none; margin-top: -9px; box-shadow: 0 0 15px var(--accent); border: 2px solid var(--accent); }
 
 .gacha-quick-btns { display: flex; justify-content: space-between; gap: 8px; }
-.gacha-quick-btn { flex: 1; padding: 12px 0; background: var(--surface-light); border: 1px solid var(--border-color); color: #fff; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.2s; }
-.gacha-quick-btn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px rgba(139,92,246,0.5); }
-
 .gacha-cost-box {
     background: url('https://starwalk.space/en/news/what-is-space') center/cover;
     border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
 }
-.gacha-cost-box .gacha-t-lbl { color: #a5b4fc; }
 .gacha-cost-box .gacha-t-val-large { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
 .gacha-actions { display: flex; gap: 12px; }
-.gacha-btn-quick { flex: 0.35; background: var(--surface-light); border: 1px solid var(--accent); color: var(--accent-light); border-radius: 16px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.2s; }
-.gacha-btn-main { flex: 0.65; background: linear-gradient(135deg, var(--accent), #d946ef); color: #fff; border: none; border-radius: 16px; padding: 18px 0; font-weight: 800; font-size: 17px; cursor: pointer; box-shadow: 0 8px 25px rgba(139,92,246,0.4); transition: 0.2s; }
 .gacha-btn-quick:active, .gacha-btn-main:active { transform: scale(0.96); }
 .gacha-btn-main:disabled, .gacha-btn-quick:disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
 
@@ -2109,31 +2084,6 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     color: #e2e8f0;
     font-weight: 600;
 }
-#styleFilter {
-    background: rgba(18, 18, 26, 0.9) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    height: 48px !important;
-    border-radius: 14px !important;
-    padding: 0 16px !important;
-    font-size: 14px !important;
-    outline: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-    width: 100% !important;
-    cursor: pointer !important;
-    /* Рисуем белую стрелочку, раз отключили стандартный стиль */
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 16px top 50% !important;
-    background-size: 12px auto !important;
-}
-
-#styleFilter option {
-    background: #12121a !important;
-    color: #ffffff !important;
-}
 /* ================= 3D МОДАЛКА ПОКУПКИ КРУТОК (СТВОРКИ) ================= */
 .gacha-buy-overlay {
     position: fixed; inset: 0; z-index: 10000;
@@ -2247,33 +2197,12 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     border-radius: 24px 24px 0 0;
     padding: 20px;
 }
-
-.frame-preview-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 15px 0 20px;
-}
-
-.preview-wrapper {
-    width: 80px;
-    height: 80px;
-}
-
 .preview-wrapper .profile-avatar {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
 }
-
-.frame-preview-title {
-    margin-top: 12px;
-    font-size: 14px;
-    font-weight: 800;
-    color: #fff;
-}
-
 .frame-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2292,46 +2221,19 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     background: var(--accent);
     border-radius: 10px;
 }
-
-.frame-item-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 12px 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
 .frame-item-card.active {
     border-color: var(--accent);
     background: rgba(139, 92, 246, 0.15);
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
 }
-
-.frame-item-icon {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    margin: 0 auto 8px;
-}
-
 .frame-item-icon img.mini-avatar {
     width: 100%;
     height: 100%;
     border-radius: 50%;
 }
-
-.frame-item-name {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-muted);
-}
-
 .frame-item-card.active .frame-item-name {
     color: #fff;
 }
-
 /* Обертка для аватарки в списке ТОПов */
 .top-avatar-wrap {
     position: relative;
@@ -2341,28 +2243,12 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     flex-shrink: 0;
     margin: 0 10px;
 }
-
 /* Рамка в списке ТОПа */
 .top-avatar-wrap .avatar-frame {
     width: 122%;
     height: 122%;
 }
 /* Магазин рамок */
-.shop-frame-price-box {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 16px;
-    text-align: center;
-    margin: 15px 0;
-}
-.shop-frame-status {
-    margin-top: 8px;
-    font-size: 12px;
-    font-weight: 800;
-    padding: 4px;
-    border-radius: 6px;
-}
 .shop-frame-status.owned {
     background: rgba(74, 222, 128, 0.15);
     color: #4ade80;
@@ -2585,58 +2471,6 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     color: #8e8e93;
     background: rgba(255, 255, 255, 0.03);
     border-color: rgba(255, 255, 255, 0.08);
-}
-/* ================= НОВЫЕ КНОПКИ МЕНЮ (Заработок, Бонус, Ачивки, Саппорт) ================= */
-.action-buttons-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Две колонки для 4 кнопок */
-    gap: 12px;
-    margin: 15px 10px 25px 10px;
-}
-
-.action-btn-modern {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
-    padding: 14px 10px;
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 700;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.action-btn-modern:active {
-    transform: scale(0.94);
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.action-btn-modern .btn-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    margin-bottom: 6px;
-}
-
-.action-btn-modern .btn-icon svg {
-    width: 100%;
-    height: 100%;
-    stroke: #ffffff; /* Цвет иконок (белый) */
-    filter: drop-shadow(0 2px 6px rgba(255, 255, 255, 0.2)); /* Легкое премиум-свечение */
-    transition: 0.2s;
-}
-
-.action-btn-modern:active .btn-icon svg {
-    transform: scale(0.9);
 }
 /* ================= ДИЗАЙН ДОСТИЖЕНИЙ ================= */
 
@@ -3203,10 +3037,6 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
     100% { left: 200%; }
 }
 
-.gacha-btn-main {
-    position: relative;
-    overflow: hidden; /* Скрываем вылезающий блик */
-}
 .gacha-btn-main::after {
     content: '';
     position: absolute;

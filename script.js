@@ -81,7 +81,14 @@ function getCardSkill(cardId) {
             }
             tg.showAlert((name || 'Раздел') + ' в разработке 🚧');
         }
-
+        // Сокращает крупные числа: 1 240 → 1.2K, 3 500 000 → 3.5M.
+        // Нужно, чтобы миллионные балансы не выпирали из колонок.
+        function formatBal(n) {
+            n = Number(n) || 0;
+            if (n >= 1000000) return (n / 1000000).toFixed(n >= 10000000 ? 0 : 1).replace('.0', '') + 'M';
+            if (n >= 10000)   return (n / 1000).toFixed(n >= 100000 ? 0 : 1).replace('.0', '') + 'K';
+            return n.toLocaleString('ru-RU');
+        }
 // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ КАТАЛОГА И СКИНОВ ===
         var currentCatalogTab = 'cards';
         var isExclusiveFilterActive = false;
@@ -147,15 +154,15 @@ function getCardSkill(cardId) {
                 if (res.ok) {
                     var data = await res.json();
                     
-                    document.getElementById('valKrw').innerText = data.krw;
-                    document.getElementById('valDiamond').innerText = data.diamond;
-                    document.getElementById('valBc').innerText = data.battlecoin;
+                    document.getElementById('valKrw').innerText = formatBal(data.krw);
+                    document.getElementById('valDiamond').innerText = formatBal(data.diamond);
+                    document.getElementById('valBc').innerText = formatBal(data.battlecoin);
                     if (document.getElementById('shopAttemptsBal')) {
                         document.getElementById('shopAttemptsBal').innerText = data.attempts || 0;
                     }
                     
                     userOwnedCards = data.owned_cards || [];
-                    document.getElementById('valCards').innerText = userOwnedCards.length;
+                    document.getElementById('valCards').innerText = formatBal(userOwnedCards.length);
 
                     // === НОВОЕ: СИНХРОНИЗАЦИЯ СКИНОВ ===
                     userOwnedSkins = data.owned_skins || [];
@@ -2108,16 +2115,24 @@ async function openPublicProfile(targetId) {
             var pct = Math.floor((passXp / passMaxXp) * 100) || 0;
             if (pct > 100) pct = 100;
             if (pct < 0) pct = 0;
-            
+
             var lvlEl = document.getElementById('mainMenuPassLvl');
             var progEl = document.getElementById('mainMenuPassProg');
-            if(lvlEl) lvlEl.innerHTML = 'Уровень <b>' + realPassLevel + '</b>';
-            
+            var fillEl = document.getElementById('mainMenuPassFill');
+
+            if (lvlEl) lvlEl.innerHTML = 'Уровень <b>' + realPassLevel + '</b>';
+
             var unclaimed = realPassLevel - claimedPassLevels;
             if (unclaimed > 0) {
-                if(progEl) progEl.innerHTML = '<span style="color:#4ade80">🎁 Награда ждёт!</span> ›';
+                if (progEl) progEl.innerHTML = '<span style="color:#4ade80">🎁 Награда ждёт!</span> ›';
+                // Линия заполняется целиком и золотеет — награду видно, не читая текст
+                if (fillEl) fillEl.classList.add('ready');
             } else {
-                if(progEl) progEl.innerHTML = 'Прогресс <b>' + pct + '%</b> ›';
+                if (progEl) progEl.innerHTML = 'Прогресс <b>' + pct + '%</b> ›';
+                if (fillEl) {
+                    fillEl.classList.remove('ready');
+                    fillEl.style.width = pct + '%';
+                }
             }
         }
 
@@ -2950,8 +2965,8 @@ async function executeBuyAttempts(currency, packIndex) {
             showToast('Успешно!', 'Приобретено +' + data.bought_attempts + ' круток!');
 
             // Моментально обновляем балансы в Web App
-            document.getElementById('valKrw').innerText = data.new_krw;
-            document.getElementById('valDiamond').innerText = data.new_diamond;
+            document.getElementById('valKrw').innerText = formatBal(data.new_krw);
+            document.getElementById('valDiamond').innerText = formatBal(data.new_diamond);
             document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
 
             closeBuyAttemptsModal();
@@ -3269,8 +3284,8 @@ async function executeBuyFrame() {
             showToast('Успешно!', 'Рамка добавлена в коллекцию!');
 
             // Моментально обновляем баланс
-            document.getElementById('valKrw').innerText = data.new_krw;
-            document.getElementById('valDiamond').innerText = data.new_dia;
+            document.getElementById('valKrw').innerText = formatBal(data.new_krw);
+            document.getElementById('valDiamond').innerText = formatBal(data.new_dia);
 
             // Добавляем в инвентарь без перезагрузки
             userOwnedFrames.push(selectedShopFrame.id);
