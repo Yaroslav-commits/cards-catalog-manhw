@@ -1,85 +1,102 @@
 /* =====================================================================
-   ГЛАВНОЕ МЕНЮ — космический стиль
-   Подключать ПОСЛЕДНИМ, после style.css, shop.css и duel.css.
+   ГЛАВНОЕ МЕНЮ — космос, версия 2
+   Подключать ПОСЛЕДНИМ, после style.css, shop.css, duel.css.
 
-   Принцип: никаких бегущих бликов и световых полос. Глубина берётся
-   слоями — звёздное поле, туманность, тонкие грани и угловые скобки.
-   Всё статично, ничего не мерцает.
+   Правило прежнее: никаких бегущих бликов и световых полос.
+   Впечатление берётся глубиной слоёв, контрастом и масштабом.
+
+   ФОН: положи сжатую туманность в images/nebula.webp.
+   Пути меняются в одном месте — в переменных ниже.
    ===================================================================== */
 
-/* ── Звёздное поле. Точки заданы вручную, чтобы не повторялись
-      и не выглядели сеткой. Слой статичный: анимации тут нет. ── */
+:root {
+    --nebula: url('images/nebula.webp');
+    --hud-line: rgba(167, 139, 250, 0.55);
+}
+
+/* =====================  ФОН ВКЛАДКИ  ===================== */
 #tab-profile {
     position: relative;
     isolation: isolate;
 }
 
+/* Слой 1: туманность. Сильно затемнена, работает как глубина,
+   а не как картинка — текст поверх обязан читаться. */
 #tab-profile::before {
     content: '';
     position: absolute;
-    inset: -20px -16px 0;
+    inset: -30px -16px 40px;
+    z-index: -2;
+    pointer-events: none;
+    background-image: var(--nebula);
+    background-size: 140% auto;
+    background-position: 62% -4%;
+    background-repeat: no-repeat;
+    opacity: 0.30;
+    /* Гасим к низу, чтобы кнопки внизу лежали на чистом тёмном */
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,0.55) 38%, transparent 72%);
+    mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,0.55) 38%, transparent 72%);
+}
+
+/* Слой 2: звёзды поверх туманности. Позиции заданы вручную,
+   чтобы не читались повторяющейся сеткой. */
+#tab-profile::after {
+    content: '';
+    position: absolute;
+    inset: -30px -16px 0;
     z-index: -1;
     pointer-events: none;
     background:
-        radial-gradient(62% 38% at 78% 4%,  rgba(109, 40, 217, 0.26), transparent 72%),
-        radial-gradient(54% 32% at 8% 22%,  rgba(6, 182, 212, 0.13), transparent 74%),
-        radial-gradient(46% 30% at 92% 56%, rgba(217, 70, 239, 0.10), transparent 76%),
-        radial-gradient(1.4px 1.4px at 11% 9%,  rgba(255,255,255,0.70), transparent),
-        radial-gradient(1.2px 1.2px at 27% 4%,  rgba(196,181,253,0.55), transparent),
-        radial-gradient(1px 1px   at 41% 14%, rgba(255,255,255,0.45), transparent),
-        radial-gradient(1.6px 1.6px at 63% 7%,  rgba(255,255,255,0.65), transparent),
-        radial-gradient(1px 1px   at 84% 17%, rgba(165,243,252,0.50), transparent),
-        radial-gradient(1.2px 1.2px at 95% 31%, rgba(255,255,255,0.40), transparent),
-        radial-gradient(1px 1px   at 6% 38%,  rgba(255,255,255,0.35), transparent),
-        radial-gradient(1.4px 1.4px at 19% 52%, rgba(196,181,253,0.45), transparent),
-        radial-gradient(1px 1px   at 36% 61%, rgba(255,255,255,0.30), transparent),
-        radial-gradient(1.2px 1.2px at 71% 47%, rgba(255,255,255,0.45), transparent),
-        radial-gradient(1px 1px   at 88% 68%, rgba(165,243,252,0.35), transparent),
-        radial-gradient(1.4px 1.4px at 14% 79%, rgba(255,255,255,0.40), transparent),
-        radial-gradient(1px 1px   at 52% 86%, rgba(196,181,253,0.35), transparent),
-        radial-gradient(1.2px 1.2px at 79% 92%, rgba(255,255,255,0.35), transparent);
-}
-
-/* ── Общая отделка панелей: угловые скобки как на HUD ── */
-.profile-card,
-.pass-bar,
-.module-card,
-.action-card {
-    position: relative;
-}
-
-.profile-card::after,
-.pass-bar::after {
-    content: '';
-    position: absolute;
-    inset: 9px;
-    pointer-events: none;
-    background:
-        linear-gradient(var(--hud), var(--hud)) left  top    / 13px 1px no-repeat,
-        linear-gradient(var(--hud), var(--hud)) left  top    / 1px 13px no-repeat,
-        linear-gradient(var(--hud), var(--hud)) right top    / 13px 1px no-repeat,
-        linear-gradient(var(--hud), var(--hud)) right top    / 1px 13px no-repeat,
-        linear-gradient(var(--hud), var(--hud)) left  bottom / 13px 1px no-repeat,
-        linear-gradient(var(--hud), var(--hud)) left  bottom / 1px 13px no-repeat,
-        linear-gradient(var(--hud), var(--hud)) right bottom / 13px 1px no-repeat,
-        linear-gradient(var(--hud), var(--hud)) right bottom / 1px 13px no-repeat;
-    opacity: 0.45;
+        radial-gradient(1.6px 1.6px at 11% 6%,  rgba(255,255,255,0.85), transparent),
+        radial-gradient(1.2px 1.2px at 27% 3%,  rgba(196,181,253,0.65), transparent),
+        radial-gradient(1px 1px     at 41% 11%, rgba(255,255,255,0.50), transparent),
+        radial-gradient(2px 2px     at 63% 5%,  rgba(255,255,255,0.90), transparent),
+        radial-gradient(1px 1px     at 84% 14%, rgba(165,243,252,0.60), transparent),
+        radial-gradient(1.4px 1.4px at 95% 27%, rgba(255,255,255,0.50), transparent),
+        radial-gradient(1px 1px     at 6% 33%,  rgba(255,255,255,0.40), transparent),
+        radial-gradient(1.6px 1.6px at 19% 47%, rgba(196,181,253,0.55), transparent),
+        radial-gradient(1px 1px     at 36% 57%, rgba(255,255,255,0.35), transparent),
+        radial-gradient(1.2px 1.2px at 71% 42%, rgba(255,255,255,0.50), transparent),
+        radial-gradient(1px 1px     at 88% 63%, rgba(165,243,252,0.40), transparent),
+        radial-gradient(1.4px 1.4px at 14% 74%, rgba(255,255,255,0.45), transparent),
+        radial-gradient(1px 1px     at 52% 82%, rgba(196,181,253,0.40), transparent);
 }
 
 /* =====================  КОМАНДНЫЙ ОТСЕК  ===================== */
 .profile-card {
-    --hud: #a78bfa;
-    border: 1px solid rgba(139, 92, 246, 0.32);
-    border-radius: 24px;
-    padding: 20px 18px;
+    position: relative;
+    border: 1px solid rgba(167, 139, 250, 0.38);
+    border-radius: 26px;
+    padding: 22px 18px 18px;
     margin-bottom: 14px;
     overflow: hidden;
     background:
-        radial-gradient(90% 120% at 88% -10%, rgba(139, 92, 246, 0.22), transparent 62%),
-        linear-gradient(165deg, #100e1e 0%, #08070f 62%, #05050a 100%);
+        linear-gradient(168deg, rgba(22, 16, 44, 0.90) 0%, rgba(8, 7, 16, 0.96) 58%, rgba(4, 4, 9, 0.99) 100%),
+        var(--nebula);
+    background-size: auto, 180% auto;
+    background-position: center, 30% 18%;
     box-shadow:
-        0 18px 44px rgba(0, 0, 0, 0.55),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        0 22px 50px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        0 1px 0 rgba(255, 255, 255, 0.07) inset;
+}
+
+/* Угловые скобки HUD */
+.profile-card::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    pointer-events: none;
+    background:
+        linear-gradient(var(--hud-line), var(--hud-line)) left  top    / 16px 1.5px no-repeat,
+        linear-gradient(var(--hud-line), var(--hud-line)) left  top    / 1.5px 16px no-repeat,
+        linear-gradient(var(--hud-line), var(--hud-line)) right top    / 16px 1.5px no-repeat,
+        linear-gradient(var(--hud-line), var(--hud-line)) right top    / 1.5px 16px no-repeat,
+        linear-gradient(var(--hud-line), var(--hud-line)) left  bottom / 16px 1.5px no-repeat,
+        linear-gradient(var(--hud-line), var(--hud-line)) left  bottom / 1.5px 16px no-repeat,
+        linear-gradient(var(--hud-line), var(--hud-line)) right bottom / 16px 1.5px no-repeat,
+        linear-gradient(var(--hud-line), var(--hud-line)) right bottom / 1.5px 16px no-repeat;
+    opacity: 0.6;
 }
 
 .profile-card:active { transform: scale(0.995); }
@@ -87,67 +104,75 @@
 .profile-head {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 15px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
-/* ── Аватар с орбитой ── */
+/* ── Аватар с кольцом прогресса PASS ──
+   Кольцо показывает тот же процент, что и шкала ниже.
+   Ставится из JS: element.style.setProperty('--p', '42%') */
 .avatar-wrapper {
     position: relative;
     flex-shrink: 0;
-    width: 76px;
-    height: 76px;
+    width: 78px;
+    height: 78px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Орбита: наклонённое кольцо. Статичное, без вращения. */
 .avatar-wrapper::before {
     content: '';
     position: absolute;
-    inset: -4px;
+    inset: 0;
     border-radius: 50%;
-    border: 1px solid rgba(167, 139, 250, 0.45);
-    border-right-color: transparent;
-    border-bottom-color: rgba(6, 182, 212, 0.35);
-    transform: rotate(-28deg);
+    background: conic-gradient(from -90deg,
+        #7c3aed 0%,
+        #a855f7 calc(var(--p, 0%) * 0.55),
+        #67e8f9 var(--p, 0%),
+        rgba(255, 255, 255, 0.08) var(--p, 0%));
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
     pointer-events: none;
 }
 
-/* Спутник на орбите */
+/* Спутник на конце дуги прогресса */
 .avatar-wrapper::after {
     content: '';
     position: absolute;
-    top: 4px;
-    right: 6px;
-    width: 5px;
-    height: 5px;
+    top: 3px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
     border-radius: 50%;
     background: #67e8f9;
-    box-shadow: 0 0 8px rgba(103, 232, 249, 0.9);
+    box-shadow: 0 0 10px rgba(103, 232, 249, 0.95);
+    transform: rotate(calc(var(--p, 0%) * 3.6)) translateY(0);
+    transform-origin: 3px 36px;
     pointer-events: none;
 }
 
 .profile-avatar {
-    width: 64px;
-    height: 64px;
+    width: 62px;
+    height: 62px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid rgba(139, 92, 246, 0.85);
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.10);
+    border: none;
+    box-shadow: 0 0 0 3px rgba(8, 7, 16, 0.95);
 }
 
 .profile-name {
     flex: 1;
     min-width: 0;
-    font-size: 23px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
     display: flex;
     align-items: center;
     gap: 9px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
 .profile-name > span:first-child {
@@ -159,32 +184,29 @@
 .profile-name .puzzle { font-size: 19px; filter: none; }
 
 .profile-chevron {
-    color: rgba(196, 181, 253, 0.55);
-    font-size: 24px;
+    color: rgba(196, 181, 253, 0.6);
+    font-size: 26px;
     font-weight: 300;
     flex-shrink: 0;
 }
 
 .profile-divider {
     height: 1px;
-    margin: 16px 0 14px;
-    background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.35), transparent);
+    margin: 18px 0 14px;
+    background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.45), transparent);
 }
 
-/* =====================  ТЕЛЕМЕТРИЯ (БАЛАНС)  =====================
-   Числа уменьшены и переведены на моноширинные цифры: при
-   миллионных балансах колонки больше не разъезжаются.
-   Компактный вид (1.2M) задаётся в JS, см. formatBal().
-   ================================================================ */
+/* =====================  ТЕЛЕМЕТРИЯ  ===================== */
 .balance-row {
     display: flex;
     align-items: stretch;
     position: relative;
-    z-index: 1;
-    padding: 10px 2px;
+    z-index: 2;
+    padding: 11px 2px;
     border-radius: 16px;
-    background: rgba(0, 0, 0, 0.32);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(2, 2, 6, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.55);
 }
 
 .balance-cell {
@@ -194,7 +216,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 6px;
     font-size: 15px;
     font-weight: 800;
     color: #fff;
@@ -212,131 +234,162 @@
 .balance-cell .b-ico {
     font-size: 15px;
     color: #c4b5fd;
-    opacity: 0.9;
     line-height: 1;
     font-weight: 700;
 }
 
-.balance-cell .b-svg {
-    width: 16px;
-    height: 16px;
-    color: #c4b5fd;
-    opacity: 0.9;
-}
+.balance-cell .b-svg { width: 16px; height: 16px; color: #c4b5fd; }
 
 .balance-sep {
     width: 1px;
-    height: auto;
     align-self: stretch;
-    margin: 4px 0;
-    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    margin: 5px 0;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.14), transparent);
 }
 
-/* =====================  PASS  ===================== */
+/* =====================  PASS  =====================
+   Полностью перестроен. Прежняя версия прятала прогресс
+   в четырёхпиксельную полоску по нижней кромке — её не было видно.
+   Теперь это крупная шкала с делениями и числами XP.
+   ================================================================ */
 .pass-bar {
-    --hud: #c4b5fd;
-    display: flex;
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "hex info"
+        "bar bar";
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 16px 18px 20px;
-    border-radius: 20px;
+    gap: 14px 14px;
+    padding: 18px;
+    border-radius: 22px;
     margin-bottom: 14px;
     overflow: hidden;
-    border: 1px solid rgba(139, 92, 246, 0.42);
+    border: 1px solid rgba(139, 92, 246, 0.45);
     background:
-        radial-gradient(80% 140% at 6% 0%, rgba(139, 92, 246, 0.30), transparent 66%),
-        linear-gradient(140deg, #150f2a 0%, #0a0814 100%);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+        radial-gradient(90% 150% at 4% 0%, rgba(124, 58, 237, 0.38), transparent 62%),
+        linear-gradient(140deg, #18102f 0%, #0a0814 100%);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5);
 }
 
+.pass-bar:active { transform: scale(0.995); }
+
+/* Шестиугольник с уровнем */
 .pass-badge {
-    position: relative;
-    z-index: 1;
-    font-size: 15px;
-    font-weight: 900;
-    letter-spacing: 0.16em;
-    color: #fff;
-    padding: 5px 11px;
-    border-radius: 9px;
-    background: rgba(139, 92, 246, 0.24);
-    border: 1px solid rgba(167, 139, 250, 0.5);
+    grid-area: hex;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 64px;
     flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: #fff;
+    background: linear-gradient(160deg, #8b5cf6, #5b21b6);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
-.pass-mid,
+.pass-badge .pass-lvl-num {
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.pass-info { grid-area: info; min-width: 0; }
+
+.pass-mid {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 3px;
+}
+
 .pass-right {
-    position: relative;
-    z-index: 1;
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
-    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.5);
+    font-variant-numeric: tabular-nums;
 }
 
 .pass-mid b, .pass-right b { color: #fff; font-weight: 800; }
 
-/* Линия прогресса по нижней кромке карточки */
+/* Шкала: толстая, с делениями, её видно с первого взгляда */
 .pass-line {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.06);
+    grid-area: bar;
+    position: relative;
+    height: 14px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    overflow: hidden;
 }
 
 .pass-line-fill {
     height: 100%;
     width: 0;
-    border-radius: 0 3px 3px 0;
-    background: linear-gradient(90deg, #7c3aed, #a855f7 55%, #67e8f9);
-    transition: width 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    border-radius: 7px;
+    background: linear-gradient(90deg, #6d28d9, #a855f7 45%, #67e8f9);
+    transition: width 0.6s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Когда награда ждёт — линия заполнена и подсвечена золотом */
+/* Деления поверх шкалы — десять сегментов */
+.pass-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(90deg,
+        transparent 0, transparent calc(10% - 2px),
+        rgba(2, 2, 6, 0.85) calc(10% - 2px), rgba(2, 2, 6, 0.85) 10%);
+}
+
+/* Награда ждёт: шкала полная и золотая */
 .pass-line-fill.ready {
     width: 100% !important;
-    background: linear-gradient(90deg, #f59e0b, #fbbf24 60%, #fde68a);
+    background: linear-gradient(90deg, #d97706, #fbbf24 55%, #fde68a);
 }
 
 /* =====================  МОДУЛЬ (БАНДА)  ===================== */
 .module-card {
-    border-radius: 18px;
-    padding: 15px 16px;
+    position: relative;
+    border-radius: 20px;
+    padding: 16px;
     border: 1px solid rgba(255, 255, 255, 0.07);
-    background: linear-gradient(150deg, rgba(18, 18, 30, 0.9), rgba(8, 8, 14, 0.9));
+    background: linear-gradient(150deg, rgba(20, 18, 34, 0.92), rgba(7, 7, 13, 0.95));
     overflow: hidden;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
 }
 
-/* Тонкая грань слева — отмечает раздел, не мигая */
 .module-card::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 22%;
-    bottom: 22%;
-    width: 2px;
-    border-radius: 0 2px 2px 0;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
     background: linear-gradient(180deg, #a855f7, #06b6d4);
 }
 
 .module-card:active { transform: scale(0.985); }
 
 .module-icon {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 13px;
-    background: rgba(139, 92, 246, 0.12);
-    border: 1px solid rgba(139, 92, 246, 0.28);
+    background: rgba(139, 92, 246, 0.14);
+    border: 1px solid rgba(139, 92, 246, 0.32);
     color: #c4b5fd;
 }
 
 .module-title { font-weight: 800; font-size: 15px; }
 .module-sub { font-size: 12px; color: rgba(255, 255, 255, 0.45); }
-.chev { color: rgba(196, 181, 253, 0.5); font-size: 22px; font-weight: 300; }
+.chev { color: rgba(196, 181, 253, 0.55); font-size: 22px; font-weight: 300; }
 
-/* =====================  МОДУЛИ СТАНЦИИ (4 КНОПКИ)  ===================== */
+/* =====================  МОДУЛИ СТАНЦИИ  ===================== */
 .quad-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -348,30 +401,45 @@
 
 .action-card {
     --tint: #a855f7;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
-    padding: 14px 13px 13px;
-    border-radius: 18px;
+    gap: 11px;
+    padding: 15px 14px 14px;
+    border-radius: 20px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.07);
-    background: linear-gradient(155deg, rgba(20, 20, 32, 0.95), rgba(7, 7, 13, 0.95));
+    background: linear-gradient(155deg, rgba(20, 20, 34, 0.95), rgba(6, 6, 12, 0.97));
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42);
     transition: transform 0.12s ease, border-color 0.2s;
 }
 
-/* Мягкое пятно цвета модуля в углу — статичное, не светит и не бежит */
+/* Мягкое пятно цвета модуля. Размытое и статичное — не светит. */
 .action-card::before {
     content: '';
     position: absolute;
-    top: -40%;
-    right: -30%;
-    width: 120px;
-    height: 120px;
+    top: -46%;
+    right: -34%;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
     background: var(--tint);
-    opacity: 0.13;
-    filter: blur(26px);
+    opacity: 0.16;
+    filter: blur(28px);
+    pointer-events: none;
+}
+
+/* Тонкая грань по верхней кромке — даёт объём без свечения */
+.action-card::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--tint), transparent);
+    opacity: 0.45;
     pointer-events: none;
 }
 
@@ -381,9 +449,9 @@
 }
 
 .action-ico {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -391,16 +459,16 @@
     position: relative;
     z-index: 1;
     color: var(--tint);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-.action-ico svg { width: 20px; height: 20px; }
+.action-ico svg { width: 21px; height: 21px; }
 
 .action-info { position: relative; z-index: 1; width: 100%; min-width: 0; }
 
 .action-title {
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 800;
     color: #fff;
     margin-bottom: 3px;
@@ -415,18 +483,16 @@
     color: rgba(255, 255, 255, 0.42);
 }
 
-/* Стрелка внизу справа, чтобы не отъедала ширину у текста */
 .action-arrow {
     position: absolute;
-    right: 12px;
-    bottom: 12px;
-    color: rgba(255, 255, 255, 0.22);
+    right: 13px;
+    bottom: 13px;
+    color: rgba(255, 255, 255, 0.24);
     z-index: 1;
 }
 
 .action-arrow svg { width: 15px; height: 15px; }
 
-/* Цвет каждого модуля */
 .action-card:has(.ico-earn)    { --tint: #4ade80; }
 .action-card:has(.ico-bonus)   { --tint: #fbbf24; }
 .action-card:has(.ico-achiev)  { --tint: #06b6d4; }
@@ -437,12 +503,6 @@
 .ico-bonus   { color: #fbbf24; }
 .ico-achiev  { color: #06b6d4; }
 .ico-support { color: #f472b6; }
-
-/* =====================  ШАПКА РАЗДЕЛА  ===================== */
-.section-hero {
-    position: relative;
-    overflow: hidden;
-}
 
 @media (prefers-reduced-motion: reduce) {
     .pass-line-fill { transition: none; }

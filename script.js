@@ -2116,19 +2116,25 @@ async function openPublicProfile(targetId) {
             if (pct > 100) pct = 100;
             if (pct < 0) pct = 0;
 
-            var lvlEl = document.getElementById('mainMenuPassLvl');
+            var numEl  = document.getElementById('passLvlNum');
+            var lvlEl  = document.getElementById('mainMenuPassLvl');
             var progEl = document.getElementById('mainMenuPassProg');
             var fillEl = document.getElementById('mainMenuPassFill');
+            var ringEl = document.querySelector('.avatar-wrapper');
 
-            if (lvlEl) lvlEl.innerHTML = 'Уровень <b>' + realPassLevel + '</b>';
+            if (numEl) numEl.innerText = realPassLevel;
+            if (lvlEl) lvlEl.innerText = 'ManhwCard Pass';
+
+            // Кольцо вокруг аватара показывает тот же процент
+            if (ringEl) ringEl.style.setProperty('--p', pct + '%');
 
             var unclaimed = realPassLevel - claimedPassLevels;
             if (unclaimed > 0) {
-                if (progEl) progEl.innerHTML = '<span style="color:#4ade80">🎁 Награда ждёт!</span> ›';
-                // Линия заполняется целиком и золотеет — награду видно, не читая текст
+                if (progEl) progEl.innerHTML = '<span style="color:#fbbf24">🎁 Награда ждёт</span> · ' + unclaimed + ' ур.';
                 if (fillEl) fillEl.classList.add('ready');
+                if (ringEl) ringEl.style.setProperty('--p', '100%');
             } else {
-                if (progEl) progEl.innerHTML = 'Прогресс <b>' + pct + '%</b> ›';
+                if (progEl) progEl.innerHTML = '<b>' + passXp + '</b> / ' + passMaxXp + ' XP · ' + pct + '%';
                 if (fillEl) {
                     fillEl.classList.remove('ready');
                     fillEl.style.width = pct + '%';
