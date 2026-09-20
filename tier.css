@@ -213,7 +213,6 @@
     left: 0;
     padding: 16px 14px;
     transform-origin: 0 0;
-    will-change: transform;
 }
 
 /* Плавность только при программном зуме кнопками,
@@ -285,8 +284,6 @@
     object-fit: cover;
 }
 
-/* Плашка цены в правом верхнем углу.
-   Ширина не растёт: длинные числа сокращаются на сервере (12K, 2.9K). */
 .tier-price {
     position: absolute;
     top: 4px;
@@ -298,10 +295,8 @@
     line-height: 1.35;
     color: #fff;
     font-variant-numeric: tabular-nums;
-    background: rgba(4, 4, 10, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
+    background: rgba(4, 4, 10, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     pointer-events: none;
 }
 
@@ -334,14 +329,12 @@
     height: 36px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 11px;
-    background: rgba(8, 8, 16, 0.85);
+    background: rgba(8, 8, 16, 0.92);
     color: #fff;
     font-size: 17px;
     font-weight: 700;
     line-height: 1;
     cursor: pointer;
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
 }
 
 .tier-zoom button:active { background: rgba(139, 92, 246, 0.3); }

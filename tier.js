@@ -137,7 +137,7 @@
             var cards = row.cards.map(function (c) {
                 return '' +
                   '<div class="tier-card" onclick="openTierCard(\'' + esc(c.id) + '\')">' +
-                    '<img src="images/' + esc(c.file) + '" loading="lazy" ' +
+                    '<img src="images/' + esc(c.file) + '" loading="lazy" decoding="async" ' +
                     'onerror="this.src=\'images/default.webp\'">' +
                     '<div class="tier-price">' + esc(c.price_short) + '</div>' +
                     '<div class="tier-card-name">' + esc(c.name) + '</div>' +
@@ -188,7 +188,7 @@
     /* ---------- Зум и перетаскивание ----------
        Свой обработчик вместо браузерного зума: страница не должна
        масштабироваться целиком, увеличивается только доска. */
-    var zoom = { scale: 1, x: 0, y: 0, min: 0.5, max: 3 };
+    var zoom = { scale: 1, x: 0, y: 0, min: 0.5, max: 2.2 };
     var drag = null, pinch = null;
 
     function applyZoom(smooth) {
