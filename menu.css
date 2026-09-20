@@ -586,3 +586,32 @@ html, body {
     overflow-x: hidden;
     max-width: 100%;
 }
+/* Нижний ряд из трёх кнопок */
+.triple-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0 0 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Узкие кнопки: подпись и стрелка не помещаются в треть ширины,
+   поэтому прячем их, а разметку оставляем нетронутой */
+.action-card.compact {
+    align-items: center;
+    text-align: center;
+    padding: 14px 8px 12px;
+    gap: 9px;
+}
+
+.action-card.compact .action-title {
+    font-size: 12.5px;
+    width: 100%;
+}
+
+.action-card.compact .action-sub,
+.action-card.compact .action-arrow { display: none; }
+
+.action-card:has(.ico-tier) { --tint: #fbbf24; }
+.ico-tier { color: #fbbf24; }

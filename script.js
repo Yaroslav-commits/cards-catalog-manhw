@@ -1318,6 +1318,8 @@ async function openModal(item) {
             var bgSystemOpen = document.getElementById('bgSystemSheet').classList.contains('open');
             var frameSystemOpen = document.getElementById('frameSystemSheet').classList.contains('open');
             var duelOpen = document.getElementById('duelArena').classList.contains('open');
+            var tierOpen = document.getElementById('tierScreen').classList.contains('open');
+            var tierCardOpen = document.getElementById('tierAnalytic').classList.contains('open');
 
             if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen ||
                 ownersOpen || favSystemOpen || titleSystemOpen || bgSystemOpen || frameSystemOpen || duelOpen) {
@@ -1343,6 +1345,9 @@ async function openModal(item) {
                 else if (document.getElementById('earnScreen').classList.contains('open')) closeEarnModal();
                 else if (document.getElementById('passScreen').classList.contains('open')) closePassModal();
                 else if (document.getElementById('collDetailView').style.display === 'block') backToUniverses();
+                else if (document.getElementById('tierAnalytic').classList.contains('open')) closeTierCard();
+                else if (document.getElementById('tierScreen').classList.contains('open')) closeTierScreen();
+                else if (document.getElementById('duelArena').classList.contains('open')) closeDuelArena();
             });
         }
 // Открытие профиля

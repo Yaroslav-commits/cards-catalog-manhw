@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="shop.css">
         <link rel="stylesheet" href="duel.css">
         <link rel="stylesheet" href="menu.css">
+        <link rel="stylesheet" href="tier.css">
 </head>
 <body>
     <div id="splashScreen" class="splash-screen">
@@ -209,8 +210,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </div>
     </div>
+</div>
 
-    <div class="action-card" onclick="openAchievements()">
+<div class="triple-grid">
+    <div class="action-card compact" onclick="openAchievements()">
         <div class="action-ico ico-achiev">
             <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-archive"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
         </div>
@@ -223,7 +226,20 @@
         </div>
     </div>
 
-    <div class="action-card" onclick="tg.openTelegramLink('https://t.me/manhwcard_support_bot')">
+    <div class="action-card compact" onclick="openTierScreen()">
+        <div class="action-ico ico-tier">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="13" width="5" height="8" rx="1"></rect><rect x="9.5" y="8" width="5" height="13" rx="1"></rect><rect x="16" y="11" width="5" height="10" rx="1"></rect><path d="M12 2l.95 2.1 2.3.3-1.7 1.6.43 2.3L12 7.2 10.02 8.3l.43-2.3-1.7-1.6 2.3-.3L12 2z"></path></svg>
+        </div>
+        <div class="action-info">
+            <div class="action-title">Тирлист</div>
+            <div class="action-sub">Ценность карт</div>
+        </div>
+        <div class="action-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+    </div>
+
+    <div class="action-card compact" onclick="tg.openTelegramLink('https://t.me/manhwcard_support_bot')">
         <div class="action-ico ico-support">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
         </div>
@@ -1242,6 +1258,32 @@
         </div>
     </div>
 
+    <div class="tier-screen" id="tierScreen">
+        <div class="tier-head">
+            <button class="tier-back" id="tierBackBtn" onclick="closeTierScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div>
+                <div class="tier-title" id="tierTitle">Тирлисты</div>
+                <div class="tier-sub" id="tierSub">Ценность карт по версии сообщества</div>
+            </div>
+        </div>
+        <div class="tier-body" id="tierPickBody"></div>
+    </div>
+
+    <div class="tier-analytic" id="tierAnalytic">
+        <div class="tier-head">
+            <button class="tier-back" onclick="closeTierCard()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div>
+                <div class="tier-title" style="font-size:20px">Аналитика</div>
+                <div class="tier-sub">Цена, история и оценки</div>
+            </div>
+        </div>
+        <div class="ta-body" id="taBody"></div>
+    </div>
+
     <script src="script.js"></script>
 
     <script src="custom-select.js"></script>
@@ -1262,6 +1304,11 @@
           switchShopSubTab('wheel');
         }
 
+        if (fromUrl === 'tier' || fromTg === 'tier') {
+          switchTab('profile', document.querySelectorAll('.nav-btn')[2]);
+          setTimeout(openTierScreen, 300);
+        }
+
         if (fromUrl === 'duel' || fromTg === 'duel') {
           openEarnModal();
           switchEarnTab('duel');
@@ -1273,6 +1320,7 @@
         }
       })();
     </script>
+    <script src="tier.js"></script>
 
 </body>
 </html>

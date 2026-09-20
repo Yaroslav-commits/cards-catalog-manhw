@@ -1,0 +1,719 @@
+/* =====================================================================
+   ТИРЛИСТЫ
+   Подключать после style.css и menu.css.
+
+   Три экрана: выбор тирлиста, сама доска с зумом, аналитика карты.
+   Стиль тот же, что в главном меню: тёмные панели, тонкие грани,
+   угловые скобки. Бегущих бликов нет.
+   ===================================================================== */
+
+/* =====================  ЭКРАН ВЫБОРА  ===================== */
+.tier-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9400;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #0a0912 0%, #05050a 100%);
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+    overflow: hidden;
+}
+
+.tier-screen.open { transform: translateX(0); }
+
+.tier-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: max(env(safe-area-inset-top, 14px), 14px) 16px 12px;
+    flex-shrink: 0;
+}
+
+.tier-back {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    cursor: pointer;
+}
+
+.tier-back svg { width: 18px; height: 18px; }
+
+.tier-title {
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.tier-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.tier-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 16px 24px;
+}
+
+/* ---------- Карточки трёх тирлистов ---------- */
+.tier-pick {
+    position: relative;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 18px;
+    margin-bottom: 14px;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(150deg, rgba(20, 20, 34, 0.95), rgba(6, 6, 12, 0.97));
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    transition: transform 0.14s, border-color 0.2s;
+}
+
+.tier-pick:active { transform: scale(0.98); border-color: var(--pc, #a855f7); }
+
+/* Мягкое пятно цвета списка, статичное */
+.tier-pick::before {
+    content: '';
+    position: absolute;
+    top: -55%;
+    right: -25%;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--pc, #a855f7);
+    opacity: 0.16;
+    filter: blur(34px);
+    pointer-events: none;
+}
+
+.tier-pick-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.tier-pick-ico {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tier-pick-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.tier-pick-desc {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 2px;
+}
+
+.tier-pick-count {
+    flex-shrink: 0;
+    padding: 5px 11px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--pc, #a855f7);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+/* Три превью самых дорогих карт списка */
+.tier-pick-preview {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 8px;
+}
+
+.tier-pick-preview img {
+    width: 62px;
+    height: 84px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #14141f;
+}
+
+/* =====================  ДОСКА С ЗУМОМ  ===================== */
+.tier-board-wrap {
+    position: relative;
+    margin: 4px 0 14px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    background:
+        radial-gradient(90% 60% at 50% 0%, rgba(139, 92, 246, 0.14), transparent 70%),
+        linear-gradient(180deg, #0e0d18, #06060c);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+/* Угловые скобки рамки */
+.tier-board-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    pointer-events: none;
+    z-index: 3;
+    background:
+        linear-gradient(#a78bfa, #a78bfa) left  top    / 15px 1.5px no-repeat,
+        linear-gradient(#a78bfa, #a78bfa) left  top    / 1.5px 15px no-repeat,
+        linear-gradient(#a78bfa, #a78bfa) right top    / 15px 1.5px no-repeat,
+        linear-gradient(#a78bfa, #a78bfa) right top    / 1.5px 15px no-repeat,
+        linear-gradient(#a78bfa, #a78bfa) left  bottom / 15px 1.5px no-repeat,
+        linear-gradient(#a78bfa, #a78bfa) left  bottom / 1.5px 15px no-repeat,
+        linear-gradient(#a78bfa, #a78bfa) right bottom / 15px 1.5px no-repeat,
+        linear-gradient(#a78bfa, #a78bfa) right bottom / 1.5px 15px no-repeat;
+    opacity: 0.5;
+}
+
+/* Окно просмотра. touch-action: none только здесь, чтобы жесты
+   зума не перехватывались прокруткой страницы. */
+.tier-viewport {
+    position: relative;
+    height: 56vh;
+    min-height: 330px;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+}
+
+.tier-viewport:active { cursor: grabbing; }
+
+.tier-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 16px 14px;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+
+/* Плавность только при программном зуме кнопками,
+   при жесте класс снимается — иначе палец «отстаёт» */
+.tier-canvas.smooth { transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1); }
+
+/* ---------- Ряд тира ---------- */
+.tier-row {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tier-row:last-child { margin-bottom: 0; }
+
+.tier-label {
+    width: 52px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border-radius: 14px;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #0b0b12;
+    background: var(--tc, #a855f7);
+    box-shadow: inset 0 -3px 12px rgba(0, 0, 0, 0.28);
+}
+
+.tier-label small {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    opacity: 0.65;
+}
+
+.tier-cards {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.028);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- Карточка на доске ---------- */
+.tier-card {
+    position: relative;
+    width: 76px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #12121c;
+    cursor: pointer;
+}
+
+.tier-card img {
+    display: block;
+    width: 100%;
+    height: 102px;
+    object-fit: cover;
+}
+
+/* Плашка цены в правом верхнем углу.
+   Ширина не растёт: длинные числа сокращаются на сервере (12K, 2.9K). */
+.tier-price {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    padding: 2px 6px;
+    border-radius: 7px;
+    font-size: 10.5px;
+    font-weight: 900;
+    line-height: 1.35;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    background: rgba(4, 4, 10, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+}
+
+.tier-card-name {
+    padding: 4px 5px 5px;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: rgba(255, 255, 255, 0.72);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Управление зумом ---------- */
+.tier-zoom {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tier-zoom button {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 11px;
+    background: rgba(8, 8, 16, 0.85);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.tier-zoom button:active { background: rgba(139, 92, 246, 0.3); }
+
+.tier-zoom-val {
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.tier-hint {
+    position: absolute;
+    left: 14px;
+    bottom: 16px;
+    z-index: 4;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.32);
+    pointer-events: none;
+}
+
+/* =====================  СПИСОК КАРТ  ===================== */
+.tier-list-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 4px 2px 10px;
+}
+
+.tier-list-head b {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.tier-search {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.tier-search:focus { border-color: var(--accent); }
+
+.tier-row-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.032);
+    color: #fff;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.16s, transform 0.12s;
+}
+
+.tier-row-btn:active { transform: scale(0.985); background: rgba(255, 255, 255, 0.07); }
+
+.tier-row-badge {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 900;
+    color: #0b0b12;
+    background: var(--tc, #a855f7);
+}
+
+.tier-row-info { flex: 1; min-width: 0; }
+
+.tier-row-name {
+    font-size: 14px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tier-row-stats {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    margin-top: 1px;
+}
+
+.tier-row-price {
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 900;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+}
+
+.tier-row-price small {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-left: 3px;
+}
+
+/* =====================  АНАЛИТИКА  ===================== */
+.tier-analytic {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #0b0a14 0%, #05050a 100%);
+    transform: translateY(100%);
+    transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+    overflow: hidden;
+}
+
+.tier-analytic.open { transform: translateY(0); }
+
+.ta-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px 28px;
+}
+
+/* Крупная карта, как в каталоге */
+.ta-hero {
+    position: relative;
+    width: 100%;
+    max-width: 260px;
+    margin: 6px auto 16px;
+    aspect-ratio: 3 / 4;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid var(--tc, #a855f7);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6);
+}
+
+.ta-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.ta-tier-flag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 11px;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 900;
+    color: #0b0b12;
+    background: var(--tc, #a855f7);
+}
+
+.ta-name {
+    text-align: center;
+    font-size: 23px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 3px;
+}
+
+.ta-series {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+/* Характеристики */
+.ta-stats {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.ta-stat {
+    flex: 1;
+    padding: 11px 6px;
+    border-radius: 14px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ta-stat-ico { font-size: 15px; margin-bottom: 3px; }
+
+.ta-stat-val {
+    font-size: 19px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.ta-stat-lbl {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* Текущая цена */
+.ta-price-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    border-radius: 18px;
+    background: linear-gradient(100deg, rgba(139, 92, 246, 0.16), rgba(6, 182, 212, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.ta-price-lbl {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #a5b4fc;
+    margin-bottom: 3px;
+}
+
+.ta-price-val {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 18px rgba(139, 92, 246, 0.6);
+}
+
+.ta-change {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.ta-change.up   { color: #4ade80; background: rgba(74, 222, 128, 0.14); }
+.ta-change.down { color: #f87171; background: rgba(248, 113, 113, 0.14); }
+.ta-change.flat { color: var(--text-muted); background: rgba(255, 255, 255, 0.05); }
+
+/* График истории */
+.ta-chart-box {
+    padding: 16px;
+    margin-bottom: 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ta-chart-title {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.ta-chart { width: 100%; height: 130px; display: block; }
+
+.ta-chart-empty {
+    padding: 22px 0;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-muted);
+}
+
+.ta-hist-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-variant-numeric: tabular-nums;
+}
+
+.ta-hist-row span:first-child { color: var(--text-muted); }
+
+/* Голосование */
+.ta-vote-box {
+    padding: 18px;
+    border-radius: 18px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ta-vote-q {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.ta-vote-hint {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.ta-vote-btns { display: flex; gap: 10px; }
+
+.ta-vote-btn {
+    flex: 1;
+    padding: 14px 0;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.18s;
+}
+
+.ta-vote-btn:active { transform: scale(0.95); }
+
+.ta-vote-btn.up.on {
+    background: rgba(74, 222, 128, 0.18);
+    border-color: rgba(74, 222, 128, 0.55);
+    color: #4ade80;
+}
+
+.ta-vote-btn.down.on {
+    background: rgba(248, 113, 113, 0.18);
+    border-color: rgba(248, 113, 113, 0.55);
+    color: #f87171;
+}
+
+/* Полоса соотношения голосов: абсолютные числа не показываем,
+   чтобы накрутка не выглядела как достижение */
+.ta-vote-bar {
+    display: flex;
+    height: 7px;
+    margin-top: 14px;
+    border-radius: 99px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.ta-vote-bar i { display: block; height: 100%; }
+.ta-vote-bar .yes { background: #4ade80; }
+.ta-vote-bar .no  { background: #f87171; }
+
+.ta-vote-pct {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tier-screen, .tier-analytic, .tier-canvas.smooth { transition: none; }
+}
