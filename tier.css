@@ -710,3 +710,16 @@
 @media (prefers-reduced-motion: reduce) {
     .tier-screen, .tier-analytic, .tier-canvas.smooth { transition: none; }
 }
+/* Пока картинка не подгружена, место под неё держит заглушка —
+   иначе доска будет прыгать по мере появления карт */
+.tier-img {
+    display: block;
+    width: 100%;
+    height: 102px;
+    object-fit: cover;
+    background: #15151f;
+}
+
+/* Изолируем отрисовку каждой карточки, чтобы браузер не пересчитывал
+   всю доску при появлении одной картинки */
+.tier-card { contain: content; }

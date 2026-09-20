@@ -122,9 +122,12 @@
             '<div id="tierRows">' + rowsHtml(current.all) + '</div>';
 
         initZoom();
+        setupLazyImages();
     };
 
     global.backToTierPicks = function () {
+        if (imgObserver) { imgObserver.disconnect(); imgObserver = null; }
+        document.getElementById('tierTitle').innerText = 'Тирлисты';
         document.getElementById('tierTitle').innerText = 'Тирлисты';
         document.getElementById('tierSub').innerText = 'Ценность карт по версии сообщества';
         document.getElementById('tierBackBtn').setAttribute('onclick', 'closeTierScreen()');
@@ -135,10 +138,12 @@
     function boardHtml(data) {
         return data.tiers.map(function (row) {
             var cards = row.cards.map(function (c) {
+                // src намеренно пустой: картинки подставляет lazy-загрузчик
+                // ниже. Иначе браузер декодирует все 65 разом и кладёт WebView.
                 return '' +
                   '<div class="tier-card" onclick="openTierCard(\'' + esc(c.id) + '\')">' +
-                    '<img src="images/' + esc(c.file) + '" loading="lazy" decoding="async" ' +
-                    'onerror="this.src=\'images/default.webp\'">' +
+                    '<img class="tier-img" data-src="images/' + esc(c.file) + '" ' +
+                    'decoding="async" alt="">' +
                     '<div class="tier-price">' + esc(c.price_short) + '</div>' +
                     '<div class="tier-card-name">' + esc(c.name) + '</div>' +
                   '</div>';
@@ -184,6 +189,44 @@
             rows[i].style.display = (!q || name.indexOf(q) !== -1) ? '' : 'none';
         }
     };
+
+
+    var imgObserver = null;
+
+    function setupLazyImages() {
+        var vp = document.getElementById('tierViewport');
+        if (!vp) return;
+
+        if (imgObserver) imgObserver.disconnect();
+
+        if (!('IntersectionObserver' in window)) {
+            // Совсем старый движок: грузим порциями по восемь штук
+            var imgs = vp.querySelectorAll('.tier-img');
+            var i = 0;
+            (function step() {
+                for (var n = 0; n < 8 && i < imgs.length; n++, i++) {
+                    imgs[i].src = imgs[i].getAttribute('data-src');
+                }
+                if (i < imgs.length) setTimeout(step, 120);
+            })();
+            return;
+        }
+
+        imgObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                var img = en.target;
+                if (en.isIntersecting) {
+                    if (!img.src) img.src = img.getAttribute('data-src');
+                } else if (img.src && en.intersectionRatio === 0) {
+                    // Освобождаем растр у того, что уехало далеко
+                    img.removeAttribute('src');
+                }
+            });
+        }, { root: vp, rootMargin: '300px', threshold: 0 });
+
+        var list = vp.querySelectorAll('.tier-img');
+        for (var k = 0; k < list.length; k++) imgObserver.observe(list[k]);
+    }
 
     /* ---------- Зум и перетаскивание ----------
        Свой обработчик вместо браузерного зума: страница не должна
