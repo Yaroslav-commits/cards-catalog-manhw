@@ -14,19 +14,19 @@
        в main.py — сервер присылает индекс из этого же списка.
        Крупные призы расставлены вразбивку, чтобы колесо читалось. */
     var WHEEL_PRIZES = [
-        { type: 'bc',  amount: 1000, color: '#fbbf24', icon: '🪙' },
+        { type: 'bc',  amount: 800, color: '#fbbf24', icon: '🪙' },
         { type: 'bc',  amount: 75,   color: '#475569', icon: '🪙' },
         { type: 'bc',  amount: 250,  color: '#8b5cf6', icon: '🪙' },
         { type: 'dia', amount: 2,    color: '#06b6d4', icon: '💎' },
-        { type: 'bc',  amount: 500,  color: '#f59e0b', icon: '🪙' },
+        { type: 'bc',  amount: 450,  color: '#f59e0b', icon: '🪙' },
         { type: 'bc',  amount: 100,  color: '#64748b', icon: '🪙' },
         { type: 'bc',  amount: 350,  color: '#a855f7', icon: '🪙' },
-        { type: 'dia', amount: 5,    color: '#22d3ee', icon: '💎' },
+        { type: 'bc', amount: 50,    color: '#22d3ee', icon: '🪙' },
         { type: 'bc',  amount: 200,  color: '#7c3aed', icon: '🪙' },
         { type: 'dia', amount: 4,    color: '#0ea5e9', icon: '💎' }
     ];
 
-    var SPIN_COST = 400;
+    var SPIN_COST = 300;
     var COUNT = WHEEL_PRIZES.length;
     var STEP = 360 / COUNT;
     var CX = 150, CY = 150, R = 142;
