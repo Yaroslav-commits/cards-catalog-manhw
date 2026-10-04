@@ -1808,6 +1808,43 @@ input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radi
         .summon-grid {
             position: relative; z-index: 10; display: grid; gap: 12px;
             width: 100%; max-width: 500px; padding: 20px;
+            /* ФИКС: если карт много и они не влезают по высоте — сетка скроллится,
+               а не обрезается сверху/снизу (у оверлея overflow: hidden) */
+            max-height: calc(100vh - 110px);
+            max-height: calc(100dvh - 110px);
+            overflow-y: auto; overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .summon-grid::-webkit-scrollbar { display: none; }
+
+        /* === МУЛЬТИ-ОТКРЫТИЕ 17–24 КАРТ ===
+           Срабатывает автоматически, когда в сетке 17+ карт (6 колонок × 4 ряда).
+           !important перебивает grid-template-columns, если его ставит JS инлайном. */
+        .summon-grid:has(> .summon-card:nth-child(17)) {
+            grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+            gap: 8px; max-width: 620px;
+            padding: 14px 12px 90px; /* снизу место под кнопку «Забрать» */
+        }
+        .summon-grid:has(> .summon-card:nth-child(17)) .summon-card-front,
+        .summon-grid:has(> .summon-card:nth-child(17)) .summon-card-back { border-radius: 8px; }
+        .summon-grid:has(> .summon-card:nth-child(17)) .rarity-flash { inset: -8px; border-radius: 10px; }
+        .summon-grid:has(> .summon-card:nth-child(17)) .dup-stamp {
+            font-size: 8px; padding: 3px 4px; border-width: 1px; border-radius: 4px;
+        }
+        /* Очень узкие экраны: 4 колонки, остальное доскролливается */
+        @media (max-width: 340px) {
+            .summon-grid:has(> .summon-card:nth-child(17)) {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+        }
+        /* Явный класс на случай старого WebView без :has() — JS может добавить .summon-grid--24 */
+        .summon-grid.summon-grid--24 {
+            grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+            gap: 8px; max-width: 620px; padding: 14px 12px 90px;
+        }
+        .summon-grid.summon-grid--24 .dup-stamp {
+            font-size: 8px; padding: 3px 4px; border-width: 1px; border-radius: 4px;
         }
 
         /* 3D Карта с индивидуальной перспективой */

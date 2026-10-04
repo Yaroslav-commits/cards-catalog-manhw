@@ -159,6 +159,7 @@ function getCardSkill(cardId) {
                     document.getElementById('valBc').innerText = formatBal(data.battlecoin);
                     if (document.getElementById('shopAttemptsBal')) {
                         document.getElementById('shopAttemptsBal').innerText = data.attempts || 0;
+                        if (typeof refreshSummonCostState === 'function') refreshSummonCostState();
                     }
                     
                     userOwnedCards = data.owned_cards || [];
@@ -2347,15 +2348,55 @@ async function openPublicProfile(targetId) {
         setInterval(updatePassResetTimer, 60000);
         updateMainMenuPass();
 // ================= ЛОГИКА ГАЧИ (МАГАЗИН) =================
+        // Максимум круток за раз. ДОЛЖЕН совпадать с MULTI_SUMMON_MAX в main.py
+        var SUMMON_MAX = 24;
         var selectedSummonAmount = 8; // По умолчанию ползунок стоит на 8
         var summonedCardsData = [];
         var flippedCardsCount = 0;
+        var summonTimers = [];      // таймеры анимации, чтобы их можно было отменить
+        var summonInFlight = false; // защита от двойного нажатия
+
+        // Ползунок в HTML мог остаться с max="16" — выставляем границы из JS
+        (function initSummonSlider() {
+            var slider = document.getElementById('gachaSlider');
+            if (slider) { slider.min = 1; slider.max = SUMMON_MAX; }
+        })();
+
+        // Подсветка стоимости красным, если попыток не хватает
+        function refreshSummonCostState() {
+            var balEl = document.getElementById('shopAttemptsBal');
+            var costBox = document.querySelector('.gacha-cost-box');
+            if (balEl && costBox) {
+                var have = parseInt(balEl.innerText.replace(/\D/g, '')) || 0;
+                costBox.classList.toggle('not-enough', have < selectedSummonAmount);
+            }
+        }
+
+        // Сколько колонок в сетке призыва для N карт
+        function getSummonCols(n) {
+            if (n <= 1) return 1;
+            if (n === 2 || n === 4) return 2;                       // 2x1 или 2x2
+            if (n === 3 || n === 5 || n === 6 || n === 9) return 3; // 3x1, 3x2, 3x3
+            if (n > 16) return 6;                                   // 17–24: 6 колонок × до 4 рядов
+            return 4;
+        }
+
+        function applySummonGridLayout(grid, n) {
+            grid.style.gridTemplateColumns = `repeat(${getSummonCols(n)}, minmax(0, 1fr))`;
+            // Класс для компактного вида (на случай старого WebView без CSS :has)
+            grid.classList.toggle('summon-grid--24', n > 16);
+        }
+
+        function clearSummonTimers() {
+            summonTimers.forEach(t => clearTimeout(t));
+            summonTimers = [];
+        }
 
         // Единая функция синхронизации ползунка и кнопок
         function syncSummon(val) {
             val = parseInt(val);
-            if (val < 1) val = 1;
-            if (val > 16) val = 16;
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > SUMMON_MAX) val = SUMMON_MAX;
 
             selectedSummonAmount = val;
 
@@ -2379,16 +2420,11 @@ async function openPublicProfile(targetId) {
             document.getElementById('summonCostText').innerText = val + textStr;
 
             // 5. Заливка дорожки — только процент, сам градиент живёт в shop.css
-            var percentage = ((val - 1) / 15) * 100;
+            var percentage = ((val - 1) / (SUMMON_MAX - 1)) * 100;
             document.getElementById('gachaSlider').style.setProperty('--fill', percentage + '%');
 
             // 6. Подсвечиваем стоимость красным, если попыток не хватает
-            var balEl = document.getElementById('shopAttemptsBal');
-            var costBox = document.querySelector('.gacha-cost-box');
-            if (balEl && costBox) {
-                var have = parseInt(balEl.innerText.replace(/\D/g, '')) || 0;
-                costBox.classList.toggle('not-enough', have < val);
-            }
+            refreshSummonCostState();
 
             if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
         }
@@ -2403,6 +2439,9 @@ async function openPublicProfile(targetId) {
 
         // Функция запроса к серверу (ОСТАВЛЯЕМ КАК БЫЛА ПОКА ЧТО)
         async function executeSummon(isQuick) {
+            if (summonInFlight) return; // уже идёт запрос
+            summonInFlight = true;
+
             var btnFull = document.getElementById('btnFullSummon');
             var btnQuick = document.getElementById('btnQuickSummon');
             btnFull.disabled = true; btnQuick.disabled = true;
@@ -2415,21 +2454,29 @@ async function openPublicProfile(targetId) {
                 });
                 var data = await res.json();
                 
-                if (data.success) {
+                if (data.success && Array.isArray(data.cards) && data.cards.length) {
                     summonedCardsData = data.cards;
                     document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
+                    refreshSummonCostState();
                     fetchProfile(); // Фоново обновляем основную коллекцию
                     
                     if (isQuick) showQuickResults();
                     else startEpicSummonSequence();
+
+                    // Сервер вернул часть билетов (сбой посреди открытия)
+                    if (data.refunded > 0) {
+                        showToast('Часть билетов возвращена', 'Не удалось открыть ' + data.refunded + ' шт. — билеты вернулись на баланс.');
+                    }
                 } else {
-                    tg.showAlert(data.error);
+                    // data.detail — так FastAPI отдаёт ошибки авторизации (401/403)
+                    tg.showAlert(data.error || data.detail || 'Не удалось открыть карты');
                 }
             } catch (e) {
                 tg.showAlert("Ошибка соединения с сервером");
+            } finally {
+                btnFull.disabled = false; btnQuick.disabled = false;
+                summonInFlight = false;
             }
-            
-            btnFull.disabled = false; btnQuick.disabled = false;
         }
 
         // --- ЭПИЧНАЯ СЦЕНА ---
@@ -2440,37 +2487,38 @@ async function openPublicProfile(targetId) {
             var grid = document.getElementById('summonGrid');
             var claimBtn = document.getElementById('summonClaimBtn');
             
+            // ФИКС: отменяем таймеры прошлой анимации — иначе её карты
+            // «доприлетали» в новую сетку
+            clearSummonTimers();
             flippedCardsCount = 0;
             grid.innerHTML = '';
+            grid.scrollTop = 0;
             claimBtn.classList.remove('show');
             overlay.classList.remove('shake');
             
-            // УМНАЯ СЕТКА: красиво распределяем любое число от 1 до 16
-            var cols = 4; // по умолчанию 4 колонки
-            if (selectedSummonAmount === 1) cols = 1;
-            else if (selectedSummonAmount === 2 || selectedSummonAmount === 4) cols = 2; // 2x1 или 2x2
-            else if (selectedSummonAmount === 3 || selectedSummonAmount === 5 || selectedSummonAmount === 6 || selectedSummonAmount === 9) cols = 3; // 3x1, 3x2, 3x3
-            
-            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            // УМНАЯ СЕТКА: считаем по реальному числу карт, а не по ползунку
+            applySummonGridLayout(grid, summonedCardsData.length);
             
             overlay.classList.add('open');
             
-            setTimeout(() => { 
+            summonTimers.push(setTimeout(() => { 
                 portal.style.opacity = '1'; 
                 rays.style.opacity = '1';
                 if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            }, 300);
+            }, 300));
 
+            // При 17+ картах летят чуть быстрее, чтобы анимация не затягивалась
+            var step = summonedCardsData.length > 16 ? 60 : 80;
             summonedCardsData.forEach((card, index) => {
                 var isDivine = (card.rarity || '').includes('Божест');
-                var delay = (index * 80) + (isDivine ? 200 : 0) + 600; 
-                setTimeout(() => { spawnSummonCard(card, index); }, delay);
+                var delay = (index * step) + (isDivine ? 200 : 0) + 600; 
+                summonTimers.push(setTimeout(() => { spawnSummonCard(card, index); }, delay));
             });
 
-            var totalTime = (summonedCardsData.length * 80) + 1200;
-            setTimeout(() => {
-                document.querySelectorAll('.summon-card').forEach(c => c.classList.add('floating'));
-            }, totalTime);
+            var totalTime = (summonedCardsData.length * step) + 1200;
+            summonTimers.push(setTimeout(() => {
+                document.querySelectorAll('.summon-card:not(.flipped)').forEach(c => c.classList.add('floating'));
+            }, totalTime));
         }
 
         
@@ -2554,7 +2602,8 @@ async function openPublicProfile(targetId) {
                         if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
                     }
                     
-                    if (flippedCardsCount >= selectedSummonAmount) {
+                    // ФИКС: сравниваем с реальным числом карт (сервер мог вернуть меньше)
+                    if (flippedCardsCount >= summonedCardsData.length) {
                         setTimeout(() => { document.getElementById('summonClaimBtn').classList.add('show'); }, 600);
                     }
                 }, 300); 
@@ -2567,17 +2616,14 @@ async function openPublicProfile(targetId) {
             var rays = document.getElementById('summonRays');
             var grid = document.getElementById('summonGrid');
             
+            clearSummonTimers();
             portal.style.opacity = '0'; rays.style.opacity = '0';
             overlay.classList.add('open');
             grid.innerHTML = '';
+            grid.scrollTop = 0;
             
             // ТА ЖЕ УМНАЯ СЕТКА ДЛЯ БЫСТРОГО РЕЗУЛЬТАТА
-            var cols = 4;
-            if (selectedSummonAmount === 1) cols = 1;
-            else if (selectedSummonAmount === 2 || selectedSummonAmount === 4) cols = 2;
-            else if (selectedSummonAmount === 3 || selectedSummonAmount === 5 || selectedSummonAmount === 6 || selectedSummonAmount === 9) cols = 3;
-            
-            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            applySummonGridLayout(grid, summonedCardsData.length);
             
             summonedCardsData.forEach(card => {
                 var cardEl = document.createElement('div');
@@ -2612,6 +2658,7 @@ async function openPublicProfile(targetId) {
 
         function closeSummonScene() {
             if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            clearSummonTimers();
             document.getElementById('summonOverlay').classList.remove('open');
             var claimBtn = document.getElementById('summonClaimBtn');
             if(claimBtn) claimBtn.classList.remove('show');
@@ -2955,7 +3002,12 @@ function renderBuyPacks() {
     });
 }
 
+var buyAttemptsInFlight = false;
+
 async function executeBuyAttempts(currency, packIndex) {
+    // ФИКС: двойной тап по паку покупал его дважды
+    if (buyAttemptsInFlight) return;
+    buyAttemptsInFlight = true;
     if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
 
     try {
@@ -2973,14 +3025,17 @@ async function executeBuyAttempts(currency, packIndex) {
             document.getElementById('valKrw').innerText = formatBal(data.new_krw);
             document.getElementById('valDiamond').innerText = formatBal(data.new_diamond);
             document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
+            if (typeof refreshSummonCostState === 'function') refreshSummonCostState();
 
             closeBuyAttemptsModal();
             fetchProfile(); // Фоновая синхронизация
         } else {
-            tg.showAlert(data.error);
+            tg.showAlert(data.error || data.detail || 'Не удалось купить');
         }
     } catch (e) {
         tg.showAlert('Ошибка соединения с сервером');
+    } finally {
+        buyAttemptsInFlight = false;
     }
 }
 // ================= ЛОГИКА РАМОК ПРОФИЛЯ =================
