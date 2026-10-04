@@ -36,6 +36,11 @@
     var balance = 0;
     var built = false;
 
+    // Бесплатный спин раз в 7 дней после прошлого бесплатного (считает сервер)
+    var freeAvailable = false;
+    var nextFreeAt = 0;     // Date.now()-метка, когда спин снова станет бесплатным
+    var freeTimer = null;
+
     /* ---------- Отрисовка ---------- */
 
     function polar(angleDeg, radius) {
@@ -100,24 +105,73 @@
         if (el) el.innerText = balance.toLocaleString('ru-RU');
         if (btn) {
             var poor = balance < SPIN_COST;
-            btn.disabled = poor || isSpinning;
+            btn.disabled = isSpinning || (!freeAvailable && poor);
             btn.innerText = isSpinning ? 'Крутим…'
+                : freeAvailable ? 'Крутить бесплатно 🎁'
                 : poor ? 'Не хватает BattleCoin'
                 : 'Крутить за ' + SPIN_COST + ' 🪙';
+        }
+        renderHint();
+    }
+
+    /* ---------- Бесплатный спин ---------- */
+
+    function formatLeft(ms) {
+        var min = Math.max(1, Math.ceil(ms / 60000));
+        var d = Math.floor(min / 1440);
+        var h = Math.floor((min % 1440) / 60);
+        var m = min % 60;
+        if (d > 0) return d + ' д ' + h + ' ч';
+        if (h > 0) return h + ' ч ' + m + ' мин';
+        return m + ' мин';
+    }
+
+    function renderHint() {
+        var el = document.getElementById('wheelHint');
+        if (!el) return;
+        if (freeAvailable) {
+            el.innerText = 'Бесплатный спин доступен — следующий через 7 дней';
+        } else if (nextFreeAt) {
+            el.innerText = 'Бесплатный спин через ' + formatLeft(nextFreeAt - Date.now());
+        }
+    }
+
+    // Мигающие точки на кнопке магазина и на табе «Колесо»
+    function renderFreeDots() {
+        ['navShopBtn', 'tabShopWheelBtn'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.toggle('has-free-spin', freeAvailable);
+        });
+    }
+
+    function applyFreeState(data) {
+        if (typeof data.free_available === 'boolean') freeAvailable = data.free_available;
+        if (typeof data.next_free_in === 'number') nextFreeAt = Date.now() + data.next_free_in * 1000;
+        renderFreeDots();
+
+        // Если приложение открыто, когда пройдут 7 дней, — перезапросим состояние,
+        // и точка загорится сама, без перезахода.
+        clearTimeout(freeTimer);
+        if (!freeAvailable && nextFreeAt) {
+            var delay = Math.max(1000, nextFreeAt - Date.now() + 2000);
+            if (delay < 2147483647) freeTimer = setTimeout(loadState, delay);
         }
     }
 
     async function loadState() {
         if (!built) buildWheel();
+        if (isSpinning) return;
+        if (typeof userId === 'undefined' || !userId) return;
         try {
             var res = await fetch(API_BASE + '/api/wheel_state/' + userId, { headers: authHeaders() });
             var data = await res.json();
             if (data.success) {
                 balance = data.battlecoin;
+                applyFreeState(data);
                 renderBalance();
             }
         } catch (e) {
-            console.error('Колесо: не удалось получить баланс', e);
+            console.error('Колесо: не удалось получить состояние', e);
         }
     }
 
@@ -125,7 +179,7 @@
 
     async function spin() {
         if (isSpinning) return;
-        if (balance < SPIN_COST) return;
+        if (!freeAvailable && balance < SPIN_COST) return;
 
         isSpinning = true;
         renderBalance();
@@ -152,6 +206,7 @@
         }
 
         balance = data.battlecoin;
+        applyFreeState(data);   // точки гаснут сразу, как только спин потрачен
 
         // Докручиваем до сектора, который назвал сервер.
         // Небольшой разброс внутри сектора — чтобы стрелка не била в центр.
@@ -214,7 +269,9 @@
         document.getElementById('wheelPrizeAmount').innerText =
             '+' + prize.amount + ' ' + (prize.type === 'dia' ? '💎' : '🪙');
         document.getElementById('wheelPrizeKicker').innerText =
-            prize.type === 'dia' ? 'Редкая награда' : 'Награда получена';
+            prize.type === 'dia' ? 'Редкая награда'
+            : data.free ? 'Бесплатный спин'
+            : 'Награда получена';
 
         overlay.classList.add('open');
 
@@ -226,6 +283,26 @@
     function closePrize() {
         var overlay = document.getElementById('wheelPrizeOverlay');
         if (overlay) overlay.classList.remove('open');
+    }
+
+    /* ---------- Старт ---------- */
+
+    // Состояние грузим сразу при запуске приложения, а не только при
+    // открытии колеса — иначе точка на навигации никогда не появится.
+    function boot() {
+        loadState();
+        setInterval(renderHint, 30000);   // обратный отсчёт в подсказке
+    }
+
+    // Вернулись в приложение (могли пройти 7 дней) — обновляемся
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) loadState();
+    });
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
     }
 
     global.initWheel = loadState;

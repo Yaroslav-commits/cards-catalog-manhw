@@ -341,6 +341,7 @@
                 Крутки
             </div>
             <div class="gacha-tab" id="tabShopWheelBtn" onclick="switchShopSubTab('wheel')">
+                <span class="free-dot" aria-hidden="true"></span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3v6.5M12 14.5V21M3 12h6.5M14.5 12H21"/></svg>
                 Колесо
             </div>
@@ -439,7 +440,7 @@
                 </div>
 
                 <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">Крутить за 400 🪙</button>
-                <div class="wheel-hint">Награда начисляется сразу после остановки</div>
+                <div class="wheel-hint" id="wheelHint">Награда начисляется сразу после остановки</div>
             </div>
         </div>
 
@@ -890,7 +891,8 @@
         <button class="nav-btn" onclick="switchTab('catalog', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
         </button>
-        <button class="nav-btn" onclick="switchTab('shop', this)">
+        <button class="nav-btn nav-btn-shop" id="navShopBtn" onclick="switchTab('shop', this)">
+            <span class="free-dot" aria-hidden="true"></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
         </button>
         <button class="nav-btn nav-center active" onclick="switchTab('profile', this)">

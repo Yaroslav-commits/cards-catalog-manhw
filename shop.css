@@ -782,3 +782,57 @@
     .wheel-prize-icon { animation: none; }
     #wheelRotor { transition-duration: 1.2s; }
 }
+
+/* =====================  БЕСПЛАТНЫЙ СПИН: ТОЧКА  ===================== */
+/* Точка лежит в разметке всегда, но видна только когда JS ставит
+   родителю .has-free-spin (кнопка магазина в навигации и таб «Колесо»). */
+
+.nav-btn-shop { position: relative; }
+
+.free-dot {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #fbbf24;
+    border: 2px solid rgba(10, 10, 16, 0.95);
+    box-sizing: content-box;
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.9);
+    pointer-events: none;
+}
+
+.has-free-spin > .free-dot {
+    display: block;
+    animation: freeDotBlink 1.4s ease-in-out infinite;
+}
+
+/* Расходящееся кольцо — то, что ловит взгляд краем глаза */
+.has-free-spin > .free-dot::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid #fbbf24;
+    animation: freeDotRing 1.4s ease-out infinite;
+}
+
+/* Позиции: верхний правый угол иконки */
+.nav-btn .free-dot   { top: calc(50% - 16px); left: calc(50% + 6px); }
+.gacha-tab .free-dot { top: 6px; left: calc(50% + 5px); }
+
+@keyframes freeDotBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.55; }
+}
+
+@keyframes freeDotRing {
+    0%   { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2);   opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .has-free-spin > .free-dot { animation: none; }
+    .has-free-spin > .free-dot::after { display: none; }
+}
