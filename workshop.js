@@ -1361,10 +1361,23 @@ function wsPlural(n, one, few, many) {
     return many;
 }
 
+// encodeURIComponent падает на «половинке» эмодзи (Safari: «String contained an illegal
+// UTF-16 sequence»), поэтому кодируем безопасно и первую букву берём целым символом.
+function wsEnc(s) {
+    s = String(s == null ? '' : s);
+    try { return encodeURIComponent(s); }
+    catch (e) { return encodeURIComponent(s.replace(/[\uD800-\uDFFF]/g, '')); }
+}
+
+function wsFirstChar(s) {
+    var chars = Array.from ? Array.from(String(s || '').trim()) : String(s || '').trim().split('');
+    return chars.length ? chars[0].toUpperCase() : '?';
+}
+
 function wsAvatar(author, size) {
     var name = (author && author.name) || 'Игрок';
-    var src = API_BASE + '/api/avatar/' + author.id + '?name=' + encodeURIComponent(name);
-    var fb = 'https://placehold.co/96x96/1c1c28/8b5cf6?text=' + encodeURIComponent(name.charAt(0).toUpperCase()).replace(/'/g, '%27');
+    var src = API_BASE + '/api/avatar/' + author.id + '?name=' + wsEnc(name);
+    var fb = 'https://placehold.co/96x96/1c1c28/8b5cf6?text=' + wsEnc(wsFirstChar(name)).replace(/'/g, '%27');
     return '<span class="ws-ava' + (author.frame_url ? ' framed' : '') + '" style="--s:' + (size || 40) + 'px">' +
         '<img class="ws-ava-img" src="' + wsEsc(src) + '" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'' + fb + '\'">' +
         (author.frame_url ? '<img class="ws-ava-frame" src="' + wsEsc(author.frame_url) + '" alt="" loading="lazy">' : '') +
@@ -1990,7 +2003,7 @@ async function wsHandleDeepLink() {
     openWorkshop();
     if (!link.token) return;
     try {
-        var d = await wsGet('/api/workshop/work/' + userId + '?token=' + encodeURIComponent(link.token));
+        var d = await wsGet('/api/workshop/work/' + userId + '?token=' + wsEnc(link.token));
         if (!d.success) throw new Error(d.error || d.detail || '');
         openWorkshopViewer(d.work);
     } catch (e) {
