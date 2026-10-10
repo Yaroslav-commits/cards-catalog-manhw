@@ -990,14 +990,60 @@ async function openModal(item) {
         }
 
         function renderPartnerSub() {
-            var btn = document.getElementById('subDoBtn');
-            if (!btn) return;
-            if (tasksData && tasksData.subscribe_done) {
-                var row = btn.parentElement;
-                var chk = document.createElement('div');
-                chk.className = 'partner-done-check';
-                chk.innerHTML = '✓';
-                btn.replaceWith(chk);
+            markPartnerDone('subDoBtn', tasksData && tasksData.subscribe_done);
+            markPartnerDone('chatDoBtn', tasksData && tasksData.chat_sub_done);
+        }
+
+        function markPartnerDone(btnId, done) {
+            var btn = document.getElementById(btnId);
+            if (!btn || !done) return;
+            var chk = document.createElement('div');
+            chk.className = 'partner-done-check';
+            chk.innerHTML = '✓';
+            btn.replaceWith(chk);
+        }
+
+        // Вступление в чат игроков (Партнёры)
+        var chatCheckBusy = false;
+        async function checkChatSub() {
+            if (chatCheckBusy) return;
+            chatCheckBusy = true;
+            var btn = document.getElementById('chatDoBtn');
+            var reset = function () {
+                if (btn) { btn.disabled = false; btn.classList.remove('checking'); btn.innerText = 'Выполнить'; }
+            };
+            if (btn) { btn.disabled = true; btn.classList.add('checking'); btn.innerText = 'Проверяем...'; }
+            try {
+                var res = await fetch(API_BASE + '/api/check_chat/' + userId, { method: 'POST', headers: authHeaders() });
+                var data = await res.json();
+                if (!data.ok) { tg.showAlert(data.error || 'Ошибка проверки'); reset(); return; }
+                if (!data.joined) {
+                    var link = data.link || (LINKS && LINKS.chat);
+                    if (link) {
+                        if (link.indexOf('t.me/') !== -1 && tg.openTelegramLink) tg.openTelegramLink(link);
+                        else openUrl(link);
+                        tg.showAlert('Вступите в чат и нажмите «Выполнить» ещё раз.');
+                    } else {
+                        tg.showAlert('Ссылка на чат пока недоступна. Попробуйте позже.');
+                    }
+                    reset();
+                    return;
+                }
+                if (data.rewarded) {
+                    if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
+                    var rw = data.reward || { krw: 1000, dia: 5 };
+                    showToast('Награда получена ✓', '+' + rw.krw + ' ₩ и +' + rw.dia + ' 💎 за вступление в чат.');
+                    fetchProfile();
+                } else {
+                    showToast('Уже выполнено ✓', 'Вступление в чат засчитано ранее.');
+                }
+                if (tasksData) tasksData.chat_sub_done = true;
+                markPartnerDone('chatDoBtn', true);
+            } catch (e) {
+                tg.showAlert('Ошибка соединения');
+                reset();
+            } finally {
+                chatCheckBusy = false;
             }
         }
 
@@ -1321,9 +1367,14 @@ async function openModal(item) {
             var duelOpen = document.getElementById('duelArena').classList.contains('open');
             var tierOpen = document.getElementById('tierScreen').classList.contains('open');
             var tierCardOpen = document.getElementById('tierAnalytic').classList.contains('open');
+            var workshopOpen = (typeof isWorkshopOpen === 'function') && isWorkshopOpen();
+            var achEl = document.getElementById('achievementsModal');
+            var achOpen = !!(achEl && achEl.style.display === 'flex');
 
+            // ФИКС: тирлист и окно достижений тоже показывают системную кнопку «Назад»
             if (earnOpen || sheetOpen || profileOpen || pubProfileOpen || passOpen || detailOpen ||
-                ownersOpen || favSystemOpen || titleSystemOpen || bgSystemOpen || frameSystemOpen || duelOpen) {
+                ownersOpen || favSystemOpen || titleSystemOpen || bgSystemOpen || frameSystemOpen || duelOpen ||
+                tierOpen || tierCardOpen || achOpen || workshopOpen) {
                 tg.BackButton.show();
             } else {
                 tg.BackButton.hide();
@@ -1333,9 +1384,11 @@ async function openModal(item) {
         if (tg.BackButton && tg.BackButton.onClick) {
             tg.BackButton.onClick(function() {
                 // ПОРЯДОК ВАЖЕН: Закрываем окна от верхних к нижним
-                if (document.getElementById('duelArena').classList.contains('open')) closeDuelArena();
+                // Мастерская лежит поверх всего и сама закрывает свои слои по одному
+                if (typeof isWorkshopOpen === 'function' && isWorkshopOpen()) workshopBack();
+                else if (document.getElementById('duelArena').classList.contains('open')) closeDuelArena();
                 else if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
-                else if (document.getElementById('taskSheet').classList.contains('open')) closeTaskSheet();
+                else if (document.getElementById('achievementsModal') && document.getElementById('achievementsModal').style.display === 'flex') closeAchievements();
                 else if (document.getElementById('favSystemSheet').classList.contains('open')) closeFavSystem();
                 else if (document.getElementById('titleSystemSheet').classList.contains('open')) closeTitleSystem();
                 else if (document.getElementById('bgSystemSheet').classList.contains('open')) closeBgSystem();
@@ -1348,7 +1401,6 @@ async function openModal(item) {
                 else if (document.getElementById('collDetailView').style.display === 'block') backToUniverses();
                 else if (document.getElementById('tierAnalytic').classList.contains('open')) closeTierCard();
                 else if (document.getElementById('tierScreen').classList.contains('open')) closeTierScreen();
-                else if (document.getElementById('duelArena').classList.contains('open')) closeDuelArena();
             });
         }
 // Открытие профиля
@@ -2337,11 +2389,6 @@ async function openPublicProfile(targetId) {
             setTimeout(function() {
                 toast.classList.remove('active');
             }, 3500);
-        }
-
-        function closePublicProfile() {
-            document.getElementById('publicProfileScreen').classList.remove('open');
-            manageBack();
         }
 
         // Инициализация интервалов
@@ -3393,6 +3440,7 @@ function openAchievements() {
 
     // 2. Открываем темный фон и саму шторку
     document.getElementById('achievementsModal').style.display = 'flex';
+    if (typeof manageBack === 'function') manageBack();
 
     // 3. Делаем запрос к твоему Python-серверу (добавлен API_BASE и заголовки)
     fetch(API_BASE + '/api/achievements?user_id=' + myUserId, {
@@ -3412,6 +3460,7 @@ function openAchievements() {
 
 function closeAchievements() {
     document.getElementById('achievementsModal').style.display = 'none';
+    if (typeof manageBack === 'function') manageBack();
 }
 
 function renderAchievementsList(achievements) {
