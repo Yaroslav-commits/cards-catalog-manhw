@@ -5,7 +5,7 @@ from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # 📂 Теперь здесь список папок, с которыми мы работаем
-folders = ['images', 'images/skins']
+folders = ['images', 'images/skins', 'images/templates']
 
 # Перебираем каждую папку из списка
 for folder_path in folders:
