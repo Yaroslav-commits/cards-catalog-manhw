@@ -1098,3 +1098,36 @@ select.ws-input option, select.ws-input optgroup { background: #12121c; color: #
     .ws-seg-pill, .ws-sheet, .ws-switch-knob { transition: none; }
     .ws-burst.go > svg, .ws-burst.go i, .ws-like.pop .ws-like-ico, .sk { animation: none; }
 }
+
+/* ---------- своё окно подтверждения ---------- */
+.ws-confirm {
+    position: absolute; inset: 0; z-index: 80;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(3, 2, 8, 0.72);
+}
+.ws-confirm.open { display: flex; animation: wsFade .18s ease; }
+@keyframes wsFade { from { opacity: 0; } to { opacity: 1; } }
+.ws-confirm-box {
+    width: 100%;
+    max-width: 340px;
+    padding: 20px 18px 16px;
+    border-radius: 22px;
+    border: 1px solid var(--line-2);
+    background: linear-gradient(180deg, #1c1830, #0e0c18);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+    animation: wsPopIn .22s cubic-bezier(.32,.72,0,1);
+}
+@keyframes wsPopIn { from { transform: scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+.ws-confirm-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+.ws-confirm-text { font-size: 14px; line-height: 1.45; color: var(--ink-2); margin-bottom: 18px; }
+.ws-confirm-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.ws-btn.danger-solid {
+    background: linear-gradient(180deg, #f87171, #dc2626);
+    border-color: rgba(255,255,255,0.18);
+    color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+    .ws-confirm.open, .ws-confirm-box { animation: none; }
+}

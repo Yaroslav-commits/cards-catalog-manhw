@@ -645,6 +645,17 @@ function wsBuild() {
             '</div>' +
         '</div>' +
 
+        // Своё окно подтверждения: системное tg.showConfirm есть не во всех версиях Telegram
+        '<div class="ws-confirm" id="wsConfirm" role="alertdialog" aria-modal="true" aria-labelledby="wsConfirmTitle">' +
+            '<div class="ws-confirm-box">' +
+                '<div class="ws-confirm-title" id="wsConfirmTitle"></div>' +
+                '<div class="ws-confirm-text" id="wsConfirmText"></div>' +
+                '<div class="ws-confirm-btns">' +
+                    '<button class="ws-btn ghost" id="wsConfirmNo">Отмена</button>' +
+                    '<button class="ws-btn primary" id="wsConfirmYes">Да</button>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
         '<div class="ws-busy" id="wsBusy"><div class="ws-spinner"></div><div id="wsBusyText">Сохраняю…</div></div>' +
         '<div class="ws-toast" id="wsToast" role="status" aria-live="polite"></div>';
 
@@ -737,6 +748,7 @@ function closeWorkshop() {
 // Закрывает верхний слой мастерской. Вызывается из кнопки «Назад» Telegram.
 function workshopBack() {
     if (document.getElementById('wsBusy').classList.contains('show')) return;
+    if (wsLayerOpen('wsConfirm')) return wsConfirmClose(false);
     var pub = document.getElementById('publicProfileScreen');
     if (pub && pub.classList.contains('open') && typeof closePublicProfile === 'function') return closePublicProfile();
     if (window.CustomSelect) try { CustomSelect.closeAll(); } catch (e) {}
@@ -896,8 +908,8 @@ function closeWorkshopEditor(force) {
         var doClose = function (ok) {
             if (ok) closeWorkshopEditor(true);
         };
-        if (tg.showConfirm) tg.showConfirm('Выйти из редактора? Несохранённая карта останется в черновике до закрытия приложения.', doClose);
-        else doClose(confirm('Выйти из редактора?'));
+        wsConfirm('Несохранённая карта останется в черновике, пока открыто приложение.', doClose,
+            { title: 'Выйти из редактора?', ok: 'Выйти' });
         return;
     }
     document.getElementById('wsEditor').classList.remove('open');
@@ -1793,31 +1805,45 @@ async function wsSendToChat(work) {
     }
 }
 
+// Скачивание. 1) Telegram 8.0+: штатное окно «Сохранить файл».
+// 2) Иначе (старый Telegram, ошибка, отказ платформы) — бот присылает
+//    карту файлом без сжатия в чат, оттуда её можно сохранить на любом устройстве.
 function wsDownload() {
-    if (!ws.viewing) return;
+    var w = ws.viewing;
+    if (!w) return;
     wsHaptic('medium');
-    var url = API_BASE + ws.viewing.download_url;
-    var fileName = 'manhwcard_' + ws.viewing.id + '.jpg';
+    var url = API_BASE + w.download_url;
+    var fileName = 'manhwcard_' + w.id + '.jpg';
+    var native = false;
     try {
-        // Telegram 8.0+: штатное окно сохранения файла
-        if (tg.downloadFile && tg.isVersionAtLeast && tg.isVersionAtLeast('8.0')) {
+        native = !!(tg.downloadFile && tg.isVersionAtLeast && tg.isVersionAtLeast('8.0'));
+    } catch (e) { native = false; }
+    if (native) {
+        try {
             tg.downloadFile({ url: url, file_name: fileName }, function (accepted) {
                 if (accepted) wsToast('Скачивание началось');
             });
             return;
+        } catch (e) {
+            // падаем на запасной путь ниже
         }
-    } catch (e) {}
-    // Старый Telegram: открываем во внешнем браузере, там файл скачается сам
-    if (tg.openLink && tg.initData) {
-        tg.openLink(url);
-        return;
     }
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    wsSendFile(w);
+}
+
+async function wsSendFile(w) {
+    if (ws.busy) return;
+    ws.busy = true;
+    try {
+        var d = await wsPost('/api/workshop/send/', { token: w.token, as_file: true });
+        if (!d.success) throw new Error(d.error || d.detail);
+        wsHaptic('success');
+        wsToast('Файл без сжатия отправлен в чат с ботом — сохрани его оттуда');
+    } catch (e) {
+        wsToast(e.message || 'Ошибка соединения', true);
+    } finally {
+        ws.busy = false;
+    }
 }
 
 function wsAfterChange(updated) {
@@ -1826,15 +1852,36 @@ function wsAfterChange(updated) {
     if (ws.tab === 'mine') wsRenderMine();
 }
 
-function wsConfirm(msg, cb) {
-    if (tg.showConfirm) tg.showConfirm(msg, cb);
-    else cb(confirm(msg));
+// opts: { title, ok, danger }
+function wsConfirm(msg, cb, opts) {
+    opts = opts || {};
+    var box = document.getElementById('wsConfirm');
+    if (!box) { cb(window.confirm(msg)); return; }
+    document.getElementById('wsConfirmTitle').textContent = opts.title || 'Подтвердите действие';
+    document.getElementById('wsConfirmText').textContent = msg;
+    var yes = document.getElementById('wsConfirmYes');
+    yes.textContent = opts.ok || 'Да';
+    yes.className = 'ws-btn ' + (opts.danger ? 'danger-solid' : 'primary');
+    ws.confirmCb = cb;
+    yes.onclick = function () { wsConfirmClose(true); };
+    document.getElementById('wsConfirmNo').onclick = function () { wsConfirmClose(false); };
+    box.onclick = function (e) { if (e.target === box) wsConfirmClose(false); };
+    box.classList.add('open');
+    wsHaptic('light');
+}
+
+function wsConfirmClose(ok) {
+    var box = document.getElementById('wsConfirm');
+    if (box) box.classList.remove('open');
+    var cb = ws.confirmCb;
+    ws.confirmCb = null;
+    if (cb) cb(!!ok);
 }
 
 function wsPublish() {
     if (!ws.viewing || ws.busy) return;
     var w = ws.viewing;
-    wsConfirm('Отправить карту на проверку? После одобрения её увидят все игроки в ленте.', async function (ok) {
+    wsConfirm('После одобрения модератором карту увидят все игроки в ленте и в чате.', async function (ok) {
         if (!ok) return;
         ws.busy = true;
         try {
@@ -1848,13 +1895,13 @@ function wsPublish() {
         } finally {
             ws.busy = false;
         }
-    });
+    }, { title: 'Опубликовать в ленте?', ok: 'Опубликовать' });
 }
 
 function wsDeleteWork() {
     if (!ws.viewing || ws.busy) return;
     var w = ws.viewing;
-    wsConfirm('Удалить карту навсегда? Лайки и заявки по ней тоже пропадут.', async function (ok) {
+    wsConfirm('Лайки и заявки по ней тоже пропадут. Копия останется в боте: Профиль → Настройка → Мастерская.', async function (ok) {
         if (!ok) return;
         ws.busy = true;
         try {
@@ -1871,7 +1918,7 @@ function wsDeleteWork() {
         } finally {
             ws.busy = false;
         }
-    });
+    }, { title: 'Удалить карту?', ok: 'Удалить', danger: true });
 }
 
 // ---------------------------------------------------------------------
