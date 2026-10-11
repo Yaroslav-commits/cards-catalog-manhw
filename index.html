@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="duel.css">
         <link rel="stylesheet" href="menu.css">
         <link rel="stylesheet" href="tier.css">
-        <link rel="stylesheet" href="workshop.css?v=7">
+        <link rel="stylesheet" href="workshop.css?v=8">
         <link rel="stylesheet" href="upgrade.css?v=2">
 </head>
 <body>
@@ -74,7 +74,7 @@
         <div class="filters-wrapper">
             <div class="filters-grid">
                 <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени..." oninput="updateCards()">
-
+                
                 <select id="rarityFilter" onchange="updateCards()">
                     <option value="all">Все редкости</option>
                     <option value="Божественная">⚫ Божественная</option>
@@ -84,7 +84,7 @@
                     <option value="Редкая">🟡 Редкая</option>
                     <option value="Обычная">⚪️ Обычная</option>
                 </select>
-
+                
                 <select id="seriesFilter" onchange="updateCards()">
                     <option value="all">Все вселенные</option>
                 </select>
@@ -105,7 +105,7 @@
                     </optgroup>
                 </select>
             </div>
-
+            
             <div class="filters-grid-row-2">
                 <select id="styleFilter" onchange="updateCards()">
                     <option value="all">Все навыки</option>
@@ -117,7 +117,7 @@
                     <option value="Уклонение">🌪 Уклонение</option>
                     <option value="Базовый">⚪ Базовые (Без навыка)</option>
                 </select>
-
+                
                 <div class="exclusive-switch-wrapper" id="exclusiveFilterBtn" onclick="toggleExclusive()">
                     <svg><use href="#icon-star"></use></svg>
                     Эксклюзив
@@ -129,7 +129,7 @@
             <span id="cardsResultText">Загружаю...</span>
             <span class="collection-count" id="collectionProgress">0%</span>
         </div>
-
+        
         <div class="cards-grid" id="cardsContainer"></div>
         <div class="catalog-pagination" id="catalogPagination"></div>
     </div>
@@ -256,7 +256,7 @@
         </div>
     </div>
 
-    <div class="action-card compact" onclick="tg.openTelegramLink('https://t.me/manhwcard_support_bot')">
+    <div class="action-card compact" data-snd="off" onclick="openSupport()">
         <div class="action-ico ico-support">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
         </div>
@@ -292,7 +292,7 @@
     </div>
 
     <div id="tab-collection" class="tab-content" style="padding-bottom: 100px;">
-
+        
         <div id="collUniversesView">
             <div class="section-hero" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(6, 6, 12, 0.9)); margin-bottom: 20px;">
                 <div class="hero-kicker" style="color: #c4b5fd;">Архив Системы</div>
@@ -308,10 +308,10 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 Назад к вселенным
             </button>
-
+            
             <div class="coll-detail-header-card" id="collDetailHeaderBox">
                 </div>
-
+            
             <div id="collDetailRaritiesContainer">
                 </div>
         </div>
@@ -388,7 +388,7 @@
                 <div class="gacha-kicker">GACHA PORTAL</div>
                 <div class="gacha-title">Призыв Карт</div>
                 <div class="gacha-desc">Испытай удачу и собери редчайших персонажей.</div>
-
+                
                 <div class="gacha-bal-wrap">
                     <div class="gacha-bal-pill">
                         <div class="gacha-t-icon">🎟</div>
@@ -404,7 +404,7 @@
 
         <div class="gacha-selector">
             <div class="gacha-sel-title">Выберите количество круток</div>
-
+            
             <div class="gacha-slider-area">
                 <button class="gacha-step-btn" onclick="adjustSummon(-1)">-1</button>
                 <div class="gacha-center-val">
@@ -413,7 +413,7 @@
                 </div>
                 <button class="gacha-step-btn" onclick="adjustSummon(1)">+1</button>
             </div>
-
+            
             <div class="gacha-range-wrap">
                 <input type="range" id="gachaSlider" min="1" max="16" value="8" step="1" oninput="syncSummon(this.value)">
             </div>
@@ -519,7 +519,7 @@
             </div>
             <div class="modal-info">
                 <h2 class="modal-title" id="modalName">Имя персонажа</h2>
-
+                
                 <div class="stat-row">
                     <span class="stat-label">🔮 Редкость:</span>
                     <span class="stat-val" id="modalRarity">Мифическая 🔴</span>
@@ -572,7 +572,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 Назад
             </button>
-            <div style="width: 24px;"></div>
+            <div style="width: 24px;"></div> 
         </div>
 
         <div class="ps-user-info">
@@ -621,7 +621,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 Назад
             </button>
-            <div style="width: 24px;"></div>
+            <div style="width: 24px;"></div> 
         </div>
 
         <div class="ps-user-info">
@@ -656,7 +656,7 @@
         <div class="ps-box">
             <div class="ps-box-title">СТАТИСТИКА БОЁВ</div>
             <div class="ps-stats-grid">
-
+                
                 <div class="ps-stat-card win">
                     <div class="bg-glow"></div>
                     <div class="stat-icon">
@@ -882,32 +882,32 @@
 
     <div class="system-overlay-center" id="favSystemSheet">
         <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh; padding-bottom: 0;">
-
+            
             <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
                 <button class="sys-close" onclick="closeFavSystem()">✖</button>
                 <div class="sys-kicker">SYSTEM NOTIFICATION</div>
                 <div class="sys-title">ВЫБОР КАРТЫ</div>
             </div>
-
+            
             <div class="filters-grid" style="margin-bottom: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="renderFavSelector()">
-
+                
                 <div id="favRarityFilters" style="display: flex; justify-content: flex-start; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; user-select: none;">
                     </div>
-
+                
                 <select id="favSortSelect" onchange="renderFavSelector()" class="filter-full">
                     <option value="rarity_desc">✨ От Божественных к Обычным</option>
                     <option value="rarity_asc">✨ От Обычных к Божественным</option>
                     <option value="newest">📅 По дате получения (новые выше)</option>
                     <option value="oldest">📅 По дате получения (старые выше)</option>
                 </select>
-
+                
                 <div id="favCardCount" style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight: 500;"></div>
             </div>
 
             <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: max-content; gap: 8px; flex: 1 1 auto; min-height: 0; padding-bottom: 20px; user-select: none;">
                 </div>
-
+            
             <div style="flex-shrink: 0; padding-top: 12px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05);">
                 <button onclick="selectFavCard('none')" style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s;">
                     Снять карту со слота ❌
@@ -919,13 +919,13 @@
 
     <div class="system-overlay-center" id="bgSystemSheet">
         <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh;">
-
+            
             <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
                 <button class="sys-close" onclick="closeBgSystem()">✖</button>
                 <div class="sys-kicker">SYSTEM NOTIFICATION</div>
                 <div class="sys-title">ФОН ПРОФИЛЯ</div>
             </div>
-
+            
             <div class="bg-slider-container" id="bgListContainer" style="margin-bottom: 16px;">
                 </div>
 
@@ -1051,7 +1051,7 @@
 </div>
 
             <button class="pass-btn waiting" id="passMainBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 
                 Следующая награда через <span id="passLeftTextBtn">550 XP</span>
             </button>
         </div>
@@ -1105,14 +1105,14 @@
                     <div class="rew-chance">25% <span>ШАНС</span></div>
                 </div>
             </div>
-
+            
             <div class="pass-task-foot" style="margin-top:12px;">Награда определяется случайным образом</div>
         </div>
     </div>
 
     <div class="pack-overlay" id="packOverlay">
         <div class="sys-flash" id="sysFlash"></div>
-
+        
         <div class="pack-box-container" id="packBoxContainer" onclick="openSystemPack()">
             <div class="sys-alert-box">[ СИСТЕМА ]<br><span style="font-size:12px; font-weight:400; color:#fff;">Награда готова к получению. Нажмите.</span></div>
             <div class="pack-cube" id="packCube"></div>
@@ -1124,7 +1124,7 @@
             <div class="card-3d-wrapper" onclick="clickToFlipCard()" style="cursor: pointer;" id="packCardWrapper">
                 <!-- Контейнер для электро-взрыва -->
                 <div id="electroExplosionContainer"></div>
-
+                
                 <div class="card-3d-inner" id="packCardInner">
                     <div class="card-3d-front">SYSTEM</div>
                     <div class="card-3d-back" id="packCardBack">
@@ -1132,7 +1132,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="pack-card-info" id="packCardInfo">
                 <div class="pack-card-title" id="packCardTitle">ИМЯ КАРТЫ</div>
                 <div class="pack-card-rarity" id="packCardRarity">Редкость</div>
@@ -1143,7 +1143,7 @@
         </div>
     </div>
 
-
+    
     <div class="gacha-buy-overlay" id="buyAttemptsModal" onclick="if (event.target === this) closeBuyAttemptsModal()">
         <div class="gacha-gate gate-left"></div>
         <div class="gacha-gate gate-right"></div>
@@ -1395,7 +1395,7 @@
         <div class="ta-body" id="taBody"></div>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 
     <script src="custom-select.js"></script>
     <script src="wheel.js"></script>
@@ -1435,7 +1435,7 @@
 
     <!-- МАСТЕРСКАЯ -->
     <div class="ws-screen" id="wsScreen"></div>
-    <script src="workshop.js?v=8"></script>
+    <script src="workshop.js?v=10"></script>
 
 </body>
 </html>

@@ -1131,3 +1131,35 @@ select.ws-input option, select.ws-input optgroup { background: #12121c; color: #
 @media (prefers-reduced-motion: reduce) {
     .ws-confirm.open, .ws-confirm-box { animation: none; }
 }
+
+/* ---------- логотип: подсказка про PNG и положение ---------- */
+.ws-png-note {
+    display: flex; align-items: flex-start; gap: 9px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(34, 211, 238, 0.07);
+    border: 1px solid rgba(34, 211, 238, 0.28);
+    font-size: 12px; line-height: 1.45;
+    color: var(--ink-2);
+}
+.ws-png-note svg { width: 16px; height: 16px; margin-top: 1px; color: var(--cyan); }
+.ws-png-note b { color: #a5f3fc; }
+.ws-logo-hint b { color: #fde68a; }
+
+.ws-logo-pos {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(139, 92, 246, 0.07);
+    border: 1px dashed rgba(196, 181, 253, 0.35);
+}
+.ws-logo-pos-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.ws-logo-pos-head b { font-size: 13.5px; }
+.ws-logo-pos-hint { font-size: 12px; line-height: 1.45; color: var(--ink-3); margin-bottom: 10px; }
+.ws-logo-align { display: flex; gap: 6px; margin-bottom: 12px; }
+.ws-logo-align .ws-chip { --c: #a78bfa; flex: 1; justify-content: center; height: 36px; }
+.ws-logo-size { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--ink-2); }
+.ws-logo-size input[type=range] { flex: 1; accent-color: #a855f7; }
+.ws-logo-size b { min-width: 40px; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+#wsPreview { touch-action: pan-y; }

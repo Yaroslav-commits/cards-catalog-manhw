@@ -44,9 +44,19 @@ var WS_CFG = {
     // Арт: мифическая на всю карту, остальные — 96% по центру
     artScale: { mythic: 1, other: 0.96 },
 
-    // Зона логотипа (левый верхний угол). Логотип вписывается целиком,
-    // прозрачные поля по краям обрезаются автоматически.
-    logo: { x: 52, y: 46, w: 205, h: 158 },
+    // Зона логотипа (левый верхний угол) — это «рамка возможного»: внутри неё
+    // игрок может двигать и уменьшать лого. Прозрачные поля по краям обрезаются.
+    // Числа — в пикселях карты 960×1280. Чтобы подвинуть зону, меняй x/y.
+    logo: {
+        zones: {
+            other:  { x: 52, y: 46, w: 205, h: 158 },
+            mythic: { x: 34, y: 26, w: 205, h: 158 }   // у мифической — выше и левее
+        },
+        // Положение по умолчанию внутри зоны: 0 — к левому/верхнему краю, 1 — к правому/нижнему.
+        // ay: 0 — лого прижимается к верху (раньше висело по центру, и сверху была пустота).
+        ax: 0, ay: 0,
+        minScale: 0.45     // насколько игрок может уменьшить лого (45%)
+    },
 
     mythic: {
         // baseline — линия, на которой стоят буквы; cap — высота заглавной
@@ -94,6 +104,9 @@ var ws = {
     series: '',
     customSeries: '',
     customLogo: null,        // canvas с обрезанным логотипом игрока
+    logoPos: { s: 1, ax: null, ay: null },   // размер и место лого внутри зоны (null — по умолчанию)
+    logoGeom: null,          // последняя геометрия лого в превью (для перетаскивания)
+    logoFrameUntil: 0,       // до какого момента показывать пунктирную рамку
     name: '',
     stats: { speed: 85, strength: 85, intellect: 85 },
     src: null,               // canvas с артом игрока (уменьшенный)
@@ -255,10 +268,90 @@ function wsTrim(img) {
     return out;
 }
 
+// Обрезка ЛОГОТИПА — аккуратнее, чем wsTrim:
+//  • если фон не прозрачный, а однотонный (белый JPG и т.п.) — убираем его,
+//    заливкой от краёв картинки, чтобы не задеть такие же цвета внутри лого;
+//  • границы считаются по «массе» рисунка: одиночные пылинки, полупрозрачная
+//    тень и шум по краям не раздувают рамку, поэтому пустых полей не остаётся.
+function wsTrimLogo(img) {
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var x = c.getContext('2d');
+    x.drawImage(img, 0, 0);
+    var id;
+    try { id = x.getImageData(0, 0, w, h); } catch (e) { return c; }
+    var d = id.data, bgRemoved = false;
+
+    // 1. Однотонный непрозрачный фон? Смотрим 8 точек по краям.
+    var pts = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1], [w >> 1, 0], [w >> 1, h - 1], [0, h >> 1], [w - 1, h >> 1]];
+    var opaque = 0, sr = 0, sg = 0, sb = 0;
+    pts.forEach(function (p) {
+        var i = (p[1] * w + p[0]) * 4;
+        if (d[i + 3] > 245) { opaque++; sr += d[i]; sg += d[i + 1]; sb += d[i + 2]; }
+    });
+    if (opaque >= 7) {
+        var br = sr / opaque, bgc = sg / opaque, bb = sb / opaque, similar = true;
+        pts.forEach(function (p) {
+            var i = (p[1] * w + p[0]) * 4;
+            if (d[i + 3] > 245 && Math.max(Math.abs(d[i] - br), Math.abs(d[i + 1] - bgc), Math.abs(d[i + 2] - bb)) > 40) similar = false;
+        });
+        if (similar) {
+            var TOL = 38, SOFT = 70, seen = new Uint8Array(w * h), stack = new Int32Array(w * h), sp = 0;
+            var dist = function (k) { var i = k * 4; return Math.max(Math.abs(d[i] - br), Math.abs(d[i + 1] - bgc), Math.abs(d[i + 2] - bb)); };
+            var push = function (k) { if (!seen[k] && dist(k) < SOFT) { seen[k] = 1; stack[sp++] = k; } };
+            for (var ex = 0; ex < w; ex++) { push(ex); push((h - 1) * w + ex); }
+            for (var ey = 0; ey < h; ey++) { push(ey * w); push(ey * w + w - 1); }
+            while (sp) {
+                var k = stack[--sp], px = k % w, py = (k / w) | 0, dd = dist(k);
+                // мягкий край: почти фон — прозрачно, переходные пиксели — полупрозрачно
+                d[k * 4 + 3] = dd < TOL ? 0 : Math.round(d[k * 4 + 3] * (dd - TOL) / (SOFT - TOL));
+                if (dd < TOL) {
+                    if (px > 0) push(k - 1);
+                    if (px < w - 1) push(k + 1);
+                    if (py > 0) push(k - w);
+                    if (py < h - 1) push(k + w);
+                }
+            }
+            x.putImageData(id, 0, 0);
+            bgRemoved = true;
+        }
+    }
+
+    // 2. Границы по «массе» рисунка (отбрасываем по 0.1% с каждой стороны — это пыль и шум)
+    var col = new Float64Array(w), row = new Float64Array(h), total = 0;
+    for (var y = 0; y < h; y++) {
+        for (var xx = 0; xx < w; xx++) {
+            var a = d[(y * w + xx) * 4 + 3];
+            if (a > 24) { col[xx] += a; row[y] += a; total += a; }
+        }
+    }
+    if (!total) return c;
+    var cut = total * 0.001;
+    var edge = function (arr, fromEnd) {
+        var acc = 0, n = arr.length;
+        for (var i = 0; i < n; i++) {
+            var j = fromEnd ? n - 1 - i : i;
+            acc += arr[j];
+            if (acc > cut) return j;
+        }
+        return fromEnd ? n - 1 : 0;
+    };
+    var pad = 2;
+    var minX = Math.max(0, edge(col, false) - pad), maxX = Math.min(w - 1, edge(col, true) + pad);
+    var minY = Math.max(0, edge(row, false) - pad), maxY = Math.min(h - 1, edge(row, true) + pad);
+    var out = document.createElement('canvas');
+    out.width = maxX - minX + 1;
+    out.height = maxY - minY + 1;
+    out.getContext('2d').drawImage(c, minX, minY, out.width, out.height, 0, 0, out.width, out.height);
+    out._bgRemoved = bgRemoved;
+    return out;
+}
+
 var wsTrimCache = {};
 function wsLoadTrimmed(url) {
     if (wsTrimCache[url]) return wsTrimCache[url];
-    wsTrimCache[url] = wsLoadImg(url).then(wsTrim);
+    wsTrimCache[url] = wsLoadImg(url).then(wsTrimLogo);
     return wsTrimCache[url];
 }
 
@@ -388,8 +481,16 @@ async function wsRenderCard(canvas, opts) {
     if (tpl instanceof Error) missing.push(WS_CFG.templates[rarity]);
     else ctx.drawImage(tpl, 0, 0, W, H);
 
-    // 3. Логотип
-    if (logo) wsDrawContain(ctx, logo, WS_CFG.logo);
+    // 3. Логотип (в превью — с пунктирной «рамкой возможного», пока её двигают)
+    ws.logoGeom = null;
+    if (logo) {
+        var lg = wsLogoRect(logo, rarity);
+        ctx.drawImage(logo, lg.rect.x, lg.rect.y, lg.rect.w, lg.rect.h);
+        if (opts.preview) {
+            ws.logoGeom = lg;
+            if (ws.logoDrag || Date.now() < ws.logoFrameUntil) wsDrawLogoFrame(ctx, lg);
+        }
+    }
 
     // 4. Статы
     if (isMythic) {
@@ -421,6 +522,41 @@ async function wsRenderCard(canvas, opts) {
     wsDrawOutlined(ctx, ws.name.trim(), ws.fontFamily.name, nc, 'Н');
 
     return { missing: missing };
+}
+
+// Где стоит лого: вписываем в зону, уменьшаем на logoPos.s и ставим в точку ax/ay
+// внутри свободного места — так лого никогда не выходит за рамку.
+function wsLogoZone(rarity) {
+    var z = WS_CFG.logo.zones;
+    return rarity === 'mythic' ? z.mythic : z.other;
+}
+function wsLogoRect(logo, rarity) {
+    var zone = wsLogoZone(rarity);
+    var iw = logo.naturalWidth || logo.width, ih = logo.naturalHeight || logo.height;
+    var s = Math.max(WS_CFG.logo.minScale, Math.min(1, ws.logoPos.s || 1));
+    var k = Math.min(zone.w / iw, zone.h / ih) * s;
+    var w = iw * k, h = ih * k;
+    var ax = ws.logoPos.ax == null ? WS_CFG.logo.ax : ws.logoPos.ax;
+    ax = ax >= 0.5 ? 1 : 0;   // только слева или справа
+    var ay = ws.logoPos.ay == null ? WS_CFG.logo.ay : ws.logoPos.ay;
+    var freeX = zone.w - w, freeY = zone.h - h;
+    return { zone: zone, freeX: freeX, freeY: freeY, ax: ax, ay: ay,
+             rect: { x: zone.x + freeX * ax, y: zone.y + freeY * ay, w: w, h: h } };
+}
+function wsDrawLogoFrame(ctx, lg) {
+    var z = lg.zone, r = lg.rect;
+    ctx.save();
+    ctx.fillStyle = 'rgba(139, 92, 246, 0.12)';
+    ctx.fillRect(z.x, z.y, z.w, z.h);
+    ctx.setLineDash([14, 10]);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.strokeRect(z.x, z.y, z.w, z.h);
+    ctx.setLineDash([]);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(196, 181, 253, 0.95)';
+    ctx.strokeRect(r.x, r.y, r.w, r.h);
+    ctx.restore();
 }
 
 function wsCurrentLogo() {
@@ -566,13 +702,23 @@ function wsBuild() {
                         '<div class="ws-logo-row">' +
                             '<div class="ws-logo-box" id="wsLogoBox">Без лого</div>' +
                             '<div class="ws-logo-btns">' +
-                                '<label class="ws-btn ghost small">' + WS_ICON.upload + ' Загрузить лого<input type="file" accept="image/*" hidden onchange="wsOnLogoFile(this)"></label>' +
+                                '<label class="ws-btn ghost small">' + WS_ICON.upload + ' Загрузить лого<input type="file" accept="image/png,image/webp,image/*" hidden onchange="wsOnLogoFile(this)"></label>' +
                                 '<button class="ws-btn ghost small" id="wsLogoClear" style="display:none" onclick="wsClearLogo()">Убрать</button>' +
                             '</div>' +
                         '</div>' +
-                        '<div class="ws-hint">Лучше всего — PNG с прозрачным фоном.</div>' +
+                        '<div class="ws-png-note">' + WS_ICON.bulb + '<span>Загружай логотип в формате <b>.PNG с прозрачным фоном</b>. Пустые края обрежутся сами, однотонный фон мы попробуем убрать — но с прозрачным PNG лого выглядит чище всего.</span></div>' +
+                        '<div class="ws-hint ws-logo-hint" id="wsLogoHint"></div>' +
                     '</div>' +
                     '<div class="ws-hint" id="wsSeriesHint"></div>' +
+                    '<div class="ws-logo-pos" id="wsLogoPos" style="display:none">' +
+                        '<div class="ws-logo-pos-head"><b>Положение логотипа</b><button class="ws-btn ghost small" onclick="wsLogoReset()">Сбросить</button></div>' +
+                        '<div class="ws-logo-pos-hint">Логотип стоит слева или справа. Перетащи его пальцем прямо на карте — он прилипнет к ближнему краю пунктирной рамки, а по высоте двигается свободно.</div>' +
+                        '<div class="ws-logo-align">' +
+                            '<button class="ws-chip" data-ax="0" onclick="wsLogoAlign(0)">Слева</button>' +
+                            '<button class="ws-chip" data-ax="1" onclick="wsLogoAlign(1)">Справа</button>' +
+                        '</div>' +
+                        '<div class="ws-logo-size"><span>Размер</span><input type="range" id="wsLogoSize" min="45" max="100" value="100" oninput="wsLogoSize(this.value)"><b id="wsLogoSizeVal">100%</b></div>' +
+                    '</div>' +
                 '</div>' +
 
                 '<div class="ws-field"><div class="ws-label">Имя персонажа</div>' +
@@ -899,6 +1045,8 @@ function openWorkshopEditor() {
     wsSetRarity(ws.rarity, true);
     wsOnSeries(document.getElementById('wsSeriesSelect').value, true);
     wsUpdateArtButtons();
+    wsInitLogoDrag();
+    wsUpdateLogoPanel();
     document.getElementById('wsEditor').classList.add('open');
     wsQueuePreview();
 }
@@ -999,7 +1147,8 @@ function wsOnSeries(val, silent) {
             if (ws.series === val && !map[val]) hint.textContent = 'У этой вселенной пока нет логотипа — карта будет без лого.';
         });
     }
-    if (!silent) wsHaptic('select');
+    if (!silent) { wsHaptic('select'); ws.logoPos = { s: 1, ax: null, ay: null }; }
+    wsUpdateLogoPanel();
     wsQueuePreview();
 }
 
@@ -1007,8 +1156,16 @@ function wsOnLogoFile(input) {
     var file = input.files && input.files[0];
     input.value = '';
     if (!file) return;
+    var notPng = !/png|webp/i.test(file.type || '');
     wsFileToCanvas(file, 1200).then(function (c) {
-        ws.customLogo = wsTrim(c);
+        ws.customLogo = wsTrimLogo(c);
+        ws.logoPos = { s: 1, ax: null, ay: null };
+        var lh = document.getElementById('wsLogoHint');
+        if (lh) {
+            if (ws.customLogo._bgRemoved) lh.innerHTML = '<b>Фон у картинки не прозрачный</b> — мы убрали его автоматически. Если края выглядят грязно, загрузи <b>.PNG с прозрачным фоном</b>.';
+            else if (notPng) lh.innerHTML = 'Это не PNG — у такого файла не бывает прозрачности. Лучше загрузить <b>.PNG с прозрачным фоном</b>.';
+            else lh.innerHTML = '';
+        }
         var box = document.getElementById('wsLogoBox');
         box.innerHTML = '';
         var prev = document.createElement('canvas');
@@ -1017,7 +1174,8 @@ function wsOnLogoFile(input) {
         prev.getContext('2d').drawImage(ws.customLogo, 0, 0);
         box.appendChild(prev);
         document.getElementById('wsLogoClear').style.display = '';
-        wsQueuePreview();
+        wsShowLogoFrame();
+        wsUpdateLogoPanel();
     }).catch(function (e) { wsToast(e.message, true); });
 }
 
@@ -1025,7 +1183,118 @@ function wsClearLogo() {
     ws.customLogo = null;
     document.getElementById('wsLogoBox').textContent = 'Без лого';
     document.getElementById('wsLogoClear').style.display = 'none';
+    var lh = document.getElementById('wsLogoHint');
+    if (lh) lh.innerHTML = '';
+    wsUpdateLogoPanel();
     wsQueuePreview();
+}
+
+// ---------- Положение логотипа ----------
+function wsShowLogoFrame(ms) {
+    ws.logoFrameUntil = Date.now() + (ms || 1400);
+    wsQueuePreview();
+    clearTimeout(ws._frameTimer);
+    ws._frameTimer = setTimeout(wsQueuePreview, (ms || 1400) + 30);
+}
+
+function wsUpdateLogoPanel() {
+    var panel = document.getElementById('wsLogoPos');
+    if (!panel) return;
+    wsCurrentLogo().then(function (logo) {
+        panel.style.display = logo ? '' : 'none';
+        var s = Math.round((ws.logoPos.s || 1) * 100);
+        var inp = document.getElementById('wsLogoSize');
+        if (inp) inp.value = s;
+        var val = document.getElementById('wsLogoSizeVal');
+        if (val) val.textContent = s + '%';
+        var ax = ws.logoPos.ax == null ? WS_CFG.logo.ax : ws.logoPos.ax;
+        panel.querySelectorAll('.ws-logo-align .ws-chip').forEach(function (b) {
+            b.classList.toggle('active', Math.abs(parseFloat(b.getAttribute('data-ax')) - ax) < 0.01);
+        });
+    });
+}
+
+function wsLogoSize(v) {
+    ws.logoPos.s = Math.max(WS_CFG.logo.minScale, Math.min(1, v / 100));
+    var val = document.getElementById('wsLogoSizeVal');
+    if (val) val.textContent = Math.round(ws.logoPos.s * 100) + '%';
+    wsShowLogoFrame();
+}
+
+function wsLogoAlign(ax) {
+    wsHaptic('select');
+    ws.logoPos.ax = ax;
+    wsShowLogoFrame();
+    wsUpdateLogoPanel();
+}
+
+function wsLogoReset() {
+    wsHaptic('light');
+    ws.logoPos = { s: 1, ax: null, ay: null };
+    wsShowLogoFrame();
+    wsUpdateLogoPanel();
+}
+
+// Перетаскивание лого пальцем/мышью по превью
+function wsInitLogoDrag() {
+    var cv = document.getElementById('wsPreview');
+    if (!cv || cv._logoDrag) return;
+    cv._logoDrag = true;
+
+    var toCanvas = function (cx, cy) {
+        var r = cv.getBoundingClientRect();
+        return { x: (cx - r.left) * WS_CFG.W / r.width, y: (cy - r.top) * WS_CFG.H / r.height };
+    };
+    var hit = function (p) {
+        var g = ws.logoGeom;
+        if (!g) return false;
+        var z = g.zone, m = 40;   // немного шире рамки — по маленькому лого тоже легко попасть
+        return p.x >= z.x - m && p.x <= z.x + z.w + m && p.y >= z.y - m && p.y <= z.y + z.h + m;
+    };
+    var start = function (cx, cy) {
+        var p = toCanvas(cx, cy);
+        if (!hit(p)) return false;
+        var g = ws.logoGeom;
+        ws.logoDrag = { x: p.x, y: p.y, ax: g.ax, ay: g.ay, freeX: g.freeX, freeY: g.freeY };
+        wsHaptic('light');
+        wsQueuePreview();
+        return true;
+    };
+    var move = function (cx, cy) {
+        var dr = ws.logoDrag;
+        if (!dr) return;
+        var p = toCanvas(cx, cy);
+        // По горизонтали лого стоит только слева или справа — прилипает к ближнему краю
+        if (dr.freeX > 0.5) {
+            var nx = dr.ax + (p.x - dr.x) / dr.freeX;
+            var side = nx >= 0.5 ? 1 : 0;
+            if (side !== ws.logoPos.ax) wsHaptic('select');
+            ws.logoPos.ax = side;
+        }
+        if (dr.freeY > 0.5) ws.logoPos.ay = Math.max(0, Math.min(1, dr.ay + (p.y - dr.y) / dr.freeY));
+        wsQueuePreview();
+    };
+    var end = function () {
+        if (!ws.logoDrag) return;
+        ws.logoDrag = null;
+        wsShowLogoFrame(900);
+        wsUpdateLogoPanel();
+    };
+
+    cv.addEventListener('touchstart', function (e) {
+        if (e.touches.length !== 1) return;
+        if (start(e.touches[0].clientX, e.touches[0].clientY)) e.preventDefault();   // не скроллим страницу, пока тащим
+    }, { passive: false });
+    cv.addEventListener('touchmove', function (e) {
+        if (!ws.logoDrag) return;
+        e.preventDefault();
+        move(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    cv.addEventListener('touchend', end);
+    cv.addEventListener('touchcancel', end);
+    cv.addEventListener('mousedown', function (e) { if (start(e.clientX, e.clientY)) e.preventDefault(); });
+    window.addEventListener('mousemove', function (e) { move(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', end);
 }
 
 function wsOnArtFile(input) {
