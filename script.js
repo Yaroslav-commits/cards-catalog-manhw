@@ -1838,7 +1838,7 @@ async function openPublicProfile(targetId) {
 
             document.getElementById('pubName').innerHTML = mcEsc(dispName) + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
 
-            document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id + "?name=" + encodeURIComponent(dispName);
+            document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id + "?name=" + mcEnc(dispName);
 
             if (p.is_premium) {
                 document.getElementById('pubAvatar').style.borderColor = "var(--premium-gold)";
@@ -3190,6 +3190,22 @@ function mcSkinVideo(file, cls, extra) {
     var src = 'images/skins/' + String(file || '').replace(/\.[^.\/]+$/, '') + '.webm';
     return '<video class="' + (cls || '') + '" src="' + src + '" autoplay loop muted playsinline webkit-playsinline preload="metadata" ' + (extra || '') + '></video>';
 }
+// Убирает «половинки» эмодзи (одиночные суррогаты UTF-16): на них encodeURIComponent
+// бросает ошибку «String contained an illegal UTF-16 sequence» и ломал топ/владельцев
+function mcWellFormed(str) {
+    str = String(str == null ? '' : str);
+    if (typeof str.toWellFormed === 'function') return str.toWellFormed();
+    return str.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '$1�');
+}
+function mcEnc(str) {
+    try { return encodeURIComponent(mcWellFormed(str)); } catch (e) { return ''; }
+}
+// Первый СИМВОЛ имени целиком (эмодзи не режется пополам)
+function mcInitial(name) {
+    var chars = Array.from(mcWellFormed(name).trim());
+    var c = chars.length ? chars[0] : 'U';
+    return mcEnc(c.toUpperCase()) || 'U';
+}
 function mcRgb(hex) {
     var h = String(hex || '').replace('#', '');
     if (h.length === 3) h = h.replace(/./g, '$&$&');
@@ -3842,9 +3858,9 @@ function renderOwnersList(data) {
     container.innerHTML = data.owners.map(function (player, i) {
         var pos = offset + i + 1;
         var cleanName = mcEsc((player.name || 'Игрок').trim());
-        var initial = encodeURIComponent((player.name || 'U').trim().charAt(0).toUpperCase() || 'U');
+        var initial = mcInitial(player.name || 'U');
         var fallbackImg = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
-        var avatarSrc = API_BASE + '/api/avatar/' + player.id + '?name=' + encodeURIComponent(player.name || 'U');
+        var avatarSrc = API_BASE + '/api/avatar/' + player.id + '?name=' + mcEnc(player.name || 'U');
         var frameHtml = player.frame_url ? '<img src="' + mcEsc(player.frame_url) + '" class="avatar-frame" onerror="this.style.display=\'none\'">' : '';
         var isMe = String(player.id) === String(userId);
         var cls = 'os-owner-row' + (pos === 1 ? ' top1' : pos <= 3 ? ' top3' : '') + (isMe ? ' is-me' : '');
@@ -4006,9 +4022,9 @@ function mcLbValue(p) {
 
 function mcLbAvatar(p, cls) {
     var name = (p.name || 'Игрок').trim();
-    var initial = encodeURIComponent(name.charAt(0).toUpperCase() || 'U');
+    var initial = mcInitial(name);
     var fallbackImg = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
-    var src = API_BASE + '/api/avatar/' + p.id + '?name=' + encodeURIComponent(name);
+    var src = API_BASE + '/api/avatar/' + p.id + '?name=' + mcEnc(name);
     return '<div class="lb-ava ' + (cls || '') + '">' +
         '<img class="lb-ava-img" src="' + src + '" loading="lazy" onerror="this.onerror=null; this.src=\'' + fallbackImg + '\'" alt="">' +
         (p.frame_url ? '<img class="lb-ava-frame" src="' + mcEsc(p.frame_url) + '" alt="" onerror="this.style.display=\'none\'">' : '') +
