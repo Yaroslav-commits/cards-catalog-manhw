@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="menu.css">
         <link rel="stylesheet" href="tier.css">
         <link rel="stylesheet" href="workshop.css?v=7">
+        <link rel="stylesheet" href="upgrade.css?v=1">
 </head>
 <body>
     <div id="splashScreen" class="splash-screen">
@@ -73,7 +74,7 @@
         <div class="filters-wrapper">
             <div class="filters-grid">
                 <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени..." oninput="updateCards()">
-                
+
                 <select id="rarityFilter" onchange="updateCards()">
                     <option value="all">Все редкости</option>
                     <option value="Божественная">⚫ Божественная</option>
@@ -83,7 +84,7 @@
                     <option value="Редкая">🟡 Редкая</option>
                     <option value="Обычная">⚪️ Обычная</option>
                 </select>
-                
+
                 <select id="seriesFilter" onchange="updateCards()">
                     <option value="all">Все вселенные</option>
                 </select>
@@ -104,7 +105,7 @@
                     </optgroup>
                 </select>
             </div>
-            
+
             <div class="filters-grid-row-2">
                 <select id="styleFilter" onchange="updateCards()">
                     <option value="all">Все навыки</option>
@@ -116,7 +117,7 @@
                     <option value="Уклонение">🌪 Уклонение</option>
                     <option value="Базовый">⚪ Базовые (Без навыка)</option>
                 </select>
-                
+
                 <div class="exclusive-switch-wrapper" id="exclusiveFilterBtn" onclick="toggleExclusive()">
                     <svg><use href="#icon-star"></use></svg>
                     Эксклюзив
@@ -128,7 +129,7 @@
             <span id="cardsResultText">Загружаю...</span>
             <span class="collection-count" id="collectionProgress">0%</span>
         </div>
-        
+
         <div class="cards-grid" id="cardsContainer"></div>
         <div class="catalog-pagination" id="catalogPagination"></div>
     </div>
@@ -137,7 +138,7 @@
 
         <div class="profile-card" onclick="openProfileModal()">
             <div class="profile-head">
-                <div class="avatar-wrapper" onclick="openFrameSystem()">
+                <div class="avatar-wrapper" onclick="event.stopPropagation(); openFrameSystem()">
                     <img src="https://placehold.co/150x150/1c1c28/8b5cf6?text=U" id="userAvatar" class="profile-avatar">
                     <img id="userAvatarFrame" class="avatar-frame" src="" style="display: none;">
                 </div>
@@ -228,13 +229,14 @@
 </div>
 
 <div class="triple-grid">
-    <div class="action-card compact" onclick="openAchievements()">
+    <div class="action-card compact ach-menu-card" onclick="openAchievements()">
+        <div class="ach-menu-badge" id="achMenuBadge" style="display:none;">0</div>
         <div class="action-ico ico-achiev">
             <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-archive"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
         </div>
         <div class="action-info">
             <div class="action-title">Достижения</div>
-            <div class="action-sub">Награды за развитие</div>
+            <div class="action-sub" id="achMenuSub">Награды за развитие</div>
         </div>
         <div class="action-arrow">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -268,25 +270,6 @@
     </div>
 </div>
 
-        <div id="achievementsModal" class="achiev-modal-overlay" style="display: none;">
-    <div class="achiev-sheet">
-        <div class="sheet-header-clean">
-            <div class="sheet-title-clean">🏆 Достижения</div>
-            <button class="sheet-close-btn" onclick="closeAchievements()">✕</button>
-        </div>
-
-        <div class="achiev-tabs">
-            <div class="achiev-tab active">Achievements</div>
-        </div>
-
-        <div id="achievementsContainer" class="achiev-list">
-            <div style="text-align: center; color: #8e8e93; margin-top: 20px;">
-                <span class="loader"></span> Загрузка...
-            </div>
-        </div>
-    </div>
-</div>
-
         <div class="shop-banner" onclick="switchTab('shop', document.querySelectorAll('.nav-btn')[1])">
             <div class="shop-banner-bg"></div>
             <div class="shop-banner-overlay"></div>
@@ -299,7 +282,7 @@
     </div>
 
     <div id="tab-collection" class="tab-content" style="padding-bottom: 100px;">
-        
+
         <div id="collUniversesView">
             <div class="section-hero" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(6, 6, 12, 0.9)); margin-bottom: 20px;">
                 <div class="hero-kicker" style="color: #c4b5fd;">Архив Системы</div>
@@ -315,10 +298,10 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 Назад к вселенным
             </button>
-            
+
             <div class="coll-detail-header-card" id="collDetailHeaderBox">
                 </div>
-            
+
             <div id="collDetailRaritiesContainer">
                 </div>
         </div>
@@ -326,27 +309,49 @@
     </div>
 
     <div id="tab-tops" class="tab-content">
-        <div class="tops-header">
-            <div class="tops-title">🏆 Рейтинг игроков</div>
-            <div class="tops-timer" id="topsTimer" style="display: none;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                До сброса: <span id="topsTimeValue">...</span>
+        <div class="lb-hero" id="lbHero">
+            <div class="lb-hero-beams"></div>
+            <div class="lb-hero-grid"></div>
+            <div class="lb-hero-inner">
+                <div class="lb-kicker"><span class="lb-live-dot"></span>HALL OF FAME</div>
+                <div class="lb-title">Рейтинг <span>игроков</span></div>
+                <div class="lb-subtitle" id="lbSubtitle">Лучшие бойцы текущего сезона</div>
+                <div class="lb-timer" id="topsTimer" style="display:none;">
+                    <div class="lb-timer-label">До конца сезона</div>
+                    <div class="lb-timer-cells">
+                        <div class="lb-cell"><b id="lbTmD">00</b><span>дн</span></div>
+                        <div class="lb-colon">:</div>
+                        <div class="lb-cell"><b id="lbTmH">00</b><span>час</span></div>
+                        <div class="lb-colon">:</div>
+                        <div class="lb-cell"><b id="lbTmM">00</b><span>мин</span></div>
+                        <div class="lb-colon">:</div>
+                        <div class="lb-cell"><b id="lbTmS">00</b><span>сек</span></div>
+                    </div>
+                    <span id="topsTimeValue" hidden></span>
+                </div>
             </div>
         </div>
 
-        <div class="tops-nav">
-            <button class="tops-nav-btn active" id="btnTopPvpSeason" onclick="switchTopCategory('pvp_season', this)">PvP (Сезон)</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('pvp', this)">PvP (Все)</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('rank', this)">Очки ранга</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('krw', this)">Баланс</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('bc', this)">Коины</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('cards', this)">Карты</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('diamond', this)">Алмазы</button>
-            <button class="tops-nav-btn" onclick="switchTopCategory('level', this)">Уровень</button>
+        <div class="lb-tabs" id="lbTabs">
+            <div class="lb-tabs-glider" id="lbTabsGlider"></div>
+            <button class="lb-tab active" id="btnTopPvpSeason" data-cat="pvp_season" onclick="switchTopCategory('pvp_season', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>Сезон</button>
+            <button class="lb-tab" data-cat="pvp" onclick="switchTopCategory('pvp', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>PvP</button>
+            <button class="lb-tab" data-cat="rank" onclick="switchTopCategory('rank', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Ранг</button>
+            <button class="lb-tab" data-cat="level" onclick="switchTopCategory('level', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>Уровень</button>
+            <button class="lb-tab" data-cat="cards" onclick="switchTopCategory('cards', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>Карты</button>
+            <button class="lb-tab" data-cat="krw" onclick="switchTopCategory('krw', this)"><span class="lb-tab-glyph">₩</span>KRW</button>
+            <button class="lb-tab" data-cat="bc" onclick="switchTopCategory('bc', this)"><span class="lb-tab-glyph">Ⓑ</span>Коины</button>
+            <button class="lb-tab" data-cat="diamond" onclick="switchTopCategory('diamond', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>Алмазы</button>
         </div>
 
-        <div class="tops-list" id="topsListContainer">
-            </div>
+        <div class="lb-board" id="topsListContainer"></div>
+        <div class="lb-me" id="lbMe" style="display:none;"></div>
     </div>
 
     <div id="tab-shop" class="tab-content">
@@ -373,7 +378,7 @@
                 <div class="gacha-kicker">GACHA PORTAL</div>
                 <div class="gacha-title">Призыв Карт</div>
                 <div class="gacha-desc">Испытай удачу и собери редчайших персонажей.</div>
-                
+
                 <div class="gacha-bal-wrap">
                     <div class="gacha-bal-pill">
                         <div class="gacha-t-icon">🎟</div>
@@ -389,7 +394,7 @@
 
         <div class="gacha-selector">
             <div class="gacha-sel-title">Выберите количество круток</div>
-            
+
             <div class="gacha-slider-area">
                 <button class="gacha-step-btn" onclick="adjustSummon(-1)">-1</button>
                 <div class="gacha-center-val">
@@ -398,7 +403,7 @@
                 </div>
                 <button class="gacha-step-btn" onclick="adjustSummon(1)">+1</button>
             </div>
-            
+
             <div class="gacha-range-wrap">
                 <input type="range" id="gachaSlider" min="1" max="16" value="8" step="1" oninput="syncSummon(this.value)">
             </div>
@@ -504,7 +509,7 @@
             </div>
             <div class="modal-info">
                 <h2 class="modal-title" id="modalName">Имя персонажа</h2>
-                
+
                 <div class="stat-row">
                     <span class="stat-label">🔮 Редкость:</span>
                     <span class="stat-val" id="modalRarity">Мифическая 🔴</span>
@@ -557,7 +562,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 Назад
             </button>
-            <div style="width: 24px;"></div> 
+            <div style="width: 24px;"></div>
         </div>
 
         <div class="ps-user-info">
@@ -576,6 +581,12 @@
             <div class="ps-box-title">ЛЮБИМЫЕ КАРТЫ</div>
             <div class="ps-fav-grid" id="pubFavGrid">
                 </div>
+        </div>
+
+        <div class="ps-box ps-ach-box" id="pubAchBox" onclick="openPublicAchievements()">
+            <div class="ps-box-title ps-ach-title">ДОСТИЖЕНИЯ <span class="ps-ach-count" id="pubAchCount">—</span></div>
+            <div class="ps-ach-bar"><div class="ps-ach-fill" id="pubAchFill"></div></div>
+            <div class="ps-ach-badges" id="pubAchBadges"></div>
         </div>
 
         <div class="ps-box">
@@ -600,7 +611,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 Назад
             </button>
-            <div style="width: 24px;"></div> 
+            <div style="width: 24px;"></div>
         </div>
 
         <div class="ps-user-info">
@@ -626,10 +637,16 @@
                 <div class="ps-fav-slot" onclick="openFavSystem(2)">+</div>
             </div>
         </div>
-<div class="ps-box">
+<div class="ps-box ps-ach-box" onclick="openAchievements()">
+            <div class="ps-box-title ps-ach-title">ДОСТИЖЕНИЯ <span class="ps-ach-count" id="psAchCount">—</span></div>
+            <div class="ps-ach-bar"><div class="ps-ach-fill" id="psAchFill"></div></div>
+            <div class="ps-ach-badges" id="psAchBadges"></div>
+        </div>
+
+        <div class="ps-box">
             <div class="ps-box-title">СТАТИСТИКА БОЁВ</div>
             <div class="ps-stats-grid">
-                
+
                 <div class="ps-stat-card win">
                     <div class="bg-glow"></div>
                     <div class="stat-icon">
@@ -855,32 +872,32 @@
 
     <div class="system-overlay-center" id="favSystemSheet">
         <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh; padding-bottom: 0;">
-            
+
             <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
                 <button class="sys-close" onclick="closeFavSystem()">✖</button>
                 <div class="sys-kicker">SYSTEM NOTIFICATION</div>
                 <div class="sys-title">ВЫБОР КАРТЫ</div>
             </div>
-            
+
             <div class="filters-grid" style="margin-bottom: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="renderFavSelector()">
-                
+
                 <div id="favRarityFilters" style="display: flex; justify-content: flex-start; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; user-select: none;">
                     </div>
-                
+
                 <select id="favSortSelect" onchange="renderFavSelector()" class="filter-full">
                     <option value="rarity_desc">✨ От Божественных к Обычным</option>
                     <option value="rarity_asc">✨ От Обычных к Божественным</option>
                     <option value="newest">📅 По дате получения (новые выше)</option>
                     <option value="oldest">📅 По дате получения (старые выше)</option>
                 </select>
-                
+
                 <div id="favCardCount" style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight: 500;"></div>
             </div>
 
             <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: max-content; gap: 8px; flex: 1 1 auto; min-height: 0; padding-bottom: 20px; user-select: none;">
                 </div>
-            
+
             <div style="flex-shrink: 0; padding-top: 12px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05);">
                 <button onclick="selectFavCard('none')" style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s;">
                     Снять карту со слота ❌
@@ -892,13 +909,13 @@
 
     <div class="system-overlay-center" id="bgSystemSheet">
         <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh;">
-            
+
             <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
                 <button class="sys-close" onclick="closeBgSystem()">✖</button>
                 <div class="sys-kicker">SYSTEM NOTIFICATION</div>
                 <div class="sys-title">ФОН ПРОФИЛЯ</div>
             </div>
-            
+
             <div class="bg-slider-container" id="bgListContainer" style="margin-bottom: 16px;">
                 </div>
 
@@ -911,21 +928,62 @@
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <button class="nav-btn" onclick="switchTab('catalog', this)">
+    <!-- ================= ДОСТИЖЕНИЯ ================= -->
+    <div id="achievementsModal" class="achiev-modal-overlay" style="display: none;">
+        <div class="achiev-sheet ach2">
+            <div class="sheet-grabber"></div>
+            <div class="ach-head">
+                <div class="ach-ring" id="achRing">
+                    <svg viewBox="0 0 64 64"><circle class="ach-ring-track" cx="32" cy="32" r="27"/><circle class="ach-ring-fill" id="achRingFill" cx="32" cy="32" r="27"/></svg>
+                    <div class="ach-ring-txt" id="achRingTxt">0%</div>
+                </div>
+                <div class="ach-head-info">
+                    <div class="ach-kicker" id="achKicker">ЗАЛ СЛАВЫ</div>
+                    <div class="ach-title" id="achTitle">Достижения</div>
+                    <div class="ach-sub" id="achSub">Загрузка…</div>
+                </div>
+                <button class="sheet-close-btn" onclick="closeAchievements()">✕</button>
+            </div>
+            <div class="ach-filters" id="achFilters"></div>
+            <div id="achievementsContainer" class="achiev-list"></div>
+        </div>
+    </div>
+
+    <!-- ================= ПОЛНОЭКРАННЫЙ ПРОСМОТР (скины / карты) ================= -->
+    <div class="mv-overlay" id="mediaViewer" aria-hidden="true">
+        <div class="mv-backdrop" id="mvBackdrop"></div>
+        <div class="mv-top">
+            <div class="mv-titles">
+                <div class="mv-title" id="mvTitle"></div>
+                <div class="mv-sub" id="mvSub"></div>
+            </div>
+            <button class="mv-close" onclick="closeMediaViewer()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="mv-stage" id="mvStage"></div>
+        <div class="mv-controls" id="mvControls"></div>
+        <div class="mv-hint">Смахни вниз, чтобы закрыть</div>
+    </div>
+
+    <div class="page-flip-shade" id="pageFlipShade"></div>
+
+    <nav class="bottom-nav" id="bottomNav">
+        <div class="nav-indicator" id="navIndicator" aria-hidden="true"><span class="nav-indicator-glow"></span></div>
+        <button class="nav-btn" data-tab="catalog" onclick="switchTab('catalog', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
         </button>
-        <button class="nav-btn nav-btn-shop" id="navShopBtn" onclick="switchTab('shop', this)">
+        <button class="nav-btn nav-btn-shop" id="navShopBtn" data-tab="shop" onclick="switchTab('shop', this)">
             <span class="free-dot" aria-hidden="true"></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
         </button>
-        <button class="nav-btn nav-center active" onclick="switchTab('profile', this)">
+        <button class="nav-btn nav-center active" data-tab="profile" onclick="switchTab('profile', this)">
             <svg viewBox="0 0 32 24" fill="currentColor"><path d="M3 22 7 2l9 12 9-12 4 20h-5L21 11l-5 8-5-8-2 11z"/></svg>
         </button>
-        <button class="nav-btn" onclick="switchTab('tops', this)">
+        <button class="nav-btn" data-tab="tops" onclick="switchTab('tops', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
-        <button class="nav-btn" onclick="switchTab('collection', this)">
+        <button class="nav-btn" data-tab="collection" onclick="switchTab('collection', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
@@ -983,7 +1041,7 @@
 </div>
 
             <button class="pass-btn waiting" id="passMainBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Следующая награда через <span id="passLeftTextBtn">550 XP</span>
             </button>
         </div>
@@ -1037,14 +1095,14 @@
                     <div class="rew-chance">25% <span>ШАНС</span></div>
                 </div>
             </div>
-            
+
             <div class="pass-task-foot" style="margin-top:12px;">Награда определяется случайным образом</div>
         </div>
     </div>
 
     <div class="pack-overlay" id="packOverlay">
         <div class="sys-flash" id="sysFlash"></div>
-        
+
         <div class="pack-box-container" id="packBoxContainer" onclick="openSystemPack()">
             <div class="sys-alert-box">[ СИСТЕМА ]<br><span style="font-size:12px; font-weight:400; color:#fff;">Награда готова к получению. Нажмите.</span></div>
             <div class="pack-cube" id="packCube"></div>
@@ -1056,7 +1114,7 @@
             <div class="card-3d-wrapper" onclick="clickToFlipCard()" style="cursor: pointer;" id="packCardWrapper">
                 <!-- Контейнер для электро-взрыва -->
                 <div id="electroExplosionContainer"></div>
-                
+
                 <div class="card-3d-inner" id="packCardInner">
                     <div class="card-3d-front">SYSTEM</div>
                     <div class="card-3d-back" id="packCardBack">
@@ -1064,7 +1122,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="pack-card-info" id="packCardInfo">
                 <div class="pack-card-title" id="packCardTitle">ИМЯ КАРТЫ</div>
                 <div class="pack-card-rarity" id="packCardRarity">Редкость</div>
@@ -1075,7 +1133,7 @@
         </div>
     </div>
 
-    
+
     <div class="gacha-buy-overlay" id="buyAttemptsModal">
         <div class="gacha-gate gate-left"></div>
         <div class="gacha-gate gate-right"></div>
@@ -1152,8 +1210,9 @@
         </div>
     </div>
 
-<!-- ЭКРАН ВЛАДЕЛЬЦЕВ (КАК НА СКРИНШОТЕ) -->
+<!-- ================= ЭКРАН ВЛАДЕЛЬЦЕВ ================= -->
     <div class="owners-screen" id="ownersScreen">
+        <div class="os-backdrop" id="osBackdrop"></div>
         <div class="os-header">
             <button class="os-back" onclick="closeOwnersScreen()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -1165,48 +1224,53 @@
             <div class="os-rarity-pill" id="osRarityPill">Редкость</div>
         </div>
 
-        <div class="os-top-grid">
-            <div class="os-card-wrap" id="osCardWrap">
-                <img src="" id="osCardImg">
+        <div class="os-hero">
+            <div class="os-card-wrap" id="osCardWrap" onclick="openOwnersCardFullscreen()">
+                <img src="" id="osCardImg" alt="">
+                <div class="os-card-holo"></div>
                 <div class="os-card-stats-strip" id="osCardStrip">Имя</div>
+                <div class="os-card-zoom">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                </div>
             </div>
 
             <div class="os-stats-box">
-                <div class="os-stat-row" style="margin-bottom: 12px;">
-                    <span style="color:#8e8e93; display:flex; align-items:center; gap:6px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        Владельцев
-                    </span>
-                    <span style="font-size:18px; font-weight:800; color:#fff;" id="osTotalOwners">...</span>
+                <div class="os-owners-big">
+                    <div class="os-owners-num" id="osTotalOwners">…</div>
+                    <div class="os-owners-lbl">владельцев<br><span id="osTotalCopies">— копий</span></div>
                 </div>
-
-                <div class="os-stat-row">
-                    <span style="color:#8e8e93">Редкость</span>
-                    <span style="font-weight:700;" id="osStatRarity">...</span>
+                <div class="os-rarity-line">Редкость <b id="osStatRarity">…</b></div>
+                <div class="os-bar-row">
+                    <span class="os-bar-lbl">⚡</span>
+                    <div class="os-bar"><div class="os-bar-fill spd" id="osBarSpd"></div></div>
+                    <span class="os-bar-val" id="osStatSpd">0</span>
                 </div>
-                <div class="os-stat-row">
-                    <span style="color:#8e8e93">Скорость</span>
-                    <span style="font-weight:700; color:#fff;" id="osStatSpd">0</span>
+                <div class="os-bar-row">
+                    <span class="os-bar-lbl">💪</span>
+                    <div class="os-bar"><div class="os-bar-fill str" id="osBarStr"></div></div>
+                    <span class="os-bar-val" id="osStatStr">0</span>
                 </div>
-                <div class="os-stat-row">
-                    <span style="color:#8e8e93">Сила</span>
-                    <span style="font-weight:700; color:#fff;" id="osStatStr">0</span>
+                <div class="os-bar-row">
+                    <span class="os-bar-lbl">🧠</span>
+                    <div class="os-bar"><div class="os-bar-fill int" id="osBarInt"></div></div>
+                    <span class="os-bar-val" id="osStatInt">0</span>
                 </div>
-                <div class="os-stat-row">
-                    <span style="color:#8e8e93">Интеллект</span>
-                    <span style="font-weight:700; color:#fff;" id="osStatInt">0</span>
-                </div>
-
-                <div id="osSkinsBlock" style="display:none; margin-top:12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top:12px;">
-                    <div class="os-stat-row">
-                        <span style="color:#8e8e93">Скины</span>
-                        <span style="font-weight:700; color:#fff;" id="osSkinsCount">1</span>
-                    </div>
-                    <div class="os-skins-list" id="osSkinsList"></div>
-                </div>
+                <div class="os-power">Мощь <b id="osPower">0</b></div>
             </div>
         </div>
 
+        <div class="os-skins" id="osSkinsBlock" style="display:none;">
+            <div class="os-section-title">
+                <span>Скины</span>
+                <span class="os-section-count" id="osSkinsCount">0</span>
+            </div>
+            <div class="os-skins-list" id="osSkinsList"></div>
+        </div>
+
+        <div class="os-section-title">
+            <span>Владельцы</span>
+            <span class="os-section-hint">по количеству копий</span>
+        </div>
         <div class="os-list-container">
             <div id="osListContent"></div>
             <div class="pagination-bar" id="osPagination" style="padding: 15px 0; display: none; border: none;"></div>
@@ -1310,7 +1374,7 @@
         <div class="ta-body" id="taBody"></div>
     </div>
 
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
 
     <script src="custom-select.js"></script>
     <script src="wheel.js"></script>
