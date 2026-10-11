@@ -1,16 +1,3 @@
-/* =====================================================================
-   ManhwCard — UPGRADE PACK
-   Подключается ПОСЛЕДНИМ, поверх style.css / menu.css и т.д.
-   1. Навигация + перелистывание страниц
-   2. Топ игроков
-   3. Владельцы карты и скины
-   4. Модалка карты (видео со звуком)
-   5. Полноэкранный просмотр
-   6. Достижения + витрина в профиле
-   7. Фон профиля (затемнение снизу)
-   8. Скелетоны, общие анимации
-   ===================================================================== */
-
 @property --ang {
     syntax: '<angle>';
     initial-value: 0deg;
@@ -102,59 +89,47 @@
 }
 @keyframes navRipple { to { transform: scale(6.5); opacity: 0; } }
 
-/* ---------- Перелистывание страниц ---------- */
-.tab-content.active { animation: none; }
+/* ---------- Перелистывание страниц ----------
+   Само движение задаёт JS (Web Animations API), здесь только «бумага».
+   !important — чтобы никакой другой CSS (menu.css и т.п.) не мешал. */
+.tab-content.active { animation: none !important; }
 
 .tab-content.page-leaving {
     display: block !important;
     position: fixed !important;
-    left: 0; right: 0;
-    min-height: 100vh;
-    z-index: 450;
-    pointer-events: none;
-    overflow: hidden;
-    background-color: #07070d;
+    top: 0 !important; left: 0 !important; right: 0 !important; bottom: auto !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    z-index: 450 !important;
+    pointer-events: none !important;
+    animation: none !important;
+    background-color: #07070d !important;
     background-image:
         radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.15), transparent 30%),
-        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.1), transparent 30%);
+        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.1), transparent 30%) !important;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     will-change: transform;
 }
-.tab-content.page-leaving.flip-left  { animation: pageFlipLeft 0.74s cubic-bezier(0.4, 0, 0.3, 1) forwards; }
-.tab-content.page-leaving.flip-right { animation: pageFlipRight 0.74s cubic-bezier(0.4, 0, 0.3, 1) forwards; }
-@keyframes pageFlipLeft {
-    0%   { transform: perspective(1800px) rotateY(0deg); box-shadow: 0 0 0 rgba(0, 0, 0, 0); }
-    40%  { box-shadow: 30px 0 80px rgba(0, 0, 0, 0.75); }
-    100% { transform: perspective(1800px) rotateY(-100deg); box-shadow: 30px 0 80px rgba(0, 0, 0, 0.75); }
-}
-@keyframes pageFlipRight {
-    0%   { transform: perspective(1800px) rotateY(0deg); box-shadow: 0 0 0 rgba(0, 0, 0, 0); }
-    40%  { box-shadow: -30px 0 80px rgba(0, 0, 0, 0.75); }
-    100% { transform: perspective(1800px) rotateY(100deg); box-shadow: -30px 0 80px rgba(0, 0, 0, 0.75); }
-}
 /* Тень и блик на переворачиваемом листе */
-.tab-content.page-leaving::before,
-.tab-content.page-leaving::after {
-    content: '';
+.page-curl {
     position: absolute;
-    inset: 0;
-    pointer-events: none;
+    left: 0; right: 0;
     z-index: 999;
+    pointer-events: none;
     opacity: 0;
-    animation: pageShadeIn 0.74s ease-in forwards;
 }
-.tab-content.page-leaving.flip-left::after  { background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.75) 100%); }
-.tab-content.page-leaving.flip-right::after { background: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.75) 100%); }
-.tab-content.page-leaving.flip-left::before  { background: linear-gradient(to right, transparent 55%, rgba(255, 255, 255, 0.14) 82%, transparent 96%); }
-.tab-content.page-leaving.flip-right::before { background: linear-gradient(to left, transparent 55%, rgba(255, 255, 255, 0.14) 82%, transparent 96%); }
-@keyframes pageShadeIn { to { opacity: 1; } }
-
-.tab-content.page-entering { animation: pageReveal 0.74s cubic-bezier(0.22, 0.8, 0.3, 1) both; }
-@keyframes pageReveal {
-    0%   { transform: scale(0.94); opacity: 0.4; }
-    100% { transform: none; opacity: 1; }
+.page-curl.from-left {
+    background:
+        linear-gradient(to right, transparent 55%, rgba(255, 255, 255, 0.14) 82%, transparent 96%),
+        linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.78) 100%);
 }
+.page-curl.from-right {
+    background:
+        linear-gradient(to left, transparent 55%, rgba(255, 255, 255, 0.14) 82%, transparent 96%),
+        linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.78) 100%);
+}
+/* Тень, которую лист отбрасывает на новую страницу */
 .page-flip-shade {
     position: fixed;
     inset: 0;
@@ -162,10 +137,8 @@
     pointer-events: none;
     opacity: 0;
 }
-.page-flip-shade.on { animation: shadeFade 0.74s ease-out forwards; }
-.page-flip-shade.on.from-left  { background: linear-gradient(to right, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.3) 60%, rgba(0, 0, 0, 0.12)); }
-.page-flip-shade.on.from-right { background: linear-gradient(to left, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.3) 60%, rgba(0, 0, 0, 0.12)); }
-@keyframes shadeFade { 0% { opacity: 1; } 100% { opacity: 0; } }
+.page-flip-shade.from-left  { background: linear-gradient(to right, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.3) 60%, rgba(0, 0, 0, 0.12)); }
+.page-flip-shade.from-right { background: linear-gradient(to left, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.3) 60%, rgba(0, 0, 0, 0.12)); }
 
 /* ===================== 2. ТОП ИГРОКОВ ===================== */
 #tab-tops {
@@ -1363,4 +1336,281 @@
     .owners-screen .os-card-wrap, .ach-card.st-ready, .ach-claim, .lb-ped-shine, .os-skin-shine {
         animation: none !important;
     }
+}
+
+/* ===================== 9. ЗВУКИ: переключатель на главной ===================== */
+.snd-toggle-card {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.3s ease;
+}
+.snd-toggle-card:active { transform: scale(0.98); }
+.snd-toggle-card.on { border-color: rgba(139, 92, 246, 0.3); }
+.snd-ico {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 12px;
+    display: grid; place-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+.snd-ico svg { width: 21px; height: 21px; }
+.snd-toggle-card.on .snd-ico { background: rgba(139, 92, 246, 0.18); color: #c4b5fd; box-shadow: 0 0 16px rgba(139, 92, 246, 0.3); }
+.snd-texts { flex: 1; min-width: 0; }
+.mc-switch {
+    position: relative;
+    width: 50px; height: 30px; flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.12);
+    transition: background 0.3s ease;
+}
+.mc-switch i {
+    position: absolute; top: 3px; left: 3px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.snd-toggle-card.on .mc-switch { background: linear-gradient(135deg, var(--accent), #06b6d4); box-shadow: 0 0 14px rgba(139, 92, 246, 0.45); }
+.snd-toggle-card.on .mc-switch i { transform: translateX(20px); }
+
+/* ===================== 10. СИСТЕМНЫЕ ИКОНКИ ВАЛЮТ ===================== */
+.mc-cur { display: inline-block; flex-shrink: 0; width: 1em; height: 1em; vertical-align: -0.15em; }
+span.mc-cur { width: auto; height: auto; font-weight: 900; line-height: 1; }
+.mc-krw { color: #c4b5fd; }
+.mc-bc  { color: #fbbf24; }
+.mc-dia { color: #06b6d4; }
+.ach-rw .ach-rw-dia { color: #06b6d4; }
+
+/* Ежедневный бонус */
+.daily-item .d-icon { display: flex; align-items: center; justify-content: center; height: 20px; }
+.daily-item .d-icon svg.mc-cur { width: 19px; height: 19px; }
+.daily-item .d-krw .mc-krw { font-size: 17px; }
+.daily-item.pack-purple .d-icon { color: #c4b5fd; filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.6)); }
+.daily-item.pack-gold .d-icon { color: #fbbf24; filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7)); }
+.daily-item .d-val .mc-dia { width: 10px; height: 10px; }
+.daily-footer-btn .mc-dia { width: 14px; height: 14px; color: #fff; }
+.dup-stamp .mc-krw { color: #fff; }
+
+.lb-err-detail { margin-top: 6px; font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, 0.4); word-break: break-word; }
+
+/* ===================== 11. ПОКУПКА КРУТОК ===================== */
+.gacha-buy-window.bx2 {
+    width: calc(100% - 56px);
+    max-width: 420px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 20px 16px 16px;
+    background: linear-gradient(180deg, rgba(28, 20, 46, 0.94), rgba(10, 10, 16, 0.97));
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(168, 85, 247, 0.25);
+    scrollbar-width: none;
+}
+.gacha-buy-window.bx2::-webkit-scrollbar { display: none; }
+.bx-glow {
+    position: absolute; top: -100px; left: 50%;
+    width: 320px; height: 240px; margin-left: -160px;
+    background: radial-gradient(closest-side, rgba(244, 63, 94, 0.35), transparent);
+    pointer-events: none;
+}
+.bx2 .gacha-buy-close { z-index: 3; }
+.bx-head { position: relative; flex-shrink: 0; text-align: center; margin-bottom: 14px; }
+.bx-ticket {
+    width: 56px; height: 56px;
+    margin: 0 auto 8px;
+    border-radius: 20px;
+    display: grid; place-items: center;
+    font-size: 28px;
+    background: linear-gradient(135deg, #f43f5e, #a855f7);
+    box-shadow: 0 10px 30px rgba(244, 63, 94, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transform: rotate(-8deg);
+    animation: bxFloat 3.2s ease-in-out infinite;
+}
+.bx-ticket span { filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)); }
+@keyframes bxFloat { 50% { transform: rotate(6deg) translateY(-5px); } }
+.bx2 .gacha-buy-title { font-size: 24px; text-transform: none; }
+.bx-have { margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+.bx-have b { color: #fff; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+.bx-tabs {
+    position: relative;
+    flex-shrink: 0;
+    display: grid; grid-template-columns: 1fr 1fr;
+    margin-bottom: 14px;
+    padding: 4px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.bx-tabs-glider {
+    position: absolute; top: 4px; bottom: 4px; left: 4px;
+    width: calc(50% - 4px);
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), #6b21a8);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.5, 1), background 0.3s ease, box-shadow 0.3s ease;
+}
+.bx-tabs[data-cur="dia"] .bx-tabs-glider {
+    transform: translateX(100%);
+    background: linear-gradient(135deg, #0891b2, #2563eb);
+    box-shadow: 0 6px 18px rgba(6, 182, 212, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.bx-tab {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 8px 6px;
+    border: none; background: none;
+    color: var(--text-muted);
+    font-family: inherit; font-size: 13px; font-weight: 800;
+    transition: color 0.3s ease;
+}
+.bx-tab.active { color: #fff; }
+.bx-tab.active .mc-cur { color: #fff; }
+.bx-tab .mc-cur { font-size: 18px; }
+.bx-tab svg.mc-cur { width: 18px; height: 18px; }
+.bx-tab-txt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; }
+.bx-tab-txt small { font-size: 10.5px; font-weight: 700; opacity: 0.75; font-variant-numeric: tabular-nums; }
+
+.bx-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin: 0 -6px 12px;
+    padding: 4px 6px 6px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.bx-grid::-webkit-scrollbar { display: none; }
+.bx-pack {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 8px 12px;
+    border-radius: 18px;
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+    color: #fff;
+    font-family: inherit;
+    cursor: pointer;
+    overflow: hidden;
+    animation: bxIn 0.45s cubic-bezier(0.34, 1.4, 0.5, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 55ms);
+    transition: transform 0.2s ease, border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+@keyframes bxIn { from { opacity: 0; transform: translateY(14px) scale(0.92); } }
+.bx-pack:active { transform: scale(0.96); }
+.bx-pack.best {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.16), rgba(168, 85, 247, 0.12));
+    border-color: rgba(251, 191, 36, 0.45);
+}
+.bx-pack.selected {
+    border-color: #c084fc;
+    box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.25), 0 10px 26px rgba(139, 92, 246, 0.35);
+    transform: translateY(-2px);
+}
+.bx-pack.best.selected { border-color: #fbbf24; box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.25), 0 10px 26px rgba(251, 191, 36, 0.3); }
+.bx-pack.cant { opacity: 0.5; }
+.bx-pack.cant .bx-price { color: #f87171; }
+.bx-stack { display: flex; justify-content: center; height: 34px; margin-bottom: 4px; }
+.bx-stack span {
+    margin: 0 -7px;
+    font-size: 26px;
+    transform: rotate(calc(-14deg + var(--k, 0) * 9deg)) translateY(calc(var(--k, 0) * -1px));
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+}
+.bx-amt {
+    font-size: 26px; font-weight: 900; line-height: 1;
+    background: linear-gradient(180deg, #fff, #d8b4fe);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+}
+.bx-pack.best .bx-amt { font-size: 32px; background: linear-gradient(180deg, #fff, #fbbf24); -webkit-background-clip: text; background-clip: text; }
+.bx-lbl { margin: 4px 0 10px; font-size: 10.5px; font-weight: 700; color: var(--text-muted); }
+.bx-price {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: 11px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px; font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+.bx-price .mc-cur { font-size: 15px; }
+.bx-price svg.mc-cur { width: 15px; height: 15px; }
+.bx-bonus {
+    position: absolute; top: 8px; right: 8px;
+    padding: 2px 7px;
+    border-radius: 7px;
+    background: #4ade80; color: #052e16;
+    font-size: 10px; font-weight: 900;
+}
+.bx-ribbon {
+    position: absolute; top: 14px; left: -32px;
+    width: 124px;
+    padding: 3px 0;
+    transform: rotate(-35deg);
+    text-align: center;
+    background: linear-gradient(90deg, #fde68a, #f59e0b);
+    color: #1a1005;
+    font-size: 9px; font-weight: 900; letter-spacing: 0.08em;
+    box-shadow: 0 2px 10px rgba(251, 191, 36, 0.5);
+}
+.bx-check {
+    position: absolute; top: 8px; left: 8px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: #c084fc; color: #1a0b2e;
+    font-size: 12px; font-weight: 900;
+    transform: scale(0);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.bx-pack.best .bx-check { left: auto; right: 8px; background: #fbbf24; }
+.bx-pack.selected .bx-check { transform: scale(1); }
+
+.bx-cta {
+    position: relative;
+    flex-shrink: 0;
+    width: 100%; height: 54px;
+    border: none;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f43f5e, #a855f7 60%, #6366f1);
+    color: #fff;
+    font-family: inherit; font-size: 15px; font-weight: 900;
+    box-shadow: 0 10px 28px rgba(168, 85, 247, 0.45);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+}
+.bx-cta:not(:disabled):active { transform: scale(0.97); }
+.bx-cta .mc-cur { color: #fff; font-size: 16px; }
+.bx-cta svg.mc-cur { width: 16px; height: 16px; }
+.bx-cta:not(:disabled)::after {
+    content: '';
+    position: absolute; top: 0; left: -80%;
+    width: 45%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: skewX(-20deg);
+    animation: lbShine 2.6s ease-in-out infinite;
+}
+.bx-cta:disabled { background: rgba(255, 255, 255, 0.07); color: var(--text-muted); box-shadow: none; }
+.bx-cta.cant:disabled { background: rgba(239, 68, 68, 0.12); color: #f87171; }
+.bx-cta.cant .mc-cur { color: #f87171; }
+.bx-cta.loading:disabled { background: linear-gradient(135deg, #f43f5e, #a855f7 60%, #6366f1); color: #fff; opacity: 0.8; }
+.bx-cta.done, .bx-cta.done:disabled { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 10px 28px rgba(34, 197, 94, 0.45); }
+.bx-spin {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    animation: lbSpin 0.7s linear infinite;
 }

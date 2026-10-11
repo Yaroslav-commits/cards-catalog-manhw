@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="menu.css">
         <link rel="stylesheet" href="tier.css">
         <link rel="stylesheet" href="workshop.css?v=7">
-        <link rel="stylesheet" href="upgrade.css?v=1">
+        <link rel="stylesheet" href="upgrade.css?v=2">
 </head>
 <body>
     <div id="splashScreen" class="splash-screen">
@@ -269,6 +269,16 @@
         </div>
     </div>
 </div>
+
+        <!-- ЗВУКИ ИНТЕРФЕЙСА -->
+        <div class="snd-toggle-card on" id="sndToggleCard" data-snd="off" onclick="toggleUiSound()">
+            <div class="snd-ico" id="sndToggleIco"></div>
+            <div class="snd-texts">
+                <div class="module-title">Звуки интерфейса</div>
+                <div class="module-sub" id="sndToggleSub">Кнопки, анимации, награды</div>
+            </div>
+            <div class="mc-switch"><i></i></div>
+        </div>
 
         <div class="shop-banner" onclick="switchTab('shop', document.querySelectorAll('.nav-btn')[1])">
             <div class="shop-banner-bg"></div>
@@ -957,7 +967,7 @@
                 <div class="mv-title" id="mvTitle"></div>
                 <div class="mv-sub" id="mvSub"></div>
             </div>
-            <button class="mv-close" onclick="closeMediaViewer()">
+            <button class="mv-close" onclick="mcCloseViewer()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
@@ -1134,24 +1144,35 @@
     </div>
 
 
-    <div class="gacha-buy-overlay" id="buyAttemptsModal">
+    <div class="gacha-buy-overlay" id="buyAttemptsModal" onclick="if (event.target === this) closeBuyAttemptsModal()">
         <div class="gacha-gate gate-left"></div>
         <div class="gacha-gate gate-right"></div>
 
-        <div class="gacha-buy-window">
-            <button class="gacha-buy-close" onclick="closeBuyAttemptsModal()">✖</button>
-            <div class="gacha-buy-header">
+        <div class="gacha-buy-window bx2">
+            <div class="bx-glow"></div>
+            <button class="gacha-buy-close" onclick="closeBuyAttemptsModal()">✕</button>
+            <div class="bx-head">
+                <div class="bx-ticket"><span>🎟</span></div>
                 <div class="gacha-buy-subtitle">PORTAL STORE</div>
-                <div class="gacha-buy-title">ПОКУПКА КРУТОК</div>
+                <div class="gacha-buy-title">Покупка круток</div>
+                <div class="bx-have">Сейчас у вас <b id="bxHave">0</b> 🎟</div>
             </div>
 
-            <div class="gacha-buy-tabs">
-                <button class="gacha-buy-tab active" id="tabBuyKrw" onclick="switchBuyCurrency('krw')">💴 за KRW</button>
-                <button class="gacha-buy-tab" id="tabBuyDia" onclick="switchBuyCurrency('dia')">💎 за Алмазы</button>
+            <div class="bx-tabs" id="bxTabs" data-cur="krw">
+                <div class="bx-tabs-glider"></div>
+                <button class="bx-tab active" id="tabBuyKrw" onclick="switchBuyCurrency('krw')">
+                    <span class="mc-cur mc-krw">₩</span>
+                    <span class="bx-tab-txt">KRW<small id="bxBalKrw">0</small></span>
+                </button>
+                <button class="bx-tab" id="tabBuyDia" onclick="switchBuyCurrency('dia')">
+                    <svg class="mc-cur mc-dia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
+                    <span class="bx-tab-txt">Алмазы<small id="bxBalDia">0</small></span>
+                </button>
             </div>
 
-            <div class="gacha-packs-grid" id="buyPacksGrid">
-                </div>
+            <div class="bx-grid" id="buyPacksGrid"></div>
+
+            <button class="bx-cta" id="bxCta" onclick="confirmBuyAttempts()" disabled>Выберите набор</button>
         </div>
     </div>
 
@@ -1374,7 +1395,7 @@
         <div class="ta-body" id="taBody"></div>
     </div>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
 
     <script src="custom-select.js"></script>
     <script src="wheel.js"></script>

@@ -142,6 +142,7 @@ function getCardSkill(cardId) {
                     document.getElementById('valKrw').innerText = formatBal(data.krw);
                     document.getElementById('valDiamond').innerText = formatBal(data.diamond);
                     document.getElementById('valBc').innerText = formatBal(data.battlecoin);
+                    mcBal.krw = data.krw || 0; mcBal.dia = data.diamond || 0; mcBal.bc = data.battlecoin || 0; mcBal.att = data.attempts || 0;
                     if (document.getElementById('shopAttemptsBal')) {
                         document.getElementById('shopAttemptsBal').innerText = data.attempts || 0;
                         if (typeof refreshSummonCostState === 'function') refreshSummonCostState();
@@ -278,12 +279,12 @@ function getCardSkill(cardId) {
                     innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon check">✓</div>';
                 } else {
                     if (isPack) {
-                        var icon = isMythic ? '👑' : '📦';
+                        var icon = isMythic ? MC_SYS.crown : MC_SYS.cards;
                         innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon">' + icon + '</div><div class="d-val">Pack</div>';
                     } else {
                         var valText = r.krw;
-                        if(r.dia) valText += '<br>+' + r.dia + '💎';
-                        innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon">💴</div><div class="d-val">' + valText + '</div>';
+                        if(r.dia) valText += '<br>+' + r.dia + ' ' + MC_SYS.dia;
+                        innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon d-krw">' + MC_SYS.krw + '</div><div class="d-val">' + valText + '</div>';
                     }
                 }
 
@@ -295,7 +296,7 @@ function getCardSkill(cardId) {
             if (canClaimDaily) {
                 if (needsRecovery) {
                     footerContainer.innerHTML =
-                        '<button class="daily-footer-btn active recover" onclick="claimDailyBonus(\'recover\')">Восстановить стрик (10 💎)</button>' +
+                        '<button class="daily-footer-btn active recover" onclick="claimDailyBonus(\'recover\')">Восстановить стрик (10 ' + MC_SYS.dia + ')</button>' +
                         '<button class="daily-footer-btn reset" onclick="claimDailyBonus(\'reset\')">Начать заново (Бесплатно)</button>';
                 } else {
                     footerContainer.innerHTML = '<button class="daily-footer-btn active" onclick="claimDailyBonus(\'claim\')">Забрать награду</button>';
@@ -731,7 +732,7 @@ function renderCards(cards) {
             var webFileName = (item.skinFile || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp').replace(/\.mp4/i, '.webm');
 
             if (item.skinType === 'absolute') {
-                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div>' + skinVideoHtml(item.skinFile, 'skin-grid-video', 'onloadeddata="this.parentElement.classList.add(\'loaded\')"') + '<div class="skin-video-badge">▶</div></div>';
+                mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div>' + mcSkinVideo(item.skinFile, 'skin-grid-video', 'onloadeddata="this.parentElement.classList.add(\'loaded\')"') + '<div class="skin-video-badge">▶</div></div>';
             } else {
                 mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/skins/' + webFileName + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="this.onerror=null; this.src=\'images/default.webp\';"></div>';
             }
@@ -1399,7 +1400,7 @@ function closeProfileModal() {
                     var card = allCards.find(c => c.id === cardId);
                     if (card) {
                         // ИСПРАВЛЕНО: Чистый путь images/
-                        slotHtml = '<img src="images/' + card.file + '" onerror="this.onerror=null; this.src=\'' + cardArtSrc(card.file) + '\'" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">';
+                        slotHtml = '<img src="images/' + card.file + '" onerror="this.onerror=null; this.src=\'' + mcCardArt(card.file) + '\'" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">';
                     }
                 }
                 grid.innerHTML += '<div class="ps-fav-slot" onclick="openFavSystem(' + i + ')">' + slotHtml + '</div>';
@@ -1835,7 +1836,7 @@ async function openPublicProfile(targetId) {
             var p = data.profile;
             var dispName = p.nickname || p.username || 'Игрок ' + p.id;
 
-            document.getElementById('pubName').innerHTML = escHtml(dispName) + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
+            document.getElementById('pubName').innerHTML = mcEsc(dispName) + ' <span style="font-size: 20px;" id="pubStatusEmoji">' + (p.is_premium ? '👑' : '🧩') + '</span>';
 
             document.getElementById('pubAvatar').src = API_BASE + '/api/avatar/' + p.id + "?name=" + encodeURIComponent(dispName);
 
@@ -1903,7 +1904,7 @@ async function openPublicProfile(targetId) {
                 if (cardId && cardId !== 'none') {
                     var card = allCards.find(c => c.id === cardId);
                     if (card) {
-                        favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" onerror="this.onerror=null; this.src=\'' + cardArtSrc(card.file) + '\'" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
+                        favGrid.innerHTML += '<div class="ps-fav-slot" onclick="openModalById(\'' + card.id + '\')" style="border:none; padding:0; cursor:pointer;"><img src="images/' + card.file + '" onerror="this.onerror=null; this.src=\'' + mcCardArt(card.file) + '\'" style="width:100%; height:100%; object-fit:cover; border-radius:14px;"></div>';
                         continue;
                     }
                 }
@@ -2384,7 +2385,7 @@ async function openPublicProfile(targetId) {
                 imgClass = 'is-dup-img';
                 dupHtml = `<div class="dup-overlay">
                               <div class="dup-slash"></div>
-                              <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} 💴</div>
+                              <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} ${MC_SYS.krw}</div>
                            </div>`;
             }
 
@@ -2460,7 +2461,7 @@ async function openPublicProfile(targetId) {
                     imgClass = 'is-dup-img';
                     dupHtml = `<div class="dup-overlay">
                                   <div class="dup-slash"></div>
-                                  <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} 💴</div>
+                                  <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} ${MC_SYS.krw}</div>
                                </div>`;
                 }
 
@@ -2592,9 +2593,9 @@ function initCollection() {
         var color = universeColors[uniName] || 'var(--accent)';
 
         htmlBuffer += `
-            <div class="coll-universe-card" data-uni="${escHtml(uniName)}" onclick="openUniverseDetail(this.dataset.uni)" style="--uni-color: ${color}; animation-delay: ${delayIndex * 0.1}s;">
+            <div class="coll-universe-card" data-uni="${mcEsc(uniName)}" onclick="openUniverseDetail(this.dataset.uni)" style="--uni-color: ${color}; animation-delay: ${delayIndex * 0.1}s;">
                 <div class="coll-uni-top">
-                    <div class="coll-uni-title">${escHtml(uniName)}</div>
+                    <div class="coll-uni-title">${mcEsc(uniName)}</div>
                     <div class="coll-uni-badge">${pct}%</div>
                 </div>
                 <div class="coll-uni-meta">
@@ -2781,84 +2782,12 @@ var BUY_PACKS_DIA_DATA = [
     { price: 1000, attempts: 475 }
 ];
 
-function openBuyAttemptsModal() {
-    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('medium');
-    document.getElementById('buyAttemptsModal').classList.add('open'); manageBack();
-    switchBuyCurrency('krw');
-}
 
-function closeBuyAttemptsModal() {
-    if (tg.HapticFeedback && tg.HapticFeedback.selectionChanged) tg.HapticFeedback.selectionChanged();
-    document.getElementById('buyAttemptsModal').classList.remove('open'); manageBack();
-}
 
-function switchBuyCurrency(curr) {
-    currentBuyCurrency = curr;
-    document.getElementById('tabBuyKrw').classList.toggle('active', curr === 'krw');
-    document.getElementById('tabBuyDia').classList.toggle('active', curr === 'dia');
-    renderBuyPacks();
-}
 
-function renderBuyPacks() {
-    var grid = document.getElementById('buyPacksGrid');
-    grid.innerHTML = '';
-
-    var packs = currentBuyCurrency === 'krw' ? BUY_PACKS_KRW_DATA : BUY_PACKS_DIA_DATA;
-
-    packs.forEach((p, index) => {
-        var priceStr = currentBuyCurrency === 'krw' ? (p.price + ' 💴') : (p.price + ' 💎');
-        var packHtml = `
-            <div class="gacha-pack-card" onclick="executeBuyAttempts('${currentBuyCurrency}', ${index})">
-                <div class="gacha-pack-left">
-                    <div class="gacha-pack-icon">🎟</div>
-                    <div>
-                        <div class="gacha-pack-amt">+${p.attempts} круток</div>
-                        <div class="gacha-pack-sub">Набор попыток</div>
-                    </div>
-                </div>
-                <button class="gacha-pack-btn">${priceStr}</button>
-            </div>
-        `;
-        grid.insertAdjacentHTML('beforeend', packHtml);
-    });
-}
 
 var buyAttemptsInFlight = false;
 
-async function executeBuyAttempts(currency, packIndex) {
-    // ФИКС: двойной тап по паку покупал его дважды
-    if (buyAttemptsInFlight) return;
-    buyAttemptsInFlight = true;
-    if (tg.HapticFeedback && tg.HapticFeedback.impactOccurred) tg.HapticFeedback.impactOccurred('heavy');
-
-    try {
-        var res = await fetch(API_BASE + '/api/buy_attempts/' + userId, {
-            method: 'POST',
-            headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
-            body: JSON.stringify({ currency: currency, pack_index: packIndex })
-        });
-        var data = await res.json();
-
-        if (data.success) {
-            showToast('Успешно!', 'Приобретено +' + data.bought_attempts + ' круток!');
-
-            // Моментально обновляем балансы в Web App
-            document.getElementById('valKrw').innerText = formatBal(data.new_krw);
-            document.getElementById('valDiamond').innerText = formatBal(data.new_diamond);
-            document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
-            if (typeof refreshSummonCostState === 'function') refreshSummonCostState();
-
-            closeBuyAttemptsModal();
-            fetchProfile(); // Фоновая синхронизация
-        } else {
-            tg.showAlert(data.error || data.detail || 'Не удалось купить');
-        }
-    } catch (e) {
-        tg.showAlert('Ошибка соединения с сервером');
-    } finally {
-        buyAttemptsInFlight = false;
-    }
-}
 // ================= ЛОГИКА РАМОК ПРОФИЛЯ =================
 var userOwnedFrames = ['none'];
 var equippedFrameId = 'none';
@@ -3167,6 +3096,7 @@ async function executeBuyFrame() {
             // Моментально обновляем баланс
             document.getElementById('valKrw').innerText = formatBal(data.new_krw);
             document.getElementById('valDiamond').innerText = formatBal(data.new_dia);
+            mcBal.krw = data.new_krw || 0; mcBal.dia = data.new_dia || 0;
 
             // Добавляем в инвентарь без перезагрузки
             userOwnedFrames.push(selectedShopFrame.id);
@@ -3233,19 +3163,13 @@ const RARITY_COLORS = {
 // =====================================================================
 
 // ---------- Общие утилиты ----------
-function escHtml(s) {
+function mcEsc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
 }
-function hexRgb(hex) {
-    var h = String(hex || '').replace('#', '');
-    if (h.length === 3) h = h.replace(/./g, '$&$&');
-    var n = parseInt(h, 16) || 0;
-    return ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255);
-}
-function fmtNum(n) { return (Number(n) || 0).toLocaleString('ru-RU'); }
-function hapticTap(kind) {
+function mcFmt(n) { return (Number(n) || 0).toLocaleString('ru-RU'); }
+function mcHaptic(kind) {
     if (!tg.HapticFeedback) return;
     try {
         if (kind === 'select') tg.HapticFeedback.selectionChanged();
@@ -3253,27 +3177,42 @@ function hapticTap(kind) {
         else tg.HapticFeedback.impactOccurred(kind || 'light');
     } catch (e) {}
 }
-function prefersReducedMotion() {
+function mcReduced() {
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 }
 // Пауза и выключение звука у всех видео внутри элемента
-function stopMediaIn(el) {
+function mcStopMedia(el) {
     if (!el) return;
     el.querySelectorAll('video').forEach(function (v) { try { v.pause(); v.muted = true; } catch (e) {} });
 }
-// Видео-скин: webm для Android/ПК + mp4 как запасной вариант для старых iOS
-function skinVideoHtml(file, cls, extra) {
-    var base = 'images/skins/' + String(file || '').replace(/\.[^.\/]+$/, '');
-    return '<video class="' + (cls || '') + '" autoplay loop muted playsinline webkit-playsinline preload="metadata" ' + (extra || '') + '>' +
-        '<source src="' + base + '.webm" type="video/webm">' +
-        '<source src="' + base + '.mp4" type="video/mp4">' +
-        '</video>';
+// Видео-скин: только .webm (имя файла из базы может быть .mp4 — меняем расширение)
+function mcSkinVideo(file, cls, extra) {
+    var src = 'images/skins/' + String(file || '').replace(/\.[^.\/]+$/, '') + '.webm';
+    return '<video class="' + (cls || '') + '" src="' + src + '" autoplay loop muted playsinline webkit-playsinline preload="metadata" ' + (extra || '') + '></video>';
 }
-function skinImageSrc(file) {
+function mcRgb(hex) {
+    var h = String(hex || '').replace('#', '');
+    if (h.length === 3) h = h.replace(/./g, '$&$&');
+    var n = parseInt(h, 16) || 0;
+    return ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255);
+}
+
+// ---------- Системные иконки валют (те же, что в балансе на главной) ----------
+var MC_DIA_PATH = '<path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/>';
+var MC_SYS = {
+    krw: '<span class="mc-cur mc-krw">₩</span>',
+    bc: '<span class="mc-cur mc-bc">Ⓑ</span>',
+    dia: '<svg class="mc-cur mc-dia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">' + MC_DIA_PATH + '</svg>',
+    cards: '<svg class="mc-cur" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>',
+    crown: '<svg class="mc-cur" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 8.2l4.6 3.6L12 4.6l4.9 7.2 4.6-3.6-2.1 10.6H4.6z"/><rect x="4.6" y="20" width="14.8" height="2" rx="1"/></svg>'
+};
+// Балансы в «сыром» виде (на главной они сокращены до 54K)
+var mcBal = { krw: 0, dia: 0, bc: 0, att: 0 };
+function mcSkinImg(file) {
     return 'images/skins/' + String(file || '').replace(/\.jpg|\.jpeg|\.png/i, '.webp');
 }
-function cardArtSrc(file) { return 'images/' + String(file || '').replace(/\.jpe?g$/i, '.webp'); }
-function rarityColorOf(rarity) {
+function mcCardArt(file) { return 'images/' + String(file || '').replace(/\.jpe?g$/i, '.webp'); }
+function mcRarityColor(rarity) {
     var r = rarity || '';
     if (r.indexOf('Божест') !== -1) return '#a855f7';
     if (r.indexOf('Мифич') !== -1) return '#ef4444';
@@ -3282,9 +3221,9 @@ function rarityColorOf(rarity) {
     if (r.indexOf('Редк') !== -1) return '#fde047';
     return '#94a3b8';
 }
-var SKIN_LABELS = { awakened: '💠 Пробуждённый', absolute: '🔮 Абсолютный' };
+var MC_SKIN_LABELS = { awakened: '💠 Пробуждённый', absolute: '🔮 Абсолютный' };
 
-var UI_ICONS = {
+var MC_ICONS = {
     soundOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
     soundOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>',
     play: '<svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg>',
@@ -3296,16 +3235,16 @@ var UI_ICONS = {
 // =====================================================================
 //  1. НАВИГАЦИЯ: плавающий индикатор + перелистывание страниц как в книге
 // =====================================================================
-var TAB_ORDER = ['catalog', 'shop', 'profile', 'tops', 'collection'];
-var currentTabId = 'profile';
-var tabScrollMemory = {};
-var pageFlip = null;
+var MC_TAB_ORDER = ['catalog', 'shop', 'profile', 'tops', 'collection'];
+var mcCurrentTab = 'profile';
+var mcTabScroll = {};
+var mcPageFlip = null;
 
-function getNavBtn(tabId) {
+function mcNavBtn(tabId) {
     return document.querySelector('.bottom-nav .nav-btn[data-tab="' + tabId + '"]');
 }
 
-function moveNavIndicator(btn, animate, dir) {
+function mcMoveNav(btn, animate, dir) {
     var ind = document.getElementById('navIndicator');
     if (!ind || !btn) return;
     if (!animate) ind.classList.add('no-anim');
@@ -3324,7 +3263,7 @@ function moveNavIndicator(btn, animate, dir) {
     ind.classList.add('stretch');
 }
 
-function navRipple(btn) {
+function mcNavRipple(btn) {
     if (!btn) return;
     var r = document.createElement('span');
     r.className = 'nav-ripple';
@@ -3332,37 +3271,90 @@ function navRipple(btn) {
     setTimeout(function () { r.remove(); }, 650);
 }
 
-function finishPageFlip() {
-    if (!pageFlip) return;
-    var f = pageFlip;
-    pageFlip = null;
+function mcFinishFlip() {
+    if (!mcPageFlip) return;
+    var f = mcPageFlip;
+    mcPageFlip = null;
     clearTimeout(f.timer);
-    f.old.classList.remove('page-leaving', 'flip-left', 'flip-right', 'active');
-    f.old.style.top = '';
+    (f.anims || []).forEach(function (a) { try { a.cancel(); } catch (e) {} });
+    if (f.curl && f.curl.parentNode) f.curl.parentNode.removeChild(f.curl);
+    f.old.classList.remove('page-leaving', 'active');
+    f.old.style.height = '';
     f.old.style.transformOrigin = '';
-    f.neu.classList.remove('page-entering', 'enter-left', 'enter-right');
+    try { f.old.scrollTop = 0; } catch (e) {}
     f.neu.style.transformOrigin = '';
+}
+
+// Перелистывание как в книге.
+// Анимация идёт через Web Animations API — её не может перебить никакой CSS
+// (раньше menu.css со своими правилами для #tab-profile гасил переворот с главной).
+// Уходящая страница превращается в слой ровно размером с экран: на iPhone
+// огромные 3D-слои во всю длину страницы иногда просто не рисовались.
+function mcFlipPages(oldTab, newTab, flip, sy, targetY) {
+    var vh = window.innerHeight || document.documentElement.clientHeight || 700;
+    var sign = flip === 'left' ? -1 : 1;
+
+    oldTab.classList.add('page-leaving');
+    oldTab.style.height = vh + 'px';
+    oldTab.style.transformOrigin = (flip === 'left' ? '0%' : '100%') + ' 50%';
+    oldTab.scrollTop = sy;
+
+    // Тень и блик на самом листе — ровно в видимой области
+    var curl = document.createElement('div');
+    curl.className = 'page-curl from-' + flip;
+    curl.style.top = oldTab.scrollTop + 'px';
+    curl.style.height = vh + 'px';
+    oldTab.appendChild(curl);
+
+    newTab.classList.add('active');
+    newTab.style.transformOrigin = '50% ' + (targetY + vh / 2) + 'px';
+    window.scrollTo(0, targetY);
+
+    var D = 720, EASE = 'cubic-bezier(0.38, 0, 0.3, 1)';
+    var anims = [];
+    anims.push(oldTab.animate([
+        { transform: 'perspective(1500px) rotateY(0deg)', boxShadow: '0 0 0 rgba(0,0,0,0)' },
+        { transform: 'perspective(1500px) rotateY(' + (sign * 28) + 'deg)', boxShadow: (sign * -30) + 'px 0 70px rgba(0,0,0,0.7)', offset: 0.35 },
+        { transform: 'perspective(1500px) rotateY(' + (sign * 98) + 'deg)', boxShadow: (sign * -30) + 'px 0 70px rgba(0,0,0,0.7)' }
+    ], { duration: D, easing: EASE, fill: 'forwards' }));
+    anims.push(curl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: D, easing: 'ease-in', fill: 'forwards' }));
+    anims.push(newTab.animate([
+        { transform: 'scale(0.94)', opacity: 0.4 },
+        { transform: 'scale(1)', opacity: 1 }
+    ], { duration: D, easing: 'cubic-bezier(0.22, 0.8, 0.3, 1)' }));
+
     var shade = document.getElementById('pageFlipShade');
-    if (shade) shade.className = 'page-flip-shade';
+    if (shade) {
+        shade.className = 'page-flip-shade from-' + flip;
+        anims.push(shade.animate([{ opacity: 1 }, { opacity: 0 }], { duration: D, easing: 'ease-out', fill: 'forwards' }));
+    }
+
+    mcPageFlip = { old: oldTab, neu: newTab, curl: curl, anims: anims };
+    anims[0].onfinish = mcFinishFlip;
+    mcPageFlip.timer = setTimeout(mcFinishFlip, D + 150); // страховка
 }
 
 function switchTab(tabId, btnElement, opts) {
     var newTab = document.getElementById('tab-' + tabId);
     if (!newTab) return;
-    btnElement = btnElement || getNavBtn(tabId);
-    hapticTap('select');
-    finishPageFlip();
+    btnElement = btnElement || mcNavBtn(tabId);
+    mcHaptic('select');
+    mcFinishFlip();
 
-    var prevId = currentTabId;
+    var prevId = mcCurrentTab;
     var oldTab = document.getElementById('tab-' + prevId);
-    var dir = TAB_ORDER.indexOf(tabId) < TAB_ORDER.indexOf(prevId) ? 'left' : 'right';
+    // navDir — куда едет индикатор навигации;
+    // flip — куда переворачивается страница (в обратную сторону, как в книге:
+    // жмёшь «Каталог» слева — лист уходит вправо, возвращаешься в меню — влево)
+    var navDir = MC_TAB_ORDER.indexOf(tabId) < MC_TAB_ORDER.indexOf(prevId) ? 'left' : 'right';
+    var flip = navDir === 'left' ? 'right' : 'left';
 
     document.querySelectorAll('.bottom-nav .nav-btn').forEach(function (b) {
         b.classList.toggle('active', b === btnElement);
     });
     if (btnElement) {
-        moveNavIndicator(btnElement, prevId !== tabId, dir);
-        navRipple(btnElement);
+        mcMoveNav(btnElement, prevId !== tabId, navDir);
+        mcNavRipple(btnElement);
     }
 
     // Повторный тап по активной вкладке — плавно наверх
@@ -3373,38 +3365,29 @@ function switchTab(tabId, btnElement, opts) {
     }
 
     var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
-    tabScrollMemory[prevId] = sy;
-    var targetY = tabScrollMemory[tabId] || 0;
-    currentTabId = tabId;
+    mcTabScroll[prevId] = sy;
+    var targetY = mcTabScroll[tabId] || 0;
+    mcCurrentTab = tabId;
 
     document.querySelectorAll('.tab-content').forEach(function (t) {
         if (t !== oldTab && t !== newTab) t.classList.remove('active');
     });
 
-    var instant = (opts && opts.instant) || prefersReducedMotion() || !oldTab;
-    if (instant) {
-        if (oldTab) oldTab.classList.remove('active');
+    var canAnimate = oldTab && typeof oldTab.animate === 'function' && !(opts && opts.instant);
+    if (canAnimate) {
+        try {
+            mcFlipPages(oldTab, newTab, flip, sy, targetY);
+            MCSound.play('flip');
+        } catch (e) {
+            console.error('page flip error', e);
+            mcFinishFlip();
+            canAnimate = false;
+        }
+    }
+    if (!canAnimate) {
+        if (oldTab) oldTab.classList.remove('active', 'page-leaving');
         newTab.classList.add('active');
         window.scrollTo(0, targetY);
-    } else {
-        var vh = window.innerHeight || 700;
-        // Уходящая страница «отрывается» от корешка и переворачивается в сторону движения
-        oldTab.classList.add('page-leaving', 'flip-' + dir);
-        oldTab.style.top = (-sy) + 'px';
-        oldTab.style.transformOrigin = (dir === 'left' ? '0% ' : '100% ') + (sy + vh / 2) + 'px';
-
-        newTab.classList.add('active', 'page-entering', 'enter-' + dir);
-        newTab.style.transformOrigin = '50% ' + (targetY + vh / 2) + 'px';
-        window.scrollTo(0, targetY);
-
-        var shade = document.getElementById('pageFlipShade');
-        if (shade) {
-            shade.className = 'page-flip-shade';
-            void shade.offsetWidth;
-            shade.className = 'page-flip-shade on from-' + dir;
-        }
-        pageFlip = { old: oldTab, neu: newTab };
-        pageFlip.timer = setTimeout(finishPageFlip, 780);
     }
 
     // Топы грузим только при первом переходе на вкладку
@@ -3412,21 +3395,21 @@ function switchTab(tabId, btnElement, opts) {
         loadTopsTimer();
         switchTopCategory('pvp_season', document.getElementById('btnTopPvpSeason'));
     } else if (tabId === 'tops') {
-        moveLbGlider(document.querySelector('.lb-tab.active'), false);
+        mcMoveLbGlider(document.querySelector('.lb-tab.active'), false);
     }
 }
 
-function initNavIndicator() {
-    var active = document.querySelector('.bottom-nav .nav-btn.active') || getNavBtn('profile');
-    moveNavIndicator(active, false);
+function mcInitNav() {
+    var active = document.querySelector('.bottom-nav .nav-btn.active') || mcNavBtn('profile');
+    mcMoveNav(active, false);
 }
-initNavIndicator();
-window.addEventListener('load', initNavIndicator);
+mcInitNav();
+window.addEventListener('load', mcInitNav);
 window.addEventListener('resize', function () {
-    initNavIndicator();
-    moveLbGlider(document.querySelector('.lb-tab.active'), false);
+    mcInitNav();
+    mcMoveLbGlider(document.querySelector('.lb-tab.active'), false);
 });
-setTimeout(initNavIndicator, 2700); // после сплэша (шрифты уже загружены)
+setTimeout(mcInitNav, 2700); // после сплэша (шрифты уже загружены)
 
 // =====================================================================
 //  2. МОДАЛКА КАРТЫ: видео-скины со звуком и полноэкранный режим
@@ -3435,26 +3418,26 @@ async function openModal(item) {
     currentModalCard = item;
     var cleanRarity = (item.rarity || '').split(' ')[0];
     var wrap = document.querySelector('.modal-img-wrapper');
-    stopMediaIn(wrap);
+    mcStopMedia(wrap);
     wrap.innerHTML = '';
     wrap.classList.remove('has-video');
 
     var barHtml = '';
     if (item.isSkin) {
-        var label = SKIN_LABELS[item.skinType] || 'Скин';
+        var label = MC_SKIN_LABELS[item.skinType] || 'Скин';
         if (item.skinType === 'absolute') {
             wrap.classList.add('has-video');
             wrap.innerHTML = '<div class="modal-media-frame glow-' + cleanRarity + '">' +
-                skinVideoHtml(item.skinFile, 'modal-img modal-video', 'onclick="toggleModalVideoPlay()"') +
+                mcSkinVideo(item.skinFile, 'modal-img modal-video', 'onclick="toggleModalVideoPlay()"') +
                 '<div class="modal-skin-tag">' + label + '</div></div>';
             barHtml =
-                '<button class="modal-media-btn sound" id="modalSoundBtn" onclick="toggleModalSound()">' + UI_ICONS.soundOff + '<span>Со звуком</span></button>' +
-                '<button class="modal-media-btn" onclick="openModalFullscreen()">' + UI_ICONS.expand + '<span>Во весь экран</span></button>';
+                '<button class="modal-media-btn sound" id="modalSoundBtn" onclick="toggleModalSound()">' + MC_ICONS.soundOff + '<span>Со звуком</span></button>' +
+                '<button class="modal-media-btn" onclick="openModalFullscreen()">' + MC_ICONS.expand + '<span>Во весь экран</span></button>';
         } else {
             wrap.innerHTML = '<div class="modal-media-frame glow-' + cleanRarity + '">' +
-                '<img src="' + skinImageSrc(item.skinFile) + '" class="modal-img" onclick="openModalFullscreen()" onerror="this.onerror=null; this.src=\'images/default.webp\';">' +
+                '<img src="' + mcSkinImg(item.skinFile) + '" class="modal-img" onclick="openModalFullscreen()" onerror="this.onerror=null; this.src=\'images/default.webp\';">' +
                 '<div class="modal-skin-tag">' + label + '</div></div>';
-            barHtml = '<button class="modal-media-btn" onclick="openModalFullscreen()">' + UI_ICONS.expand + '<span>Во весь экран</span></button>';
+            barHtml = '<button class="modal-media-btn" onclick="openModalFullscreen()">' + MC_ICONS.expand + '<span>Во весь экран</span></button>';
         }
         document.getElementById('modalNameTop').innerText = item.name + (item.skinType === 'awakened' ? ' [💠]' : ' [🔮]');
         document.getElementById('modalName').innerText = item.name;
@@ -3463,7 +3446,7 @@ async function openModal(item) {
         var fallbackSrc = (item.file || '').replace(/\.jpe?g$/i, '.webp');
         wrap.innerHTML = '<div class="modal-media-frame glow-' + cleanRarity + '">' +
             '<img src="images/' + fallbackSrc + '" class="modal-img" onclick="openModalFullscreen()"></div>';
-        barHtml = '<button class="modal-media-btn" onclick="openModalFullscreen()">' + UI_ICONS.expand + '<span>Во весь экран</span></button>';
+        barHtml = '<button class="modal-media-btn" onclick="openModalFullscreen()">' + MC_ICONS.expand + '<span>Во весь экран</span></button>';
         document.getElementById('modalNameTop').innerText = item.name || '';
         document.getElementById('modalName').innerText = item.name || '';
     }
@@ -3480,7 +3463,7 @@ async function openModal(item) {
     var top = (item.rarity || '').indexOf('Мифическая') !== -1 || (item.rarity || '').indexOf('Божественная') !== -1;
     statEls.forEach(function (el) { el.classList.toggle('mythic', top); });
 
-    hapticTap('light');
+    mcHaptic('light');
     document.getElementById('cardModal').classList.add('open');
     manageBack();
 
@@ -3491,7 +3474,7 @@ async function openModal(item) {
             var res = await fetch(API_BASE + '/api/card_count/' + encodeURIComponent(item.id));
             if (res.ok) {
                 var data = await res.json();
-                if (currentModalCard === item) countEl.innerText = fmtNum(data.count);
+                if (currentModalCard === item) countEl.innerText = mcFmt(data.count);
             } else countEl.innerText = '?';
         } catch (e) { countEl.innerText = 'Ошибка'; }
     }
@@ -3499,33 +3482,33 @@ async function openModal(item) {
 
 function closeModal() {
     var modal = document.getElementById('cardModal');
-    stopMediaIn(modal);
+    mcStopMedia(modal);
     modal.classList.remove('open');
     manageBack();
 }
 
-function getModalVideo() { return document.querySelector('#cardModal .modal-video'); }
+function mcModalVideo() { return document.querySelector('#cardModal .modal-video'); }
 
-function setSoundBtnState(btn, muted) {
+function mcSoundBtnState(btn, muted) {
     if (!btn) return;
     btn.classList.toggle('on', !muted);
-    btn.innerHTML = (muted ? UI_ICONS.soundOff : UI_ICONS.soundOn) + '<span>' + (muted ? 'Со звуком' : 'Звук включён') + '</span>';
+    btn.innerHTML = (muted ? MC_ICONS.soundOff : MC_ICONS.soundOn) + '<span>' + (muted ? 'Со звуком' : 'Звук включён') + '</span>';
 }
 
 function toggleModalSound() {
-    var v = getModalVideo();
+    var v = mcModalVideo();
     if (!v) return;
-    hapticTap('light');
+    mcHaptic('light');
     v.muted = !v.muted;
     if (!v.muted) {
         var p = v.play();
-        if (p && p.catch) p.catch(function () { v.muted = true; setSoundBtnState(document.getElementById('modalSoundBtn'), true); });
+        if (p && p.catch) p.catch(function () { v.muted = true; mcSoundBtnState(document.getElementById('modalSoundBtn'), true); });
     }
-    setSoundBtnState(document.getElementById('modalSoundBtn'), v.muted);
+    mcSoundBtnState(document.getElementById('modalSoundBtn'), v.muted);
 }
 
 function toggleModalVideoPlay() {
-    var v = getModalVideo();
+    var v = mcModalVideo();
     if (!v) return;
     if (v.paused) v.play().catch(function () {}); else v.pause();
 }
@@ -3534,62 +3517,62 @@ function openModalFullscreen() {
     var item = currentModalCard;
     if (!item) return;
     if (item.isSkin) {
-        var v = getModalVideo();
+        var v = mcModalVideo();
         var withSound = !!(v && !v.muted);
         if (v) { v.pause(); }
-        openMediaViewer({
+        mcOpenViewer({
             kind: item.skinType === 'absolute' ? 'video' : 'image',
             file: item.skinFile,
-            src: skinImageSrc(item.skinFile),
+            src: mcSkinImg(item.skinFile),
             title: item.name,
-            sub: SKIN_LABELS[item.skinType] || 'Скин',
-            color: rarityColorOf(item.rarity),
+            sub: MC_SKIN_LABELS[item.skinType] || 'Скин',
+            color: mcRarityColor(item.rarity),
             sound: withSound,
             startAt: v ? v.currentTime : 0,
-            onClose: function () { var mv = getModalVideo(); if (mv && document.getElementById('cardModal').classList.contains('open')) mv.play().catch(function () {}); }
+            onClose: function () { var mv = mcModalVideo(); if (mv && document.getElementById('cardModal').classList.contains('open')) mv.play().catch(function () {}); }
         });
     } else {
-        openMediaViewer({ kind: 'image', src: cardArtSrc(item.file), fallback: 'images/' + item.file, title: item.name, sub: item.rarity || '', color: rarityColorOf(item.rarity) });
+        mcOpenViewer({ kind: 'image', src: mcCardArt(item.file), fallback: 'images/' + item.file, title: item.name, sub: item.rarity || '', color: mcRarityColor(item.rarity) });
     }
 }
 
 // =====================================================================
 //  3. ПОЛНОЭКРАННЫЙ ПРОСМОТРЩИК (картинки и видео со звуком)
 // =====================================================================
-var mvState = { video: null, onClose: null, drag: null };
+var mcViewer = { video: null, onClose: null, drag: null };
 
-function openMediaViewer(o) {
+function mcOpenViewer(o) {
     var ov = document.getElementById('mediaViewer');
     var stage = document.getElementById('mvStage');
     var ctr = document.getElementById('mvControls');
     var bd = document.getElementById('mvBackdrop');
     if (!ov) return;
-    teardownMediaViewer();
+    mcTeardownViewer();
 
     document.getElementById('mvTitle').textContent = o.title || '';
     document.getElementById('mvSub').textContent = o.sub || '';
     ov.style.setProperty('--mv-glow', o.color || '#8b5cf6');
-    mvState.onClose = o.onClose || null;
+    mcViewer.onClose = o.onClose || null;
 
     if (o.kind === 'video') {
-        stage.innerHTML = '<div class="mv-media-wrap">' + skinVideoHtml(o.file, 'mv-media', '') + '<div class="mv-play-flash" id="mvPlayFlash"></div></div>';
+        stage.innerHTML = '<div class="mv-media-wrap">' + mcSkinVideo(o.file, 'mv-media', '') + '<div class="mv-play-flash" id="mvPlayFlash"></div></div>';
         bd.style.backgroundImage = '';
         var v = stage.querySelector('video');
-        mvState.video = v;
+        mcViewer.video = v;
         ctr.innerHTML =
-            '<button class="mv-btn" id="mvPlayBtn" onclick="mvTogglePlay()">' + UI_ICONS.pause + '</button>' +
+            '<button class="mv-btn" id="mvPlayBtn" onclick="mcViewerPlay()">' + MC_ICONS.pause + '</button>' +
             '<div class="mv-progress" id="mvProgress"><div class="mv-progress-fill" id="mvProg"></div></div>' +
-            '<button class="mv-btn mv-sound" id="mvSoundBtn" onclick="mvToggleSound()">' + UI_ICONS.soundOff + '<span>Звук</span></button>';
+            '<button class="mv-btn mv-sound" id="mvSoundBtn" onclick="mcViewerSound()">' + MC_ICONS.soundOff + '<span>Звук</span></button>';
         ctr.style.display = '';
 
-        v.addEventListener('click', mvTogglePlay);
+        v.addEventListener('click', mcViewerPlay);
         v.addEventListener('timeupdate', function () {
             var f = document.getElementById('mvProg');
             if (f && v.duration) f.style.width = (v.currentTime / v.duration * 100) + '%';
         });
-        v.addEventListener('play', mvSyncButtons);
-        v.addEventListener('pause', mvSyncButtons);
-        v.addEventListener('volumechange', mvSyncButtons);
+        v.addEventListener('play', mcViewerSync);
+        v.addEventListener('pause', mcViewerSync);
+        v.addEventListener('volumechange', mcViewerSync);
         if (o.startAt) {
             v.addEventListener('loadedmetadata', function once() {
                 v.removeEventListener('loadedmetadata', once);
@@ -3608,7 +3591,7 @@ function openMediaViewer(o) {
             var p = v.play();
             if (p && p.catch) p.catch(function () { v.muted = true; v.play().catch(function () {}); });
         }
-        mvSyncButtons();
+        mcViewerSync();
     } else {
         var fb = o.fallback ? ' onerror="this.onerror=null; this.src=\'' + o.fallback + '\'"' : '';
         stage.innerHTML = '<div class="mv-media-wrap"><img class="mv-media" src="' + o.src + '"' + fb + ' alt=""></div>';
@@ -3619,59 +3602,60 @@ function openMediaViewer(o) {
 
     ov.classList.add('open');
     ov.setAttribute('aria-hidden', 'false');
-    hapticTap('medium');
+    MCSound.play('open');
+    mcHaptic('medium');
     manageBack();
 }
 
-function mvSyncButtons() {
-    var v = mvState.video;
+function mcViewerSync() {
+    var v = mcViewer.video;
     if (!v) return;
     var pb = document.getElementById('mvPlayBtn');
-    if (pb) pb.innerHTML = v.paused ? UI_ICONS.play : UI_ICONS.pause;
+    if (pb) pb.innerHTML = v.paused ? MC_ICONS.play : MC_ICONS.pause;
     var sb = document.getElementById('mvSoundBtn');
     if (sb) {
         sb.classList.toggle('on', !v.muted);
-        sb.innerHTML = (v.muted ? UI_ICONS.soundOff : UI_ICONS.soundOn) + '<span>' + (v.muted ? 'Звук' : 'Звук вкл.') + '</span>';
+        sb.innerHTML = (v.muted ? MC_ICONS.soundOff : MC_ICONS.soundOn) + '<span>' + (v.muted ? 'Звук' : 'Звук вкл.') + '</span>';
     }
 }
 
-function mvTogglePlay() {
-    var v = mvState.video;
+function mcViewerPlay() {
+    var v = mcViewer.video;
     if (!v) return;
     if (v.paused) v.play().catch(function () {}); else v.pause();
     var fl = document.getElementById('mvPlayFlash');
     if (fl) {
-        fl.innerHTML = v.paused ? UI_ICONS.pause : UI_ICONS.play;
+        fl.innerHTML = v.paused ? MC_ICONS.pause : MC_ICONS.play;
         fl.classList.remove('show'); void fl.offsetWidth; fl.classList.add('show');
     }
 }
 
-function mvToggleSound() {
-    var v = mvState.video;
+function mcViewerSound() {
+    var v = mcViewer.video;
     if (!v) return;
-    hapticTap('light');
+    mcHaptic('light');
     v.muted = !v.muted;
     if (!v.muted && v.paused) v.play().catch(function () {});
-    mvSyncButtons();
+    mcViewerSync();
 }
 
-function teardownMediaViewer() {
-    if (mvState.video) {
-        try { mvState.video.pause(); mvState.video.removeAttribute('src'); mvState.video.load(); } catch (e) {}
+function mcTeardownViewer() {
+    if (mcViewer.video) {
+        try { mcViewer.video.pause(); mcViewer.video.removeAttribute('src'); mcViewer.video.load(); } catch (e) {}
     }
-    mvState.video = null;
+    mcViewer.video = null;
     var stage = document.getElementById('mvStage');
     if (stage) { stage.innerHTML = ''; stage.style.transform = ''; stage.style.opacity = ''; }
 }
 
-function closeMediaViewer() {
+function mcCloseViewer() {
     var ov = document.getElementById('mediaViewer');
     if (!ov || !ov.classList.contains('open')) return;
     ov.classList.remove('open');
     ov.setAttribute('aria-hidden', 'true');
-    var cb = mvState.onClose;
-    mvState.onClose = null;
-    setTimeout(teardownMediaViewer, 260);
+    var cb = mcViewer.onClose;
+    mcViewer.onClose = null;
+    setTimeout(mcTeardownViewer, 260);
     manageBack();
     if (cb) setTimeout(cb, 50);
 }
@@ -3682,29 +3666,29 @@ function closeMediaViewer() {
     var stage = document.getElementById('mvStage');
     var bd = document.getElementById('mvBackdrop');
     if (!ov || !stage) return;
-    bd.addEventListener('click', closeMediaViewer);
-    stage.addEventListener('click', function (e) { if (e.target === stage) closeMediaViewer(); });
+    bd.addEventListener('click', mcCloseViewer);
+    stage.addEventListener('click', function (e) { if (e.target === stage) mcCloseViewer(); });
     stage.addEventListener('touchstart', function (e) {
         if (e.touches.length !== 1) return;
-        mvState.drag = { y: e.touches[0].clientY, dy: 0 };
+        mcViewer.drag = { y: e.touches[0].clientY, dy: 0 };
         stage.style.transition = 'none';
     }, { passive: true });
     stage.addEventListener('touchmove', function (e) {
-        if (!mvState.drag) return;
-        var dy = e.touches[0].clientY - mvState.drag.y;
-        mvState.drag.dy = dy;
+        if (!mcViewer.drag) return;
+        var dy = e.touches[0].clientY - mcViewer.drag.y;
+        mcViewer.drag.dy = dy;
         if (dy > 0) {
             stage.style.transform = 'translateY(' + dy + 'px) scale(' + Math.max(0.85, 1 - dy / 1200) + ')';
             ov.style.setProperty('--mv-dim', Math.max(0.25, 1 - dy / 400));
         }
     }, { passive: true });
     stage.addEventListener('touchend', function () {
-        if (!mvState.drag) return;
-        var dy = mvState.drag.dy;
-        mvState.drag = null;
+        if (!mcViewer.drag) return;
+        var dy = mcViewer.drag.dy;
+        mcViewer.drag = null;
         stage.style.transition = '';
         ov.style.removeProperty('--mv-dim');
-        if (dy > 110) closeMediaViewer();
+        if (dy > 110) mcCloseViewer();
         else stage.style.transform = '';
     });
 })();
@@ -3712,12 +3696,12 @@ function closeMediaViewer() {
 // =====================================================================
 //  4. ВЛАДЕЛЬЦЫ КАРТЫ + СКИНЫ
 // =====================================================================
-var osCurrentKey = null;
+var mcOsKey = null;
 
-function renderOwnersHeader(c) {
+function mcOwnersHeader(c) {
     var rName = c.rarity || 'Обычная ⚪️';
     var cleanRarity = rName.split(' ')[0];
-    var rColor = RARITY_COLORS[rName] || rarityColorOf(rName);
+    var rColor = RARITY_COLORS[rName] || mcRarityColor(rName);
     var screen = document.getElementById('ownersScreen');
     screen.style.setProperty('--r-color', rColor);
 
@@ -3727,7 +3711,7 @@ function renderOwnersHeader(c) {
     pill.style.setProperty('--r-color', rColor);
     document.getElementById('osCardWrap').style.setProperty('--r-color', rColor);
 
-    var art = cardArtSrc(c.file);
+    var art = mcCardArt(c.file);
     var img = document.getElementById('osCardImg');
     img.onerror = function () { this.onerror = null; this.src = 'images/' + (c.file || ''); };
     img.src = art;
@@ -3740,7 +3724,7 @@ function renderOwnersHeader(c) {
     document.getElementById('osStatSpd').innerText = spd;
     document.getElementById('osStatStr').innerText = str;
     document.getElementById('osStatInt').innerText = intl;
-    document.getElementById('osPower').innerText = fmtNum(spd + str + intl);
+    document.getElementById('osPower').innerText = mcFmt(spd + str + intl);
 
     var maxStat = Math.max(100, spd, str, intl);
     [['osBarSpd', spd], ['osBarStr', str], ['osBarInt', intl]].forEach(function (pair) {
@@ -3751,7 +3735,7 @@ function renderOwnersHeader(c) {
 
     // Скины
     var list = document.getElementById('osSkinsList');
-    stopMediaIn(list);
+    mcStopMedia(list);
     var cardSkins = (allSkins || []).filter(function (s) { return s.card_id === c.id; });
     var block = document.getElementById('osSkinsBlock');
     if (!cardSkins.length) {
@@ -3765,14 +3749,14 @@ function renderOwnersHeader(c) {
         var isVideo = s.type === 'absolute';
         var owned = (userOwnedSkins || []).indexOf(s.card_id + '_' + s.type) !== -1;
         var media = isVideo
-            ? skinVideoHtml(s.file, 'os-skin-media', '')
-            : '<img class="os-skin-media" src="' + skinImageSrc(s.file) + '" loading="lazy" onerror="this.onerror=null; this.src=\'images/default.webp\';" alt="">';
-        return '<button class="os-skin-tile type-' + s.type + '" style="--i:' + i + '" onclick="openSkinViewer(\'' + escHtml(s.card_id) + '\', \'' + s.type + '\')">' +
+            ? mcSkinVideo(s.file, 'os-skin-media', '')
+            : '<img class="os-skin-media" src="' + mcSkinImg(s.file) + '" loading="lazy" onerror="this.onerror=null; this.src=\'images/default.webp\';" alt="">';
+        return '<button class="os-skin-tile type-' + s.type + '" style="--i:' + i + '" onclick="openSkinViewer(\'' + mcEsc(s.card_id) + '\', \'' + s.type + '\')">' +
             media +
             '<div class="os-skin-shine"></div>' +
-            (isVideo ? '<div class="os-skin-play">' + UI_ICONS.play + '</div>' : '') +
+            (isVideo ? '<div class="os-skin-play">' + MC_ICONS.play + '</div>' : '') +
             (owned ? '<div class="os-skin-owned">✓ У вас</div>' : '') +
-            '<div class="os-skin-type">' + (SKIN_LABELS[s.type] || s.type) + '</div>' +
+            '<div class="os-skin-type">' + (MC_SKIN_LABELS[s.type] || s.type) + '</div>' +
             '</button>';
     }).join('');
 }
@@ -3781,34 +3765,34 @@ function openSkinViewer(cardId, type) {
     var s = (allSkins || []).find(function (x) { return x.card_id === cardId && x.type === type; });
     if (!s) return;
     var base = allCards.find(function (c) { return c.id === cardId; }) || {};
-    openMediaViewer({
+    mcOpenViewer({
         kind: type === 'absolute' ? 'video' : 'image',
         file: s.file,
-        src: skinImageSrc(s.file),
+        src: mcSkinImg(s.file),
         fallback: 'images/default.webp',
         title: base.name || 'Скин',
-        sub: SKIN_LABELS[type] || 'Скин',
-        color: rarityColorOf(base.rarity)
+        sub: MC_SKIN_LABELS[type] || 'Скин',
+        color: mcRarityColor(base.rarity)
     });
 }
 
 function openOwnersCardFullscreen() {
     var c = currentModalCard;
     if (!c) return;
-    openMediaViewer({ kind: 'image', src: cardArtSrc(c.file), fallback: 'images/' + c.file, title: c.name, sub: c.rarity || '', color: rarityColorOf(c.rarity) });
+    mcOpenViewer({ kind: 'image', src: mcCardArt(c.file), fallback: 'images/' + c.file, title: c.name, sub: c.rarity || '', color: mcRarityColor(c.rarity) });
 }
 
 async function openOwnersScreen(page) {
     page = Number(page) || 0;
     if (!currentModalCard) return;
-    hapticTap('light');
+    mcHaptic('light');
     var c = currentModalCard;
     var screen = document.getElementById('ownersScreen');
     var wasOpen = screen.classList.contains('open');
 
-    if (!wasOpen || osCurrentKey !== c.id) {
-        renderOwnersHeader(c);
-        osCurrentKey = c.id;
+    if (!wasOpen || mcOsKey !== c.id) {
+        mcOwnersHeader(c);
+        mcOsKey = c.id;
         screen.scrollTop = 0;
     }
     screen.classList.add('open');
@@ -3826,10 +3810,10 @@ async function openOwnersScreen(page) {
     try {
         var res = await fetch(API_BASE + '/api/card_owners/' + encodeURIComponent(c.id) + '?page=' + page);
         var data = await res.json();
-        if (osCurrentKey !== c.id) return;
+        if (mcOsKey !== c.id) return;
         if (data.success) {
-            animateCount(document.getElementById('osTotalOwners'), data.total_unique || 0, 700);
-            document.getElementById('osTotalCopies').innerText = fmtNum(data.total_copies || 0) + ' копий';
+            mcCount(document.getElementById('osTotalOwners'), data.total_unique || 0, 700);
+            document.getElementById('osTotalCopies').innerText = mcFmt(data.total_copies || 0) + ' копий';
             renderOwnersList(data);
         } else {
             container.innerHTML = '<div class="os-empty err">Ошибка загрузки</div>';
@@ -3841,9 +3825,9 @@ async function openOwnersScreen(page) {
 
 function closeOwnersScreen() {
     var screen = document.getElementById('ownersScreen');
-    stopMediaIn(screen);
+    mcStopMedia(screen);
     screen.classList.remove('open');
-    osCurrentKey = null;
+    mcOsKey = null;
     manageBack();
 }
 
@@ -3857,15 +3841,15 @@ function renderOwnersList(data) {
     var offset = (data.page || 0) * (data.limit || 15);
     container.innerHTML = data.owners.map(function (player, i) {
         var pos = offset + i + 1;
-        var cleanName = escHtml((player.name || 'Игрок').trim());
+        var cleanName = mcEsc((player.name || 'Игрок').trim());
         var initial = encodeURIComponent((player.name || 'U').trim().charAt(0).toUpperCase() || 'U');
         var fallbackImg = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
         var avatarSrc = API_BASE + '/api/avatar/' + player.id + '?name=' + encodeURIComponent(player.name || 'U');
-        var frameHtml = player.frame_url ? '<img src="' + escHtml(player.frame_url) + '" class="avatar-frame" onerror="this.style.display=\'none\'">' : '';
+        var frameHtml = player.frame_url ? '<img src="' + mcEsc(player.frame_url) + '" class="avatar-frame" onerror="this.style.display=\'none\'">' : '';
         var isMe = String(player.id) === String(userId);
         var cls = 'os-owner-row' + (pos === 1 ? ' top1' : pos <= 3 ? ' top3' : '') + (isMe ? ' is-me' : '');
         return '<div class="' + cls + '" style="--i:' + i + '" onclick="openPublicProfile(' + Number(player.id) + ')">' +
-            '<div class="os-pos">' + (pos === 1 ? UI_ICONS.crown : pos) + '</div>' +
+            '<div class="os-pos">' + (pos === 1 ? MC_ICONS.crown : pos) + '</div>' +
             '<div class="top-avatar-wrap os-ava-wrap"><img src="' + avatarSrc + '" class="os-avatar" loading="lazy" onerror="this.onerror=null; this.src=\'' + fallbackImg + '\'">' + frameHtml + '</div>' +
             '<div class="os-name">' + cleanName + (isMe ? '<span class="os-me-tag">ВЫ</span>' : '') + '</div>' +
             '<div class="os-badge">×' + (player.count || 1) + '</div>' +
@@ -3897,16 +3881,16 @@ function renderOwnersList(data) {
 }
 
 // Плавный счётчик чисел
-function animateCount(el, target, duration) {
+function mcCount(el, target, duration) {
     if (!el) return;
     target = Number(target) || 0;
-    if (prefersReducedMotion() || target < 3) { el.textContent = fmtNum(target); return; }
+    if (mcReduced() || target < 3) { el.textContent = mcFmt(target); return; }
     duration = duration || 1100;
     var start = performance.now();
     function step(now) {
         var t = Math.min(1, (now - start) / duration);
         var eased = 1 - Math.pow(1 - t, 3);
-        el.textContent = fmtNum(Math.round(target * eased));
+        el.textContent = mcFmt(Math.round(target * eased));
         if (t < 1 && el.isConnected) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
@@ -3915,10 +3899,10 @@ function animateCount(el, target, duration) {
 // =====================================================================
 //  5. ВЗРЫВНОЙ ТОП
 // =====================================================================
-var LB_SWORD = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="m2.75 9.25 1.5 2.5 2 1.5m-4.5 0 1 1m1.5-2.5-1.5 1.5m3-1 8.5-8.5v-2h-2l-8.5 8.5"></path><path d="m10.25 12.25-2.25-2.25m2-2 2.25 2.25m1-1-1.5 2.5-2 1.5m4.5 0-1 1m-1.5-2.5 1.5 1.5m-7.25-5.25-4.25-4.25v-2h2l4.25 4.25"></path></svg>';
-var LB_CATS = {
-    pvp_season: { sub: 'Победы в текущем сезоне · топ-1 получает рамку «Король сезона»', a: '#f43f5e', b: '#f97316', icon: LB_SWORD },
-    pvp:        { sub: 'Победы за всё время', a: '#ef4444', b: '#a855f7', icon: LB_SWORD },
+var MC_LB_SWORD = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="m2.75 9.25 1.5 2.5 2 1.5m-4.5 0 1 1m1.5-2.5-1.5 1.5m3-1 8.5-8.5v-2h-2l-8.5 8.5"></path><path d="m10.25 12.25-2.25-2.25m2-2 2.25 2.25m1-1-1.5 2.5-2 1.5m4.5 0-1 1m-1.5-2.5 1.5 1.5m-7.25-5.25-4.25-4.25v-2h2l4.25 4.25"></path></svg>';
+var MC_LB_CATS = {
+    pvp_season: { sub: 'Победы в текущем сезоне · топ-1 получает рамку «Король сезона»', a: '#f43f5e', b: '#f97316', icon: MC_LB_SWORD },
+    pvp:        { sub: 'Победы за всё время', a: '#ef4444', b: '#a855f7', icon: MC_LB_SWORD },
     rank:       { sub: 'Очки ранга — путь к Бессмертному Архонту', a: '#fbbf24', b: '#f97316', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' },
     level:      { sub: 'Уровень ManhwCard Pass', a: '#22c55e', b: '#06b6d4', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>' },
     cards:      { sub: 'Уникальные карты в коллекции', a: '#8b5cf6', b: '#ec4899', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>' },
@@ -3926,9 +3910,9 @@ var LB_CATS = {
     bc:         { sub: 'Запасы BattleCoin', a: '#f59e0b', b: '#eab308', icon: '<span class="lb-glyph">Ⓑ</span>' },
     diamond:    { sub: 'Алмазные магнаты', a: '#06b6d4', b: '#3b82f6', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>' }
 };
-var lbReqId = 0;
+var mcLbReq = 0;
 
-function moveLbGlider(btn, animate) {
+function mcMoveLbGlider(btn, animate) {
     var g = document.getElementById('lbTabsGlider');
     if (!g || !btn || !btn.offsetWidth) return;
     if (animate === false) g.classList.add('no-anim');
@@ -3939,30 +3923,30 @@ function moveLbGlider(btn, animate) {
 }
 
 function switchTopCategory(category, btnEl) {
-    if (!LB_CATS[category]) category = 'pvp_season';
-    hapticTap('select');
+    if (!MC_LB_CATS[category]) category = 'pvp_season';
+    mcHaptic('select');
     currentTopCategory = category;
     btnEl = btnEl || document.querySelector('.lb-tab[data-cat="' + category + '"]');
     document.querySelectorAll('.lb-tab').forEach(function (b) { b.classList.toggle('active', b === btnEl); });
 
     var tabs = document.getElementById('lbTabs');
     if (btnEl && tabs) {
-        moveLbGlider(btnEl, true);
+        mcMoveLbGlider(btnEl, true);
         tabs.scrollTo({ left: btnEl.offsetLeft - (tabs.clientWidth - btnEl.offsetWidth) / 2, behavior: 'smooth' });
     }
 
-    var cfg = LB_CATS[category];
+    var cfg = MC_LB_CATS[category];
     var root = document.getElementById('tab-tops');
     root.style.setProperty('--lb-a', cfg.a);
     root.style.setProperty('--lb-b', cfg.b);
-    root.style.setProperty('--lb-a-rgb', hexRgb(cfg.a));
-    root.style.setProperty('--lb-b-rgb', hexRgb(cfg.b));
+    root.style.setProperty('--lb-a-rgb', mcRgb(cfg.a));
+    root.style.setProperty('--lb-b-rgb', mcRgb(cfg.b));
     document.getElementById('topsTimer').style.display = category === 'pvp_season' ? '' : 'none';
     document.getElementById('lbSubtitle').textContent = cfg.sub;
-    loadTops(category);
+    mcLoadTops(category);
 }
 
-function lbSkeleton() {
+function mcLbSkeleton() {
     var pod = '<div class="lb-podium sk">' +
         '<div class="lb-pod p2"><div class="sk-circle big"></div><div class="sk-line"></div><div class="lb-pedestal"></div></div>' +
         '<div class="lb-pod p1"><div class="sk-circle huge"></div><div class="sk-line"></div><div class="lb-pedestal"></div></div>' +
@@ -3972,75 +3956,100 @@ function lbSkeleton() {
     return pod + '<div class="lb-list">' + rows + '</div>';
 }
 
-async function loadTops(category) {
-    var my = ++lbReqId;
+function mcLbError(title, detail) {
+    return '<div class="lb-empty err">' + title +
+        (detail ? '<div class="lb-err-detail">' + mcEsc(detail) + '</div>' : '') +
+        '<button onclick="mcLoadTops(currentTopCategory)">Повторить</button></div>';
+}
+
+async function mcLoadTops(category) {
+    var my = ++mcLbReq;
     var container = document.getElementById('topsListContainer');
-    container.innerHTML = lbSkeleton();
+    container.innerHTML = mcLbSkeleton();
     document.getElementById('lbMe').style.display = 'none';
+
+    var base = API_BASE + '/api/tops/' + encodeURIComponent(category);
+    var data = null, lastErr = '';
+    // Сначала с позицией игрока, если сервер ответил ошибкой — без неё
+    var urls = [base + '?me=' + encodeURIComponent(userId), base];
+    for (var i = 0; i < urls.length && !data; i++) {
+        try {
+            var res = await fetch(urls[i]);
+            if (!res.ok) { lastErr = 'HTTP ' + res.status; continue; }
+            data = await res.json();
+        } catch (e) {
+            lastErr = (e && e.message) || String(e);
+        }
+    }
+    if (my !== mcLbReq) return; // пользователь уже переключил категорию
+    if (!data) {
+        container.innerHTML = mcLbError(lastErr.indexOf('HTTP') === 0 ? 'Сервер ответил ошибкой' : 'Нет связи с сервером', lastErr);
+        return;
+    }
+    if (!data.success) {
+        container.innerHTML = mcLbError('Ошибка рейтинга', data.error || '');
+        return;
+    }
     try {
-        var res = await fetch(API_BASE + '/api/tops/' + category + '?me=' + encodeURIComponent(userId));
-        var data = await res.json();
-        if (my !== lbReqId) return; // пользователь уже переключил категорию
-        if (data.success) renderTops(data.leaderboard, data.me);
-        else container.innerHTML = '<div class="lb-empty err">Ошибка: ' + escHtml(data.error) + '<button onclick="loadTops(currentTopCategory)">Повторить</button></div>';
+        mcRenderTops(data.leaderboard || [], data.me);
     } catch (e) {
-        if (my !== lbReqId) return;
-        container.innerHTML = '<div class="lb-empty err">Нет связи с сервером<button onclick="loadTops(currentTopCategory)">Повторить</button></div>';
+        console.error('Ошибка отрисовки топа:', e);
+        container.innerHTML = mcLbError('Не удалось отрисовать рейтинг', (e && e.message) || String(e));
     }
 }
 
-function lbValue(p) {
+function mcLbValue(p) {
     if (!p) return 0;
     if (p.value != null) return Number(p.value) || 0;
     return parseInt(String(p.score || '').replace(/[^\d]/g, ''), 10) || 0;
 }
 
-function lbAvatar(p, cls) {
+function mcLbAvatar(p, cls) {
     var name = (p.name || 'Игрок').trim();
     var initial = encodeURIComponent(name.charAt(0).toUpperCase() || 'U');
     var fallbackImg = 'https://placehold.co/150x150/1c1c28/8b5cf6?text=' + initial;
     var src = API_BASE + '/api/avatar/' + p.id + '?name=' + encodeURIComponent(name);
     return '<div class="lb-ava ' + (cls || '') + '">' +
         '<img class="lb-ava-img" src="' + src + '" loading="lazy" onerror="this.onerror=null; this.src=\'' + fallbackImg + '\'" alt="">' +
-        (p.frame_url ? '<img class="lb-ava-frame" src="' + escHtml(p.frame_url) + '" alt="" onerror="this.style.display=\'none\'">' : '') +
+        (p.frame_url ? '<img class="lb-ava-frame" src="' + mcEsc(p.frame_url) + '" alt="" onerror="this.style.display=\'none\'">' : '') +
         '</div>';
 }
 
-function lbPodiumHtml(p, place) {
-    var cfg = LB_CATS[currentTopCategory] || LB_CATS.pvp;
+function mcLbPodium(p, place) {
+    var cfg = MC_LB_CATS[currentTopCategory] || MC_LB_CATS.pvp;
     var isMe = String(p.id) === String(userId);
-    var name = escHtml((p.name || 'Игрок').trim());
+    var name = mcEsc((p.name || 'Игрок').trim());
     var top = place === 1
-        ? '<div class="lb-crown">' + UI_ICONS.crown + '</div><div class="lb-rays"></div>'
+        ? '<div class="lb-crown">' + MC_ICONS.crown + '</div><div class="lb-rays"></div>'
         : '';
     return '<div class="lb-pod p' + place + (isMe ? ' is-me' : '') + '" onclick="openPublicProfile(' + Number(p.id) + ')">' +
         top +
-        '<div class="lb-pod-ava-wrap"><div class="lb-pod-ring"></div>' + lbAvatar(p, 'pod') +
+        '<div class="lb-pod-ava-wrap"><div class="lb-pod-ring"></div>' + mcLbAvatar(p, 'pod') +
         '<div class="lb-medal">' + place + '</div></div>' +
         '<div class="lb-pod-name">' + name + (p.is_premium ? ' <span class="lb-prem">👑</span>' : '') + '</div>' +
         '<div class="lb-pod-lvl">' + (isMe ? '<span class="lb-me-tag">ВЫ</span>' : 'Lv. ' + (p.level || 1)) + '</div>' +
-        '<div class="lb-pod-score"><span class="lb-ico">' + cfg.icon + '</span><span data-count="' + lbValue(p) + '">0</span></div>' +
+        '<div class="lb-pod-score"><span class="lb-ico">' + cfg.icon + '</span><span data-count="' + mcLbValue(p) + '">0</span></div>' +
         '<div class="lb-pedestal"><span>' + place + '</span><i class="lb-ped-shine"></i></div>' +
         '</div>';
 }
 
-function lbRowHtml(p, rank, leaderVal, idx) {
-    var cfg = LB_CATS[currentTopCategory] || LB_CATS.pvp;
+function mcLbRow(p, rank, leaderVal, idx) {
+    var cfg = MC_LB_CATS[currentTopCategory] || MC_LB_CATS.pvp;
     var isMe = String(p.id) === String(userId);
-    var val = lbValue(p);
+    var val = mcLbValue(p);
     var pct = leaderVal > 0 ? Math.max(4, Math.round(val / leaderVal * 100)) : 0;
     return '<div class="lb-row' + (isMe ? ' is-me' : '') + '" style="--i:' + idx + '" onclick="openPublicProfile(' + Number(p.id) + ')">' +
         '<div class="lb-rank">' + rank + '</div>' +
-        lbAvatar(p, 'row') +
+        mcLbAvatar(p, 'row') +
         '<div class="lb-info">' +
-            '<div class="lb-name">' + escHtml((p.name || 'Игрок').trim()) + (p.is_premium ? ' <span class="lb-prem">👑</span>' : '') + (isMe ? '<span class="lb-me-tag">ВЫ</span>' : '') + '</div>' +
+            '<div class="lb-name">' + mcEsc((p.name || 'Игрок').trim()) + (p.is_premium ? ' <span class="lb-prem">👑</span>' : '') + (isMe ? '<span class="lb-me-tag">ВЫ</span>' : '') + '</div>' +
             '<div class="lb-meta"><span class="lb-lvl">Lv. ' + (p.level || 1) + '</span><div class="lb-gap"><div style="width:' + pct + '%"></div></div></div>' +
         '</div>' +
-        '<div class="lb-score"><span class="lb-ico">' + cfg.icon + '</span>' + fmtNum(val) + '</div>' +
+        '<div class="lb-score"><span class="lb-ico">' + cfg.icon + '</span>' + mcFmt(val) + '</div>' +
         '</div>';
 }
 
-function lbSparks() {
+function mcLbSparks() {
     var s = '<div class="lb-sparks">';
     for (var i = 0; i < 16; i++) {
         s += '<i style="left:' + (5 + Math.random() * 90).toFixed(1) + '%;--dl:' + (Math.random() * 4).toFixed(2) + 's;--du:' + (3 + Math.random() * 3).toFixed(2) + 's;--sz:' + (2 + Math.random() * 3).toFixed(1) + 'px"></i>';
@@ -4048,41 +4057,42 @@ function lbSparks() {
     return s + '</div>';
 }
 
-function renderTops(list, me) {
+function mcRenderTops(list, me) {
     var container = document.getElementById('topsListContainer');
     if (!list || !list.length) {
         container.innerHTML = '<div class="lb-empty">Рейтинг пока пуст.<br><span>Займи первое место первым!</span></div>';
-        renderLbMe(me, []);
+        mcRenderLbMe(me, []);
         return;
     }
-    var leaderVal = lbValue(list[0]);
-    var html = '<div class="lb-podium">' + lbSparks();
+    var leaderVal = mcLbValue(list[0]);
+    var html = '<div class="lb-podium">' + mcLbSparks();
     [1, 0, 2].forEach(function (i) {
-        html += list[i] ? lbPodiumHtml(list[i], i + 1) : '<div class="lb-pod p' + (i + 1) + ' empty"><div class="lb-pedestal"><span>' + (i + 1) + '</span></div></div>';
+        html += list[i] ? mcLbPodium(list[i], i + 1) : '<div class="lb-pod p' + (i + 1) + ' empty"><div class="lb-pedestal"><span>' + (i + 1) + '</span></div></div>';
     });
     html += '</div><div class="lb-list">';
-    list.slice(3).forEach(function (p, idx) { html += lbRowHtml(p, idx + 4, leaderVal, idx); });
+    list.slice(3).forEach(function (p, idx) { html += mcLbRow(p, idx + 4, leaderVal, idx); });
     html += '</div>';
     container.innerHTML = html;
-    container.querySelectorAll('[data-count]').forEach(function (el) { animateCount(el, el.getAttribute('data-count')); });
-    renderLbMe(me, list);
+    container.querySelectorAll('[data-count]').forEach(function (el) { mcCount(el, el.getAttribute('data-count')); });
+    MCSound.play('shine');
+    mcRenderLbMe(me, list);
 }
 
-function renderLbMe(me, list) {
+function mcRenderLbMe(me, list) {
     var box = document.getElementById('lbMe');
     if (!me || !me.rank) { box.style.display = 'none'; return; }
-    var cfg = LB_CATS[currentTopCategory] || LB_CATS.pvp;
+    var cfg = MC_LB_CATS[currentTopCategory] || MC_LB_CATS.pvp;
     var inTop = list.some(function (p) { return String(p.id) === String(userId); });
     var sub;
     if (inTop) sub = me.rank <= 3 ? 'Ты на пьедестале 🔥' : 'Ты в топ-25 — держи позицию!';
-    else if (list.length >= 25) sub = 'До топ-25: ещё ' + fmtNum(Math.max(1, lbValue(list[list.length - 1]) - (me.value || 0) + 1));
+    else if (list.length >= 25) sub = 'До топ-25: ещё ' + mcFmt(Math.max(1, mcLbValue(list[list.length - 1]) - (me.value || 0) + 1));
     else sub = 'Поднимайся выше!';
     var myFrame = (typeof allFramesData !== 'undefined' && equippedFrameId !== 'none' && allFramesData[equippedFrameId]) ? allFramesData[equippedFrameId].url : '';
     box.innerHTML =
-        '<div class="lb-me-rank"><small>место</small>#' + fmtNum(me.rank) + '</div>' +
-        lbAvatar({ id: userId, name: userName, frame_url: myFrame }, 'row') +
-        '<div class="lb-me-info"><div class="lb-me-title">' + escHtml(userName) + '</div><div class="lb-me-sub">' + sub + '</div></div>' +
-        '<div class="lb-score"><span class="lb-ico">' + cfg.icon + '</span>' + fmtNum(me.value || 0) + '</div>';
+        '<div class="lb-me-rank"><small>место</small>#' + mcFmt(me.rank) + '</div>' +
+        mcLbAvatar({ id: userId, name: userName, frame_url: myFrame }, 'row') +
+        '<div class="lb-me-info"><div class="lb-me-title">' + mcEsc(userName) + '</div><div class="lb-me-sub">' + sub + '</div></div>' +
+        '<div class="lb-score"><span class="lb-ico">' + cfg.icon + '</span>' + mcFmt(me.value || 0) + '</div>';
     box.style.display = '';
     box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
 }
@@ -4100,7 +4110,7 @@ function updateTopsTimerDisplay() {
 // =====================================================================
 //  6. ДОСТИЖЕНИЯ
 // =====================================================================
-var ACH_ICONS = {
+var MC_ACH_ICONS = {
     crown: '<path d="M2.5 8.2l4.6 3.6L12 4.6l4.9 7.2 4.6-3.6-2.1 10.6H4.6z"/><path d="M4.6 21h14.8"/>',
     swords: '<path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/>',
     trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>',
@@ -4126,7 +4136,7 @@ var ACH_ICONS = {
     sparkle: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
     infinity: '<path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4z"/>'
 };
-var ACH_META = {
+var MC_ACH_META = {
     season_king: ['crown', '#fbbf24'], battle_master: ['swords', '#ef4444'], arena_legend: ['trophy', '#f59e0b'],
     year_nonstop: ['calendar', '#22c55e'], battlefield_elite: ['star', '#fbbf24'], relentless: ['flame', '#f97316'],
     mythic_collector: ['gem', '#ef4444'], scenery_master: ['image', '#14b8a6'], legendary_collector: ['gem', '#3b82f6'],
@@ -4140,43 +4150,44 @@ var ACH_META = {
     skin_collector: ['sparkle', '#e879f9'], shopaholic: ['bag', '#fb7185'], premium_user: ['crown', '#fbbf24'],
     absolute_legend: ['infinity', '#f0abfc']
 };
-var ACH_REWARD_SVGS = {
+var MC_REWARD_SVGS = {
     krw: '<span class="ach-rw-glyph" style="color:#c4b5fd">₩</span>',
     battlecoin: '<span class="ach-rw-glyph" style="color:#fbbf24">Ⓑ</span>',
-    diamond: '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/></svg>',
+    // системный алмаз — тот же, что в балансе на главной
+    diamond: '<svg class="ach-rw-dia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">' + MC_DIA_PATH + '</svg>',
     attempts: '<span class="ach-rw-glyph">🎟</span>'
 };
 
-function achIconSvg(id, size) {
-    var m = ACH_META[id] || ['trophy', '#a855f7'];
+function mcAchIcon(id, size) {
+    var m = MC_ACH_META[id] || ['trophy', '#a855f7'];
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"' +
-        (size ? ' style="width:' + size + 'px;height:' + size + 'px"' : '') + '>' + (ACH_ICONS[m[0]] || ACH_ICONS.trophy) + '</svg>';
+        (size ? ' style="width:' + size + 'px;height:' + size + 'px"' : '') + '>' + (MC_ACH_ICONS[m[0]] || MC_ACH_ICONS.trophy) + '</svg>';
 }
-function achColor(id) { return (ACH_META[id] || ['', '#a855f7'])[1]; }
-function achPrestige(a) {
+function mcAchColor(id) { return (MC_ACH_META[id] || ['', '#a855f7'])[1]; }
+function mcAchPrestige(a) {
     var r = a.rewards || {};
     return (r.frame_id ? 1000 : 0) + (r.diamond || 0) * 3 + (r.attempts || 0) * 2 + (r.battlecoin || 0) / 50 + (r.krw || 0) / 100;
 }
 
-var achData = [];
-var achFilter = 'all';
-var achMode = 'own';        // own | public
-var achPublic = null;       // { id, name, data }
-var achClaiming = {};
+var mcAchData = [];
+var mcAchFilter = 'all';
+var mcAchMode = 'own';        // own | public
+var mcAchPublic = null;       // { id, name, data }
+var mcAchClaiming = {};
 
-function achState(a) {
-    if (achMode === 'public') return a.earned ? 'claimed' : 'locked';
+function mcAchState(a) {
+    if (mcAchMode === 'public') return a.earned ? 'claimed' : 'locked';
     if (a.is_claimed) return 'claimed';
     if (a.is_completed) return 'ready';
     return 'progress';
 }
 
-async function loadAchievements() {
+async function mcLoadAchievements() {
     try {
         var res = await fetch(API_BASE + '/api/achievements?user_id=' + encodeURIComponent(userId), { headers: authHeaders() });
         var data = await res.json();
         if (data.success) {
-            achData = data.achievements || [];
+            mcAchData = data.achievements || [];
             updateAchSummaryUI();
             return true;
         }
@@ -4184,7 +4195,7 @@ async function loadAchievements() {
     return false;
 }
 
-function showAchSheet() {
+function mcShowAchSheet() {
     var m = document.getElementById('achievementsModal');
     m.style.display = 'flex';
     m.classList.remove('open');
@@ -4195,31 +4206,32 @@ function showAchSheet() {
 }
 
 function openAchievements() {
-    hapticTap('light');
-    achMode = 'own';
-    achFilter = achData.some(function (a) { return a.is_completed && !a.is_claimed; }) ? 'ready' : 'all';
+    mcHaptic('light');
+    MCSound.play('open');
+    mcAchMode = 'own';
+    mcAchFilter = mcAchData.some(function (a) { return a.is_completed && !a.is_claimed; }) ? 'ready' : 'all';
     document.getElementById('achKicker').textContent = 'ЗАЛ СЛАВЫ';
     document.getElementById('achTitle').textContent = 'Достижения';
-    showAchSheet();
-    if (achData.length) renderAchievements();
-    else document.getElementById('achievementsContainer').innerHTML = achSkeleton();
-    loadAchievements().then(function (ok) {
-        if (achMode !== 'own') return;
-        if (ok) renderAchievements();
-        else if (!achData.length) document.getElementById('achievementsContainer').innerHTML =
+    mcShowAchSheet();
+    if (mcAchData.length) mcRenderAchievements();
+    else document.getElementById('achievementsContainer').innerHTML = mcAchSkeleton();
+    mcLoadAchievements().then(function (ok) {
+        if (mcAchMode !== 'own') return;
+        if (ok) mcRenderAchievements();
+        else if (!mcAchData.length) document.getElementById('achievementsContainer').innerHTML =
             '<div class="ach-empty err">Ошибка загрузки. Проверьте соединение.</div>';
     });
 }
 
 function openPublicAchievements() {
-    if (!achPublic || !achPublic.data) return;
-    hapticTap('light');
-    achMode = 'public';
-    achFilter = 'all';
+    if (!mcAchPublic || !mcAchPublic.data) return;
+    mcHaptic('light');
+    mcAchMode = 'public';
+    mcAchFilter = 'all';
     document.getElementById('achKicker').textContent = 'ДОСТИЖЕНИЯ ИГРОКА';
-    document.getElementById('achTitle').textContent = achPublic.name || 'Игрок';
-    showAchSheet();
-    renderAchievements();
+    document.getElementById('achTitle').textContent = mcAchPublic.name || 'Игрок';
+    mcShowAchSheet();
+    mcRenderAchievements();
 }
 
 function closeAchievements() {
@@ -4232,24 +4244,24 @@ document.getElementById('achievementsModal').addEventListener('click', function 
     if (e.target === this) closeAchievements();
 });
 
-function achSkeleton() {
+function mcAchSkeleton() {
     var s = '';
     for (var i = 0; i < 5; i++) s += '<div class="ach-card skeleton"><div class="sk-square"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line short"></div></div></div>';
     return s;
 }
 
 function setAchFilter(f) {
-    hapticTap('select');
-    achFilter = f;
-    renderAchievements();
+    mcHaptic('select');
+    mcAchFilter = f;
+    mcRenderAchievements();
     document.getElementById('achievementsContainer').scrollTop = 0;
 }
 
-function renderAchievements() {
-    var list = achMode === 'public' ? ((achPublic && achPublic.data && achPublic.data.achievements) || []) : achData;
+function mcRenderAchievements() {
+    var list = mcAchMode === 'public' ? ((mcAchPublic && mcAchPublic.data && mcAchPublic.data.achievements) || []) : mcAchData;
     var total = list.length || 0;
     var counts = { claimed: 0, ready: 0, progress: 0, locked: 0 };
-    list.forEach(function (a) { counts[achState(a)]++; });
+    list.forEach(function (a) { counts[mcAchState(a)]++; });
 
     // Кольцо прогресса
     var pct = total ? Math.round(counts.claimed / total * 100) : 0;
@@ -4259,82 +4271,82 @@ function renderAchievements() {
     ring.style.strokeDashoffset = C;
     requestAnimationFrame(function () { ring.style.strokeDashoffset = C * (1 - pct / 100); });
     document.getElementById('achRingTxt').textContent = pct + '%';
-    document.getElementById('achSub').innerHTML = achMode === 'public'
+    document.getElementById('achSub').innerHTML = mcAchMode === 'public'
         ? 'Открыто <b>' + counts.claimed + '</b> из ' + total
         : 'Получено <b>' + counts.claimed + '</b> из ' + total + (counts.ready ? ' · <span class="ach-sub-ready">🎁 ' + counts.ready + ' ждут</span>' : '');
 
     // Фильтры
-    var filters = achMode === 'public'
+    var filters = mcAchMode === 'public'
         ? [['all', 'Все', total], ['claimed', 'Открыты', counts.claimed], ['locked', 'Закрыты', counts.locked]]
         : [['all', 'Все', total], ['ready', 'Забрать', counts.ready], ['progress', 'В процессе', counts.progress], ['claimed', 'Получены', counts.claimed]];
-    if (!filters.some(function (f) { return f[0] === achFilter; })) achFilter = 'all';
+    if (!filters.some(function (f) { return f[0] === mcAchFilter; })) mcAchFilter = 'all';
     document.getElementById('achFilters').innerHTML = filters.map(function (f) {
-        return '<button class="ach-filter' + (achFilter === f[0] ? ' active' : '') + (f[0] === 'ready' && f[2] ? ' hot' : '') +
+        return '<button class="ach-filter' + (mcAchFilter === f[0] ? ' active' : '') + (f[0] === 'ready' && f[2] ? ' hot' : '') +
             '" onclick="setAchFilter(\'' + f[0] + '\')">' + f[1] + ' <span>' + f[2] + '</span></button>';
     }).join('');
 
     // Сортировка: готовые → в процессе (по %) → полученные
     var order = { ready: 0, progress: 1, claimed: 2, locked: 3 };
-    var items = list.filter(function (a) { return achFilter === 'all' || achState(a) === achFilter; })
+    var items = list.filter(function (a) { return mcAchFilter === 'all' || mcAchState(a) === mcAchFilter; })
         .slice().sort(function (a, b) {
-            var sa = achState(a), sb = achState(b);
+            var sa = mcAchState(a), sb = mcAchState(b);
             if (order[sa] !== order[sb]) return order[sa] - order[sb];
             if (sa === 'progress') return (b.progress / b.req) - (a.progress / a.req);
-            return achPrestige(b) - achPrestige(a);
+            return mcAchPrestige(b) - mcAchPrestige(a);
         });
 
     var container = document.getElementById('achievementsContainer');
     if (!items.length) {
-        var msg = achFilter === 'ready' ? 'Пока нечего забирать — продолжай играть!' : 'Здесь пока пусто';
+        var msg = mcAchFilter === 'ready' ? 'Пока нечего забирать — продолжай играть!' : 'Здесь пока пусто';
         container.innerHTML = '<div class="ach-empty">' + msg + '</div>';
         return;
     }
-    container.innerHTML = items.map(function (a, i) { return achCardHtml(a, i); }).join('');
+    container.innerHTML = items.map(function (a, i) { return mcAchCard(a, i); }).join('');
 }
 
-function achRewardsHtml(r) {
+function mcAchRewards(r) {
     r = r || {};
     var out = [];
     if (r.frame_id) {
         var fr = (typeof allFramesData !== 'undefined' && allFramesData[r.frame_id]) || null;
-        out.push('<span class="ach-rw frame">' + (fr && fr.url ? '<img src="' + escHtml(fr.url) + '" alt="">' : '🖼') + 'Рамка' + (fr ? ' «' + escHtml(fr.name) + '»' : '') + '</span>');
+        out.push('<span class="ach-rw frame">' + (fr && fr.url ? '<img src="' + mcEsc(fr.url) + '" alt="">' : '🖼') + 'Рамка' + (fr ? ' «' + mcEsc(fr.name) + '»' : '') + '</span>');
     }
-    if (r.krw) out.push('<span class="ach-rw">' + ACH_REWARD_SVGS.krw + fmtNum(r.krw) + '</span>');
-    if (r.battlecoin) out.push('<span class="ach-rw">' + ACH_REWARD_SVGS.battlecoin + fmtNum(r.battlecoin) + '</span>');
-    if (r.diamond) out.push('<span class="ach-rw">' + ACH_REWARD_SVGS.diamond + fmtNum(r.diamond) + '</span>');
-    if (r.attempts) out.push('<span class="ach-rw">' + ACH_REWARD_SVGS.attempts + fmtNum(r.attempts) + '</span>');
+    if (r.krw) out.push('<span class="ach-rw">' + MC_REWARD_SVGS.krw + mcFmt(r.krw) + '</span>');
+    if (r.battlecoin) out.push('<span class="ach-rw">' + MC_REWARD_SVGS.battlecoin + mcFmt(r.battlecoin) + '</span>');
+    if (r.diamond) out.push('<span class="ach-rw">' + MC_REWARD_SVGS.diamond + mcFmt(r.diamond) + '</span>');
+    if (r.attempts) out.push('<span class="ach-rw">' + MC_REWARD_SVGS.attempts + mcFmt(r.attempts) + '</span>');
     return out.join('');
 }
 
-function achCardHtml(a, i) {
-    var st = achState(a);
-    var color = achColor(a.id);
+function mcAchCard(a, i) {
+    var st = mcAchState(a);
+    var color = mcAchColor(a.id);
     var pct = a.req ? Math.min(100, Math.round((a.progress || 0) / a.req * 100)) : 0;
     var action = '';
-    if (st === 'ready') action = '<button class="ach-claim" onclick="claimAchievement(\'' + escHtml(a.id) + '\', this)">Забрать</button>';
+    if (st === 'ready') action = '<button class="ach-claim" onclick="claimAchievement(\'' + mcEsc(a.id) + '\', this)">Забрать</button>';
     else if (st === 'claimed') action = '<div class="ach-done">✓</div>';
     else if (st === 'progress') action = '<div class="ach-pct">' + pct + '<small>%</small></div>';
     else action = '<div class="ach-lock">🔒</div>';
 
     var progHtml = '';
-    if (achMode === 'own' && st !== 'claimed') {
+    if (mcAchMode === 'own' && st !== 'claimed') {
         progHtml = '<div class="ach-prog"><div class="ach-prog-bar"><div class="ach-prog-fill" style="width:' + (st === 'ready' ? 100 : pct) + '%"></div></div>' +
-            '<div class="ach-prog-txt">' + fmtNum(Math.min(a.progress || 0, a.req)) + ' / ' + fmtNum(a.req) + '</div></div>';
+            '<div class="ach-prog-txt">' + mcFmt(Math.min(a.progress || 0, a.req)) + ' / ' + mcFmt(a.req) + '</div></div>';
     }
     return '<div class="ach-card st-' + st + '" style="--ac:' + color + ';--i:' + Math.min(i, 12) + '">' +
-        '<div class="ach-ico">' + achIconSvg(a.id) + (st === 'claimed' ? '<span class="ach-ico-check">✓</span>' : '') + '</div>' +
+        '<div class="ach-ico">' + mcAchIcon(a.id) + (st === 'claimed' ? '<span class="ach-ico-check">✓</span>' : '') + '</div>' +
         '<div class="ach-body">' +
-            '<div class="ach-card-title">' + escHtml(a.title) + '</div>' +
-            '<div class="ach-card-desc">' + escHtml(a.desc) + '</div>' +
-            '<div class="ach-rewards">' + achRewardsHtml(a.rewards) + '</div>' +
+            '<div class="ach-card-title">' + mcEsc(a.title) + '</div>' +
+            '<div class="ach-card-desc">' + mcEsc(a.desc) + '</div>' +
+            '<div class="ach-rewards">' + mcAchRewards(a.rewards) + '</div>' +
             progHtml +
         '</div>' +
         '<div class="ach-action">' + action + '</div>' +
         '</div>';
 }
 
-function achConfetti(anchor) {
-    if (!anchor || prefersReducedMotion()) return;
+function mcConfetti(anchor) {
+    if (!anchor || mcReduced()) return;
     var r = anchor.getBoundingClientRect();
     var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     var colors = ['#fbbf24', '#a855f7', '#22d3ee', '#f43f5e', '#4ade80', '#ffffff'];
@@ -4355,10 +4367,10 @@ function achConfetti(anchor) {
 }
 
 async function claimAchievement(achievId, btn) {
-    if (achClaiming[achievId]) return;
-    achClaiming[achievId] = true;
+    if (mcAchClaiming[achievId]) return;
+    mcAchClaiming[achievId] = true;
     if (btn) { btn.disabled = true; btn.classList.add('loading'); btn.textContent = '…'; }
-    hapticTap('heavy');
+    mcHaptic('heavy');
     try {
         var res = await fetch(API_BASE + '/api/claim_achievement', {
             method: 'POST',
@@ -4367,19 +4379,21 @@ async function claimAchievement(achievId, btn) {
         });
         var data = await res.json();
         if (data.success) {
-            hapticTap('success');
-            achConfetti(btn);
-            var item = achData.find(function (a) { return a.id === achievId; });
+            mcHaptic('success');
+            MCSound.play('success');
+            mcConfetti(btn);
+            var item = mcAchData.find(function (a) { return a.id === achievId; });
             if (item) { item.is_claimed = true; item.is_completed = true; item.progress = item.req; }
             showToast('Достижение получено 🏆', String(data.message || '').replace(/^Награда получена:\s*/, ''));
-            setTimeout(function () { if (achMode === 'own') renderAchievements(); }, 350);
+            setTimeout(function () { if (mcAchMode === 'own') mcRenderAchievements(); }, 350);
             updateAchSummaryUI();
             if (typeof fetchProfile === 'function') fetchProfile();
             if (typeof loadUserFrames === 'function') loadUserFrames();
             // «Абсолютная легенда» зависит от остальных — тихо пересчитываем
-            setTimeout(function () { loadAchievements().then(function (ok) { if (ok && achMode === 'own' && document.getElementById('achievementsModal').style.display === 'flex') renderAchievements(); }); }, 1200);
+            setTimeout(function () { mcLoadAchievements().then(function (ok) { if (ok && mcAchMode === 'own' && document.getElementById('achievementsModal').style.display === 'flex') mcRenderAchievements(); }); }, 1200);
         } else {
-            hapticTap('error');
+            mcHaptic('error');
+            MCSound.play('error');
             tg.showAlert(data.message || 'Произошла ошибка');
             if (btn) { btn.disabled = false; btn.classList.remove('loading'); btn.textContent = 'Забрать'; }
         }
@@ -4387,12 +4401,12 @@ async function claimAchievement(achievId, btn) {
         tg.showAlert('Ошибка соединения с сервером');
         if (btn) { btn.disabled = false; btn.classList.remove('loading'); btn.textContent = 'Забрать'; }
     } finally {
-        achClaiming[achievId] = false;
+        mcAchClaiming[achievId] = false;
     }
 }
 
 // Витрина достижений (свой профиль, публичный профиль, главное меню)
-function renderAchShowcase(prefix, earnedList, total, readyCount) {
+function mcAchShowcase(prefix, earnedList, total, readyCount) {
     var countEl = document.getElementById(prefix + 'AchCount');
     var fillEl = document.getElementById(prefix + 'AchFill');
     var badgesEl = document.getElementById(prefix + 'AchBadges');
@@ -4401,12 +4415,12 @@ function renderAchShowcase(prefix, earnedList, total, readyCount) {
     countEl.textContent = earned + ' / ' + total;
     if (fillEl) fillEl.style.width = (total ? Math.round(earned / total * 100) : 0) + '%';
 
-    var top = earnedList.slice().sort(function (a, b) { return achPrestige(b) - achPrestige(a); });
+    var top = earnedList.slice().sort(function (a, b) { return mcAchPrestige(b) - mcAchPrestige(a); });
     var shown = top.slice(0, 6);
     var html = '';
     if (readyCount) html += '<div class="ps-ach-ready">🎁<b>' + readyCount + '</b></div>';
     html += shown.map(function (a, i) {
-        return '<div class="ps-ach-badge" style="--ac:' + achColor(a.id) + ';--i:' + i + '" title="' + escHtml(a.title) + '">' + achIconSvg(a.id) + '</div>';
+        return '<div class="ps-ach-badge" style="--ac:' + mcAchColor(a.id) + ';--i:' + i + '" title="' + mcEsc(a.title) + '">' + mcAchIcon(a.id) + '</div>';
     }).join('');
     if (top.length > shown.length) html += '<div class="ps-ach-more">+' + (top.length - shown.length) + '</div>';
     if (!earned && !readyCount) html = '<div class="ps-ach-empty">' + (prefix === 'pub' ? 'Игрок ещё не открыл достижений' : 'Пока пусто — открой первое достижение!') + '</div>';
@@ -4414,18 +4428,18 @@ function renderAchShowcase(prefix, earnedList, total, readyCount) {
 }
 
 function updateAchSummaryUI() {
-    if (!achData.length) return;
-    var claimed = achData.filter(function (a) { return a.is_claimed; });
-    var ready = achData.filter(function (a) { return a.is_completed && !a.is_claimed; }).length;
-    renderAchShowcase('ps', claimed, achData.length, ready);
+    if (!mcAchData.length) return;
+    var claimed = mcAchData.filter(function (a) { return a.is_claimed; });
+    var ready = mcAchData.filter(function (a) { return a.is_completed && !a.is_claimed; }).length;
+    mcAchShowcase('ps', claimed, mcAchData.length, ready);
     var badge = document.getElementById('achMenuBadge');
     var sub = document.getElementById('achMenuSub');
     if (badge) { badge.style.display = ready ? '' : 'none'; badge.textContent = ready; }
-    if (sub) sub.innerHTML = ready ? '<span class="ach-sub-ready">🎁 Готово: ' + ready + '</span>' : 'Открыто ' + claimed.length + ' / ' + achData.length;
+    if (sub) sub.innerHTML = ready ? '<span class="ach-sub-ready">🎁 Готово: ' + ready + '</span>' : 'Открыто ' + claimed.length + ' / ' + mcAchData.length;
 }
 
 function resetPublicAchBox() {
-    achPublic = null;
+    mcAchPublic = null;
     var box = document.getElementById('pubAchBox');
     if (box) box.style.display = '';
     var c = document.getElementById('pubAchCount'); if (c) c.textContent = '…';
@@ -4435,68 +4449,68 @@ function resetPublicAchBox() {
 }
 
 async function loadPublicAchievements(targetId, name) {
-    achPublic = { id: targetId, name: name, data: null };
+    mcAchPublic = { id: targetId, name: name, data: null };
     try {
         var res = await fetch(API_BASE + '/api/public_achievements/' + encodeURIComponent(targetId));
         if (!res.ok) throw new Error('HTTP ' + res.status);
         var data = await res.json();
-        if (!achPublic || achPublic.id !== targetId || !data.success) return;
-        achPublic.data = data;
+        if (!mcAchPublic || mcAchPublic.id !== targetId || !data.success) return;
+        mcAchPublic.data = data;
         var earned = (data.achievements || []).filter(function (a) { return a.earned; });
-        renderAchShowcase('pub', earned, (data.achievements || []).length, 0);
+        mcAchShowcase('pub', earned, (data.achievements || []).length, 0);
     } catch (e) {
         // Бэкенд ещё не обновлён — просто прячем блок
         var box = document.getElementById('pubAchBox');
-        if (box && achPublic && achPublic.id === targetId) box.style.display = 'none';
+        if (box && mcAchPublic && mcAchPublic.id === targetId) box.style.display = 'none';
     }
 }
 
 // Подгружаем достижения в фоне, чтобы бейдж «готово» был виден сразу
-setTimeout(loadAchievements, 1500);
+setTimeout(mcLoadAchievements, 1500);
 
 // =====================================================================
 //  7. СИСТЕМНАЯ КНОПКА «НАЗАД» (единый стек слоёв)
 // =====================================================================
-function _isOpenCls(id) { var e = document.getElementById(id); return !!(e && e.classList.contains('open')); }
-function _isDisp(id, v) { var e = document.getElementById(id); return !!(e && e.style.display === v); }
+function mcIsOpen(id) { var e = document.getElementById(id); return !!(e && e.classList.contains('open')); }
+function mcIsDisp(id, v) { var e = document.getElementById(id); return !!(e && e.style.display === v); }
 
-var BACK_LAYERS = [
+var MC_BACK_LAYERS = [
     { open: function () { return typeof isWorkshopOpen === 'function' && isWorkshopOpen(); }, close: function () { workshopBack(); } },
-    { open: function () { return _isOpenCls('mediaViewer'); }, close: function () { closeMediaViewer(); } },
-    { open: function () { return _isOpenCls('duelArena'); }, close: function () { closeDuelArena(); } },
-    { open: function () { return _isOpenCls('frameShopPreviewSheet'); }, close: function () { closeFrameShopPreview(); } },
-    { open: function () { return _isOpenCls('buyAttemptsModal'); }, close: function () { closeBuyAttemptsModal(); } },
-    { open: function () { return _isOpenCls('taskSheet'); }, close: function () { closeTaskSheet(); } },
-    { open: function () { return _isDisp('achievementsModal', 'flex'); }, close: function () { closeAchievements(); } },
-    { open: function () { return _isOpenCls('favSystemSheet'); }, close: function () { closeFavSystem(); } },
-    { open: function () { return _isOpenCls('titleSystemSheet'); }, close: function () { closeTitleSystem(); } },
-    { open: function () { return _isOpenCls('bgSystemSheet'); }, close: function () { closeBgSystem(); } },
-    { open: function () { return _isOpenCls('frameSystemSheet'); }, close: function () { closeFrameSystem(); } },
-    { open: function () { return _isOpenCls('ownersScreen'); }, close: function () { closeOwnersScreen(); } },
-    { open: function () { return _isOpenCls('cardModal'); }, close: function () { closeModal(); } },
-    { open: function () { return _isOpenCls('dailyModal'); }, close: function () { closeDailyModal(); } },
-    { open: function () { return _isOpenCls('publicProfileScreen'); }, close: function () { closePublicProfile(); } },
-    { open: function () { return _isOpenCls('fullProfileScreen'); }, close: function () { closeProfileModal(); } },
-    { open: function () { return _isOpenCls('earnScreen'); }, close: function () { closeEarnModal(); } },
-    { open: function () { return _isOpenCls('passScreen'); }, close: function () { closePassModal(); } },
-    { open: function () { return _isDisp('collDetailView', 'block'); }, close: function () { backToUniverses(); } },
-    { open: function () { return _isOpenCls('tierAnalytic'); }, close: function () { closeTierCard(); } },
-    { open: function () { return _isOpenCls('tierScreen'); }, close: function () { closeTierScreen(); } }
+    { open: function () { return mcIsOpen('mediaViewer'); }, close: function () { mcCloseViewer(); } },
+    { open: function () { return mcIsOpen('duelArena'); }, close: function () { closeDuelArena(); } },
+    { open: function () { return mcIsOpen('frameShopPreviewSheet'); }, close: function () { closeFrameShopPreview(); } },
+    { open: function () { return mcIsOpen('buyAttemptsModal'); }, close: function () { closeBuyAttemptsModal(); } },
+    { open: function () { return mcIsOpen('taskSheet'); }, close: function () { closeTaskSheet(); } },
+    { open: function () { return mcIsDisp('achievementsModal', 'flex'); }, close: function () { closeAchievements(); } },
+    { open: function () { return mcIsOpen('favSystemSheet'); }, close: function () { closeFavSystem(); } },
+    { open: function () { return mcIsOpen('titleSystemSheet'); }, close: function () { closeTitleSystem(); } },
+    { open: function () { return mcIsOpen('bgSystemSheet'); }, close: function () { closeBgSystem(); } },
+    { open: function () { return mcIsOpen('frameSystemSheet'); }, close: function () { closeFrameSystem(); } },
+    { open: function () { return mcIsOpen('ownersScreen'); }, close: function () { closeOwnersScreen(); } },
+    { open: function () { return mcIsOpen('cardModal'); }, close: function () { closeModal(); } },
+    { open: function () { return mcIsOpen('dailyModal'); }, close: function () { closeDailyModal(); } },
+    { open: function () { return mcIsOpen('publicProfileScreen'); }, close: function () { closePublicProfile(); } },
+    { open: function () { return mcIsOpen('fullProfileScreen'); }, close: function () { closeProfileModal(); } },
+    { open: function () { return mcIsOpen('earnScreen'); }, close: function () { closeEarnModal(); } },
+    { open: function () { return mcIsOpen('passScreen'); }, close: function () { closePassModal(); } },
+    { open: function () { return mcIsDisp('collDetailView', 'block'); }, close: function () { backToUniverses(); } },
+    { open: function () { return mcIsOpen('tierAnalytic'); }, close: function () { closeTierCard(); } },
+    { open: function () { return mcIsOpen('tierScreen'); }, close: function () { closeTierScreen(); } }
 ];
 
-function _layerOpen(l) { try { return !!l.open(); } catch (e) { return false; } }
+function mcLayerOpen(l) { try { return !!l.open(); } catch (e) { return false; } }
 
 function manageBack() {
     if (!tg.BackButton) return;
-    if (BACK_LAYERS.some(_layerOpen)) tg.BackButton.show();
+    if (MC_BACK_LAYERS.some(mcLayerOpen)) tg.BackButton.show();
     else tg.BackButton.hide();
 }
 
 if (tg.BackButton && tg.BackButton.onClick) {
     tg.BackButton.onClick(function () {
-        for (var i = 0; i < BACK_LAYERS.length; i++) {
-            if (_layerOpen(BACK_LAYERS[i])) {
-                try { BACK_LAYERS[i].close(); } catch (e) { console.error(e); }
+        for (var i = 0; i < MC_BACK_LAYERS.length; i++) {
+            if (mcLayerOpen(MC_BACK_LAYERS[i])) {
+                try { MC_BACK_LAYERS[i].close(); } catch (e) { console.error(e); }
                 break;
             }
         }
@@ -4513,3 +4527,409 @@ if (tg.BackButton && tg.BackButton.onClick) {
         if (id === 'frameSystemSheet') closeFrameSystem(); else closeFrameShopPreview();
     });
 });
+
+// =====================================================================
+//  8. ЗВУКИ ИНТЕРФЕЙСА (синтез через Web Audio — никаких файлов)
+// =====================================================================
+var MCSound = (function () {
+    var ctx = null, master = null, noiseBuf = null, on = true, last = {};
+    try { on = localStorage.getItem('mc_sound') !== '0'; } catch (e) {}
+
+    function getCtx() {
+        if (!on) return null;
+        if (!ctx) {
+            var C = window.AudioContext || window.webkitAudioContext;
+            if (!C) return null;
+            try { ctx = new C(); } catch (e) { return null; }
+            master = ctx.createGain();
+            master.gain.value = 0.7;
+            var comp = ctx.createDynamicsCompressor();
+            master.connect(comp);
+            comp.connect(ctx.destination);
+        }
+        if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
+        return ctx;
+    }
+    function env(g, t, a, peak, d) {
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(peak, t + a);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + a + d);
+    }
+    function tone(t, f, dur, o) {
+        o = o || {};
+        var osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = o.type || 'sine';
+        osc.frequency.setValueAtTime(f, t);
+        if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t + dur);
+        env(g, t, o.a || 0.005, o.vol || 0.15, dur);
+        osc.connect(g); g.connect(master);
+        osc.start(t); osc.stop(t + (o.a || 0.005) + dur + 0.05);
+    }
+    function noise(t, dur, o) {
+        o = o || {};
+        if (!noiseBuf) {
+            noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+            var d = noiseBuf.getChannelData(0);
+            for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+        }
+        var src = ctx.createBufferSource();
+        src.buffer = noiseBuf;
+        var f = ctx.createBiquadFilter();
+        f.type = o.filter || 'bandpass';
+        f.Q.value = o.q || 1;
+        f.frequency.setValueAtTime(o.f1 || 1200, t);
+        if (o.f2) f.frequency.exponentialRampToValueAtTime(o.f2, t + dur);
+        var g = ctx.createGain();
+        env(g, t, o.a || 0.01, o.vol || 0.12, dur);
+        src.connect(f); f.connect(g); g.connect(master);
+        src.start(t, Math.random() * 0.4);
+        src.stop(t + dur + 0.1);
+    }
+    function arp(t, notes, step, o) {
+        notes.forEach(function (n, i) { tone(t + i * step, n, (o && o.dur) || 0.3, o); });
+    }
+    var N = { G4: 392, C5: 523.25, E5: 659.25, G5: 783.99, A5: 880, B5: 987.77, C6: 1046.5, D6: 1174.66, E6: 1318.5, G6: 1568, C7: 2093 };
+
+    var S = {
+        tap:     function (t) { tone(t, 1150, 0.045, { to: 720, vol: 0.07 }); },
+        tick:    function (t) { tone(t, 1900, 0.018, { vol: 0.05, type: 'triangle' }); },
+        open:    function (t) { tone(t, 420, 0.13, { to: 860, vol: 0.06, type: 'triangle' }); noise(t, 0.12, { f1: 900, f2: 3200, vol: 0.025 }); },
+        flip:    function (t) { noise(t, 0.3, { f1: 3400, f2: 650, q: 0.6, vol: 0.12, a: 0.05 }); noise(t + 0.2, 0.1, { filter: 'lowpass', f1: 420, vol: 0.1 }); },
+        pop:     function (t) { tone(t, 620, 0.08, { to: 1240, vol: 0.07 }); },
+        shine:   function (t) { arp(t, [N.E6, N.G6, N.C7], 0.05, { vol: 0.035, dur: 0.25, type: 'triangle' }); },
+        coin:    function (t) { tone(t, N.B5, 0.07, { vol: 0.1, type: 'triangle' }); tone(t + 0.07, N.E6, 0.3, { vol: 0.1, type: 'triangle' }); },
+        success: function (t) {
+            arp(t, [N.C6, N.E6, N.G6, N.C7], 0.075, { vol: 0.09, dur: 0.35, type: 'triangle' });
+            noise(t + 0.25, 0.4, { filter: 'highpass', f1: 6000, vol: 0.03 });
+        },
+        error:   function (t) { tone(t, 230, 0.14, { to: 170, vol: 0.06, type: 'sawtooth' }); tone(t + 0.13, 180, 0.18, { to: 130, vol: 0.05, type: 'sawtooth' }); },
+        whoosh:  function (t) { noise(t, 0.55, { f1: 300, f2: 4200, q: 0.8, vol: 0.12, a: 0.22 }); },
+        portal:  function (t) { noise(t, 0.9, { f1: 200, f2: 2600, q: 0.7, vol: 0.12, a: 0.35 }); tone(t, 110, 0.9, { to: 330, vol: 0.06, type: 'triangle', a: 0.3 }); },
+        land:    function (t) { tone(t, 210, 0.07, { to: 110, vol: 0.08 }); noise(t, 0.05, { filter: 'lowpass', f1: 900, vol: 0.05 }); },
+        thud:    function (t) { tone(t, 140, 0.16, { to: 60, vol: 0.18 }); noise(t, 0.1, { filter: 'lowpass', f1: 500, vol: 0.08 }); },
+        rumble:  function (t) { noise(t, 0.5, { filter: 'lowpass', f1: 160, vol: 0.2, a: 0.05 }); tone(t, 70, 0.5, { vol: 0.12 }); },
+        win:     function (t) {
+            arp(t, [N.G5, N.C6, N.E6], 0.09, { vol: 0.08, dur: 0.25, type: 'triangle' });
+            [N.C6, N.E6, N.G6].forEach(function (f) { tone(t + 0.3, f, 0.7, { vol: 0.05, type: 'triangle' }); });
+        },
+        reveal:  function (t, rarity) {
+            var r = String(rarity || '');
+            if (r.indexOf('Божест') !== -1) {
+                tone(t, 90, 0.8, { to: 38, vol: 0.3 });
+                noise(t, 0.6, { filter: 'lowpass', f1: 300, vol: 0.18 });
+                arp(t + 0.12, [N.C6, N.E6, N.G6, N.C7, N.E6 * 2], 0.06, { vol: 0.07, dur: 0.5, type: 'triangle' });
+            } else if (r.indexOf('Мифич') !== -1) {
+                tone(t, 120, 0.4, { to: 60, vol: 0.16 });
+                arp(t + 0.05, [N.A5, N.C6, N.E6, N.A5 * 2], 0.06, { vol: 0.07, dur: 0.4, type: 'triangle' });
+            } else if (r.indexOf('Легенд') !== -1) {
+                arp(t, [N.G5, N.B5, N.D6, N.G6], 0.06, { vol: 0.07, dur: 0.3, type: 'triangle' });
+            } else if (r.indexOf('Эпич') !== -1) {
+                arp(t, [N.E5, N.G5, N.C6], 0.06, { vol: 0.07, dur: 0.25, type: 'triangle' });
+            } else {
+                tone(t, N.C6, 0.15, { vol: 0.06, type: 'triangle' });
+            }
+        }
+    };
+
+    function play(name, arg) {
+        if (!on || !S[name]) return;
+        var now = (window.performance && performance.now()) || Date.now();
+        var gap = name === 'tick' ? 28 : 45;
+        if (last[name] && now - last[name] < gap) return;
+        last[name] = now;
+        var c = getCtx();
+        if (!c) return;
+        try { S[name](c.currentTime + 0.01, arg); } catch (e) {}
+    }
+    function setOn(v) {
+        on = !!v;
+        try { localStorage.setItem('mc_sound', on ? '1' : '0'); } catch (e) {}
+        if (!on && ctx && ctx.state === 'running') { try { ctx.suspend(); } catch (e) {} }
+    }
+    // iOS разрешает звук только после касания — «будим» звуковой движок на первом тапе
+    ['touchend', 'pointerdown', 'click'].forEach(function (ev) {
+        document.addEventListener(ev, function () { if (on) getCtx(); }, { capture: true, passive: true });
+    });
+    return { play: play, isOn: function () { return on; }, setOn: setOn };
+})();
+
+// ---------- Переключатель звука на главной ----------
+function mcRenderSoundToggle() {
+    var on = MCSound.isOn();
+    var card = document.getElementById('sndToggleCard');
+    if (!card) return;
+    card.classList.toggle('on', on);
+    var sub = document.getElementById('sndToggleSub');
+    if (sub) sub.textContent = on ? 'Кнопки, анимации, награды' : 'Выключены';
+    var ico = document.getElementById('sndToggleIco');
+    if (ico) ico.innerHTML = on ? MC_ICONS.soundOn : MC_ICONS.soundOff;
+}
+function toggleUiSound() {
+    MCSound.setOn(!MCSound.isOn());
+    mcHaptic('select');
+    mcRenderSoundToggle();
+    if (MCSound.isOn()) MCSound.play('success');
+}
+mcRenderSoundToggle();
+
+// ---------- Тихий «клик» на любые кнопки ----------
+document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var el = t.closest('button, a, [onclick], .card, .lb-row, .lb-pod, .os-skin-tile, .os-owner-row');
+    if (!el) return;
+    if (el.closest('.bottom-nav, #summonGrid, #packCardWrapper, [data-snd="off"]')) return;
+    if (el.id === 'wheelSpinBtn' || el.id === 'sndToggleCard') return;
+    MCSound.play('tap');
+}, true);
+
+// ---------- Подключаем звуки к существующим функциям ----------
+function mcWrap(name, before, after) {
+    var orig = window[name];
+    if (typeof orig !== 'function' || orig.__mcWrapped) return;
+    var wrapped = function () {
+        var args = arguments, ctxThis = this;
+        try { if (before) before.apply(ctxThis, args); } catch (e) {}
+        var r = orig.apply(ctxThis, args);
+        try { if (after) after.apply(ctxThis, args); } catch (e) {}
+        return r;
+    };
+    wrapped.__mcWrapped = true;
+    window[name] = wrapped;
+}
+
+mcWrap('startEpicSummonSequence', function () { MCSound.play('portal'); });
+mcWrap('spawnSummonCard', null, function () { MCSound.play('land'); });
+mcWrap('showQuickResults', function () { MCSound.play('shine'); });
+mcWrap('syncSummon', function () { MCSound.play('tick'); });
+mcWrap('startPackSequence', function () { MCSound.play('open'); });
+mcWrap('openSystemPack', function () { MCSound.play('rumble'); });
+mcWrap('clickToFlipCard', function () {
+    if (isCardFlipped || !currentPackData) return;
+    if (packTapCount + 1 < 3) MCSound.play('thud');
+    else { var r = currentPackData.card_rarity; setTimeout(function () { MCSound.play('reveal', r); }, 60); }
+});
+mcWrap('showToast', function () { MCSound.play('pop'); });
+mcWrap('showPremiumToast', function () { MCSound.play('success'); });
+mcWrap('openDailyModal', function () { MCSound.play('open'); });
+
+// Переворот карт в сцене призыва: звук по редкости
+(function () {
+    var grid = document.getElementById('summonGrid');
+    if (!grid) return;
+    grid.addEventListener('click', function (e) {
+        var card = e.target.closest && e.target.closest('.summon-card');
+        if (!card || card.classList.contains('flipped')) return;
+        var idx = Array.prototype.indexOf.call(grid.children, card);
+        var data = (summonedCardsData || [])[idx] || {};
+        MCSound.play('whoosh');
+        setTimeout(function () { MCSound.play('reveal', data.rarity); }, 280);
+    }, true);
+})();
+
+// Колесо удачи: щелчки по секторам в такт вращению + фанфары на приз
+function mcWheelAngle(el) {
+    try {
+        var t = getComputedStyle(el).transform;
+        if (t && t !== 'none') {
+            var v = t.replace(/^matrix(3d)?\(|\)$/g, '').split(',').map(parseFloat);
+            return Math.atan2(v[1], v[0]) * 180 / Math.PI;
+        }
+        var bv = el.transform && el.transform.baseVal;
+        if (bv && bv.numberOfItems) { var m = bv.consolidate().matrix; return Math.atan2(m.b, m.a) * 180 / Math.PI; }
+    } catch (e) {}
+    return 0;
+}
+function mcTrackWheel() {
+    var els = [document.getElementById('wheelRotor'), document.querySelector('.wheel-svg')].filter(Boolean);
+    if (!els.length || !window.requestAnimationFrame) return;
+    var prev = els.map(mcWheelAngle);
+    var start = performance.now(), lastMove = start, moved = false, total = 0, sector = 0;
+    function frame(now) {
+        var delta = 0;
+        els.forEach(function (el, i) {
+            var a = mcWheelAngle(el), d = a - prev[i];
+            if (d > 180) d -= 360; else if (d < -180) d += 360;
+            delta += Math.abs(d); prev[i] = a;
+        });
+        if (delta > 0.05) { moved = true; lastMove = now; }
+        total += delta;
+        var s = Math.floor(total / 36);
+        if (s !== sector) { sector = s; MCSound.play('tick'); }
+        var done = (moved && now - lastMove > 500) || (!moved && now - start > 2500) || now - start > 12000;
+        if (!done) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+}
+window.addEventListener('load', function () {
+    mcWrap('spinWheel', function () {
+        var btn = document.getElementById('wheelSpinBtn');
+        if (btn && btn.disabled) return;
+        MCSound.play('whoosh');
+        setTimeout(mcTrackWheel, 30);
+    });
+    var ov = document.getElementById('wheelPrizeOverlay');
+    if (ov && window.MutationObserver) {
+        var shown = false;
+        new MutationObserver(function () {
+            var now = ov.classList.length > 1 || (ov.style.display && ov.style.display !== 'none');
+            if (now && !shown) MCSound.play('win');
+            shown = !!now;
+        }).observe(ov, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+});
+
+// =====================================================================
+//  9. ПОКУПКА КРУТОК — новая витрина
+// =====================================================================
+var mcBuySel = -1;
+var mcBuyBusy = false;
+
+function mcPlural(n, forms) {
+    n = Math.abs(n) % 100;
+    var n1 = n % 10;
+    if (n > 10 && n < 20) return forms[2];
+    if (n1 > 1 && n1 < 5) return forms[1];
+    if (n1 === 1) return forms[0];
+    return forms[2];
+}
+function mcBuyPacks() { return currentBuyCurrency === 'dia' ? BUY_PACKS_DIA_DATA : BUY_PACKS_KRW_DATA; }
+function mcBuyIcon() { return currentBuyCurrency === 'dia' ? MC_SYS.dia : MC_SYS.krw; }
+function mcBuyBalance() { return currentBuyCurrency === 'dia' ? mcBal.dia : mcBal.krw; }
+
+function openBuyAttemptsModal() {
+    mcHaptic('medium');
+    MCSound.play('open');
+    document.getElementById('buyAttemptsModal').classList.add('open');
+    manageBack();
+    switchBuyCurrency(currentBuyCurrency || 'krw', true);
+}
+
+function closeBuyAttemptsModal() {
+    mcHaptic('select');
+    document.getElementById('buyAttemptsModal').classList.remove('open');
+    manageBack();
+}
+
+function switchBuyCurrency(curr, silent) {
+    currentBuyCurrency = curr === 'dia' ? 'dia' : 'krw';
+    if (!silent) mcHaptic('select');
+    mcBuySel = -1;
+    var tabs = document.getElementById('bxTabs');
+    if (tabs) tabs.setAttribute('data-cur', currentBuyCurrency);
+    document.getElementById('tabBuyKrw').classList.toggle('active', currentBuyCurrency === 'krw');
+    document.getElementById('tabBuyDia').classList.toggle('active', currentBuyCurrency === 'dia');
+    mcRenderBuyPacks();
+}
+
+function mcRenderBuyBalances() {
+    var set = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+    set('bxBalKrw', mcFmt(mcBal.krw));
+    set('bxBalDia', mcFmt(mcBal.dia));
+    set('bxHave', mcFmt(mcBal.att));
+}
+
+function mcRenderBuyPacks() {
+    mcRenderBuyBalances();
+    var grid = document.getElementById('buyPacksGrid');
+    var packs = mcBuyPacks();
+    var base = packs[0].price / packs[0].attempts;
+    var bal = mcBuyBalance();
+    var best = packs.length - 1;
+    grid.innerHTML = packs.map(function (p, i) {
+        var bonus = Math.round((p.attempts * base / p.price - 1) * 100);
+        var cls = 'bx-pack' + (i === best ? ' best' : '') + (bal < p.price ? ' cant' : '') + (i === mcBuySel ? ' selected' : '');
+        var stack = '';
+        for (var k = 0; k < Math.min(4, i + 1); k++) stack += '<span style="--k:' + k + '">🎟</span>';
+        return '<button class="' + cls + '" style="--i:' + i + '" onclick="mcSelectBuyPack(' + i + ')">' +
+            (i === best ? '<div class="bx-ribbon">ЛУЧШАЯ ЦЕНА</div>' : (bonus > 0 ? '<div class="bx-bonus">+' + bonus + '%</div>' : '')) +
+            '<div class="bx-stack">' + stack + '</div>' +
+            '<div class="bx-amt">+' + p.attempts + '</div>' +
+            '<div class="bx-lbl">' + mcPlural(p.attempts, ['крутка', 'крутки', 'круток']) + '</div>' +
+            '<div class="bx-price">' + mcBuyIcon() + '<span>' + mcFmt(p.price) + '</span></div>' +
+            '<div class="bx-check">✓</div>' +
+            '</button>';
+    }).join('');
+    mcUpdateBuyCta();
+}
+
+function mcSelectBuyPack(i) {
+    mcBuySel = (mcBuySel === i) ? -1 : i;
+    mcHaptic('select');
+    MCSound.play('tick');
+    document.querySelectorAll('#buyPacksGrid .bx-pack').forEach(function (el, k) {
+        el.classList.toggle('selected', k === mcBuySel);
+    });
+    mcUpdateBuyCta();
+}
+
+function mcUpdateBuyCta(state) {
+    var cta = document.getElementById('bxCta');
+    if (!cta) return;
+    cta.className = 'bx-cta' + (state ? ' ' + state : '');
+    var packs = mcBuyPacks();
+    var p = packs[mcBuySel];
+    if (state === 'done') return;
+    if (!p) {
+        cta.disabled = true;
+        cta.innerHTML = 'Выберите набор';
+        return;
+    }
+    var bal = mcBuyBalance();
+    if (bal < p.price) {
+        cta.disabled = true;
+        cta.classList.add('cant');
+        cta.innerHTML = 'Не хватает ' + mcBuyIcon() + ' ' + mcFmt(p.price - bal);
+        return;
+    }
+    cta.disabled = !!state;
+    cta.innerHTML = state === 'loading'
+        ? '<span class="bx-spin"></span> Покупаем…'
+        : 'Купить +' + p.attempts + ' ' + mcPlural(p.attempts, ['крутку', 'крутки', 'круток']) + ' за ' + mcBuyIcon() + ' ' + mcFmt(p.price);
+}
+
+async function confirmBuyAttempts() {
+    if (mcBuyBusy || mcBuySel < 0) return;
+    var packs = mcBuyPacks();
+    var p = packs[mcBuySel];
+    if (!p || mcBuyBalance() < p.price) return;
+    mcBuyBusy = true;
+    mcHaptic('heavy');
+    mcUpdateBuyCta('loading');
+    try {
+        var res = await fetch(API_BASE + '/api/buy_attempts/' + userId, {
+            method: 'POST',
+            headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+            body: JSON.stringify({ currency: currentBuyCurrency, pack_index: mcBuySel })
+        });
+        var data = await res.json();
+        if (data.success) {
+            var got = data.bought_attempts || p.attempts;
+            if (data.new_krw == null) data.new_krw = currentBuyCurrency === 'krw' ? mcBal.krw - p.price : mcBal.krw;
+            if (data.new_diamond == null) data.new_diamond = currentBuyCurrency === 'dia' ? mcBal.dia - p.price : mcBal.dia;
+            if (data.new_attempts == null) data.new_attempts = mcBal.att + got;
+            mcHaptic('success');
+            MCSound.play('coin');
+            mcBal.krw = data.new_krw; mcBal.dia = data.new_diamond; mcBal.att = data.new_attempts;
+            document.getElementById('valKrw').innerText = formatBal(data.new_krw);
+            document.getElementById('valDiamond').innerText = formatBal(data.new_diamond);
+            document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
+            if (typeof refreshSummonCostState === 'function') refreshSummonCostState();
+            var cta = document.getElementById('bxCta');
+            mcConfetti(cta);
+            mcUpdateBuyCta('done');
+            cta.innerHTML = '✓ Получено +' + got + ' ' + mcPlural(got, ['крутка', 'крутки', 'круток']);
+            showToast('Успешно!', 'Приобретено +' + got + ' ' + mcPlural(got, ['крутка', 'крутки', 'круток']) + '!');
+            setTimeout(function () { mcBuyBusy = false; mcRenderBuyPacks(); }, 1300);
+            fetchProfile();
+            return;
+        }
+        MCSound.play('error');
+        tg.showAlert(data.error || data.detail || 'Не удалось купить');
+    } catch (e) {
+        MCSound.play('error');
+        tg.showAlert('Ошибка соединения с сервером');
+    }
+    mcBuyBusy = false;
+    mcUpdateBuyCta();
+}
