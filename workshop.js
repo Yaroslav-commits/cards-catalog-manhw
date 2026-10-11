@@ -1,17 +1,3 @@
-// =====================================================================
-//  МАСТЕРСКАЯ — создание своих карт
-//  Подключается после script.js. Использует оттуда: tg, API_BASE,
-//  authHeaders(), userId, allCards, manageBack().
-//
-//  Карта собирается прямо здесь на canvas 960×1280, слоями:
-//  арт → шаблон → логотип → статы → имя.
-//  На сервер уходит уже готовая картинка (JPEG).
-// =====================================================================
-
-// ---------------------------------------------------------------------
-//  НАСТРОЙКИ. Все координаты — в пикселях карты 960×1280.
-//  Замерены по шаблонам IMG_1133 / IMG_1134 и готовым картам.
-// ---------------------------------------------------------------------
 var WS_CFG = {
     W: 960,
     H: 1280,
@@ -537,7 +523,6 @@ function wsLogoRect(logo, rarity) {
     var k = Math.min(zone.w / iw, zone.h / ih) * s;
     var w = iw * k, h = ih * k;
     var ax = ws.logoPos.ax == null ? WS_CFG.logo.ax : ws.logoPos.ax;
-    ax = ax >= 0.5 ? 1 : 0;   // только слева или справа
     var ay = ws.logoPos.ay == null ? WS_CFG.logo.ay : ws.logoPos.ay;
     var freeX = zone.w - w, freeY = zone.h - h;
     return { zone: zone, freeX: freeX, freeY: freeY, ax: ax, ay: ay,
@@ -712,9 +697,10 @@ function wsBuild() {
                     '<div class="ws-hint" id="wsSeriesHint"></div>' +
                     '<div class="ws-logo-pos" id="wsLogoPos" style="display:none">' +
                         '<div class="ws-logo-pos-head"><b>Положение логотипа</b><button class="ws-btn ghost small" onclick="wsLogoReset()">Сбросить</button></div>' +
-                        '<div class="ws-logo-pos-hint">Логотип стоит слева или справа. Перетащи его пальцем прямо на карте — он прилипнет к ближнему краю пунктирной рамки, а по высоте двигается свободно.</div>' +
+                        '<div class="ws-logo-pos-hint">Двигай логотип пальцем прямо на карте — он ходит только внутри пунктирной рамки.</div>' +
                         '<div class="ws-logo-align">' +
                             '<button class="ws-chip" data-ax="0" onclick="wsLogoAlign(0)">Слева</button>' +
+                            '<button class="ws-chip" data-ax="0.5" onclick="wsLogoAlign(0.5)">По центру</button>' +
                             '<button class="ws-chip" data-ax="1" onclick="wsLogoAlign(1)">Справа</button>' +
                         '</div>' +
                         '<div class="ws-logo-size"><span>Размер</span><input type="range" id="wsLogoSize" min="45" max="100" value="100" oninput="wsLogoSize(this.value)"><b id="wsLogoSizeVal">100%</b></div>' +
@@ -1264,13 +1250,7 @@ function wsInitLogoDrag() {
         var dr = ws.logoDrag;
         if (!dr) return;
         var p = toCanvas(cx, cy);
-        // По горизонтали лого стоит только слева или справа — прилипает к ближнему краю
-        if (dr.freeX > 0.5) {
-            var nx = dr.ax + (p.x - dr.x) / dr.freeX;
-            var side = nx >= 0.5 ? 1 : 0;
-            if (side !== ws.logoPos.ax) wsHaptic('select');
-            ws.logoPos.ax = side;
-        }
+        if (dr.freeX > 0.5) ws.logoPos.ax = Math.max(0, Math.min(1, dr.ax + (p.x - dr.x) / dr.freeX));
         if (dr.freeY > 0.5) ws.logoPos.ay = Math.max(0, Math.min(1, dr.ay + (p.y - dr.y) / dr.freeY));
         wsQueuePreview();
     };
