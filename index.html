@@ -501,7 +501,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
                         Количество призывов
                     </span>
-                    <span class="es-panel-meta">1 – 16</span>
+                    <span class="es-panel-meta">1 – 24</span>
                 </div>
 
                 <div class="es-dial-row">
@@ -530,8 +530,8 @@
                 </div>
 
                 <div class="gacha-range-wrap es-range">
-                    <input type="range" id="gachaSlider" min="1" max="16" value="8" step="1" oninput="syncSummon(this.value)">
-                    <div class="es-range-scale"><span>1</span><span>8</span><span>16</span></div>
+                    <input type="range" id="gachaSlider" min="1" max="24" value="8" step="1" oninput="syncSummon(this.value)">
+                    <div class="es-range-scale"><span>1</span><span>12</span><span>24</span></div>
                 </div>
 
                 <div class="gacha-quick-btns es-quick">
@@ -541,6 +541,7 @@
                     <button class="gacha-quick-btn active" data-val="8" onclick="syncSummon(8)">8</button>
                     <button class="gacha-quick-btn" data-val="12" onclick="syncSummon(12)">12</button>
                     <button class="gacha-quick-btn" data-val="16" onclick="syncSummon(16)">16</button>
+                    <button class="gacha-quick-btn" data-val="24" onclick="syncSummon(24)">24</button>
                 </div>
             </section>
 
@@ -671,7 +672,6 @@
             </div>
         </div>
 
-        <div class="es-credit">Космические снимки: NASA, ESA, CSA, STScI · James Webb Space Telescope</div>
     </div>
 
     <div class="summon-overlay" id="summonOverlay">
@@ -1386,8 +1386,6 @@
 
     
     <div class="gacha-buy-overlay" id="buyAttemptsModal" onclick="if (event.target === this) closeBuyAttemptsModal()">
-        <div class="gacha-gate gate-left"></div>
-        <div class="gacha-gate gate-right"></div>
 
         <div class="gacha-buy-window bx2">
             <div class="bx-glow"></div>

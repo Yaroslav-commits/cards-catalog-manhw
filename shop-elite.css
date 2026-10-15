@@ -806,11 +806,11 @@
 }
 
 /* ---------- Быстрый выбор ---------- */
-#tab-shop .es-quick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+#tab-shop .es-quick { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
 #tab-shop .es-quick .gacha-quick-btn {
     padding: 11px 0;
     border-radius: 13px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
     color: rgba(255, 255, 255, 0.62);
     background: rgba(255, 255, 255, 0.035);
@@ -1228,15 +1228,6 @@
 #tab-shop .pf-price-tag.owned { color: #6ee7b7; border-color: rgba(52, 211, 153, 0.4); background: rgba(16, 185, 129, 0.12); }
 #tab-shop .pf-discount { background: linear-gradient(135deg, #fff1c2, #f3c969); border: none; }
 
-/* =====================  ПОДПИСЬ  ===================== */
-.es-credit {
-    margin: 22px 0 6px;
-    text-align: center;
-    font-size: 9.5px;
-    letter-spacing: 0.04em;
-    color: rgba(255, 255, 255, 0.28);
-}
-
 /* =====================================================================
    ПОДДЕРЖКА
    ===================================================================== */
@@ -1427,5 +1418,7 @@
     filter: grayscale(0.8);
     pointer-events: none;
 }
+/* Боковые неоновые полоски в окне покупки круток убраны */
+.gacha-buy-overlay .gacha-gate { display: none !important; }
 /* Тост должен быть виден поверх шторки поддержки и магазина */
 #toast.toast { z-index: 13000; }

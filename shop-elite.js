@@ -132,7 +132,7 @@
         if (!valEl || !slider) return;
 
         var min = num(slider.min) || 1;
-        var max = num(slider.max) || 16;
+        var max = num(slider.max) || 24;
         var v = Math.max(min, Math.min(max, num(valEl.textContent) || min));
 
         buildTicks(max);
