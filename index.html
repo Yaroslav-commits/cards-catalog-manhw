@@ -6,7 +6,7 @@
     <title>ManhwCard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="custom-select.css">
@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="tier.css">
         <link rel="stylesheet" href="workshop.css?v=9">
         <link rel="stylesheet" href="upgrade.css?v=2">
+        <link rel="stylesheet" href="shop-elite.css?v=1">
 </head>
 <body>
     <div id="splashScreen" class="splash-screen">
@@ -364,8 +365,76 @@
         <div class="lb-me" id="lbMe" style="display:none;"></div>
     </div>
 
-    <div id="tab-shop" class="tab-content">
-        <div class="gacha-tabs">
+    <div id="tab-shop" class="tab-content es-shop">
+
+        <!-- Звёздное небо за всем магазином -->
+        <div class="es-sky" aria-hidden="true">
+            <div class="es-sky-neb n1"></div>
+            <div class="es-sky-neb n2"></div>
+            <canvas id="esStars"></canvas>
+        </div>
+
+        <!-- ================= ШАПКА МАГАЗИНА ================= -->
+        <header class="es-hero">
+            <div class="es-hero-img"></div>
+            <div class="es-hero-shade"></div>
+            <div class="es-hero-inner">
+                <div class="es-hero-top">
+                    <div class="es-brand">
+                        <div class="es-brand-mark">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.5l2.3 6.2 6.7.3-5.2 4.2 1.8 6.5L12 16l-5.6 3.7 1.8-6.5L3 9l6.7-.3z"/></svg>
+                        </div>
+                        <div>
+                            <div class="es-eyebrow">ManhwCard · Vault</div>
+                            <h1 class="es-title">Магазин</h1>
+                        </div>
+                    </div>
+                    <button class="es-hero-help" onclick="openSupport()" aria-label="Поддержка">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                    </button>
+                </div>
+
+                <p class="es-hero-sub">Призыв карт, колесо удачи и эксклюзивные рамки — всё в одном хранилище.</p>
+
+                <div class="es-wallet">
+                    <div class="es-coin c-krw">
+                        <span class="es-coin-ico">₩</span>
+                        <span class="es-coin-val" id="esWalKrw">0</span>
+                        <span class="es-coin-lbl">KRW</span>
+                    </div>
+                    <div class="es-coin c-dia">
+                        <span class="es-coin-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span>
+                        <span class="es-coin-val" id="esWalDia">0</span>
+                        <span class="es-coin-lbl">Алмазы</span>
+                    </div>
+                    <div class="es-coin c-bc">
+                        <span class="es-coin-ico">Ⓑ</span>
+                        <span class="es-coin-val" id="esWalBc">0</span>
+                        <span class="es-coin-lbl">BattleCoin</span>
+                    </div>
+                    <button class="es-coin c-tix" onclick="openBuyAttemptsModal()">
+                        <span class="es-coin-ico">🎟</span>
+                        <span class="es-coin-val" id="esWalTix">0</span>
+                        <span class="es-coin-lbl">Крутки</span>
+                        <i class="es-coin-plus">+</i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Плашка «бесплатный спин» — показывается сама, когда спин доступен -->
+        <button class="es-promo" id="esFreePromo" onclick="switchShopSubTab('wheel')" hidden>
+            <span class="es-promo-ico">🎁</span>
+            <span class="es-promo-txt">
+                <b>Бесплатный спин доступен</b>
+                <small>Колесо удачи ждёт — заберите награду</small>
+            </span>
+            <span class="es-promo-go">›</span>
+        </button>
+
+        <!-- ================= ТАБЫ ================= -->
+        <div class="gacha-tabs es-tabs" id="esTabs" data-tab="gacha">
+            <div class="es-tabs-glider" aria-hidden="true"></div>
             <div class="gacha-tab active" id="tabShopGachaBtn" onclick="switchShopSubTab('gacha')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 Крутки
@@ -381,95 +450,191 @@
             </div>
         </div>
 
-        <div id="shopGachaContent">
-            <div class="gacha-banner">
-            <div class="gacha-bg"></div>
-            <div class="gacha-content">
-                <div class="gacha-kicker">GACHA PORTAL</div>
-                <div class="gacha-title">Призыв Карт</div>
-                <div class="gacha-desc">Испытай удачу и собери редчайших персонажей.</div>
-                
-                <div class="gacha-bal-wrap">
-                    <div class="gacha-bal-pill">
-                        <div class="gacha-t-icon">🎟</div>
-                        <div class="gacha-t-info">
-                            <div class="gacha-t-lbl">Доступно попыток</div>
-                            <div class="gacha-t-val" id="shopAttemptsBal">0</div>
+        <!-- ================= КРУТКИ ================= -->
+        <div id="shopGachaContent" class="es-pane">
+
+            <section class="es-portal" id="esPortal">
+                <div class="es-portal-img"></div>
+                <div class="es-portal-shade"></div>
+
+                <div class="es-orbit" aria-hidden="true">
+                    <span class="es-ring r1"></span>
+                    <span class="es-ring r2"></span>
+                    <span class="es-ring r3"></span>
+                    <span class="es-core"></span>
+                    <span class="es-fcard f1"></span>
+                    <span class="es-fcard f2"></span>
+                    <span class="es-fcard f3"></span>
+                </div>
+
+                <div class="es-portal-inner">
+                    <div class="es-live"><i></i>Портал открыт</div>
+                    <div class="es-portal-kicker">Gacha Portal</div>
+                    <h2 class="es-portal-title">Призыв<br><span>карт</span></h2>
+                    <p class="es-portal-desc">Открой разлом и вытяни персонажей из шести уровней редкости.</p>
+                </div>
+
+                <div class="es-portal-foot">
+                    <div class="es-rarity-rail">
+                        <span>⚫ Божественная</span>
+                        <span>🔴 Мифическая</span>
+                        <span>🔵 Легендарная</span>
+                        <span>🟢 Эпическая</span>
+                        <span>🟡 Редкая</span>
+                        <span>⚪️ Обычная</span>
+                    </div>
+
+                    <div class="es-ticket-bar">
+                        <div class="es-ticket-ico"><span>🎟</span></div>
+                        <div class="es-ticket-info">
+                            <div class="es-lbl">Доступно попыток</div>
+                            <div class="gacha-t-val es-ticket-val" id="shopAttemptsBal">0</div>
+                        </div>
+                        <button class="es-buy-btn" onclick="openBuyAttemptsModal()"><b>+</b> Купить</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="es-panel es-summon">
+                <div class="es-panel-head">
+                    <span class="es-panel-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
+                        Количество призывов
+                    </span>
+                    <span class="es-panel-meta">1 – 16</span>
+                </div>
+
+                <div class="es-dial-row">
+                    <button class="gacha-step-btn es-step" onclick="adjustSummon(-1)" aria-label="Минус один">−</button>
+
+                    <div class="es-dial" id="esDial">
+                        <div class="es-dial-ticks" id="esDialTicks"></div>
+                        <svg class="es-dial-ring" viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="esDialGrad" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#c4b5fd"/>
+                                    <stop offset="55%" stop-color="#8b5cf6"/>
+                                    <stop offset="100%" stop-color="#f3d38b"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="trk" cx="60" cy="60" r="50"/>
+                            <circle class="fil" id="esDialFill" cx="60" cy="60" r="50"/>
+                        </svg>
+                        <div class="es-dial-num">
+                            <span id="gachaSliderVal">8</span>
+                            <small>круток</small>
                         </div>
                     </div>
-                    <button class="gacha-plus-btn" onclick="openBuyAttemptsModal()">+</button>
+
+                    <button class="gacha-step-btn es-step" onclick="adjustSummon(1)" aria-label="Плюс один">+</button>
+                </div>
+
+                <div class="gacha-range-wrap es-range">
+                    <input type="range" id="gachaSlider" min="1" max="16" value="8" step="1" oninput="syncSummon(this.value)">
+                    <div class="es-range-scale"><span>1</span><span>8</span><span>16</span></div>
+                </div>
+
+                <div class="gacha-quick-btns es-quick">
+                    <button class="gacha-quick-btn" data-val="1" onclick="syncSummon(1)">1</button>
+                    <button class="gacha-quick-btn" data-val="2" onclick="syncSummon(2)">2</button>
+                    <button class="gacha-quick-btn" data-val="4" onclick="syncSummon(4)">4</button>
+                    <button class="gacha-quick-btn active" data-val="8" onclick="syncSummon(8)">8</button>
+                    <button class="gacha-quick-btn" data-val="12" onclick="syncSummon(12)">12</button>
+                    <button class="gacha-quick-btn" data-val="16" onclick="syncSummon(16)">16</button>
+                </div>
+            </section>
+
+            <div class="gacha-cost-box es-cost">
+                <div class="es-cost-ico">🎟</div>
+                <div class="es-cost-main">
+                    <div class="es-lbl">Стоимость</div>
+                    <div class="gacha-t-val-large"><span id="summonCostText">8</span> попыток</div>
+                </div>
+                <div class="es-cost-side">
+                    <div class="es-lbl">Останется</div>
+                    <div class="es-after" id="esAfter">—</div>
                 </div>
             </div>
-        </div>
 
-        <div class="gacha-selector">
-            <div class="gacha-sel-title">Выберите количество круток</div>
-            
-            <div class="gacha-slider-area">
-                <button class="gacha-step-btn" onclick="adjustSummon(-1)">-1</button>
-                <div class="gacha-center-val">
-                    <span id="gachaSliderVal">8</span>
-                    <div class="gacha-lbl">круток</div>
-                </div>
-                <button class="gacha-step-btn" onclick="adjustSummon(1)">+1</button>
-            </div>
-            
-            <div class="gacha-range-wrap">
-                <input type="range" id="gachaSlider" min="1" max="16" value="8" step="1" oninput="syncSummon(this.value)">
-            </div>
-
-            <div class="gacha-quick-btns">
-                <button class="gacha-quick-btn" data-val="1" onclick="syncSummon(1)">1</button>
-                <button class="gacha-quick-btn" data-val="2" onclick="syncSummon(2)">2</button>
-                <button class="gacha-quick-btn" data-val="4" onclick="syncSummon(4)">4</button>
-                <button class="gacha-quick-btn active" data-val="8" onclick="syncSummon(8)">8</button>
-                <button class="gacha-quick-btn" data-val="12" onclick="syncSummon(12)">12</button>
-                <button class="gacha-quick-btn" data-val="16" onclick="syncSummon(16)">16</button>
+            <div class="gacha-actions es-actions">
+                <button class="gacha-btn-quick" id="btnQuickSummon" onclick="executeSummon(true)">Быстро</button>
+                <button class="gacha-btn-main" id="btnFullSummon" onclick="executeSummon(false)">Открыть 8</button>
             </div>
         </div>
 
-        <div class="gacha-cost-box">
-            <div class="gacha-t-icon">🎟</div>
-            <div class="gacha-t-info">
-                <div class="gacha-t-lbl">Стоимость</div>
-                <div class="gacha-t-val-large"><span id="summonCostText">8</span> попыток</div>
-            </div>
-        </div>
+        <!-- ================= КОЛЕСО ================= -->
+        <div id="shopWheelContent" class="es-pane" style="display: none;">
+            <div class="wheel-wrap es-wheel">
+                <div class="es-wheel-img"></div>
+                <div class="es-wheel-shade"></div>
 
-        <div class="gacha-actions">
-            <button class="gacha-btn-quick" id="btnQuickSummon" onclick="executeSummon(true)">Быстро</button>
-            <button class="gacha-btn-main" id="btnFullSummon" onclick="executeSummon(false)">Открыть 8</button>
-        </div>
-        </div>
-
-        <div id="shopWheelContent" style="display: none; padding-top: 10px;">
-            <div class="wheel-wrap">
                 <div class="wheel-head">
                     <div class="wheel-kicker">Luck Protocol</div>
-                    <div class="wheel-title">Спин Удачи</div>
+                    <div class="wheel-title">Спин удачи</div>
+                    <div class="es-wheel-sub">Раз в 7 дней — один спин бесплатно</div>
                 </div>
 
                 <div class="wheel-stage">
+                    <div class="es-wheel-rays" aria-hidden="true"></div>
+                    <div class="es-wheel-halo" aria-hidden="true"></div>
+
                     <svg class="wheel-pointer" viewBox="0 0 30 38">
-                        <path d="M15 38 L2 8 A14 14 0 0 1 28 8 Z" fill="#fbbf24"/>
-                        <circle cx="15" cy="11" r="5" fill="#1a1005"/>
+                        <defs>
+                            <linearGradient id="esPtrGold" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#fff4cf"/>
+                                <stop offset="45%" stop-color="#f3c969"/>
+                                <stop offset="100%" stop-color="#a86a12"/>
+                            </linearGradient>
+                            <radialGradient id="esPtrGem" cx="40%" cy="35%" r="70%">
+                                <stop offset="0%" stop-color="#f5f3ff"/>
+                                <stop offset="45%" stop-color="#a78bfa"/>
+                                <stop offset="100%" stop-color="#4c1d95"/>
+                            </radialGradient>
+                        </defs>
+                        <path d="M15 37 L3.2 9 A12.6 12.6 0 0 1 26.8 9 Z" fill="url(#esPtrGold)" stroke="#5c3a07" stroke-width="0.8"/>
+                        <path d="M15 33 L7 11" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round"/>
+                        <circle cx="15" cy="11" r="5.2" fill="url(#esPtrGem)" stroke="#2a1405" stroke-width="0.8"/>
+                        <circle cx="13.4" cy="9.4" r="1.4" fill="#fff" opacity="0.85"/>
                     </svg>
+
                     <svg class="wheel-svg" viewBox="0 0 300 300">
-                        <circle cx="150" cy="150" r="147" fill="none" stroke="rgba(251,191,36,0.5)" stroke-width="3"/>
+                        <defs>
+                            <linearGradient id="esRim" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#fff1c2"/>
+                                <stop offset="30%" stop-color="#d9a650"/>
+                                <stop offset="55%" stop-color="#7a4a10"/>
+                                <stop offset="80%" stop-color="#f3d38b"/>
+                                <stop offset="100%" stop-color="#8a5a16"/>
+                            </linearGradient>
+                            <radialGradient id="esGloss" cx="35%" cy="25%" r="75%">
+                                <stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>
+                                <stop offset="40%" stop-color="rgba(255,255,255,0.04)"/>
+                                <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
+                            </radialGradient>
+                        </defs>
+                        <circle cx="150" cy="150" r="149.5" fill="url(#esRim)"/>
+                        <circle cx="150" cy="150" r="143.5" fill="#0b0912"/>
                         <g id="wheelRotor"></g>
+                        <circle cx="150" cy="150" r="142" fill="url(#esGloss)" pointer-events="none"/>
+                        <circle cx="150" cy="150" r="142.5" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1.5"/>
+                        <g id="esBulbs"></g>
                     </svg>
-                    <div class="wheel-hub"><span class="wheel-hub-icon">🍀</span></div>
+
+                    <div class="wheel-hub">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.3 6.2 6.7.3-5.2 4.2 1.8 6.5L12 16l-5.6 3.7 1.8-6.5L3 9l6.7-.3z"/></svg>
+                    </div>
                 </div>
 
                 <div class="wheel-bal">
-                    <div class="gacha-t-icon">🪙</div>
+                    <div class="es-wbal-ico">Ⓑ</div>
                     <div class="gacha-t-info">
                         <div class="gacha-t-lbl">Ваш BattleCoin</div>
                         <div class="wheel-bal-val" id="wheelBalVal">0</div>
                     </div>
+                    <div class="es-wbal-note">Награда<br>сразу на баланс</div>
                 </div>
 
-                <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">Крутить за 400 🪙</button>
+                <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">Крутить за 300 🪙</button>
                 <div class="wheel-hint" id="wheelHint">Награда начисляется сразу после остановки</div>
             </div>
         </div>
@@ -482,12 +647,31 @@
                 <button class="wheel-prize-btn" onclick="closeWheelPrize()">Забрать</button>
             </div>
         </div>
-        <div id="shopFramesContent" style="display: none; padding-top: 10px;">
-            <div class="gacha-sel-title" style="margin-bottom:15px;">Эксклюзивные рамки для профиля</div>
+
+        <!-- ================= РАМКИ ================= -->
+        <div id="shopFramesContent" class="es-pane" style="display: none;">
+            <section class="es-atelier">
+                <div class="es-atelier-img"></div>
+                <div class="es-atelier-shade"></div>
+                <div class="es-atelier-inner">
+                    <div class="es-eyebrow">Atelier · Collection</div>
+                    <h2 class="es-atelier-title">Рамки<br><span>профиля</span></h2>
+                    <p class="es-atelier-desc">Эксклюзивные рамки для аватара. Нажми на рамку, чтобы примерить её перед покупкой.</p>
+                </div>
+                <div class="es-atelier-art" aria-hidden="true">
+                    <span class="es-art-ring"></span>
+                    <span class="es-art-ring b"></span>
+                    <span class="es-art-ava"></span>
+                </div>
+            </section>
+
+            <div class="es-section-label"><span>Витрина</span><i></i></div>
             <div class="frame-grid" id="shopFramesGrid" style="max-height: none; overflow: visible;">
                 <!-- Сюда JS загрузит рамки магазина -->
             </div>
         </div>
+
+        <div class="es-credit">Космические снимки: NASA, ESA, CSA, STScI · James Webb Space Telescope</div>
     </div>
 
     <div class="summon-overlay" id="summonOverlay">
@@ -976,6 +1160,63 @@
         <div class="mv-hint">Смахни вниз, чтобы закрыть</div>
     </div>
 
+    <!-- ================= ПОДДЕРЖКА ================= -->
+    <div class="sheet-overlay es-support" id="supportSheet" onclick="if (event.target === this) closeSupport()">
+        <div class="sheet es-sup-sheet">
+            <div class="sheet-grabber"></div>
+
+            <div class="es-sup-head">
+                <div class="es-sup-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                </div>
+                <div class="es-sup-titles">
+                    <div class="sheet-kicker">Поддержка ManhwCard</div>
+                    <div class="sheet-title">Чем помочь?</div>
+                </div>
+                <button class="sheet-close" onclick="closeSupport()">✕</button>
+            </div>
+
+            <div class="es-sup-note"><i></i>Пишите в Telegram — ответит команда игры. Мы скопируем шаблон с вашим ID, чтобы вам не пришлось его искать.</div>
+
+            <button class="es-sup-main" onclick="contactSupport()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Написать в поддержку
+            </button>
+
+            <div class="es-sup-grid">
+                <button class="es-sup-topic" onclick="contactSupport('Покупка')"><span>💳</span>Проблема с покупкой</button>
+                <button class="es-sup-topic" onclick="contactSupport('Баг')"><span>🐞</span>Сообщить о баге</button>
+                <button class="es-sup-topic" onclick="contactSupport('Идея')"><span>💡</span>Предложить идею</button>
+                <button class="es-sup-topic" onclick="contactSupport('Аккаунт')"><span>👤</span>Вопрос по аккаунту</button>
+            </div>
+
+            <div class="es-sup-faq">
+                <div class="es-sup-faq-title">Частые вопросы</div>
+                <details>
+                    <summary>Как получить крутки?</summary>
+                    <p>Купить в магазине — кнопка «+» рядом с балансом попыток. Ещё крутки дают ежедневный бонус и приглашение друзей в разделе «Заработок».</p>
+                </details>
+                <details>
+                    <summary>Как работает колесо удачи?</summary>
+                    <p>Спин стоит 300 BattleCoin, а раз в 7 дней один спин бесплатный. Результат определяет сервер, награда сразу зачисляется на баланс.</p>
+                </details>
+                <details>
+                    <summary>Где найти купленные рамки?</summary>
+                    <p>Откройте профиль и нажмите на аватар или «Выбрать рамку» — все ваши рамки будут там.</p>
+                </details>
+                <details>
+                    <summary>Где взять BattleCoin?</summary>
+                    <p>BattleCoin выпадают за повышение уровня Pass, их можно выиграть в дуэлях и на колесе удачи.</p>
+                </details>
+            </div>
+
+            <div class="es-sup-id">
+                <span>Ваш ID: <b id="esSupId">—</b></span>
+                <button onclick="esCopySupportId()">Копировать</button>
+            </div>
+        </div>
+    </div>
+
     <div class="page-flip-shade" id="pageFlipShade"></div>
 
     <nav class="bottom-nav" id="bottomNav">
@@ -1399,6 +1640,7 @@
 
     <script src="custom-select.js"></script>
     <script src="wheel.js"></script>
+    <script src="shop-elite.js?v=1"></script>
     <script src="duel-ui.js"></script>
 
     <script>
