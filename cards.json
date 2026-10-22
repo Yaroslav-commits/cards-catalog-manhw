@@ -1,5 +1,17 @@
 [
     {
+        "name": "Байонетта",
+        "rarity": "Легендарная 🔵",
+        "style": "Scarborough Fair [🌪 Уклонение]",
+        "series": "Байонетта",
+        "speed": 90,
+        "strength": 88,
+        "intellect": 90,
+        "file": "bayonetta.webp",
+        "exclusive": true,
+        "id": "bayonetta"
+    },
+    {
         "name": "Ён Пэк",
         "rarity": "Легендарная 🔵",
         "style": "Пространственный мираж [🌊 Пространство]",

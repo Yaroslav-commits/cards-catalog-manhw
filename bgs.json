@@ -107,7 +107,7 @@
     },
     {
         "name": "Ли Хакхён",
-        "file": "hakhyun.mp4",
+        "file": "hakhyun.MP4",
         "width": 1280,
         "height": 720,
         "price": 99999,
@@ -118,5 +118,19 @@
         "file": "hakhyun_bg.jpeg",
         "price": 99999,
         "id": "hakhyun_bg"
+    },
+    {
+        "name": "Байонетта",
+        "file": "bayonetta_vbg.mp4",
+        "width": 1280,
+        "height": 720,
+        "price": 99999,
+        "id": "bayonetta_vbg"
+    },
+    {
+        "name": "Bayonetta",
+        "file": "bayonetta_bg.jpeg",
+        "price": 99999,
+        "id": "bayonetta_bg"
     }
 ]
