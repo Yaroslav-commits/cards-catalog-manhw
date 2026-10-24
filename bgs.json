@@ -132,5 +132,19 @@
         "file": "bayonetta_bg.jpeg",
         "price": 99999,
         "id": "bayonetta_bg"
+    },
+    {
+        "name": "Link Click Halloween",
+        "file": "hw_video_bg.mp4",
+        "width": 1280,
+        "height": 720,
+        "price": 99999,
+        "id": "hw_video_bg"
+    },
+    {
+        "name": "Random Chat Halloween",
+        "file": "hw_art_bg.jpeg",
+        "price": 99999,
+        "id": "hw_art_bg"
     }
 ]

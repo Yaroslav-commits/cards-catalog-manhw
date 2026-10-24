@@ -1,40 +1,13 @@
 var isUserPremium = false;
-// === ТОЧНЫЙ МАППИНГ НАВЫКОВ ПО ID КАРТ ===
-var SKILLS_MAP = {
-    "Копирование": [
-        "kerri_roana", "kafka", "jae_hyen", "yu_hobin_pass", "samdak", 
-        "yu_hobin", "hyeonseok_pt", "yohan_son", "park_jinyeong", 
-        "park_hyeonsok_vt", "kang_dagyeom", "eun_gel", "han_jig_wol", "premium_card_1"
-    ],
-    "Восстание": [
-        "kim_u_dzhin", "isaak_ivanov", "ioann_georg", "letniy_dzhin_vu", "reinhard",
-        "sanless", "lee_jin_ho", "son_jin_woo", "ashborn", "absolute_being", "moyon_hvi",
-        "igris", "bellion", "ber", "red_igris", "tang_gi_mun", "exclusive_card_1", "demonicheskiy_bog"
-    ],
-    "Берсерк": [
-        "uayt", "hell_dzho", "yubin", "han_wanguk", "ji_gonsop", 
-        "lee_jinson", "kim_gapryeon", "beakcheon", "antares", "antares_woo",
-        "choi_jong_in", "moyeong_yul_cheon", "jo_uk_kun", "yunsu", "li_dzhagang", "yu"
-    ],
-    "Пространство": [
-        "premium_card_2", "aheron", "enryu", "zahard", "urek_mazino", 
-        "garam_zahard", "han_son_yu", "baam", "yu_son", "han_ga_yun", 
-        "yu_cha_ryeon", "deung_yu_myeong", "yoo_seol_ha", "dzhin_soyi"
-    ],
-    "Пробивание": [
-        "lim_sae_jun", "nabirose", "ronan", "mortenaks_bleyd", "seong_han_su", 
-        "logan_gracie", "hwang_man_gi", "gun_park", "kim_kimyeon", "kwak_jichan", 
-        "ma_tesu", "shingen_yamazaki", "lee_dogyu", "manager_kim", "jangsu", 
-        "gu_kim", "kim_gitae", "shintaro_yamazaki", "choi_diyav", "im_jae_hwan", 
-        "liu_zhigang", "cha_hae_in", "jin_mu_won", "jin_gwan_ho", "eum_han_sol", 
-        "seo_mu_san", "excluzive_card_jaehwan", "dang_hevon", "eon_ganvu", "dzhegal_hi"
-    ],
-    "Уклонение": [
-        "letnyaya_cha_he_in", "letniy_gu_kim", "kun_mashenni_zahard", "ouen", 
-        "seong_tae_hun1", "lee_ji_hoon", "lineman", "na_jaegyeon", "yoojae_son", 
-        "choi_dongsu", "gyeong_mu_saeng", "jinx", "jang_ancheol"
-    ]
-};
+
+// === ДИНАМИЧЕСКИЙ МАППИНГ НАВЫКОВ ИЗ JSON ===
+var SKILLS_MAP = {};
+
+// Загружаем навыки из экспортированного файла
+fetch('skills.json')
+    .then(r => r.json())
+    .then(data => { SKILLS_MAP = data; })
+    .catch(e => console.error("Ошибка загрузки skills.json:", e));
 
 // Функция определения навыка карты по её ID
 function getCardSkill(cardId) {
