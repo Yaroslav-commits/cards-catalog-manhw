@@ -88,12 +88,12 @@ function getCardSkill(cardId) {
         var dailyShownThisSession = false; // НОВОЕ (чтобы окно открывалось только 1 раз при входе) 
         
         var DAILY_REWARDS = [
-            {krw: 200}, {krw: 300}, {krw: 350}, {krw: 350}, {krw: 400}, 
-            {krw: 400}, {pack: 'Pack'}, {krw: 450}, {krw: 450}, {krw: 500, dia: 10}, 
-            {krw: 500}, {krw: 500}, {krw: 550}, {pack: 'Pack'}, {krw: 600}, 
-            {krw: 600}, {krw: 650}, {krw: 650}, {krw: 700}, {krw: 700, dia: 10},
-            {pack: 'Pack'}, {krw: 750}, {krw: 750}, {krw: 800}, {krw: 850}, 
-            {krw: 900}, {krw: 950}, {pack: 'Pack'}, {krw: 1000}, {pack: 'Mythic'}
+            {krw: 20000}, {krw: 30000}, {krw: 35000}, {krw: 35000}, {krw: 40000}, 
+            {krw: 40000}, {pack: 'Pack'}, {krw: 45000}, {krw: 45000}, {krw: 50000, dia: 10}, 
+            {krw: 50000}, {krw: 50000}, {krw: 55000}, {pack: 'Pack'}, {krw: 60000}, 
+            {krw: 60000}, {krw: 65000}, {krw: 65000}, {krw: 70000}, {krw: 70000, dia: 10},
+            {pack: 'Pack'}, {krw: 75000}, {krw: 75000}, {krw: 80000}, {krw: 85000}, 
+            {krw: 90000}, {krw: 95000}, {pack: 'Pack'}, {krw: 100000}, {pack: 'Mythic'}
         ];
 
 
@@ -255,7 +255,7 @@ function getCardSkill(cardId) {
                         var icon = isMythic ? MC_SYS.crown : MC_SYS.cards;
                         innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon">' + icon + '</div><div class="d-val">Pack</div>';
                     } else {
-                        var valText = r.krw;
+                        var valText = formatBal(r.krw);
                         if(r.dia) valText += '<br>+' + r.dia + ' ' + MC_SYS.dia;
                         innerHtml = '<div class="d-day">' + dayNum + '</div><div class="d-icon d-krw">' + MC_SYS.krw + '</div><div class="d-val">' + valText + '</div>';
                     }
@@ -393,7 +393,7 @@ function getCardSkill(cardId) {
                     var dupMsg = document.getElementById('packDupMsg');
                     if (currentPackData.is_duplicate) {
                         dupMsg.style.display = 'inline-block';
-                        dupMsg.innerText = '⚠️ КАРТА УЖЕ ЕСТЬ: КОНВЕРТИРОВАНО В ' + currentPackData.dup_reward + ' ₩';
+                        dupMsg.innerText = '⚠️ КАРТА УЖЕ ЕСТЬ: КОНВЕРТИРОВАНО В ' + mcFmt(currentPackData.dup_reward) + ' ₩';
                     } else {
                         dupMsg.style.display = 'none';
                     }
@@ -863,11 +863,11 @@ function renderCards(cards) {
                 if (!res.ok) return;
                 refData = await res.json();
                 document.getElementById('refCount').innerText = refData.count || 0;
-                document.getElementById('refEarnedKrw').innerText = refData.earned_krw || 0;
+                document.getElementById('refEarnedKrw').innerText = formatBal(refData.earned_krw || 0);
                 document.getElementById('refEarnedAtt').innerText = refData.earned_attempts || 0;
-                var mn = refData.reward_krw_min || 500, mx = refData.reward_krw_max || 850, at = refData.reward_attempts || 5;
+                var mn = refData.reward_krw_min || 30000, mx = refData.reward_krw_max || 55000, at = refData.reward_attempts || 3;
                 document.getElementById('refNote').innerHTML =
-                    'Бонус за 1 друга: <b>₩ ' + mn + '–' + mx + '</b> + <b>' + at + ' круток</b>. Награду получаете и вы, и друг.';
+                    'Бонус за 1 друга: <b>₩ ' + mcFmt(mn) + '–' + mcFmt(mx) + '</b> + <b>' + at + ' ' + mcPlural(at, ['крутка', 'крутки', 'круток']) + '</b>. Награду получаете и вы, и друг.';
             } catch (e) { console.error('referral load error', e); }
         }
 
@@ -935,8 +935,8 @@ function renderCards(cards) {
                 }
                 if (data.rewarded) {
                     if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
-                    var rw = data.reward || { krw: 1000, dia: 5 };
-                    showToast('Награда получена ✓', '+' + rw.krw + ' ₩ и +' + rw.dia + ' 💎 за вступление в чат.');
+                    var rw = data.reward || { krw: 100000, dia: 5 };
+                    showToast('Награда получена ✓', '+' + mcFmt(rw.krw) + ' ₩ и +' + rw.dia + ' 💎 за вступление в чат.');
                     fetchProfile();
                 } else {
                     showToast('Уже выполнено ✓', 'Вступление в чат засчитано ранее.');
@@ -976,8 +976,8 @@ function renderCards(cards) {
                     type: 'tiktok',
                     kicker: 'TikTok видео',
                     title: 'TikTok видео про ManhwCard',
-                    desc: 'Снимите короткое TikTok-видео об <b>ManhwCard</b>. Награда растёт с просмотрами: 4 000 KRW + 10 алмазов за каждые 1 000 просмотров.',
-                    krw: '+4 000', dia: '+10', when: 'за 1k просмотров',
+                    desc: 'Снимите короткое TikTok-видео об <b>ManhwCard</b>. Награда растёт с просмотрами: 400 000 KRW + 10 алмазов за каждые 1 000 просмотров.',
+                    krw: '+400 000', dia: '+10', when: 'за 1k просмотров',
                     foot: 'Больше охват — больше награда: выплата масштабируется по количеству просмотров.',
                     steps: [
                         'Снимите короткое TikTok-видео <b>или эдит</b> с упоминанием бота',
@@ -993,8 +993,8 @@ function renderCards(cards) {
                     type: 'story',
                     kicker: 'Сторис в Telegram',
                     title: 'Сторис в Telegram',
-                    desc: 'Выложите сторис в Telegram с упоминанием <b>ManhwCard</b> и нашего канала. 3 000 KRW + 5 алмазов за одобренную сторис.',
-                    krw: '+3 000', dia: '+5', when: 'за одобренную сторис',
+                    desc: 'Выложите сторис в Telegram с упоминанием <b>ManhwCard</b> и нашего канала. 300 000 KRW + 5 алмазов за одобренную сторис.',
+                    krw: '+300 000', dia: '+5', when: 'за одобренную сторис',
                     foot: '',
                     steps: [
                         'Откройте Telegram и опубликуйте историю об <b>ManhwCard</b>',
@@ -1063,11 +1063,11 @@ function renderCards(cards) {
                 '<div><div class="sheet-kicker">Буст канала</div><div class="sheet-title">Буст нашего Telegram-канала</div></div>' +
                 '<button class="sheet-close" onclick="closeTaskSheet()">✖</button>' +
             '</div>' +
-            '<div class="sheet-desc">Используйте ваш Premium-слот буста на <b>@manhwcard</b>. 2 000 KRW + 10 алмазов за активный буст. Повторное получение — раз в 7 дней, пока буст активен.</div>' +
+            '<div class="sheet-desc">Используйте ваш Premium-слот буста на <b>@manhwcard</b>. 200 000 KRW + 10 алмазов за активный буст. Повторное получение — раз в 7 дней, пока буст активен.</div>' +
             '<div class="sheet-reward-box">' +
                 '<div class="sheet-reward-head"><span>Что ты получишь</span><span class="when">за каждый активный буст</span></div>' +
                 '<div class="sheet-reward-pills">' +
-                    '<span class="sheet-reward-pill"><span class="b-ico">₩</span> +2 000</span>' +
+                    '<span class="sheet-reward-pill"><span class="b-ico">₩</span> +200 000</span>' +
                     '<span class="sheet-reward-pill">' + SVG_DIAMOND + ' +10</span>' +
                 '</div>' +
             '</div>' +
@@ -1157,8 +1157,8 @@ function renderCards(cards) {
                 }
                 if (data.claimed) {
                     if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
-                    var rw = data.reward || { krw: 2000, dia: 10 };
-                    showToast('Награда получена 🚀', '+' + rw.krw + ' ₩ и +' + rw.dia + ' 💎 за активный буст.');
+                    var rw = data.reward || { krw: 200000, dia: 10 };
+                    showToast('Награда получена 🚀', '+' + mcFmt(rw.krw) + ' ₩ и +' + rw.dia + ' 💎 за активный буст.');
                     fetchProfile();
                     if (tasksData) { tasksData.boost_on_cooldown = true; tasksData.boost_seconds_left = data.boost_seconds_left; }
                     resetBoostBtn(false, data.boost_seconds_left);
@@ -1202,8 +1202,8 @@ function renderCards(cards) {
                 // Подписан
                 if (data.rewarded) {
                     if (tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
-                    var rw = data.reward || { krw: 1000, dia: 5 };
-                    showToast('Награда получена ✓', '+' + rw.krw + ' ₩ и +' + rw.dia + ' 💎 за подписку.');
+                    var rw = data.reward || { krw: 100000, dia: 5 };
+                    showToast('Награда получена ✓', '+' + mcFmt(rw.krw) + ' ₩ и +' + rw.dia + ' 💎 за подписку.');
                     fetchProfile();
                 } else {
                     showToast('Уже выполнено ✓', 'Подписка засчитана ранее.');
@@ -1943,39 +1943,39 @@ async function openPublicProfile(targetId) {
         }
 
         function getRewardRanges(level) {
-            if (level > 30) return { krw: '200 – 300', dia: '2 – 8', bc: '75 – 175' };
+            if (level > 30) return { krw: '20 000 – 30 000', dia: '2 – 8', bc: '75 – 175' };
             const r = {
-                2: { krw: '30 – 35', dia: '2 – 3', bc: '10 – 25' },
-                3: { krw: '30 – 35', dia: '2 – 3', bc: '20 – 25' },
-                4: { krw: '35', dia: '2 – 3', bc: '25' },
-                5: { krw: '35 – 50', dia: '2 – 3', bc: '25 – 30' },
-                6: { krw: '35 – 50', dia: '2 – 3', bc: '25 – 30' },
-                7: { krw: '50', dia: '2 – 3', bc: '35' },
-                8: { krw: '50 – 65', dia: '2 – 3', bc: '25 – 30' },
-                9: { krw: '50 – 65', dia: '2 – 3', bc: '25 – 30' },
-                10: { krw: '65', dia: '2 – 3', bc: '50' },
-                11: { krw: '65 – 70', dia: '2 – 3', bc: '30' },
-                12: { krw: '65 – 75', dia: '2 – 3', bc: '25 – 35' },
-                13: { krw: '65 – 75', dia: '2 – 3', bc: '25 – 35' },
-                14: { krw: '75', dia: '2 – 3', bc: '50' },
-                15: { krw: '75 – 80', dia: '2 – 3', bc: '25 – 35' },
-                16: { krw: '80', dia: '2 – 3', bc: '35' },
-                17: { krw: '80 – 85', dia: '2 – 3', bc: '30 – 35' },
-                18: { krw: '85', dia: '2 – 3', bc: '40' },
-                19: { krw: '85 – 90', dia: '2 – 3', bc: '30 – 35' },
-                20: { krw: '90', dia: '2 – 3', bc: '50' },
-                21: { krw: '90 – 95', dia: '2 – 3', bc: '35 – 40' },
-                22: { krw: '95', dia: '2 – 3', bc: '40' },
-                23: { krw: '95 – 100', dia: '2 – 3', bc: '35 – 40' },
-                24: { krw: '100', dia: '2 – 3', bc: '45' },
-                25: { krw: '100 – 110', dia: '2 – 3', bc: '35 – 45' },
-                26: { krw: '110', dia: '2 – 3', bc: '45' },
-                27: { krw: '110 – 120', dia: '2 – 3', bc: '40 – 45' },
-                28: { krw: '120 – 130', dia: '2 – 3', bc: '45' },
-                29: { krw: '130 – 140', dia: '2 – 3', bc: '45 – 50' },
-                30: { krw: '150', dia: '2 – 3', bc: '50' }
+                2: { krw: '3 000 – 3 500', dia: '2 – 3', bc: '10 – 25' },
+                3: { krw: '3 000 – 3 500', dia: '2 – 3', bc: '20 – 25' },
+                4: { krw: '3 500', dia: '2 – 3', bc: '25' },
+                5: { krw: '3 500 – 5 000', dia: '2 – 3', bc: '25 – 30' },
+                6: { krw: '3 500 – 5 000', dia: '2 – 3', bc: '25 – 30' },
+                7: { krw: '5 000', dia: '2 – 3', bc: '35' },
+                8: { krw: '5 000 – 6 500', dia: '2 – 3', bc: '25 – 30' },
+                9: { krw: '5 000 – 6 500', dia: '2 – 3', bc: '25 – 30' },
+                10: { krw: '6 500', dia: '2 – 3', bc: '50' },
+                11: { krw: '6 500 – 7 000', dia: '2 – 3', bc: '30' },
+                12: { krw: '6 500 – 7 500', dia: '2 – 3', bc: '25 – 35' },
+                13: { krw: '6 500 – 7 500', dia: '2 – 3', bc: '25 – 35' },
+                14: { krw: '7 500', dia: '2 – 3', bc: '50' },
+                15: { krw: '7 500 – 8 000', dia: '2 – 3', bc: '25 – 35' },
+                16: { krw: '8 000', dia: '2 – 3', bc: '35' },
+                17: { krw: '8 000 – 8 500', dia: '2 – 3', bc: '30 – 35' },
+                18: { krw: '8 500', dia: '2 – 3', bc: '40' },
+                19: { krw: '8 500 – 9 000', dia: '2 – 3', bc: '30 – 35' },
+                20: { krw: '9 000', dia: '2 – 3', bc: '50' },
+                21: { krw: '9 000 – 9 500', dia: '2 – 3', bc: '35 – 40' },
+                22: { krw: '9 500', dia: '2 – 3', bc: '40' },
+                23: { krw: '9 500 – 10 000', dia: '2 – 3', bc: '35 – 40' },
+                24: { krw: '10 000', dia: '2 – 3', bc: '45' },
+                25: { krw: '10 000 – 11 000', dia: '2 – 3', bc: '35 – 45' },
+                26: { krw: '11 000', dia: '2 – 3', bc: '45' },
+                27: { krw: '11 000 – 12 000', dia: '2 – 3', bc: '40 – 45' },
+                28: { krw: '12 000 – 13 000', dia: '2 – 3', bc: '45' },
+                29: { krw: '13 000 – 14 000', dia: '2 – 3', bc: '45 – 50' },
+                30: { krw: '15 000', dia: '2 – 3', bc: '50' }
             };
-            return r[level] || { krw: '200 – 300', dia: '2 – 8', bc: '75 – 175' };
+            return r[level] || { krw: '20 000 – 30 000', dia: '2 – 8', bc: '75 – 175' };
         }
 
         function renderPassScreen() {
@@ -2358,7 +2358,7 @@ async function openPublicProfile(targetId) {
                 imgClass = 'is-dup-img';
                 dupHtml = `<div class="dup-overlay">
                               <div class="dup-slash"></div>
-                              <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} ${MC_SYS.krw}</div>
+                              <div class="dup-stamp">ДУБЛИКАТ<br>+ ${mcFmt(card.dup_reward)} ${MC_SYS.krw}</div>
                            </div>`;
             }
 
@@ -2434,7 +2434,7 @@ async function openPublicProfile(targetId) {
                     imgClass = 'is-dup-img';
                     dupHtml = `<div class="dup-overlay">
                                   <div class="dup-slash"></div>
-                                  <div class="dup-stamp">ДУБЛИКАТ<br>+ ${card.dup_reward} ${MC_SYS.krw}</div>
+                                  <div class="dup-stamp">ДУБЛИКАТ<br>+ ${mcFmt(card.dup_reward)} ${MC_SYS.krw}</div>
                                </div>`;
                 }
 
@@ -2740,11 +2740,11 @@ if ('serviceWorker' in navigator) {
 var currentBuyCurrency = 'krw';
 
 var BUY_PACKS_KRW_DATA = [
-    { price: 75,   attempts: 1 },
-    { price: 375,  attempts: 6 },
-    { price: 750,  attempts: 13 },
-    { price: 1500, attempts: 28 },
-    { price: 3750, attempts: 75 }
+    { price: 7500,   attempts: 1 },
+    { price: 37500,  attempts: 6 },
+    { price: 75000,  attempts: 13 },
+    { price: 150000, attempts: 28 },
+    { price: 375000, attempts: 75 }
 ];
 
 var BUY_PACKS_DIA_DATA = [
@@ -2926,10 +2926,10 @@ loadUserFrames();
 
 // База рамок магазина (совпадает с бэкендом)
 var SHOP_FRAMES_DATA = [
-    { id: "fire", name: "Fire", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_a065206df7b011a5510e4e5bca7d49be.png?size=240&passthrough=true", currency: "krw", price: 1500 },
-    { id: "water", name: "Water", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_250640ab00a8837a1d56f35879138177.png?size=240&passthrough=true", currency: "krw", price: 1500 },
-    { id: "lightning", name: "Lightning", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_365eed4178528fe8293c4212e8e2d5cb.png?size=240&passthrough=true", currency: "krw", price: 1500 },
-    { id: "balance", name: "Balance", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_82e4df4028396ad5ccaaafb397fa6248.png?size=240&passthrough=true", currency: "krw", price: 2000 },
+    { id: "fire", name: "Fire", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_a065206df7b011a5510e4e5bca7d49be.png?size=240&passthrough=true", currency: "krw", price: 150000 },
+    { id: "water", name: "Water", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_250640ab00a8837a1d56f35879138177.png?size=240&passthrough=true", currency: "krw", price: 150000 },
+    { id: "lightning", name: "Lightning", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_365eed4178528fe8293c4212e8e2d5cb.png?size=240&passthrough=true", currency: "krw", price: 150000 },
+    { id: "balance", name: "Balance", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_82e4df4028396ad5ccaaafb397fa6248.png?size=240&passthrough=true", currency: "krw", price: 200000 },
     { id: "glitch", name: "Glitch", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_e90ebc0114e7bdc30353c8b11953ea41.png?size=240&passthrough=true", currency: "dia", price: 50 },
     { id: "head", name: "Head in the clouds", url: "https://cdn.discordapp.com/avatar-decoration-presets/a_670b722e56740d11d1e6fe55b8094013.png?size=240&passthrough=true", currency: "dia", price: 100 },
 ];
@@ -2985,9 +2985,9 @@ function renderShopFrames() {
 
             if (isUserPremium) {
                 discountBadge = '<div class="pf-discount">-20%</div>';
-                priceHtml = `<div class="pf-price-tag"><s style="font-size:11px; color:var(--text-muted); margin-right:4px;">${frame.price}</s> ${currIcon} ${finalPrice}</div>`;
+                priceHtml = `<div class="pf-price-tag"><s style="font-size:11px; color:var(--text-muted); margin-right:4px;">${mcFmt(frame.price)}</s> ${currIcon} ${mcFmt(finalPrice)}</div>`;
             } else {
-                priceHtml = `<div class="pf-price-tag">${currIcon} ${frame.price}</div>`;
+                priceHtml = `<div class="pf-price-tag">${currIcon} ${mcFmt(frame.price)}</div>`;
             }
         }
 
@@ -3031,10 +3031,10 @@ function openFrameShopPreview(frameId) {
 
         if (isUserPremium) {
             priceBox.innerHTML = `<div class="premium-discount-banner">👑 С Premium вы экономите 20%</div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${currIcon} ${finalPrice} 👑`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${currIcon} ${mcFmt(finalPrice)} 👑`;
         } else {
             priceBox.innerHTML = `<div class="premium-discount-banner no-prem">👑 С Premium вы бы сэкономили здесь 20%</div>`;
-            btnBuy.innerHTML = `КУПИТЬ ЗА ${currIcon} ${finalPrice}`;
+            btnBuy.innerHTML = `КУПИТЬ ЗА ${currIcon} ${mcFmt(finalPrice)}`;
         }
 
         btnBuy.style.display = 'flex';
@@ -4155,7 +4155,7 @@ function mcAchIcon(id, size) {
 function mcAchColor(id) { return (MC_ACH_META[id] || ['', '#a855f7'])[1]; }
 function mcAchPrestige(a) {
     var r = a.rewards || {};
-    return (r.frame_id ? 1000 : 0) + (r.diamond || 0) * 3 + (r.attempts || 0) * 2 + (r.battlecoin || 0) / 50 + (r.krw || 0) / 100;
+    return (r.frame_id ? 1000 : 0) + (r.diamond || 0) * 3 + (r.attempts || 0) * 2 + (r.battlecoin || 0) / 50 + (r.krw || 0) / 10000;
 }
 
 var mcAchData = [];
