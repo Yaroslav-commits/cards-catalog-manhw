@@ -5,28 +5,48 @@
    Три экрана: выбор тирлиста, сама доска с зумом, аналитика карты.
    Стиль тот же, что в главном меню: тёмные панели, тонкие грани,
    угловые скобки. Бегущих бликов нет.
+
+   Совместимость с iOS:
+   • у fixed-экранов рядом с inset стоят top/left/right/bottom —
+     inset Safari понимает только с 14.5;
+   • никаких filter: blur на декоре — на iPhone это дорогой
+     отдельный слой на каждую карточку;
+   • доска масштабируется через CSS zoom (см. tier.js), а не через
+     transform: scale.
    ===================================================================== */
 
 /* =====================  ЭКРАН ВЫБОРА  ===================== */
 .tier-screen {
     position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
     inset: 0;
     z-index: 9400;
     display: flex;
     flex-direction: column;
     background: linear-gradient(180deg, #0a0912 0%, #05050a 100%);
+    -webkit-transform: translateX(100%);
     transform: translateX(100%);
     transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
     overflow: hidden;
+    visibility: hidden;
 }
 
-.tier-screen.open { transform: translateX(0); }
+.tier-screen.open {
+    -webkit-transform: none;
+    transform: none;
+    visibility: visible;
+}
+
+/* Скрытый экран не держим слоем: visibility выключается после анимации */
+.tier-screen,
+.tier-analytic { transition-property: transform, visibility; }
 
 .tier-head {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: max(env(safe-area-inset-top, 14px), 14px) 16px 12px;
+    padding: 14px 16px 12px;
+    padding-top: max(env(safe-area-inset-top, 14px), 14px);
     flex-shrink: 0;
 }
 
@@ -83,18 +103,17 @@
 
 .tier-pick:active { transform: scale(0.98); border-color: var(--pc, #a855f7); }
 
-/* Мягкое пятно цвета списка, статичное */
-.tier-pick::before {
-    content: '';
+/* Мягкое пятно цвета списка, статичное. Раньше было filter: blur —
+   то же самое даёт радиальный градиент, без отдельного слоя */
+.tier-pick-glow {
     position: absolute;
-    top: -55%;
-    right: -25%;
-    width: 180px;
-    height: 180px;
+    top: -90px;
+    right: -70px;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
-    background: var(--pc, #a855f7);
-    opacity: 0.16;
-    filter: blur(34px);
+    background: radial-gradient(closest-side, var(--pc, #a855f7), transparent);
+    opacity: 0.2;
     pointer-events: none;
 }
 
@@ -179,7 +198,7 @@
 .tier-board-wrap::after {
     content: '';
     position: absolute;
-    inset: 8px;
+    top: 8px; left: 8px; right: 8px; bottom: 8px;
     pointer-events: none;
     z-index: 3;
     background:
@@ -194,36 +213,34 @@
     opacity: 0.5;
 }
 
-/* Окно просмотра. touch-action: none только здесь, чтобы жесты
-   зума не перехватывались прокруткой страницы. */
+/* Окно доски: обычная прокрутка в обе стороны.
+   pan-x pan-y — одним пальцем листает система, щипок отдаётся
+   нашему обработчику, страница целиком не масштабируется. */
 .tier-viewport {
     position: relative;
     height: 56vh;
     min-height: 330px;
-    overflow: hidden;
-    touch-action: none;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-x pan-y;
     cursor: grab;
+    scrollbar-width: none;
 }
 
+.tier-viewport::-webkit-scrollbar { display: none; }
 .tier-viewport:active { cursor: grabbing; }
 
 .tier-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
+    box-sizing: border-box;
     padding: 16px 14px;
-    transform-origin: 0 0;
 }
-
-/* Плавность только при программном зуме кнопками,
-   при жесте класс снимается — иначе палец «отстаёт» */
-.tier-canvas.smooth { transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1); }
 
 /* ---------- Ряд тира ---------- */
 .tier-row {
     display: flex;
     align-items: stretch;
-    gap: 10px;
     margin-bottom: 10px;
 }
 
@@ -232,11 +249,11 @@
 .tier-label {
     width: 52px;
     flex-shrink: 0;
+    margin-right: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
     border-radius: 14px;
     font-size: 28px;
     font-weight: 900;
@@ -247,19 +264,21 @@
 }
 
 .tier-label small {
+    margin-top: 2px;
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.1em;
     opacity: 0.65;
 }
 
+/* gap у flex на iOS работает только с 14.5 — на старых карты
+   слипались бы, поэтому отступы сделаны через margin */
 .tier-cards {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px;
+    padding: 4px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.028);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -270,6 +289,7 @@
     position: relative;
     width: 76px;
     flex-shrink: 0;
+    margin: 4px;
     border-radius: 11px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -277,11 +297,14 @@
     cursor: pointer;
 }
 
-.tier-card img {
+/* Пока картинка не подгружена, место под неё держит заглушка —
+   иначе доска будет прыгать по мере появления карт */
+.tier-img {
     display: block;
     width: 100%;
     height: 102px;
     object-fit: cover;
+    background: #15151f;
 }
 
 .tier-price {
@@ -321,8 +344,9 @@
     z-index: 4;
     display: flex;
     flex-direction: column;
-    gap: 6px;
 }
+
+.tier-zoom > * + * { margin-top: 6px; }
 
 .tier-zoom button {
     width: 36px;
@@ -373,6 +397,8 @@
     color: var(--text-muted);
 }
 
+/* 16px: при шрифте меньше iOS сам приближает страницу при фокусе
+   на поле и обратно уже не отдаляет */
 .tier-search {
     width: 100%;
     box-sizing: border-box;
@@ -383,8 +409,10 @@
     background: rgba(0, 0, 0, 0.4);
     color: #fff;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px;
     outline: none;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .tier-search:focus { border-color: var(--accent); }
@@ -392,7 +420,6 @@
 .tier-row-btn {
     display: flex;
     align-items: center;
-    gap: 12px;
     width: 100%;
     box-sizing: border-box;
     padding: 10px 12px;
@@ -404,15 +431,20 @@
     font-family: inherit;
     text-align: left;
     cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
     transition: background 0.16s, transform 0.12s;
 }
 
 .tier-row-btn:active { transform: scale(0.985); background: rgba(255, 255, 255, 0.07); }
 
+/* На iOS у <span> внутри <button> display по умолчанию inline,
+   поэтому имя и статы явно делаем блоками */
 .tier-row-badge {
     width: 30px;
     height: 30px;
     flex-shrink: 0;
+    margin-right: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -423,9 +455,10 @@
     background: var(--tc, #a855f7);
 }
 
-.tier-row-info { flex: 1; min-width: 0; }
+.tier-row-info { display: block; flex: 1; min-width: 0; margin-right: 12px; }
 
 .tier-row-name {
+    display: block;
     font-size: 14px;
     font-weight: 700;
     overflow: hidden;
@@ -434,6 +467,7 @@
 }
 
 .tier-row-stats {
+    display: block;
     font-size: 11px;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
@@ -458,17 +492,24 @@
 /* =====================  АНАЛИТИКА  ===================== */
 .tier-analytic {
     position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
     inset: 0;
     z-index: 9500;
     display: flex;
     flex-direction: column;
     background: linear-gradient(180deg, #0b0a14 0%, #05050a 100%);
+    -webkit-transform: translateY(100%);
     transform: translateY(100%);
-    transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+    transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.34s;
     overflow: hidden;
+    visibility: hidden;
 }
 
-.tier-analytic.open { transform: translateY(0); }
+.tier-analytic.open {
+    -webkit-transform: none;
+    transform: none;
+    visibility: visible;
+}
 
 .ta-body {
     flex: 1;
@@ -489,6 +530,11 @@
     overflow: hidden;
     border: 2px solid var(--tc, #a855f7);
     box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6);
+}
+
+/* aspect-ratio в Safari только с 15-й версии */
+@supports not (aspect-ratio: 3 / 4) {
+    .ta-hero { height: 346px; }
 }
 
 .ta-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -523,12 +569,12 @@
 /* Характеристики */
 .ta-stats {
     display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
+    margin: 0 -4px 14px;
 }
 
 .ta-stat {
     flex: 1;
+    margin: 0 4px;
     padding: 11px 6px;
     border-radius: 14px;
     text-align: center;
@@ -653,10 +699,11 @@
     margin-bottom: 14px;
 }
 
-.ta-vote-btns { display: flex; gap: 10px; }
+.ta-vote-btns { display: flex; margin: 0 -5px; }
 
 .ta-vote-btn {
     flex: 1;
+    margin: 0 5px;
     padding: 14px 0;
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -666,6 +713,8 @@
     font-size: 15px;
     font-weight: 800;
     cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
     transition: 0.18s;
 }
 
@@ -708,18 +757,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .tier-screen, .tier-analytic, .tier-canvas.smooth { transition: none; }
+    .tier-screen, .tier-analytic { transition: none; }
 }
-/* Пока картинка не подгружена, место под неё держит заглушка —
-   иначе доска будет прыгать по мере появления карт */
-.tier-img {
-    display: block;
-    width: 100%;
-    height: 102px;
-    object-fit: cover;
-    background: #15151f;
-}
-
-/* Изолируем отрисовку каждой карточки, чтобы браузер не пересчитывал
-   всю доску при появлении одной картинки */
-.tier-card { contain: content; }

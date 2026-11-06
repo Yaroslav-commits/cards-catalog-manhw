@@ -3,14 +3,29 @@
 
    Три экрана: выбор списка, доска с зумом, аналитика карты.
    Подключать после script.js (нужны userId, API_BASE, authHeaders, tg).
+
+   Про iOS. WebView в Telegram на iPhone жёстко ограничен по памяти,
+   и при превышении процесс страницы просто убивается — это и есть
+   «вылет». Поэтому здесь:
+     • на доске грузятся миниатюры, а не полноразмерные арты;
+     • зум сделан через CSS zoom + обычную прокрутку, а не через
+       transform: scale — scale заставлял WebKit держать в памяти всю
+       доску растром, умноженным на масштаб и плотность экрана;
+     • при уходе с доски её DOM удаляется, картинки освобождаются.
    ===================================================================== */
 
 (function (global) {
     'use strict';
 
+    // Папка с миниатюрами (делаются скриптом make_thumbs.py).
+    // Если миниатюр ещё нет, каждая картинка сама откатится на полный арт.
+    var THUMB_DIR = 'images/thumbs/';
+
     var meta = null;        // /api/tier/lists
     var current = null;     // текущий тирлист
     var currentCard = null; // карта в аналитике
+    var imgObserver = null;
+    var closeTimer = null;
 
     function api(path, options) {
         return fetch(API_BASE + '/api/tier/' + path,
@@ -34,11 +49,40 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
+    function thumbSrc(file) { return (THUMB_DIR || 'images/') + file; }
+
+    // Миниатюры нет — один раз пробуем полный арт, потом прячем
+    global.tierImgFallback = function (img) {
+        var full = img.getAttribute('data-full');
+        if (full && img.getAttribute('src') !== full) {
+            img.setAttribute('src', full);
+        } else {
+            img.onerror = null;
+            img.style.visibility = 'hidden';
+        }
+    };
+
+    function dropBoard() {
+        if (imgObserver) { imgObserver.disconnect(); imgObserver = null; }
+        var body = document.getElementById('tierPickBody');
+        if (body) body.innerHTML = '';
+        current = null;
+    }
+
+    function resetHead() {
+        document.getElementById('tierTitle').innerText = 'Тирлисты';
+        document.getElementById('tierSub').innerText = 'Ценность карт по версии сообщества';
+        document.getElementById('tierBackBtn').setAttribute('onclick', 'closeTierScreen()');
+    }
+
     /* =====================  ЭКРАН ВЫБОРА  ===================== */
 
     global.openTierScreen = async function () {
         var el = document.getElementById('tierScreen');
         if (!el) return;
+        if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+        dropBoard();
+        resetHead();
         el.classList.add('open');
         if (typeof manageBack === 'function') manageBack();
         haptic('medium');
@@ -52,16 +96,20 @@
             body.innerHTML = '<div class="ta-chart-empty">Не удалось загрузить тирлисты</div>';
             return;
         }
-        if (!meta.success) return;
+        if (!meta.success) {
+            body.innerHTML = '<div class="ta-chart-empty">Не удалось загрузить тирлисты</div>';
+            return;
+        }
 
         body.innerHTML = meta.lists.map(function (l) {
             var prev = (l.preview || []).map(function (f) {
-                return '<img src="images/' + esc(f) + '" loading="lazy" ' +
-                       'onerror="this.style.visibility=\'hidden\'">';
+                return '<img src="' + esc(thumbSrc(f)) + '" data-full="images/' + esc(f) + '" ' +
+                       'loading="lazy" decoding="async" alt="" onerror="tierImgFallback(this)">';
             }).join('');
             return '' +
               '<div class="tier-pick" style="--pc:' + esc(l.accent) + '" ' +
               'onclick="openTierBoard(\'' + esc(l.key) + '\')">' +
+                '<div class="tier-pick-glow"></div>' +
                 '<div class="tier-pick-top">' +
                   '<div class="tier-pick-ico">' + l.icon + '</div>' +
                   '<div style="flex:1;min-width:0">' +
@@ -79,6 +127,16 @@
         var el = document.getElementById('tierScreen');
         if (el) el.classList.remove('open');
         if (typeof manageBack === 'function') manageBack();
+        // После анимации выкидываем доску целиком, чтобы картинки
+        // не висели в памяти, пока игрок листает каталог
+        if (closeTimer) clearTimeout(closeTimer);
+        closeTimer = setTimeout(function () {
+            closeTimer = null;
+            if (el && !el.classList.contains('open')) {
+                dropBoard();
+                resetHead();
+            }
+        }, 400);
     };
 
     /* =====================  ДОСКА  ===================== */
@@ -88,16 +146,18 @@
         body.innerHTML = '<div class="ta-chart-empty">Загрузка…</div>';
         haptic('light');
 
+        var data;
         try {
-            current = await api('list/' + userId + '?key=' + encodeURIComponent(key));
+            data = await api('list/' + userId + '?key=' + encodeURIComponent(key));
         } catch (e) {
             body.innerHTML = '<div class="ta-chart-empty">Ошибка загрузки</div>';
             return;
         }
-        if (!current.success) {
-            body.innerHTML = '<div class="ta-chart-empty">' + esc(current.error || 'Ошибка') + '</div>';
+        if (!data.success) {
+            body.innerHTML = '<div class="ta-chart-empty">' + esc(data.error || 'Ошибка') + '</div>';
             return;
         }
+        current = data;
 
         document.getElementById('tierTitle').innerText = current.title;
         document.getElementById('tierSub').innerText = current.subtitle;
@@ -106,7 +166,7 @@
         body.innerHTML =
             '<div class="tier-board-wrap">' +
               '<div class="tier-viewport" id="tierViewport">' +
-                '<div class="tier-canvas smooth" id="tierCanvas">' + boardHtml(current) + '</div>' +
+                '<div class="tier-canvas" id="tierCanvas">' + boardHtml(current) + '</div>' +
               '</div>' +
               '<div class="tier-hint">Два пальца — масштаб</div>' +
               '<div class="tier-zoom">' +
@@ -126,24 +186,18 @@
     };
 
     global.backToTierPicks = function () {
-        if (imgObserver) { imgObserver.disconnect(); imgObserver = null; }
-        document.getElementById('tierTitle').innerText = 'Тирлисты';
-        document.getElementById('tierTitle').innerText = 'Тирлисты';
-        document.getElementById('tierSub').innerText = 'Ценность карт по версии сообщества';
-        document.getElementById('tierBackBtn').setAttribute('onclick', 'closeTierScreen()');
-        current = null;
         global.openTierScreen();
     };
 
     function boardHtml(data) {
         return data.tiers.map(function (row) {
             var cards = row.cards.map(function (c) {
-                // src намеренно пустой: картинки подставляет lazy-загрузчик
-                // ниже. Иначе браузер декодирует все 65 разом и кладёт WebView.
+                // src пустой: картинки подставляет lazy-загрузчик ниже
                 return '' +
                   '<div class="tier-card" onclick="openTierCard(\'' + esc(c.id) + '\')">' +
-                    '<img class="tier-img" data-src="images/' + esc(c.file) + '" ' +
-                    'decoding="async" alt="">' +
+                    '<img class="tier-img" data-src="' + esc(thumbSrc(c.file)) + '" ' +
+                    'data-full="images/' + esc(c.file) + '" ' +
+                    'decoding="async" alt="" onerror="tierImgFallback(this)">' +
                     '<div class="tier-price">' + esc(c.price_short) + '</div>' +
                     '<div class="tier-card-name">' + esc(c.name) + '</div>' +
                   '</div>';
@@ -162,7 +216,7 @@
         var colors = { S: '#fbbf24', A: '#f472b6', B: '#a855f7', C: '#06b6d4', D: '#64748b' };
         return list.map(function (c) {
             return '' +
-              '<button class="tier-row-btn" data-name="' + esc(c.name.toLowerCase()) + '" ' +
+              '<button class="tier-row-btn" data-name="' + esc(String(c.name).toLowerCase()) + '" ' +
               'onclick="openTierCard(\'' + esc(c.id) + '\')">' +
                 '<span class="tier-row-badge" style="--tc:' + (colors[c.tier] || '#a855f7') + '">' +
                   c.tier + '</span>' +
@@ -177,8 +231,7 @@
     }
 
     function fmt(p) {
-        if (p == null) return '—';
-        return (p === Math.floor(p)) ? String(p) : String(p);
+        return p == null ? '—' : String(p);
     }
 
     global.filterTierList = function (q) {
@@ -190,20 +243,20 @@
         }
     };
 
-
-    var imgObserver = null;
-
+    /* Ленивая загрузка. Картинку грузим один раз и больше не трогаем:
+       прежняя схема «убрать src, когда уехала» на iOS только заставляла
+       WebKit декодировать одно и то же снова и снова. */
     function setupLazyImages() {
         var vp = document.getElementById('tierViewport');
         if (!vp) return;
+        if (imgObserver) { imgObserver.disconnect(); imgObserver = null; }
 
-        if (imgObserver) imgObserver.disconnect();
+        var imgs = vp.querySelectorAll('.tier-img');
 
         if (!('IntersectionObserver' in window)) {
-            // Совсем старый движок: грузим порциями по восемь штук
-            var imgs = vp.querySelectorAll('.tier-img');
             var i = 0;
             (function step() {
+                if (!document.getElementById('tierViewport')) return;
                 for (var n = 0; n < 8 && i < imgs.length; n++, i++) {
                     imgs[i].src = imgs[i].getAttribute('data-src');
                 }
@@ -212,117 +265,141 @@
             return;
         }
 
-        imgObserver = new IntersectionObserver(function (entries) {
+        imgObserver = new IntersectionObserver(function (entries, obs) {
             entries.forEach(function (en) {
+                if (!en.isIntersecting) return;
                 var img = en.target;
-                if (en.isIntersecting) {
-                    if (!img.src) img.src = img.getAttribute('data-src');
-                } else if (img.src && en.intersectionRatio === 0) {
-                    // Освобождаем растр у того, что уехало далеко
-                    img.removeAttribute('src');
-                }
+                img.src = img.getAttribute('data-src');
+                obs.unobserve(img);
             });
-        }, { root: vp, rootMargin: '300px', threshold: 0 });
+        }, { root: vp, rootMargin: '200px', threshold: 0 });
 
-        var list = vp.querySelectorAll('.tier-img');
-        for (var k = 0; k < list.length; k++) imgObserver.observe(list[k]);
+        for (var k = 0; k < imgs.length; k++) imgObserver.observe(imgs[k]);
     }
 
-    /* ---------- Зум и перетаскивание ----------
-       Свой обработчик вместо браузерного зума: страница не должна
-       масштабироваться целиком, увеличивается только доска. */
-    var zoom = { scale: 1, x: 0, y: 0, min: 0.5, max: 2.2 };
-    var drag = null, pinch = null;
+    /* ---------- Зум ----------
+       Масштабируем через CSS zoom: браузер просто перекладывает доску
+       в новом размере и рисует её в родном разрешении. Панорама —
+       обычная прокрутка окна доски одним пальцем, её делает система. */
+    var zoom = { scale: 1, min: 0.6, max: 2.2 };
+    var pinch = null, rafId = 0, pendingZoom = null, mouse = null;
+    var globalsBound = false;
 
-    function applyZoom(smooth) {
-        var canvas = document.getElementById('tierCanvas');
-        if (!canvas) return;
-        canvas.classList.toggle('smooth', !!smooth);
-        canvas.style.transform =
-            'translate(' + zoom.x + 'px,' + zoom.y + 'px) scale(' + zoom.scale + ')';
+    function updateZoomLabel() {
         var val = document.getElementById('tierZoomVal');
         if (val) val.innerText = Math.round(zoom.scale * 100) + '%';
     }
 
-    function clampPan() {
+    // ox, oy — точка внутри окна доски, которая должна остаться на месте
+    function setZoom(next, ox, oy) {
         var vp = document.getElementById('tierViewport');
         var canvas = document.getElementById('tierCanvas');
         if (!vp || !canvas) return;
-        var w = canvas.offsetWidth * zoom.scale;
-        var h = canvas.offsetHeight * zoom.scale;
-        var minX = Math.min(0, vp.clientWidth - w);
-        var minY = Math.min(0, vp.clientHeight - h);
-        zoom.x = Math.max(minX, Math.min(0, zoom.x));
-        zoom.y = Math.max(minY, Math.min(0, zoom.y));
+        next = Math.max(zoom.min, Math.min(zoom.max, next));
+        var old = zoom.scale;
+        if (Math.abs(next - old) < 0.001) return;
+
+        var px = (vp.scrollLeft + ox) / old;
+        var py = (vp.scrollTop + oy) / old;
+        zoom.scale = next;
+        canvas.style.zoom = next;
+        vp.scrollLeft = px * next - ox;
+        vp.scrollTop = py * next - oy;
+        updateZoomLabel();
+    }
+
+    function queueZoom(next, ox, oy) {
+        pendingZoom = [next, ox, oy];
+        if (rafId) return;
+        rafId = requestAnimationFrame(function () {
+            rafId = 0;
+            if (pendingZoom) setZoom(pendingZoom[0], pendingZoom[1], pendingZoom[2]);
+            pendingZoom = null;
+        });
+    }
+
+    function fitCanvasWidth() {
+        var vp = document.getElementById('tierViewport');
+        var canvas = document.getElementById('tierCanvas');
+        if (!vp || !canvas) return;
+        // Ширина в px, а не 100%: тогда zoom честно делает доску шире окна
+        canvas.style.width = vp.clientWidth + 'px';
     }
 
     function initZoom() {
         var vp = document.getElementById('tierViewport');
-        if (!vp) return;
+        var canvas = document.getElementById('tierCanvas');
+        if (!vp || !canvas) return;
 
-        zoom.scale = 1; zoom.x = 0; zoom.y = 0;
-        applyZoom(false);
+        zoom.scale = 1;
+        canvas.style.zoom = 1;
+        fitCanvasWidth();
+        updateZoomLabel();
 
         vp.addEventListener('touchstart', function (e) {
-            var c = document.getElementById('tierCanvas');
-            if (c) c.classList.remove('smooth');
             if (e.touches.length === 2) {
+                var r = vp.getBoundingClientRect();
                 pinch = {
                     d: dist(e.touches),
                     scale: zoom.scale,
-                    cx: (e.touches[0].clientX + e.touches[1].clientX) / 2,
-                    cy: (e.touches[0].clientY + e.touches[1].clientY) / 2
+                    ox: (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left,
+                    oy: (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top
                 };
-                drag = null;
-            } else if (e.touches.length === 1) {
-                drag = { x: e.touches[0].clientX - zoom.x, y: e.touches[0].clientY - zoom.y, moved: false };
             }
         }, { passive: true });
 
         vp.addEventListener('touchmove', function (e) {
-            if (pinch && e.touches.length === 2) {
-                e.preventDefault();
-                var k = dist(e.touches) / pinch.d;
-                var next = Math.max(zoom.min, Math.min(zoom.max, pinch.scale * k));
-                var rect = vp.getBoundingClientRect();
-                var ox = pinch.cx - rect.left, oy = pinch.cy - rect.top;
-                // Точка под пальцами остаётся на месте
-                zoom.x = ox - (ox - zoom.x) * (next / zoom.scale);
-                zoom.y = oy - (oy - zoom.y) * (next / zoom.scale);
-                zoom.scale = next;
-                clampPan();
-                applyZoom(false);
-            } else if (drag && e.touches.length === 1) {
-                // Двигаем только когда есть куда: иначе отдаём жест странице
-                var canvas = document.getElementById('tierCanvas');
-                if (!canvas) return;
-                if (canvas.offsetHeight * zoom.scale <= vp.clientHeight &&
-                    canvas.offsetWidth * zoom.scale <= vp.clientWidth) return;
-                e.preventDefault();
-                zoom.x = e.touches[0].clientX - drag.x;
-                zoom.y = e.touches[0].clientY - drag.y;
-                drag.moved = true;
-                clampPan();
-                applyZoom(false);
-            }
+            if (!pinch || e.touches.length !== 2) return;
+            e.preventDefault();
+            queueZoom(pinch.scale * dist(e.touches) / pinch.d, pinch.ox, pinch.oy);
         }, { passive: false });
 
         vp.addEventListener('touchend', function (e) {
-            if (e.touches.length === 0) { pinch = null; drag = null; }
+            if (e.touches.length < 2) pinch = null;
         }, { passive: true });
 
-        // Колесо мыши для десктопа
+        // Старые iOS масштабируют страницу целиком мимо touch-action
+        ['gesturestart', 'gesturechange'].forEach(function (ev) {
+            vp.addEventListener(ev, function (e) { e.preventDefault(); }, { passive: false });
+        });
+
+        // Десктоп: Ctrl + колесо (и щипок на тачпаде) — зум, просто колесо — прокрутка
         vp.addEventListener('wheel', function (e) {
+            if (!e.ctrlKey) return;
             e.preventDefault();
-            var next = Math.max(zoom.min, Math.min(zoom.max, zoom.scale * (e.deltaY < 0 ? 1.12 : 0.89)));
-            var rect = vp.getBoundingClientRect();
-            var ox = e.clientX - rect.left, oy = e.clientY - rect.top;
-            zoom.x = ox - (ox - zoom.x) * (next / zoom.scale);
-            zoom.y = oy - (oy - zoom.y) * (next / zoom.scale);
-            zoom.scale = next;
-            clampPan();
-            applyZoom(false);
+            var r = vp.getBoundingClientRect();
+            queueZoom(zoom.scale * (e.deltaY < 0 ? 1.1 : 0.9), e.clientX - r.left, e.clientY - r.top);
         }, { passive: false });
+
+        // Десктоп: перетаскивание мышью
+        vp.addEventListener('mousedown', function (e) {
+            if (e.button !== 0) return;
+            mouse = { x: e.clientX, y: e.clientY, sl: vp.scrollLeft, st: vp.scrollTop, moved: false };
+        });
+
+        if (!globalsBound) {
+            globalsBound = true;
+            window.addEventListener('mousemove', function (e) {
+                if (!mouse) return;
+                var v = document.getElementById('tierViewport');
+                if (!v) { mouse = null; return; }
+                var dx = e.clientX - mouse.x, dy = e.clientY - mouse.y;
+                if (Math.abs(dx) + Math.abs(dy) > 5) mouse.moved = true;
+                v.scrollLeft = mouse.sl - dx;
+                v.scrollTop = mouse.st - dy;
+            });
+            window.addEventListener('mouseup', function () {
+                if (mouse && mouse.moved) {
+                    // Гасим клик по карте после перетаскивания
+                    var stop = function (ev) { ev.stopPropagation(); ev.preventDefault(); };
+                    window.addEventListener('click', stop, { capture: true, once: true });
+                    setTimeout(function () { window.removeEventListener('click', stop, true); }, 0);
+                }
+                mouse = null;
+            });
+            window.addEventListener('resize', fitCanvasWidth);
+            window.addEventListener('orientationchange', function () { setTimeout(fitCanvasWidth, 200); });
+        }
     }
 
     function dist(t) {
@@ -333,19 +410,16 @@
     global.tierZoom = function (delta) {
         var vp = document.getElementById('tierViewport');
         if (!vp) return;
-        var next = Math.max(zoom.min, Math.min(zoom.max, zoom.scale + delta));
-        var ox = vp.clientWidth / 2, oy = vp.clientHeight / 2;
-        zoom.x = ox - (ox - zoom.x) * (next / zoom.scale);
-        zoom.y = oy - (oy - zoom.y) * (next / zoom.scale);
-        zoom.scale = next;
-        clampPan();
-        applyZoom(true);
+        setZoom(zoom.scale + delta, vp.clientWidth / 2, vp.clientHeight / 2);
         haptic('light');
     };
 
     global.tierZoomReset = function () {
-        zoom.scale = 1; zoom.x = 0; zoom.y = 0;
-        applyZoom(true);
+        var vp = document.getElementById('tierViewport');
+        if (!vp) return;
+        setZoom(1, 0, 0);
+        vp.scrollLeft = 0;
+        vp.scrollTop = 0;
         haptic('light');
     };
 
@@ -379,6 +453,13 @@
         if (el) el.classList.remove('open');
         currentCard = null;
         if (typeof manageBack === 'function') manageBack();
+        // Освобождаем крупный арт после анимации
+        setTimeout(function () {
+            if (el && !el.classList.contains('open')) {
+                var body = document.getElementById('taBody');
+                if (body) body.innerHTML = '';
+            }
+        }, 400);
     };
 
     function renderAnalytic() {
@@ -394,7 +475,8 @@
 
         body.innerHTML = '' +
           '<div class="ta-hero" style="--tc:' + esc(c.tier_color) + '">' +
-            '<img src="images/' + esc(c.file) + '" onerror="this.src=\'images/default.webp\'">' +
+            '<img src="images/' + esc(c.file) + '" decoding="async" alt="" ' +
+            'onerror="this.onerror=null;this.src=\'images/default.webp\'">' +
             '<div class="ta-tier-flag">' + esc(c.tier) + '</div>' +
           '</div>' +
           '<div class="ta-name">' + esc(c.name) + '</div>' +
@@ -440,7 +522,7 @@
         if (max === min) { max = min + 1; }
 
         var pts = hist.map(function (p, i) {
-            var x = pad + (w - pad * 2) * (hist.length === 1 ? 0.5 : i / (hist.length - 1));
+            var x = pad + (w - pad * 2) * (i / (hist.length - 1));
             var y = h - pad - (h - pad * 2) * ((p.price - min) / (max - min));
             return [x, y];
         });
@@ -508,6 +590,7 @@
             return tg.showAlert('Не удалось отправить оценку');
         }
         if (!res.success) return tg.showAlert(res.error || 'Ошибка');
+        if (!currentCard) return;
 
         currentCard.up = res.up;
         currentCard.down = res.down;

@@ -1,0 +1,338 @@
+{
+  "lim": [
+    {
+      "id": "lee_hakhyun",
+      "name": "Ли Хакхён",
+      "price": 9900
+    },
+    {
+      "id": "exclusive_card_1",
+      "name": "Юк Сонджи и Джин Хобин",
+      "price": 4650
+    },
+    {
+      "id": "yu",
+      "name": "Ю",
+      "price": 2950
+    },
+    {
+      "id": "ronan",
+      "name": "Ронан",
+      "price": 2700
+    },
+    {
+      "id": "excluzive_card_jaehwan",
+      "name": "Дже Хван",
+      "price": 2300
+    },
+    {
+      "id": "sanless",
+      "name": "Санлесс",
+      "price": 2150
+    },
+    {
+      "id": "yoo_seol_ha",
+      "name": "Ю Соль Ха",
+      "price": 2100
+    },
+        {
+      "id": "jang_ancheol",
+      "name": "Чан Анчхоль",
+      "price": 2050
+    },
+    {
+      "id": "lim_sae_jun",
+      "name": "Лим Се Джун",
+      "price": 2000
+    },
+    {
+      "id": "antares_woo",
+      "name": "Антарес в Ву",
+      "price": 1900
+    },
+    {
+      "id": "yunsu",
+      "name": "Пак Юнсу",
+      "price": 1500
+    },
+    {
+      "id": "yu_hobin_pass",
+      "name": "Ю Хобин",
+      "price": 1500
+    },
+    {
+      "id": "nabirose",
+      "name": "Набироза",
+      "price": 1350
+    },
+    {
+      "id": "premium_card_1",
+      "name": "Лу Шень",
+      "price": 900
+    },
+    {
+      "id": "premium_card_2",
+      "name": "Лу Гуан и Чэн Сяоши",
+      "price": 700
+    },
+    {
+      "id": "reinhard",
+      "name": "Рейнхард",
+      "price": 500
+    },
+    {
+      "id": "jinx",
+      "name": "Джу Дже Гён и Ким Дан",
+      "price": 75
+    }
+  ],
+  "myth": [
+    {
+      "id": "enryu",
+      "name": "Энрю",
+      "price": 300
+    },
+    {
+      "id": "lloyd_frontero",
+      "name": "Ллойд Фронтеро",
+      "price": 250
+    },
+    {
+      "id": "kim_gapryeon",
+      "name": "Ким Гапрён",
+      "price": 190
+    },
+    {
+      "id": "antares",
+      "name": "Антарес",
+      "price": 180
+    },
+    {
+      "id": "ashborn",
+      "name": "Эшборн",
+      "price": 160
+    },
+    {
+      "id": "halkaros",
+      "name": "Халкарос",
+      "price": 160
+    },
+    {
+      "id": "gun_park",
+      "name": "Пак Чонгон",
+      "price": 150
+    },
+    {
+      "id": "kang_dagyeom",
+      "name": "Кан Дагём",
+      "price": 110
+    },
+    {
+      "id": "gu_kim",
+      "name": "Гу Ким",
+      "price": 105
+    },
+    {
+      "id": "moyeong_yul_cheon",
+      "name": "Моён Юль-Чхон",
+      "price": 100
+    },
+    {
+      "id": "samdak",
+      "name": "Самдак",
+      "price": 85
+    },
+    {
+      "id": "tiranus",
+      "name": "Тиранус",
+      "price": 72
+    },
+    {
+      "id": "belkis",
+      "name": "Бэлькис",
+      "price": 70
+    },
+    {
+      "id": "ksavyer_azrahon",
+      "name": "Ксавьер Азрахон",
+      "price": 60
+    },
+    {
+      "id": "kim_gitae",
+      "name": "Ким Гитэ",
+      "price": 50
+    },
+    {
+      "id": "seong_han_su",
+      "name": "Сон Хансу",
+      "price": 45
+    },
+    {
+      "id": "zahard",
+      "name": "Захард",
+      "price": 31
+    },
+    {
+      "id": "park_hyeonsok_vt",
+      "name": "Пак Хёнсок ВТ",
+      "price": 30
+    },
+    {
+      "id": "dang_hevon",
+      "name": "Данг Хэвон",
+      "price": 26
+    },
+    {
+      "id": "jin_mu_won",
+      "name": "Джин Мувон",
+      "price": 25
+    },
+    {
+      "id": "shingen_yamazaki",
+      "name": "Шинген Ямадзаки",
+      "price": 23
+    },
+    {
+      "id": "deung_yu_myeong",
+      "name": "Дын Ю-Мён",
+      "price": 22
+    },
+    {
+      "id": "urek_mazino",
+      "name": "Урек Мазино",
+      "price": 21
+    },
+    {
+      "id": "absolute_being",
+      "name": "Абсолютное Существо",
+      "price": 20
+    },
+    {
+      "id": "logan_gracie",
+      "name": "Логан Грейси",
+      "price": 12
+    },
+    {
+      "id": "choi_dongsu",
+      "name": "Чхве Донсу",
+      "price": 10
+    }
+  ],
+  "leg": [
+    {
+      "id": "park_jinyeong",
+      "name": "Пак Джинён",
+      "price": 15
+    },
+    {
+      "id": "alisiya",
+      "name": "Алисия",
+      "price": 14
+    },
+    {
+      "id": "kun_mashenni_zahard",
+      "name": "Кун Машенни Захард",
+      "price": 10
+    },
+    {
+      "id": "lee_dogyu",
+      "name": "Ли Догю",
+      "price": 7.5
+    },
+    {
+      "id": "artanis_v",
+      "name": "Артанис V",
+      "price": 7
+    },
+    {
+      "id": "solita_2",
+      "name": "Солита",
+      "price": 5
+    },
+    {
+      "id": "eon_ganvu",
+      "name": "Еон Ганву",
+      "price": 4
+    },
+    {
+      "id": "song_il_hwan",
+      "name": "Сон Иль Хван",
+      "price": 4
+    },
+    {
+      "id": "yu_hobin",
+      "name": "Ю Хобин",
+      "price": 3.5
+    },
+    {
+      "id": "jin_gwan_ho",
+      "name": "Джин Кванхо",
+      "price": 3.5
+    },
+    {
+      "id": "eum_han_sol",
+      "name": "Ым Хансоль",
+      "price": 3.4
+    },
+    {
+      "id": "manager_kim",
+      "name": "Менеджер Ким",
+      "price": 3.3
+    },
+    {
+      "id": "uayt",
+      "name": "Уайт",
+      "price": 3.25
+    },
+    {
+      "id": "yu_son",
+      "name": "Ю Сон",
+      "price": 3
+    },
+    {
+      "id": "isaak_ivanov",
+      "name": "Исаак Иванов",
+      "price": 3
+    },
+    {
+      "id": "namgun_dzhiha",
+      "name": "Намгун Джиха",
+      "price": 3
+    },
+    {
+      "id": "yohan_son",
+      "name": "Йохан Сон",
+      "price": 2.8
+    },
+    {
+      "id": "seong_tae_hun",
+      "name": "Сон Тэхун",
+      "price": 2.75
+    },
+    {
+      "id": "jo_uk_kun",
+      "name": "Джо Ук-Кун",
+      "price": 2.5
+    },
+    {
+      "id": "baek_seong_jun1",
+      "name": "Пэк Сонджун",
+      "price": 2.25
+    },
+    {
+      "id": "moyon_hvi",
+      "name": "Моён Хви",
+      "price": 2
+    },
+    {
+      "id": "kerri_roana",
+      "name": "Кэрри Роана",
+      "price": 1.7
+    },
+    {
+      "id": "jangsu",
+      "name": "Чансу",
+      "price": 1.5
+    }
+  ]
+}
