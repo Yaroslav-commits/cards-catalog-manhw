@@ -280,7 +280,21 @@
             }
         }
 
+        // Звёзды мерцают медленно — 30 кадров в секунду хватает с запасом,
+        // а процессор нагружается вдвое меньше (на 120 Гц экранах — вчетверо)
+        var FRAME_MS = 1000 / 30, lastFrame = 0;
+        function isLite() { return document.documentElement.classList.contains('perf-lite'); }
+
         function draw(t) {
+            raf = requestAnimationFrame(draw);
+            if (t - lastFrame < FRAME_MS) return;
+            lastFrame = t;
+            paint(t);
+            // Лёгкий режим: рисуем небо один раз и больше не трогаем
+            if (isLite()) { cancelAnimationFrame(raf); raf = 0; }
+        }
+
+        function paint(t) {
             ctx.clearRect(0, 0, W, H);
             var sy = window.scrollY || 0;
 
@@ -324,8 +338,6 @@
                     if (meteor.life <= 0 || meteor.x < -80 || meteor.y > H + 80) meteor = null;
                 }
             }
-
-            raf = requestAnimationFrame(draw);
         }
 
         function sync() {
@@ -333,16 +345,26 @@
             if (should && !running) {
                 running = true;
                 resize();
+                lastFrame = 0;
                 raf = requestAnimationFrame(draw);
             } else if (!should && running) {
                 running = false;
                 cancelAnimationFrame(raf);
+                raf = 0;
             }
         }
 
         new MutationObserver(sync).observe(shop, { attributes: true, attributeFilter: ['class'] });
         document.addEventListener('visibilitychange', sync);
-        window.addEventListener('resize', function () { if (running) resize(); });
+        window.addEventListener('resize', function () {
+            if (!running) return;
+            resize();
+            if (!raf) { lastFrame = 0; raf = requestAnimationFrame(draw); }
+        });
+        // Переключили лёгкий режим — перезапускаем отрисовку
+        window.addEventListener('mc:perfmode', function () {
+            if (running && !raf) { lastFrame = 0; raf = requestAnimationFrame(draw); }
+        });
         sync();
     }
 

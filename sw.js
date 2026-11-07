@@ -50,6 +50,31 @@ self.addEventListener('fetch', (event) => {
         url.pathname.endsWith('.json') ||
         url.pathname.endsWith('.png');
 
+    // JSON с данными (карты, навыки, фоны) меняется при обновлениях.
+    // Отдаём из кэша мгновенно, но тут же тихо скачиваем свежую версию —
+    // со следующего открытия игрок видит новые карты. Раньше JSON
+    // кэшировался навсегда и обновления до вернувшихся игроков не доходили.
+    if (url.pathname.endsWith('.json') && request.method === 'GET' && url.origin === self.location.origin) {
+        event.respondWith(
+            caches.open(CACHE_NAME).then((cache) => {
+                return cache.match(request).then((cachedResponse) => {
+                    const fresh = fetch(request).then((networkResponse) => {
+                        if (networkResponse && networkResponse.status === 200) {
+                            cache.put(request, networkResponse.clone());
+                        }
+                        return networkResponse;
+                    });
+                    if (cachedResponse) {
+                        event.waitUntil(fresh.catch(() => {}));
+                        return cachedResponse;
+                    }
+                    return fresh;
+                });
+            })
+        );
+        return;
+    }
+
     if (isMediaOrData && request.method === 'GET') {
         event.respondWith(
             caches.open(CACHE_NAME).then((cache) => {
