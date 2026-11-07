@@ -14,13 +14,17 @@
     --tg-cab: 0px;
 
     /* Сколько места сверху и снизу занято телефоном и Telegram */
-    --app-top: calc(max(env(safe-area-inset-top, 0px), var(--tg-sat)) + var(--tg-cat));
+    --app-gap: 0px; /* небольшой запас под кнопками Telegram в fullscreen */
+    --app-top: calc(max(env(safe-area-inset-top, 0px), var(--tg-sat)) + var(--tg-cat) + var(--app-gap));
     --app-bottom: calc(max(env(safe-area-inset-bottom, 0px), var(--tg-sab)) + var(--tg-cab));
 
     /* Ширина колонки контента (на телефоне — весь экран) */
     --app-w: 100vw;
     --rail-w: 0px;
 }
+
+/* В fullscreen контент начинается чуть ниже кнопок Telegram, а не впритык */
+html.tg-fullscreen { --app-gap: 10px; }
 
 /* =====================================================================
    1. ФОН — без background-attachment: fixed.
