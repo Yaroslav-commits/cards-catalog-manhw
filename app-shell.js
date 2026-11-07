@@ -24,15 +24,25 @@
     // Пишем их в CSS-переменные, а вёрстка уже сама отступает.
     function px(v) { v = Number(v) || 0; return (v > 0 ? Math.round(v) : 0) + 'px'; }
 
+    var platform = tg ? String(tg.platform || '').toLowerCase() : '';
+    var isPhone = platform === 'ios' || platform === 'android' || platform === 'android_x';
+    var isDesktop = platform === 'tdesktop' || platform === 'macos';
+
+    // Высота строки кнопок Telegram («Закрыть», «⌄ ⋯») в fullscreen на телефоне.
+    // Некоторые версии Telegram присылают её как 0 — тогда берём стандартную.
+    var PHONE_BUTTONS_H = 46;
+
     function applyInsets() {
         if (!tg) return;
         var sa = tg.safeAreaInset || {};
         var ca = tg.contentSafeAreaInset || {};
+        var cat = Number(ca.top) || 0;
+        if (isPhone && tg.isFullscreen && cat < 30) cat = PHONE_BUTTONS_H;
         root.style.setProperty('--tg-sat', px(sa.top));
         root.style.setProperty('--tg-sab', px(sa.bottom));
         root.style.setProperty('--tg-sal', px(sa.left));
         root.style.setProperty('--tg-sar', px(sa.right));
-        root.style.setProperty('--tg-cat', px(ca.top));
+        root.style.setProperty('--tg-cat', px(cat));
         root.style.setProperty('--tg-cab', px(ca.bottom));
         root.classList.toggle('tg-fullscreen', !!tg.isFullscreen);
     }
@@ -58,10 +68,6 @@
         // Некоторые клиенты присылают отступы с небольшой задержкой
         setTimeout(applyInsets, 300);
         setTimeout(applyInsets, 1200);
-
-        var platform = String(tg.platform || '').toLowerCase();
-        var isPhone = platform === 'ios' || platform === 'android' || platform === 'android_x';
-        var isDesktop = platform === 'tdesktop' || platform === 'macos';
 
         // Телефоны: открываемся во весь экран сами — не зависим от настройки
         // в BotFather (там fullscreen можно выключить, чтобы он не включался на ПК)
