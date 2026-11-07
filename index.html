@@ -7,7 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#06060c">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="app-shell.js?v=2"></script>
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="custom-select.css">
         <link rel="stylesheet" href="shop.css">
@@ -15,8 +17,9 @@
         <link rel="stylesheet" href="menu.css">
         <link rel="stylesheet" href="tier.css">
         <link rel="stylesheet" href="workshop.css?v=9">
-        <link rel="stylesheet" href="upgrade.css?v=2">
+        <link rel="stylesheet" href="upgrade.css?v=3">
         <link rel="stylesheet" href="shop-elite.css?v=1">
+        <link rel="stylesheet" href="app-shell.css?v=1">
 </head>
 <body>
     <div id="splashScreen" class="splash-screen">
@@ -277,6 +280,16 @@
             <div class="snd-texts">
                 <div class="module-title">Звуки интерфейса</div>
                 <div class="module-sub" id="sndToggleSub">Кнопки, анимации, награды</div>
+            </div>
+            <div class="mc-switch"><i></i></div>
+        </div>
+
+        <!-- ЛЁГКАЯ ГРАФИКА (app-shell.js) -->
+        <div class="snd-toggle-card lite-toggle-card" id="liteToggleCard" onclick="toggleLiteMode()">
+            <div class="snd-ico" id="liteToggleIco"></div>
+            <div class="snd-texts">
+                <div class="module-title">Лёгкая графика</div>
+                <div class="module-sub" id="liteToggleSub">Все эффекты и анимации</div>
             </div>
             <div class="mc-switch"><i></i></div>
         </div>
@@ -1221,20 +1234,20 @@
 
     <nav class="bottom-nav" id="bottomNav">
         <div class="nav-indicator" id="navIndicator" aria-hidden="true"><span class="nav-indicator-glow"></span></div>
-        <button class="nav-btn" data-tab="catalog" onclick="switchTab('catalog', this)">
+        <button class="nav-btn" data-tab="catalog" onclick="switchTab('catalog', this)" data-label="Каталог" aria-label="Каталог">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
         </button>
-        <button class="nav-btn nav-btn-shop" id="navShopBtn" data-tab="shop" onclick="switchTab('shop', this)">
+        <button class="nav-btn nav-btn-shop" id="navShopBtn" data-tab="shop" onclick="switchTab('shop', this)" data-label="Магазин" aria-label="Магазин">
             <span class="free-dot" aria-hidden="true"></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
         </button>
-        <button class="nav-btn nav-center active" data-tab="profile" onclick="switchTab('profile', this)">
+        <button class="nav-btn nav-center active" data-tab="profile" onclick="switchTab('profile', this)" data-label="Главная" aria-label="Главная">
             <svg viewBox="0 0 32 24" fill="currentColor"><path d="M3 22 7 2l9 12 9-12 4 20h-5L21 11l-5 8-5-8-2 11z"/></svg>
         </button>
-        <button class="nav-btn" data-tab="tops" onclick="switchTab('tops', this)">
+        <button class="nav-btn" data-tab="tops" onclick="switchTab('tops', this)" data-label="Топы" aria-label="Топы">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
         </button>
-        <button class="nav-btn" data-tab="collection" onclick="switchTab('collection', this)">
+        <button class="nav-btn" data-tab="collection" onclick="switchTab('collection', this)" data-label="Коллекция" aria-label="Коллекция">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
@@ -1634,11 +1647,11 @@
         <div class="ta-body" id="taBody"></div>
     </div>
 
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
 
     <script src="custom-select.js"></script>
     <script src="wheel.js"></script>
-    <script src="shop-elite.js?v=1"></script>
+    <script src="shop-elite.js?v=2"></script>
     <script src="duel-ui.js"></script>
 
     <script>

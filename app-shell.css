@@ -1,0 +1,483 @@
+/* =====================================================================
+   APP SHELL — грузится последним и аккуратно поправляет вёрстку:
+   1. Telegram fullscreen: контент не залезает под кнопки «Назад», «⋯», «Свернуть».
+   2. Производительность: фон без background-attachment: fixed.
+   3. Лёгкая графика (html.perf-lite) для слабых устройств.
+   4. Компьютер / планшет: аккуратная колонка по центру + боковая панель.
+   Значения --tg-* выставляет app-shell.js из Telegram WebApp API.
+   ===================================================================== */
+
+:root {
+    --tg-sat: 0px;  /* вырез / статус-бар (Telegram safeAreaInset) */
+    --tg-sab: 0px;
+    --tg-cat: 0px;  /* кнопки Telegram поверх контента в fullscreen */
+    --tg-cab: 0px;
+
+    /* Сколько места сверху и снизу занято телефоном и Telegram */
+    --app-top: calc(max(env(safe-area-inset-top, 0px), var(--tg-sat)) + var(--tg-cat));
+    --app-bottom: calc(max(env(safe-area-inset-bottom, 0px), var(--tg-sab)) + var(--tg-cab));
+
+    /* Ширина колонки контента (на телефоне — весь экран) */
+    --app-w: 100vw;
+    --rail-w: 0px;
+}
+
+/* =====================================================================
+   1. ФОН — без background-attachment: fixed.
+   С fixed-фоном браузер перерисовывает весь экран на каждом шаге прокрутки,
+   на телефонах это главный источник подёргиваний. Тот же фон рисуем
+   отдельным неподвижным слоем — его видеокарта просто держит на месте.
+   ===================================================================== */
+body {
+    background-color: var(--bg) !important;
+    background-image: none !important;
+    background-attachment: scroll !important;
+    padding-bottom: calc(110px + var(--app-bottom));
+}
+.app-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.15), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.1), transparent 30%),
+        linear-gradient(135deg, #09090e, #141421);
+}
+
+/* =====================================================================
+   2. TELEGRAM FULLSCREEN — отступы под системные кнопки
+   ===================================================================== */
+
+/* Тёмная подложка под кнопками Telegram: контент уходит под неё при прокрутке,
+   а не просвечивает под «Закрыть» и «⋯» */
+.app-top-scrim {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--app-top);
+    z-index: 490;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(6, 6, 12, 0.96) 0%, rgba(6, 6, 12, 0.82) 62%, rgba(6, 6, 12, 0) 100%);
+}
+
+/* Вкладки */
+#tab-catalog,
+#tab-profile,
+#tab-collection { padding-top: calc(16px + var(--app-top)) !important; }
+#tab-tops,
+#tab-shop { padding-top: calc(12px + var(--app-top)) !important; }
+
+/* Полноэкранные разделы */
+.earn-screen,
+.profile-screen { padding-top: calc(16px + var(--app-top)); }
+.owners-screen { padding-top: calc(16px + var(--app-top)); }
+#passScreen > .ps-head { top: calc(10px + var(--app-top)) !important; }
+.pass-top-banner { padding-top: calc(50px + var(--app-top)); }
+.tier-head { padding-top: calc(14px + var(--app-top)); }
+.duel-top { padding-top: calc(12px + var(--app-top)); }
+.ws-head { padding-top: calc(12px + var(--app-top)); }
+.ws-guide-top { padding-top: calc(14px + var(--app-top)); }
+.ws-crop-head { padding-top: calc(12px + var(--app-top)); }
+.ws-viewer-top { padding-top: calc(12px + var(--app-top)); }
+.mv-top { padding-top: calc(14px + var(--app-top)); }
+
+/* Уведомления выезжают ниже кнопок Telegram */
+.toast.show { top: calc(14px + var(--app-top)); }
+.premium-toast.active { top: calc(24px + var(--app-top)); }
+
+/* Окна по центру: не заезжают под шапку Telegram */
+.modal-overlay { padding-top: calc(15px + var(--app-top)); padding-bottom: calc(15px + var(--app-bottom)); }
+.modal-overlay .modal-content { max-height: min(90vh, 100%); }
+.gacha-buy-overlay,
+.summon-overlay,
+.pack-overlay,
+.system-overlay-center { padding-top: var(--app-top); padding-bottom: var(--app-bottom); }
+.gacha-buy-window.bx2 { max-height: min(88vh, calc(100% - 24px)); }
+
+/* Нижние шторки: сверху всегда остаётся место под кнопки Telegram */
+.sheet-overlay,
+.system-overlay,
+.achiev-modal-overlay,
+.cs-overlay { padding-top: calc(var(--app-top) + 8px); }
+.sheet { max-height: min(92vh, 100%); }
+.cs-sheet { max-height: min(78vh, 100%); }
+
+/* Нижняя навигация не наезжает на полоску «домой» на iPhone в fullscreen */
+.bottom-nav { bottom: max(16px, calc(var(--app-bottom) - 4px)); }
+
+/* =====================================================================
+   3. ПОКУПКА КРУТОК — все наборы и ценники видны сразу
+   ===================================================================== */
+
+/* «Лучшая цена» — широкая полоса: иконки | количество | ценник.
+   Так она в 2 раза ниже и не уезжает под кнопку покупки. */
+.bx2 .bx-pack.best {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 14px;
+    padding: 14px 16px 14px 74px;
+    text-align: left;
+}
+/* Слева угол занимает ленточка «Лучшая цена» — стопку билетов тут не показываем */
+.bx-pack.best .bx-stack { display: none; }
+.bx-pack.best .bx-amt { grid-row: 1; grid-column: 1; align-self: end; }
+.bx-pack.best .bx-lbl { grid-row: 2; grid-column: 1; align-self: start; margin: 3px 0 0; }
+.bx-pack.best .bx-price { grid-row: 1 / 3; grid-column: 2; padding: 9px 14px; font-size: 15px; }
+.bx-pack.best .bx-check { top: 6px; right: 6px; }
+
+/* Если список всё же прокручивается — мягко гасим нижний край */
+.bx-grid {
+    padding-bottom: 14px;
+    -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 14px), transparent);
+    mask-image: linear-gradient(180deg, #000 calc(100% - 14px), transparent);
+}
+
+@media (max-height: 920px) {
+    .bx2 .bx-ticket { width: 46px; height: 46px; font-size: 23px; border-radius: 16px; margin-bottom: 6px; }
+    .bx2 .gacha-buy-title { font-size: 21px; }
+    .bx2 .bx-head { margin-bottom: 10px; }
+    .bx2 .bx-tabs { margin-bottom: 10px; }
+    .bx2 .bx-pack { padding: 12px 8px 10px; }
+    .bx2 .bx-stack { height: 26px; margin-bottom: 2px; }
+    .bx2 .bx-stack span { font-size: 21px; }
+    .bx2 .bx-amt { font-size: 23px; }
+    .bx2 .bx-pack.best .bx-amt { font-size: 27px; }
+    .bx2 .bx-lbl { margin: 2px 0 7px; }
+    .bx2 .bx-cta { height: 50px; }
+}
+
+/* =====================================================================
+   4. ЛЁГКАЯ ГРАФИКА — html.perf-lite
+   Выключаем самое дорогое для видеокарты: размытие фона под стеклом,
+   бесконечные декоративные анимации больших слоёв и 3D-перелистывание.
+   Спиннеры загрузки и анимации наград не трогаем.
+   ===================================================================== */
+html.perf-lite *,
+html.perf-lite *::before,
+html.perf-lite *::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+/* Стекло без размытия — делаем плотнее, чтобы текст читался */
+html.perf-lite .bottom-nav { background: rgba(14, 14, 22, 0.98) !important; }
+html.perf-lite .modal-overlay,
+html.perf-lite .sheet-overlay,
+html.perf-lite .system-overlay,
+html.perf-lite .gacha-buy-overlay { background: rgba(0, 0, 0, 0.86); }
+
+html.perf-lite .es-sky-neb,
+html.perf-lite .es-hero-img,
+html.perf-lite .es-promo::after,
+html.perf-lite .es-portal-img,
+html.perf-lite .es-portal-title span,
+html.perf-lite .es-ring,
+html.perf-lite .es-fcard,
+html.perf-lite .es-wheel-rays,
+html.perf-lite .es-wheel-halo,
+html.perf-lite .es-atelier-img,
+html.perf-lite .es-art-ring,
+html.perf-lite #tab-shop .es-actions .gacha-btn-main,
+html.perf-lite #tab-shop .es-actions .gacha-btn-main::after,
+html.perf-lite #tab-shop .premium-frame-card::after,
+html.perf-lite .gacha-bg,
+html.perf-lite .gacha-banner::before,
+html.perf-lite .gacha-btn-main,
+html.perf-lite .gacha-btn-main::after,
+html.perf-lite .wheel-wrap::before,
+html.perf-lite .wheel-spin-btn,
+html.perf-lite .wheel-spin-btn::after,
+html.perf-lite .lb-hero-beams,
+html.perf-lite .lb-title span,
+html.perf-lite .lb-rays,
+html.perf-lite .lb-ped-shine,
+html.perf-lite .lb-sparks i,
+html.perf-lite .owners-screen .os-card-wrap,
+html.perf-lite .os-card-holo,
+html.perf-lite .os-skin-shine,
+html.perf-lite .ach-prog-fill::after,
+html.perf-lite .duel-game-card::before,
+html.perf-lite .duel-main-btn,
+html.perf-lite .duel-rift::before,
+html.perf-lite .coll-uni-fill::after,
+html.perf-lite .coll-mini-card.owned::after,
+html.perf-lite .pf-icon-wrap,
+html.perf-lite .cs-scan,
+html.perf-lite .bx-ticket,
+html.perf-lite .bx-cta::after {
+    animation: none !important;
+}
+/* Карточка достижения «можно забрать»: оставляем появление, убираем вращение рамки */
+html.perf-lite .ach-card.st-ready { animation: achIn 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) backwards !important; }
+/* Искры в топах — просто прячем */
+html.perf-lite .lb-sparks { display: none !important; }
+
+/* =====================================================================
+   5. КОМПЬЮТЕР И ПЛАНШЕТ
+   ===================================================================== */
+
+/* ---------- Мышь: курсор и подсветка при наведении ---------- */
+@media (hover: hover) and (pointer: fine) {
+    button, [onclick], .nav-btn, .card, .bx-pack, .gacha-tab, .catalog-toggle-btn { cursor: pointer; }
+    button:disabled { cursor: default; }
+
+    .card { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(196, 181, 253, 0.18); }
+
+    .bottom-nav .nav-btn:not(.active):hover { color: #e9e7ff; }
+    .bx-pack:not(.selected):hover { border-color: rgba(192, 132, 252, 0.45); transform: translateY(-2px); }
+    .module-card, .action-card, .snd-toggle-card { transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+    .module-card:hover, .action-card:hover, .snd-toggle-card:hover { transform: translateY(-2px); border-color: rgba(196, 181, 253, 0.28); }
+
+    /* Тонкая тёмная полоса прокрутки вместо белой системной */
+    html { scrollbar-width: thin; scrollbar-color: rgba(139, 92, 246, 0.45) transparent; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(139, 92, 246, 0.35);
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+    }
+    ::-webkit-scrollbar-thumb:hover { background-color: rgba(139, 92, 246, 0.6); }
+}
+
+/* ---------- Широкий экран: колонка по центру ----------
+   Вкладки и разделы остаются во всю ширину (фон, туманности, переходы),
+   а содержимое собирается в аккуратную колонку. */
+@media (min-width: 700px) {
+    :root { --app-w: 680px; }
+
+    .tab-content {
+        padding-left: max(14px, calc((100% - var(--app-w)) / 2)) !important;
+        padding-right: max(14px, calc((100% - var(--app-w)) / 2)) !important;
+    }
+
+    .earn-screen,
+    .profile-screen,
+    .owners-screen {
+        padding-left: max(14px, calc((100% - var(--app-w)) / 2));
+        padding-right: max(14px, calc((100% - var(--app-w)) / 2));
+    }
+    .pass-screen,
+    .tier-screen,
+    .tier-analytic,
+    .duel-arena,
+    .ws-screen {
+        padding-left: max(0px, calc((100% - var(--app-w)) / 2));
+        padding-right: max(0px, calc((100% - var(--app-w)) / 2));
+    }
+    /* Кнопка «назад» в пропуске стоит абсолютно — двигаем вместе с колонкой */
+    #passScreen > .ps-head { left: max(10px, calc((100% - var(--app-w)) / 2 + 10px)) !important; }
+    /* Слои мастерской лежат абсолютно внутри — тоже сужаем */
+    .ws-layer {
+        left: max(0px, calc((100% - var(--app-w)) / 2));
+        right: max(0px, calc((100% - var(--app-w)) / 2));
+    }
+
+    /* В колонке ~680px комфортно 4 карты в ряд */
+    .cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 12px; }
+    .card { border-radius: 16px; padding: 7px; }
+    .card h3 { font-size: 12px; }
+
+    /* Туманность главной — в пределах колонки, а не на весь монитор */
+    #tab-profile::before,
+    #tab-profile::after {
+        left: max(-16px, calc((100% - var(--app-w)) / 2 - 14px));
+        right: max(-16px, calc((100% - var(--app-w)) / 2 - 14px));
+    }
+
+    /* Фон по бокам колонки: мягкое свечение и едва заметная сетка */
+    .app-backdrop {
+        background:
+            radial-gradient(60vw 60vh at 0% 0%, rgba(139, 92, 246, 0.16), transparent 70%),
+            radial-gradient(55vw 55vh at 100% 100%, rgba(6, 182, 212, 0.11), transparent 70%),
+            radial-gradient(40vw 40vh at 100% 10%, rgba(236, 72, 153, 0.07), transparent 70%),
+            linear-gradient(135deg, #07070d, #10101b);
+    }
+    .app-backdrop::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(196, 181, 253, 0.16) 1px, transparent 1.2px);
+        background-size: 26px 26px;
+        /* Сетка видна только по краям, под колонкой её нет */
+        -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.35) 30%, transparent 42%, transparent 58%, rgba(0, 0, 0, 0.35) 70%, #000 100%);
+        mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.35) 30%, transparent 42%, transparent 58%, rgba(0, 0, 0, 0.35) 70%, #000 100%);
+        opacity: 0.55;
+    }
+    /* Светящиеся границы колонки */
+    .app-backdrop::after {
+        content: '';
+        position: absolute;
+        top: 0; bottom: 0;
+        left: 50%;
+        width: calc(var(--app-w) + 28px);
+        transform: translateX(-50%);
+        border-left: 1px solid rgba(167, 139, 250, 0.10);
+        border-right: 1px solid rgba(167, 139, 250, 0.10);
+        background: linear-gradient(180deg, rgba(10, 9, 18, 0.55), rgba(6, 6, 12, 0.75));
+        box-shadow: 0 0 80px rgba(0, 0, 0, 0.55);
+    }
+
+    /* Шторки снизу на широком экране — аккуратные окна по центру */
+    .sheet-overlay,
+    .system-overlay,
+    .achiev-modal-overlay,
+    .cs-overlay { align-items: center; padding-bottom: 24px; }
+    .sheet,
+    .system-window,
+    .cs-sheet {
+        border-radius: 26px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+    .sheet { max-height: min(86vh, 100%); padding-bottom: 22px; }
+}
+
+/* ---------- Компьютер: навигация сбоку ----------
+   Нижняя панель превращается в вертикальную панель слева от колонки. */
+@media (min-width: 900px) and (min-height: 520px) {
+    :root {
+        --rail-w: 76px;
+        --app-w: min(720px, calc(100vw - 2 * (var(--rail-w) + 44px)));
+    }
+
+    body { padding-bottom: 40px; }
+    #tab-collection { padding-bottom: 60px !important; }
+
+    .bottom-nav {
+        top: 50% !important;
+        bottom: auto !important;
+        left: calc(50% - var(--app-w) / 2 - var(--rail-w) - 26px) !important;
+        right: auto !important;
+        transform: translateY(-50%) !important;
+        width: var(--rail-w) !important;
+        max-width: none !important;
+        margin: 0 !important;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 6px;
+        padding: 10px 8px !important;
+        border-radius: 26px !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+    }
+    .bottom-nav .nav-btn {
+        flex: none;
+        width: 100%;
+        max-width: none;
+        height: 56px;
+        margin: 0;
+        padding: 0;
+        border-radius: 18px;
+    }
+    .bottom-nav .nav-btn.active { transform: none !important; }
+
+    /* Индикатор ездит вверх-вниз */
+    .nav-indicator {
+        top: 0;
+        bottom: auto;
+        left: 8px;
+        right: 8px;
+        width: auto;
+        height: var(--h, 56px);
+        transform: translate3d(0, var(--y, 0px), 0);
+        border-radius: 18px;
+        transition:
+            transform 0.62s cubic-bezier(0.34, 1.45, 0.5, 1),
+            height 0.5s cubic-bezier(0.34, 1.45, 0.5, 1),
+            opacity 0.3s ease;
+    }
+    .nav-indicator::after {
+        left: -8px;
+        top: 50%;
+        bottom: auto;
+        width: 3px;
+        height: 22px;
+        margin: -11px 0 0;
+    }
+    .nav-indicator.stretch { animation: navGooV 0.62s cubic-bezier(0.3, 0.7, 0.4, 1); }
+    @keyframes navGooV {
+        0%   { scale: 1 1; }
+        30%  { scale: 0.85 1.4; }
+        60%  { scale: 1.06 0.92; }
+        80%  { scale: 0.98 1.03; }
+        100% { scale: 1 1; }
+    }
+
+    /* Всплывающая подпись при наведении */
+    .bottom-nav .nav-btn::after {
+        content: attr(data-label);
+        position: absolute;
+        left: calc(100% + 18px);
+        top: 50%;
+        transform: translate(-6px, -50%);
+        padding: 7px 12px;
+        border-radius: 10px;
+        background: rgba(18, 18, 28, 0.96);
+        border: 1px solid rgba(167, 139, 250, 0.25);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+    }
+    .bottom-nav .nav-btn:hover::after { opacity: 1; transform: translate(0, -50%); }
+}
+
+/* ---------- Большой монитор: панель с подписями и логотипом ---------- */
+@media (min-width: 1280px) and (min-height: 600px) {
+    :root { --rail-w: 196px; --app-w: 720px; }
+
+    .bottom-nav { padding: 14px 10px 10px !important; }
+    .bottom-nav::before {
+        content: 'ManhwCard';
+        display: block;
+        padding: 4px 10px 14px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        font-family: 'Unbounded', 'Inter', sans-serif;
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+        background: linear-gradient(90deg, #fff, #c4b5fd 60%, #67e8f9);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .bottom-nav .nav-btn {
+        justify-content: flex-start;
+        gap: 14px;
+        padding: 0 16px;
+        height: 52px;
+    }
+    .bottom-nav .nav-btn svg { flex-shrink: 0; }
+    /* Подпись теперь прямо в кнопке */
+    .bottom-nav .nav-btn::after {
+        position: static;
+        transform: none;
+        padding: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+        opacity: 1;
+        font-size: 14px;
+        font-weight: 700;
+        color: inherit;
+    }
+    .bottom-nav .nav-btn:hover::after { transform: none; }
+    .nav-indicator { left: 10px; right: 10px; }
+    .nav-indicator::after { left: -10px; }
+    .nav-btn .free-dot { top: 12px; left: 32px; }
+}
+
+/* Короткий и широкий экран (телефон боком): обычная нижняя панель, чуть ниже */
+@media (min-width: 700px) and (max-height: 519px) {
+    .bottom-nav { bottom: 8px; }
+}

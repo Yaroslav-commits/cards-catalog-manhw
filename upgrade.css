@@ -1483,6 +1483,10 @@ span.mc-cur { width: auto; height: auto; font-weight: 900; line-height: 1; }
     flex: 1 1 auto;
     min-height: 0;
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    /* Строки по высоте содержимого: раньше сетка сжимала карточки под высоту окна
+       и срезала нижнюю часть вместе с ценником */
+    grid-auto-rows: max-content;
+    align-content: start;
     margin: 0 -6px 12px;
     padding: 4px 6px 6px;
     overflow-y: auto;
@@ -1518,8 +1522,10 @@ span.mc-cur { width: auto; height: auto; font-weight: 900; line-height: 1; }
     transform: translateY(-2px);
 }
 .bx-pack.best.selected { border-color: #fbbf24; box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.25), 0 10px 26px rgba(251, 191, 36, 0.3); }
-.bx-pack.cant { opacity: 0.5; }
-.bx-pack.cant .bx-price { color: #f87171; }
+/* Недоступный набор приглушаем, но ценник оставляем читаемым */
+.bx-pack.cant { opacity: 0.78; }
+.bx-pack.cant .bx-stack, .bx-pack.cant .bx-amt, .bx-pack.cant .bx-lbl { opacity: 0.6; }
+.bx-pack.cant .bx-price { color: #fca5a5; border-color: rgba(248, 113, 113, 0.35); background: rgba(127, 29, 29, 0.35); }
 .bx-stack { display: flex; justify-content: center; height: 34px; margin-bottom: 4px; }
 .bx-stack span {
     margin: 0 -7px;
