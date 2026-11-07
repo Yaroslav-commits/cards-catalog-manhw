@@ -58,6 +58,48 @@
         // Некоторые клиенты присылают отступы с небольшой задержкой
         setTimeout(applyInsets, 300);
         setTimeout(applyInsets, 1200);
+
+        var platform = String(tg.platform || '').toLowerCase();
+        var isPhone = platform === 'ios' || platform === 'android' || platform === 'android_x';
+        var isDesktop = platform === 'tdesktop' || platform === 'macos';
+
+        // Телефоны: открываемся во весь экран сами — не зависим от настройки
+        // в BotFather (там fullscreen можно выключить, чтобы он не включался на ПК)
+        safe(function () {
+            if (isPhone && atLeast('8.0') && tg.requestFullscreen && !tg.isFullscreen) tg.requestFullscreen();
+        });
+
+        // Компьютер: Telegram Desktop на Windows с масштабом экрана (125–150%)
+        // иногда ставит окно fullscreen со сдвигом — часть приложения уезжает
+        // за край монитора. Если окно не помещается на экран, выходим из
+        // fullscreen в обычное окно: там вёрстка для ПК работает как надо.
+        var fixedPlacement = false;
+        function windowOffScreen() {
+            var s = window.screen;
+            if (!s || !s.availWidth) return false;
+            var x = typeof window.screenX === 'number' ? window.screenX : window.screenLeft;
+            var y = typeof window.screenY === 'number' ? window.screenY : window.screenTop;
+            var w = window.outerWidth || window.innerWidth;
+            var h = window.outerHeight || window.innerHeight;
+            if (typeof x !== 'number' || !w) return false;
+            var left = s.availLeft || 0, top = s.availTop || 0;
+            // Запас на панель задач: fullscreen может перекрывать её
+            var tolX = (s.width - s.availWidth) + 16;
+            var tolY = (s.height - s.availHeight) + 16;
+            return x < left - tolX || x + w > left + s.availWidth + tolX ||
+                   y < top - tolY || y + h > top + s.availHeight + tolY;
+        }
+        function checkDesktopPlacement() {
+            if (!isDesktop || fixedPlacement || !tg.isFullscreen || !tg.exitFullscreen) return;
+            if (!windowOffScreen()) return;
+            fixedPlacement = true;
+            safe(function () { tg.exitFullscreen(); });
+        }
+        if (isDesktop) {
+            setTimeout(checkDesktopPlacement, 400);
+            setTimeout(checkDesktopPlacement, 1500);
+            safe(function () { tg.onEvent('fullscreenChanged', function () { setTimeout(checkDesktopPlacement, 400); }); });
+        }
     }
 
     // Затемнение под кнопками Telegram: контент уходит под него при прокрутке
