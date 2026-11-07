@@ -3239,6 +3239,9 @@ function mcMoveNav(btn, animate, dir) {
     if (!animate) ind.classList.add('no-anim');
     ind.style.setProperty('--x', btn.offsetLeft + 'px');
     ind.style.setProperty('--w', btn.offsetWidth + 'px');
+    // Для вертикальной панели на компьютере (app-shell.css)
+    ind.style.setProperty('--y', btn.offsetTop + 'px');
+    ind.style.setProperty('--h', btn.offsetHeight + 'px');
     ind.classList.add('ready');
     if (!animate) {
         void ind.offsetWidth;
@@ -3362,7 +3365,9 @@ function switchTab(tabId, btnElement, opts) {
         if (t !== oldTab && t !== newTab) t.classList.remove('active');
     });
 
-    var canAnimate = oldTab && typeof oldTab.animate === 'function' && !(opts && opts.instant);
+    // В лёгком режиме (слабые устройства) 3D-перелистывание пропускаем — вкладка меняется сразу
+    var canAnimate = oldTab && typeof oldTab.animate === 'function' && !(opts && opts.instant) &&
+        !document.documentElement.classList.contains('perf-lite');
     if (canAnimate) {
         try {
             mcFlipPages(oldTab, newTab, flip, sy, targetY);
