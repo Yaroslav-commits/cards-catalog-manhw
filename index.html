@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="upgrade.css?v=3">
         <link rel="stylesheet" href="shop-elite.css?v=1">
         <link rel="stylesheet" href="app-shell.css?v=2">
+        <link rel="stylesheet" href="summon-fx.css?v=1">
 </head>
 <body>
     <div id="splashScreen" class="splash-screen">
@@ -562,7 +563,7 @@
                 <div class="es-cost-ico">🎟</div>
                 <div class="es-cost-main">
                     <div class="es-lbl">Стоимость</div>
-                    <div class="gacha-t-val-large"><span id="summonCostText">8</span> попыток</div>
+                    <div class="gacha-t-val-large"><span id="summonCostText">8 попыток</span></div>
                 </div>
                 <div class="es-cost-side">
                     <div class="es-lbl">Останется</div>
@@ -570,9 +571,25 @@
                 </div>
             </div>
 
+            <!-- Режим открытия (summon-fx.js) -->
+            <div class="sx-modes" id="sxModes" data-mode="auto" role="group" aria-label="Режим открытия">
+                <span class="sx-modes-glider" aria-hidden="true"></span>
+                <button class="sx-mode active" type="button" data-mode="auto" onclick="setSummonMode('auto')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4l14 8-14 8z"/></svg>
+                    Авто<small>сами открываются</small>
+                </button>
+                <button class="sx-mode" type="button" data-mode="manual" onclick="setSummonMode('manual')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 10.5V9a2 2 0 0 1 4 0v4a7 7 0 0 1-7 7h-.5A6.5 6.5 0 0 1 4 14.5V13a2 2 0 0 1 4 0"/><path d="M9 11.5V13"/></svg>
+                    Вручную<small>тапай по картам</small>
+                </button>
+                <button class="sx-mode" type="button" data-mode="fast" onclick="setSummonMode('fast')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+                    Быстро<small>сразу итог</small>
+                </button>
+            </div>
+
             <div class="gacha-actions es-actions">
-                <button class="gacha-btn-quick" id="btnQuickSummon" onclick="executeSummon(true)">Быстро</button>
-                <button class="gacha-btn-main" id="btnFullSummon" onclick="executeSummon(false)">Открыть 8</button>
+                <button class="gacha-btn-main" id="btnFullSummon" onclick="executeSummon()">Открыть 8</button>
             </div>
         </div>
 
@@ -1647,11 +1664,12 @@
         <div class="ta-body" id="taBody"></div>
     </div>
 
-    <script src="script.js?v=8"></script>
+    <script src="script.js?v=9"></script>
 
     <script src="custom-select.js"></script>
     <script src="wheel.js"></script>
     <script src="shop-elite.js?v=2"></script>
+    <script src="summon-fx.js?v=1"></script>
     <script src="duel-ui.js"></script>
 
     <script>
@@ -1688,7 +1706,7 @@
 
     <!-- МАСТЕРСКАЯ -->
     <div class="ws-screen" id="wsScreen"></div>
-    <script src="workshop.js?v=11"></script>
+    <script src="workshop.js?v=12"></script>
 
 </body>
 </html>

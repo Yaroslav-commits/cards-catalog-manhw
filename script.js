@@ -518,6 +518,18 @@ function getCardSkill(cardId) {
             }
         };
 
+        // Лёгкое превью карты (images/preview, ~40 КБ вместо ~600 КБ оригинала).
+        // Делает make_previews.py. Нет превью — mcImgFallback подставит оригинал.
+        window.mcPreviewSrc = function (file) {
+            return 'images/preview/' + String(file || '').replace(/\.[^.\/]+$/, '') + '.webp';
+        };
+        window.mcImgFallback = function (img) {
+            var fb = img && img.getAttribute('data-fb');
+            if (fb) { img.removeAttribute('data-fb'); img.src = fb; return; }
+            if (img) img.onerror = null;
+            window.cardImageLoaded(img);
+        };
+
         var currentCatalogPage = 1;
         var lastCatalogFilterKey = "";
 
@@ -711,7 +723,7 @@ function renderCards(cards) {
             }
         } else {
             var fallbackSrc = (item.file || '').replace(/\.jpe?g$/i, '.webp');
-            mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="images/' + fallbackSrc + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)"></div>';
+            mediaHtml = '<div class="img-wrap"><div class="spinner-ring"></div><img src="' + mcPreviewSrc(item.file) + '" data-fb="images/' + fallbackSrc + '" loading="lazy" decoding="async" onload="window.cardImageLoaded(this)" onerror="mcImgFallback(this)"></div>';
         }
 
         var styleHtml = '';
@@ -1542,7 +1554,7 @@ function closeProfileModal() {
                 var html = '';
                 html += '<div class="img-wrap">';
                 html += '<div class="spinner-ring"></div>';
-                html += '<img src="images/' + c.file + '" alt="' + c.name + '" loading="lazy" onload="window.cardImageLoaded(this)" onerror="window.cardImageLoaded(this)" style="pointer-events: none;">';
+                html += '<img src="' + mcPreviewSrc(c.file) + '" data-fb="images/' + c.file + '" alt="' + c.name + '" loading="lazy" decoding="async" onload="window.cardImageLoaded(this)" onerror="mcImgFallback(this)" style="pointer-events: none;">';
                 html += '</div>';
                 html += '<div class="card-name" style="font-size: 13px; font-weight: 700; text-align: left; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; padding: 0 2px;">' + c.name + '</div>';
                 html += '<div class="card-rarity" style="font-size: 11px; text-align: left; color: var(--text-muted); margin-top: 2px; padding: 0 2px;">' + c.rarity + '</div>';
@@ -2232,30 +2244,38 @@ async function openPublicProfile(targetId) {
         // Инициализируем слайдер при загрузке страницы
         syncSummon(8);
 
-        // Функция запроса к серверу (ОСТАВЛЯЕМ КАК БЫЛА ПОКА ЧТО)
-        async function executeSummon(isQuick) {
+        // Открытие круток. mode: 'auto' | 'manual' | 'fast' (по умолчанию — выбранный в магазине).
+        // Сцену (summon-fx.js) запускаем сразу по нажатию: портал крутится,
+        // пока сервер отвечает, — ожидание не заметно.
+        async function executeSummon(mode) {
             if (summonInFlight) return; // уже идёт запрос
+            if (mode === true) mode = 'fast';
+            var fx = window.SummonFX;
+            if (!mode || mode === false) mode = fx ? fx.getMode() : 'auto';
             summonInFlight = true;
 
             var btnFull = document.getElementById('btnFullSummon');
-            var btnQuick = document.getElementById('btnQuickSummon');
-            btnFull.disabled = true; btnQuick.disabled = true;
+            if (btnFull) btnFull.disabled = true;
+            var amount = selectedSummonAmount;
+            if (fx) fx.begin(mode, amount);
 
             try {
                 var res = await fetch(API_BASE + '/api/multi_summon/' + userId, {
                     method: 'POST',
                     headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
-                    body: JSON.stringify({ amount: selectedSummonAmount })
+                    body: JSON.stringify({ amount: amount })
                 });
                 var data = await res.json();
 
                 if (data.success && Array.isArray(data.cards) && data.cards.length) {
                     summonedCardsData = data.cards;
                     document.getElementById('shopAttemptsBal').innerText = data.new_attempts;
+                    if (typeof mcBal !== 'undefined') mcBal.att = data.new_attempts;
                     refreshSummonCostState();
                     fetchProfile(); // Фоново обновляем основную коллекцию
 
-                    if (isQuick) showQuickResults();
+                    if (fx) fx.resolve(data.cards, { attemptsLeft: data.new_attempts });
+                    else if (mode === 'fast') showQuickResults();
                     else startEpicSummonSequence();
 
                     // Сервер вернул часть билетов (сбой посреди открытия)
@@ -2263,13 +2283,15 @@ async function openPublicProfile(targetId) {
                         showToast('Часть билетов возвращена', 'Не удалось открыть ' + data.refunded + ' шт. — билеты вернулись на баланс.');
                     }
                 } else {
+                    if (fx) fx.fail();
                     // data.detail — так FastAPI отдаёт ошибки авторизации (401/403)
                     tg.showAlert(data.error || data.detail || 'Не удалось открыть карты');
                 }
             } catch (e) {
+                if (fx) fx.fail();
                 tg.showAlert("Ошибка соединения с сервером");
             } finally {
-                btnFull.disabled = false; btnQuick.disabled = false;
+                if (btnFull) btnFull.disabled = false;
                 summonInFlight = false;
             }
         }
@@ -4672,7 +4694,7 @@ document.addEventListener('click', function (e) {
     if (!t || !t.closest) return;
     var el = t.closest('button, a, [onclick], .card, .lb-row, .lb-pod, .os-skin-tile, .os-owner-row');
     if (!el) return;
-    if (el.closest('.bottom-nav, #summonGrid, #packCardWrapper, [data-snd="off"]')) return;
+    if (el.closest('.bottom-nav, #summonGrid, #packCardWrapper, .sx-stage, .sx-spot, [data-snd="off"]')) return;
     if (el.id === 'wheelSpinBtn' || el.id === 'sndToggleCard') return;
     MCSound.play('tap');
 }, true);

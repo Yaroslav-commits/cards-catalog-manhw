@@ -13,6 +13,7 @@ var WS_CFG = {
     templates: {
         mythic: 'mythic.png',
         legendary: 'legendary.png',
+        premium: 'premium.PNG',
         epic: 'epic.png',
         rare: 'rare.png',
         common: 'common.png'
@@ -67,6 +68,7 @@ var WS_CFG = {
 var WS_RARITIES = [
     { key: 'mythic',    label: 'Мифическая',  emoji: '🔴', color: '#ef4444', min: 91, max: 100 },
     { key: 'legendary', label: 'Легендарная', emoji: '🔵', color: '#3b82f6', min: 1,  max: 99 },
+    { key: 'premium',   label: 'Премиум',     emoji: '👑', color: '#f5c84c', min: 1,  max: 99 },
     { key: 'epic',      label: 'Эпическая',   emoji: '🟢', color: '#4ade80', min: 1,  max: 99 },
     { key: 'rare',      label: 'Редкая',      emoji: '🟡', color: '#fde047', min: 1,  max: 99 },
     { key: 'common',    label: 'Обычная',     emoji: '⚪️', color: '#cbd5e1', min: 1,  max: 99 }
@@ -137,13 +139,13 @@ function wsToast(text, isError) {
 
 function wsRarity(key) {
     for (var i = 0; i < WS_RARITIES.length; i++) if (WS_RARITIES[i].key === key) return WS_RARITIES[i];
-    return WS_RARITIES[1];
+    return key === 'legendary' ? WS_RARITIES[1] : wsRarity('legendary');
 }
 
 function wsRarityByName(name) {
     name = name || '';
     for (var i = 0; i < WS_RARITIES.length; i++) if (name.indexOf(WS_RARITIES[i].label) === 0) return WS_RARITIES[i];
-    return WS_RARITIES[4];
+    return wsRarity('common');
 }
 
 function wsDaysLeft(sec) {
@@ -601,13 +603,15 @@ var WS_ICON = {
 
 var WS_PURPOSES = [
     { key: 'craft',      label: 'Крафт',   icon: 'hammer', text: 'Карту можно будет скрафтить' },
-    { key: 'battlepack', label: 'Батлпак', icon: 'gift',   text: 'Карта как награда в батлпаке' },
+    { key: 'premium',    label: 'Премиум', icon: 'gift',   text: 'Карта для игроков с Премиумом' },
     { key: 'pass',       label: 'Пасс',    icon: 'ticket', text: 'Приоритет — вселенные, которые уже есть в боте' },
     { key: 'other',      label: 'Другое',  icon: 'pen',    text: 'Опиши идею в комментарии' }
 ];
 
 function wsPurpose(key) {
     for (var i = 0; i < WS_PURPOSES.length; i++) if (WS_PURPOSES[i].key === key) return WS_PURPOSES[i];
+    // Предложения, отправленные до замены «Батлпака» на «Премиум»
+    if (key === 'battlepack') return { key: 'battlepack', label: 'Батлпак', icon: 'gift', text: '' };
     return null;
 }
 
