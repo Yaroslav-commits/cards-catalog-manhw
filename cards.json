@@ -5083,7 +5083,7 @@
         "speed": 13,
         "strength": 30,
         "intellect": 16,
-        "file": "daniel_fat.png",
+        "file": "daniel_fat.webp",
         "exclusive": false,
         "id": "daniel_fat"
     },
@@ -5107,7 +5107,7 @@
         "speed": 11,
         "strength": 11,
         "intellect": 11,
-        "file": "ha.png",
+        "file": "ha.webp",
         "exclusive": false,
         "id": "ha"
     },
@@ -5119,7 +5119,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 10,
-        "file": "yena.png",
+        "file": "yena.webp",
         "exclusive": false,
         "id": "yena"
     },
@@ -5131,7 +5131,7 @@
         "speed": 10,
         "strength": 10,
         "intellect": 10,
-        "file": "doch.png",
+        "file": "doch.webp",
         "exclusive": false,
         "id": "doch"
     },
@@ -5143,7 +5143,7 @@
         "speed": 12,
         "strength": 10,
         "intellect": 20,
-        "file": "yujin.png",
+        "file": "yujin.webp",
         "exclusive": false,
         "id": "yujin"
     },
@@ -5155,7 +5155,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 79,
-        "file": "sosun.png",
+        "file": "sosun.webp",
         "exclusive": false,
         "id": "seo_soneun"
     },
@@ -5167,7 +5167,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 80,
-        "file": "kimen.png",
+        "file": "kimen.webp",
         "exclusive": false,
         "id": "kim_kimyeon"
     },
@@ -5179,7 +5179,7 @@
         "speed": 80,
         "strength": 79,
         "intellect": 80,
-        "file": "jichan.png",
+        "file": "jichan.webp",
         "exclusive": false,
         "id": "kwak_jichan"
     },
@@ -5191,7 +5191,7 @@
         "speed": 79,
         "strength": 80,
         "intellect": 78,
-        "file": "ma.png",
+        "file": "ma.webp",
         "exclusive": false,
         "id": "ma_tesu"
     },
@@ -5203,7 +5203,7 @@
         "speed": 79,
         "strength": 80,
         "intellect": 78,
-        "file": "gonsop.png",
+        "file": "gonsop.webp",
         "exclusive": false,
         "id": "ji_gonsop"
     },
@@ -5215,7 +5215,7 @@
         "speed": 80,
         "strength": 80,
         "intellect": 76,
-        "file": "jinson.png",
+        "file": "jinson.webp",
         "exclusive": false,
         "id": "lee_jinson"
     },
@@ -5275,7 +5275,7 @@
         "speed": 78,
         "strength": 78,
         "intellect": 79,
-        "file": "ryu.png",
+        "file": "ryu.webp",
         "exclusive": false,
         "id": "ryu_jaun"
     },
@@ -5287,7 +5287,7 @@
         "speed": 79,
         "strength": 79,
         "intellect": 75,
-        "file": "oh.png",
+        "file": "oh.webp",
         "exclusive": false,
         "id": "odalyan"
     },
@@ -5299,7 +5299,7 @@
         "speed": 60,
         "strength": 62,
         "intellect": 60,
-        "file": "anson.png",
+        "file": "anson.webp",
         "exclusive": false,
         "id": "an_hyeonson"
     },
@@ -5311,7 +5311,7 @@
         "speed": 61,
         "strength": 60,
         "intellect": 61,
-        "file": "jael.png",
+        "file": "jael.webp",
         "exclusive": false,
         "id": "hong_jayeol"
     },
@@ -5347,7 +5347,7 @@
         "speed": 89,
         "strength": 87,
         "intellect": 86,
-        "file": "yohan.png",
+        "file": "yohan.webp",
         "exclusive": false,
         "id": "yohan_son"
     },
@@ -5359,7 +5359,7 @@
         "speed": 85,
         "strength": 86,
         "intellect": 88,
-        "file": "jinran.png",
+        "file": "jinran.webp",
         "exclusive": false,
         "id": "jinran"
     },
@@ -5371,7 +5371,7 @@
         "speed": 86,
         "strength": 84,
         "intellect": 85,
-        "file": "yuk.png",
+        "file": "yuk.webp",
         "exclusive": false,
         "id": "yuk_sonji"
     },
@@ -5395,7 +5395,7 @@
         "speed": 59,
         "strength": 59,
         "intellect": 59,
-        "file": "kenta.png",
+        "file": "kenta.webp",
         "exclusive": false,
         "id": "magami_kenta"
     },
@@ -5407,7 +5407,7 @@
         "speed": 58,
         "strength": 59,
         "intellect": 59,
-        "file": "minsik.png",
+        "file": "minsik.webp",
         "exclusive": false,
         "id": "choi_minsik"
     },
@@ -5419,7 +5419,7 @@
         "speed": 58,
         "strength": 59,
         "intellect": 58,
-        "file": "kazuma.png",
+        "file": "kazuma.webp",
         "exclusive": false,
         "id": "kazuma_sato"
     },
@@ -5431,7 +5431,7 @@
         "speed": 59,
         "strength": 58,
         "intellect": 50,
-        "file": "akira.png",
+        "file": "akira.webp",
         "exclusive": false,
         "id": "akira"
     },
@@ -5443,7 +5443,7 @@
         "speed": 54,
         "strength": 53,
         "intellect": 58,
-        "file": "hyon.png",
+        "file": "hyon.webp",
         "exclusive": false,
         "id": "hyeon_sejin"
     },
@@ -5455,7 +5455,7 @@
         "speed": 55,
         "strength": 54,
         "intellect": 54,
-        "file": "arim.png",
+        "file": "arim.webp",
         "exclusive": false,
         "id": "shin_arim"
     },
@@ -5467,7 +5467,7 @@
         "speed": 57,
         "strength": 52,
         "intellect": 54,
-        "file": "min.png",
+        "file": "min.webp",
         "exclusive": false,
         "id": "min_jinhun"
     },
@@ -5479,7 +5479,7 @@
         "speed": 55,
         "strength": 51,
         "intellect": 55,
-        "file": "jihan.png",
+        "file": "jihan.webp",
         "exclusive": false,
         "id": "kwak_jihan"
     },
@@ -5491,7 +5491,7 @@
         "speed": 52,
         "strength": 56,
         "intellect": 54,
-        "file": "jibom.png",
+        "file": "jibom.webp",
         "exclusive": false,
         "id": "kwak_jibom"
     },
@@ -5503,7 +5503,7 @@
         "speed": 51,
         "strength": 49,
         "intellect": 52,
-        "file": "koku.png",
+        "file": "koku.webp",
         "exclusive": false,
         "id": "watanabe_kokuin"
     },
@@ -5515,7 +5515,7 @@
         "speed": 48,
         "strength": 47,
         "intellect": 51,
-        "file": "takeshi.png",
+        "file": "takeshi.webp",
         "exclusive": false,
         "id": "takeshi_matsumoto"
     },
@@ -5527,7 +5527,7 @@
         "speed": 37,
         "strength": 38,
         "intellect": 37,
-        "file": "joe.png",
+        "file": "joe.webp",
         "exclusive": false,
         "id": "doctor_cho"
     },
@@ -5539,7 +5539,7 @@
         "speed": 36,
         "strength": 37,
         "intellect": 36,
-        "file": "eul.png",
+        "file": "eul.webp",
         "exclusive": false,
         "id": "haye_ul"
     },
@@ -5647,7 +5647,7 @@
         "speed": 80,
         "strength": 75,
         "intellect": 72,
-        "file": "sinu.png",
+        "file": "sinu.webp",
         "exclusive": false,
         "id": "han_sinu"
     },
@@ -5779,7 +5779,7 @@
         "speed": 48,
         "strength": 50,
         "intellect": 49,
-        "file": "masashi.png",
+        "file": "masashi.webp",
         "exclusive": false,
         "id": "masashi_takanobu"
     },
@@ -5791,7 +5791,7 @@
         "speed": 11,
         "strength": 12,
         "intellect": 10,
-        "file": "haruto.png",
+        "file": "haruto.webp",
         "exclusive": false,
         "id": "haruto"
     },
@@ -5803,7 +5803,7 @@
         "speed": 12,
         "strength": 11,
         "intellect": 10,
-        "file": "shime.png",
+        "file": "shime.webp",
         "exclusive": false,
         "id": "cheon_shinmyeong"
     },
@@ -5971,7 +5971,7 @@
         "speed": 20,
         "strength": 18,
         "intellect": 19,
-        "file": "bomzh.png",
+        "file": "bomzh.webp",
         "exclusive": false,
         "id": "park_beomjae"
     },
@@ -5995,7 +5995,7 @@
         "speed": 10,
         "strength": 11,
         "intellect": 12,
-        "file": "pek.png",
+        "file": "pek.webp",
         "exclusive": false,
         "id": "baek_hanggyeol"
     },
@@ -7207,7 +7207,7 @@
         "speed": 99,
         "strength": 99,
         "intellect": 101,
-        "file": "son_jin_woo.png",
+        "file": "son_jin_woo.webp",
         "video": "son_jin_woo.mp4",
         "width": 960,
         "height": 1280,
@@ -9190,7 +9190,7 @@
         "speed": 90,
         "strength": 90,
         "intellect": 85,
-        "file": "exclusive_card_1.png",
+        "file": "exclusive_card_1.webp",
         "exclusive": true,
         "id": "exclusive_card_1"
     },
