@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ManhwCard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#06060c">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="app-shell.js?v=3"></script>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="custom-select.css">
+        <link rel="stylesheet" href="shop.css">
+        <link rel="stylesheet" href="duel.css?v=2">
+        <link rel="stylesheet" href="menu.css">
+        <link rel="stylesheet" href="tier.css">
+        <link rel="stylesheet" href="workshop.css?v=9">
+        <link rel="stylesheet" href="upgrade.css?v=3">
+        <link rel="stylesheet" href="shop-elite.css?v=1">
+        <link rel="stylesheet" href="app-shell.css?v=2">
+        <link rel="stylesheet" href="summon-fx.css?v=1">
+</head>
+<body>
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-text">ManhwCard</div>
+    </div>
+
+    <div id="tab-catalog" class="tab-content">
+        <div class="section-hero">
+            <div class="hero-kicker">ManhwCard Archive</div>
+            <div class="hero-title">Каталог карточек</div>
+            <div class="hero-subtitle">Собирай коллекцию, фильтруй по редкости и вселенным.</div>
+
+            <div class="hero-pills">
+                <span class="hero-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <rect x="7" y="7" width="3" height="9" rx="1"></rect>
+                        <rect x="14" y="7" width="3" height="5" rx="1"></rect>
+                    </svg>
+                    <span id="catalogTotal">0 карт</span>
+                </span>
+                <span class="hero-pill">
+                    <svg viewBox="0 0 24 24" fill="var(--premium-gold)" stroke="var(--premium-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span id="catalogOwned">Собрано 0</span>
+                </span>
+            </div>
+        </div> <!-- ✅ ВАЖНО: Закрывающий тег для section-hero -->
+
+        <svg style="display: none;">
+            <symbol id="icon-cards" viewBox="0 0 24 24">
+                <path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </symbol>
+            <symbol id="icon-skins" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </symbol>
+            <symbol id="icon-star" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+            </symbol>
+        </svg>
+
+<div class="catalog-tabs-wrapper">
+    <div class="catalog-toggle">
+        <div class="catalog-toggle-slider" id="catalogToggleSlider"></div>
+        <div class="catalog-toggle-btn active" id="btnTabCards" onclick="toggleCatalogTab('cards')">
+            <svg><use href="#icon-skins"></use></svg> Карты
+        </div>
+        <div class="catalog-toggle-btn" id="btnTabSkins" onclick="toggleCatalogTab('skins')">
+            <svg><use href="#icon-cards"></use></svg> Скины
+        </div>
+    </div>
+</div>
+
+        <div class="filters-wrapper">
+            <div class="filters-grid">
+                <input type="text" id="searchInput" class="filter-full" placeholder="🔍 Поиск по имени..." oninput="updateCards()">
+                
+                <select id="rarityFilter" onchange="updateCards()">
+                    <option value="all">Все редкости</option>
+                    <option value="Божественная">⚫ Божественная</option>
+                    <option value="Мифическая">🔴 Мифическая</option>
+                    <option value="Легендарная">🔵 Легендарная</option>
+                    <option value="Эпическая">🟢 Эпическая</option>
+                    <option value="Редкая">🟡 Редкая</option>
+                    <option value="Обычная">⚪️ Обычная</option>
+                </select>
+                
+                <select id="seriesFilter" onchange="updateCards()">
+                    <option value="all">Все вселенные</option>
+                </select>
+
+                <select id="sortFilter" class="filter-full" onchange="updateCards()">
+                    <option value="default">Сортировка: По умолчанию</option>
+                    <optgroup label="Сила 💪">
+                        <option value="str_desc">💪Сила ⬆️</option>
+                        <option value="str_asc">💪Сила ⬇️</option>
+                    </optgroup>
+                    <optgroup label="Скорость ⚡️">
+                        <option value="spd_desc">⚡️Скорость ⬆️</option>
+                        <option value="spd_asc">⚡️Скорость ⬇️</option>
+                    </optgroup>
+                    <optgroup label="Интеллект 🧠">
+                        <option value="int_desc">🧠Интеллект ⬆️</option>
+                        <option value="int_asc">🧠Интеллект ⬇️</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <div class="filters-grid-row-2">
+                <select id="styleFilter" onchange="updateCards()">
+                    <option value="all">Все навыки</option>
+                    <option value="Копирование">👁️ Копирование</option>
+                    <option value="Восстание">🌑 Восстание</option>
+                    <option value="Берсерк">🩸 Берсерк</option>
+                    <option value="Пространство">🌊 Пространство</option>
+                    <option value="Пробивание">⚔️ Пробивание</option>
+                    <option value="Уклонение">🌪 Уклонение</option>
+                    <option value="Базовый">⚪ Базовые (Без навыка)</option>
+                </select>
+                
+                <div class="exclusive-switch-wrapper" id="exclusiveFilterBtn" onclick="toggleExclusive()">
+                    <svg><use href="#icon-star"></use></svg>
+                    Эксклюзив
+                </div>
+            </div>
+        </div>
+
+        <div class="collection-line">
+            <span id="cardsResultText">Загружаю...</span>
+            <span class="collection-count" id="collectionProgress">0%</span>
+        </div>
+        
+        <div class="cards-grid" id="cardsContainer"></div>
+        <div class="catalog-pagination" id="catalogPagination"></div>
+    </div>
+
+    <div id="tab-profile" class="tab-content active">
+
+        <div class="profile-card" onclick="openProfileModal()">
+            <div class="profile-head">
+                <div class="avatar-wrapper" onclick="event.stopPropagation(); openFrameSystem()">
+                    <img src="https://placehold.co/150x150/1c1c28/8b5cf6?text=U" id="userAvatar" class="profile-avatar">
+                    <img id="userAvatarFrame" class="avatar-frame" src="" style="display: none;">
+                </div>
+                <div class="profile-name">
+                    <span id="userName">Игрок</span>
+                    <span class="puzzle" id="userStatusEmoji">🧩</span>
+                </div>
+                <div class="profile-chevron">›</div>
+            </div>
+            <div class="profile-divider"></div>
+            <div class="balance-row">
+                <div class="balance-cell"><span class="b-ico">₩</span><span id="valKrw">0</span></div>
+                <div class="balance-sep"></div>
+                <div class="balance-cell">
+                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
+                    <span id="valDiamond">0</span>
+                </div>
+                <div class="balance-sep"></div>
+                <div class="balance-cell"><span class="b-ico">Ⓑ</span><span id="valBc">0</span></div>
+                <div class="balance-sep"></div>
+                <div class="balance-cell">
+                    <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
+                    <span id="valCards">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pass-bar" onclick="openPassModal()">
+            <div class="pass-badge">PASS</div>
+            <div class="pass-mid" id="mainMenuPassLvl">Уровень <b>1</b></div>
+            <div class="pass-right" id="mainMenuPassProg">Прогресс <b>0%</b> ›</div>
+            <div class="pass-line"><div class="pass-line-fill" id="mainMenuPassFill"></div></div>
+        </div>
+
+        <div class="module-card" onclick="wip('Банда')" style="margin-bottom:14px;">
+            <div class="module-left">
+                <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5z"/></svg>
+                </div>
+                <div>
+                    <div class="module-title">Банда</div>
+                    <div class="module-sub">Только для своих.</div>
+                </div>
+            </div>
+            <div class="chev">›</div>
+        </div>
+
+        <!-- МАСТЕРСКАЯ -->
+        <div class="module-card ws-module" onclick="openWorkshop()" style="margin-bottom:14px;">
+            <div class="module-left">
+                <div class="module-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18.4 2.6a2 2 0 0 1 2.9 2.9L12 14.8 9.2 12z"/><path d="M9.2 12C6.5 12 5 13.8 5 16c0 1.6-1 2.7-2.5 3 1.3 1.5 3.3 2.2 5.5 2 3-.3 5-2.5 4-5.2"/></svg>
+                </div>
+                <div>
+                    <div class="module-title">Мастерская</div>
+                    <div class="module-sub">Создай свою карту.</div>
+                </div>
+            </div>
+            <div class="chev">›</div>
+        </div>
+
+<div class="quad-grid">
+    <div class="action-card" onclick="openEarnModal()">
+        <div class="action-ico ico-earn">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M17.4142 10.4142C18 9.82843 18 8.88562 18 7C18 5.11438 18 4.17157 17.4142 3.58579M17.4142 10.4142C16.8284 11 15.8856 11 14 11H10C8.11438 11 7.17157 11 6.58579 10.4142M17.4142 10.4142C17.4142 10.4142 17.4142 10.4142 17.4142 10.4142ZM17.4142 3.58579C16.8284 3 15.8856 3 14 3L10 3C8.11438 3 7.17157 3 6.58579 3.58579M17.4142 3.58579C17.4142 3.58579 17.4142 3.58579 17.4142 3.58579ZM6.58579 3.58579C6 4.17157 6 5.11438 6 7C6 8.88562 6 9.82843 6.58579 10.4142M6.58579 3.58579C6.58579 3.58579 6.58579 3.58579 6.58579 3.58579ZM6.58579 10.4142C6.58579 10.4142 6.58579 10.4142 6.58579 10.4142Z" stroke="currentColor" stroke-width="1.5"></path> <path d="M13 7C13 7.55228 12.5523 8 12 8C11.4477 8 11 7.55228 11 7C11 6.44772 11.4477 6 12 6C12.5523 6 13 6.44772 13 7Z" stroke="currentColor" stroke-width="1.5"></path> <path d="M18 6C16.3431 6 15 4.65685 15 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path> <path d="M18 8C16.3431 8 15 9.34315 15 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path> <path d="M6 6C7.65685 6 9 4.65685 9 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path> <path d="M6 8C7.65685 8 9 9.34315 9 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path> <path d="M5 20.3884H7.25993C8.27079 20.3884 9.29253 20.4937 10.2763 20.6964C12.0166 21.0549 13.8488 21.0983 15.6069 20.8138C16.4738 20.6734 17.326 20.4589 18.0975 20.0865C18.7939 19.7504 19.6469 19.2766 20.2199 18.7459C20.7921 18.216 21.388 17.3487 21.8109 16.6707C22.1736 16.0894 21.9982 15.3762 21.4245 14.943C20.7873 14.4619 19.8417 14.462 19.2046 14.9433L17.3974 16.3084C16.697 16.8375 15.932 17.3245 15.0206 17.4699C14.911 17.4874 14.7962 17.5033 14.6764 17.5172M14.6764 17.5172C14.6403 17.5214 14.6038 17.5254 14.5668 17.5292M14.6764 17.5172C14.8222 17.486 14.9669 17.396 15.1028 17.2775C15.746 16.7161 15.7866 15.77 15.2285 15.1431C15.0991 14.9977 14.9475 14.8764 14.7791 14.7759C11.9817 13.1074 7.62942 14.3782 5 16.2429M14.6764 17.5172C14.6399 17.525 14.6033 17.5292 14.5668 17.5292M14.5668 17.5292C14.0434 17.5829 13.4312 17.5968 12.7518 17.5326" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path> <rect x="2" y="14" width="3" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5"></rect> </g></svg>
+        </div>
+        <div class="action-info">
+            <div class="action-title">Заработок</div>
+            <div class="action-sub">Задания и рефералы</div>
+        </div>
+        <div class="action-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+    </div>
+
+    <div class="action-card" onclick="openDailyModal()">
+        <div class="action-ico ico-bonus">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 2 7.5 4 12 7 12 7zM12 7s1.5-5 4.5-3S12 7 12 7z"/></svg>
+        </div>
+        <div class="action-info">
+            <div class="action-title">Ежедневный бонус</div>
+            <div class="action-sub" id="dailyStatusText"><span style="color:#4ade80">✓</span> 1/30</div>
+        </div>
+        <div class="action-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+    </div>
+</div>
+
+<div class="triple-grid">
+    <div class="action-card compact ach-menu-card" onclick="openAchievements()">
+        <div class="ach-menu-badge" id="achMenuBadge" style="display:none;">0</div>
+        <div class="action-ico ico-achiev">
+            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-archive"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+        </div>
+        <div class="action-info">
+            <div class="action-title">Достижения</div>
+            <div class="action-sub" id="achMenuSub">Награды за развитие</div>
+        </div>
+        <div class="action-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+    </div>
+
+    <div class="action-card compact" onclick="openTierScreen()">
+        <div class="action-ico ico-tier">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="13" width="5" height="8" rx="1"></rect><rect x="9.5" y="8" width="5" height="13" rx="1"></rect><rect x="16" y="11" width="5" height="10" rx="1"></rect><path d="M12 2l.95 2.1 2.3.3-1.7 1.6.43 2.3L12 7.2 10.02 8.3l.43-2.3-1.7-1.6 2.3-.3L12 2z"></path></svg>
+        </div>
+        <div class="action-info">
+            <div class="action-title">Тирлист</div>
+            <div class="action-sub">Ценность карт</div>
+        </div>
+        <div class="action-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+    </div>
+
+    <div class="action-card compact" data-snd="off" onclick="openSupport()">
+        <div class="action-ico ico-support">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        </div>
+        <div class="action-info">
+            <div class="action-title">Поддержка</div>
+            <div class="action-sub">Помощь по игре</div>
+        </div>
+        <div class="action-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+    </div>
+</div>
+
+        <!-- ЗВУКИ ИНТЕРФЕЙСА -->
+        <div class="snd-toggle-card on" id="sndToggleCard" data-snd="off" onclick="toggleUiSound()">
+            <div class="snd-ico" id="sndToggleIco"></div>
+            <div class="snd-texts">
+                <div class="module-title">Звуки интерфейса</div>
+                <div class="module-sub" id="sndToggleSub">Кнопки, анимации, награды</div>
+            </div>
+            <div class="mc-switch"><i></i></div>
+        </div>
+
+        <!-- ЛЁГКАЯ ГРАФИКА (app-shell.js) -->
+        <div class="snd-toggle-card lite-toggle-card" id="liteToggleCard" onclick="toggleLiteMode()">
+            <div class="snd-ico" id="liteToggleIco"></div>
+            <div class="snd-texts">
+                <div class="module-title">Лёгкая графика</div>
+                <div class="module-sub" id="liteToggleSub">Все эффекты и анимации</div>
+            </div>
+            <div class="mc-switch"><i></i></div>
+        </div>
+
+        <div class="shop-banner" onclick="switchTab('shop', document.querySelectorAll('.nav-btn')[1])">
+            <div class="shop-banner-bg"></div>
+            <div class="shop-banner-overlay"></div>
+            <div class="shop-banner-content">
+                <h2>МАГАЗИН</h2>
+                <p>Покупай карты, наборы и другие уникальные предметы.</p>
+                <button class="shop-btn">Перейти в магазин</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-collection" class="tab-content" style="padding-bottom: 100px;">
+        
+        <div id="collUniversesView">
+            <div class="section-hero" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(6, 6, 12, 0.9)); margin-bottom: 20px;">
+                <div class="hero-kicker" style="color: #c4b5fd;">Архив Системы</div>
+                <div class="hero-title">Коллекции</div>
+                <div class="hero-subtitle">Выбери интересующую вселенную для просмотра собранных карт.</div>
+            </div>
+            <div id="collUniversesContainer">
+                </div>
+        </div>
+
+        <div id="collDetailView" style="display: none;">
+            <button class="coll-detail-back-btn" onclick="backToUniverses()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Назад к вселенным
+            </button>
+            
+            <div class="coll-detail-header-card" id="collDetailHeaderBox">
+                </div>
+            
+            <div id="collDetailRaritiesContainer">
+                </div>
+        </div>
+
+    </div>
+
+    <div id="tab-tops" class="tab-content">
+        <div class="lb-hero" id="lbHero">
+            <div class="lb-hero-beams"></div>
+            <div class="lb-hero-grid"></div>
+            <div class="lb-hero-inner">
+                <div class="lb-kicker"><span class="lb-live-dot"></span>HALL OF FAME</div>
+                <div class="lb-title">Рейтинг <span>игроков</span></div>
+                <div class="lb-subtitle" id="lbSubtitle">Лучшие бойцы текущего сезона</div>
+                <div class="lb-timer" id="topsTimer" style="display:none;">
+                    <div class="lb-timer-label">До конца сезона</div>
+                    <div class="lb-timer-cells">
+                        <div class="lb-cell"><b id="lbTmD">00</b><span>дн</span></div>
+                        <div class="lb-colon">:</div>
+                        <div class="lb-cell"><b id="lbTmH">00</b><span>час</span></div>
+                        <div class="lb-colon">:</div>
+                        <div class="lb-cell"><b id="lbTmM">00</b><span>мин</span></div>
+                        <div class="lb-colon">:</div>
+                        <div class="lb-cell"><b id="lbTmS">00</b><span>сек</span></div>
+                    </div>
+                    <span id="topsTimeValue" hidden></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lb-tabs" id="lbTabs">
+            <div class="lb-tabs-glider" id="lbTabsGlider"></div>
+            <button class="lb-tab active" id="btnTopPvpSeason" data-cat="pvp_season" onclick="switchTopCategory('pvp_season', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>Сезон</button>
+            <button class="lb-tab" data-cat="pvp" onclick="switchTopCategory('pvp', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>PvP</button>
+            <button class="lb-tab" data-cat="rank" onclick="switchTopCategory('rank', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Ранг</button>
+            <button class="lb-tab" data-cat="level" onclick="switchTopCategory('level', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>Уровень</button>
+            <button class="lb-tab" data-cat="cards" onclick="switchTopCategory('cards', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>Карты</button>
+            <button class="lb-tab" data-cat="krw" onclick="switchTopCategory('krw', this)"><span class="lb-tab-glyph">₩</span>KRW</button>
+            <button class="lb-tab" data-cat="bc" onclick="switchTopCategory('bc', this)"><span class="lb-tab-glyph">Ⓑ</span>Коины</button>
+            <button class="lb-tab" data-cat="diamond" onclick="switchTopCategory('diamond', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>Алмазы</button>
+        </div>
+
+        <div class="lb-board" id="topsListContainer"></div>
+        <div class="lb-me" id="lbMe" style="display:none;"></div>
+    </div>
+
+    <div id="tab-shop" class="tab-content es-shop">
+
+        <!-- Звёздное небо за всем магазином -->
+        <div class="es-sky" aria-hidden="true">
+            <div class="es-sky-neb n1"></div>
+            <div class="es-sky-neb n2"></div>
+            <canvas id="esStars"></canvas>
+        </div>
+
+        <!-- ================= ШАПКА МАГАЗИНА ================= -->
+        <header class="es-hero">
+            <div class="es-hero-img"></div>
+            <div class="es-hero-shade"></div>
+            <div class="es-hero-inner">
+                <div class="es-hero-top">
+                    <div class="es-brand">
+                        <div class="es-brand-mark">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.5l2.3 6.2 6.7.3-5.2 4.2 1.8 6.5L12 16l-5.6 3.7 1.8-6.5L3 9l6.7-.3z"/></svg>
+                        </div>
+                        <div>
+                            <div class="es-eyebrow">ManhwCard · Vault</div>
+                            <h1 class="es-title">Магазин</h1>
+                        </div>
+                    </div>
+                    <button class="es-hero-help" onclick="openSupport()" aria-label="Поддержка">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                    </button>
+                </div>
+
+                <p class="es-hero-sub">Призыв карт, колесо удачи и эксклюзивные рамки — всё в одном хранилище.</p>
+
+                <div class="es-wallet">
+                    <div class="es-coin c-krw">
+                        <span class="es-coin-ico">₩</span>
+                        <span class="es-coin-val" id="esWalKrw">0</span>
+                        <span class="es-coin-lbl">KRW</span>
+                    </div>
+                    <div class="es-coin c-dia">
+                        <span class="es-coin-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg></span>
+                        <span class="es-coin-val" id="esWalDia">0</span>
+                        <span class="es-coin-lbl">Алмазы</span>
+                    </div>
+                    <div class="es-coin c-bc">
+                        <span class="es-coin-ico">Ⓑ</span>
+                        <span class="es-coin-val" id="esWalBc">0</span>
+                        <span class="es-coin-lbl">BattleCoin</span>
+                    </div>
+                    <button class="es-coin c-tix" onclick="openBuyAttemptsModal()">
+                        <span class="es-coin-ico">🎟</span>
+                        <span class="es-coin-val" id="esWalTix">0</span>
+                        <span class="es-coin-lbl">Крутки</span>
+                        <i class="es-coin-plus">+</i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Плашка «бесплатный спин» — показывается сама, когда спин доступен -->
+        <button class="es-promo" id="esFreePromo" onclick="switchShopSubTab('wheel')" hidden>
+            <span class="es-promo-ico">🎁</span>
+            <span class="es-promo-txt">
+                <b>Бесплатный спин доступен</b>
+                <small>Колесо удачи ждёт — заберите награду</small>
+            </span>
+            <span class="es-promo-go">›</span>
+        </button>
+
+        <!-- ================= ТАБЫ ================= -->
+        <div class="gacha-tabs es-tabs" id="esTabs" data-tab="gacha">
+            <div class="es-tabs-glider" aria-hidden="true"></div>
+            <div class="gacha-tab active" id="tabShopGachaBtn" onclick="switchShopSubTab('gacha')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Крутки
+            </div>
+            <div class="gacha-tab" id="tabShopWheelBtn" onclick="switchShopSubTab('wheel')">
+                <span class="free-dot" aria-hidden="true"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3v6.5M12 14.5V21M3 12h6.5M14.5 12H21"/></svg>
+                Колесо
+            </div>
+            <div class="gacha-tab" id="tabShopFramesBtn" onclick="switchShopSubTab('frames')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19a5.8 5.8 0 0 1 11 0"/></svg>
+                Рамки
+            </div>
+        </div>
+
+        <!-- ================= КРУТКИ ================= -->
+        <div id="shopGachaContent" class="es-pane">
+
+            <section class="es-portal" id="esPortal">
+                <div class="es-portal-img"></div>
+                <div class="es-portal-shade"></div>
+
+                <div class="es-orbit" aria-hidden="true">
+                    <span class="es-ring r1"></span>
+                    <span class="es-ring r2"></span>
+                    <span class="es-ring r3"></span>
+                    <span class="es-core"></span>
+                    <span class="es-fcard f1"></span>
+                    <span class="es-fcard f2"></span>
+                    <span class="es-fcard f3"></span>
+                </div>
+
+                <div class="es-portal-inner">
+                    <div class="es-live"><i></i>Портал открыт</div>
+                    <div class="es-portal-kicker">Gacha Portal</div>
+                    <h2 class="es-portal-title">Призыв<br><span>карт</span></h2>
+                    <p class="es-portal-desc">Открой разлом и вытяни персонажей из шести уровней редкости.</p>
+                </div>
+
+                <div class="es-portal-foot">
+                    <div class="es-rarity-rail">
+                        <span>⚫ Божественная</span>
+                        <span>🔴 Мифическая</span>
+                        <span>🔵 Легендарная</span>
+                        <span>🟢 Эпическая</span>
+                        <span>🟡 Редкая</span>
+                        <span>⚪️ Обычная</span>
+                    </div>
+
+                    <div class="es-ticket-bar">
+                        <div class="es-ticket-ico"><span>🎟</span></div>
+                        <div class="es-ticket-info">
+                            <div class="es-lbl">Доступно попыток</div>
+                            <div class="gacha-t-val es-ticket-val" id="shopAttemptsBal">0</div>
+                        </div>
+                        <button class="es-buy-btn" onclick="openBuyAttemptsModal()"><b>+</b> Купить</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="es-panel es-summon">
+                <div class="es-panel-head">
+                    <span class="es-panel-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
+                        Количество призывов
+                    </span>
+                    <span class="es-panel-meta">1 – 24</span>
+                </div>
+
+                <div class="es-dial-row">
+                    <button class="gacha-step-btn es-step" onclick="adjustSummon(-1)" aria-label="Минус один">−</button>
+
+                    <div class="es-dial" id="esDial">
+                        <div class="es-dial-ticks" id="esDialTicks"></div>
+                        <svg class="es-dial-ring" viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="esDialGrad" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#c4b5fd"/>
+                                    <stop offset="55%" stop-color="#8b5cf6"/>
+                                    <stop offset="100%" stop-color="#f3d38b"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="trk" cx="60" cy="60" r="50"/>
+                            <circle class="fil" id="esDialFill" cx="60" cy="60" r="50"/>
+                        </svg>
+                        <div class="es-dial-num">
+                            <span id="gachaSliderVal">8</span>
+                            <small>круток</small>
+                        </div>
+                    </div>
+
+                    <button class="gacha-step-btn es-step" onclick="adjustSummon(1)" aria-label="Плюс один">+</button>
+                </div>
+
+                <div class="gacha-range-wrap es-range">
+                    <input type="range" id="gachaSlider" min="1" max="24" value="8" step="1" oninput="syncSummon(this.value)">
+                    <div class="es-range-scale"><span>1</span><span>12</span><span>24</span></div>
+                </div>
+
+                <div class="gacha-quick-btns es-quick">
+                    <button class="gacha-quick-btn" data-val="1" onclick="syncSummon(1)">1</button>
+                    <button class="gacha-quick-btn" data-val="2" onclick="syncSummon(2)">2</button>
+                    <button class="gacha-quick-btn" data-val="4" onclick="syncSummon(4)">4</button>
+                    <button class="gacha-quick-btn active" data-val="8" onclick="syncSummon(8)">8</button>
+                    <button class="gacha-quick-btn" data-val="12" onclick="syncSummon(12)">12</button>
+                    <button class="gacha-quick-btn" data-val="16" onclick="syncSummon(16)">16</button>
+                    <button class="gacha-quick-btn" data-val="24" onclick="syncSummon(24)">24</button>
+                </div>
+            </section>
+
+            <div class="gacha-cost-box es-cost">
+                <div class="es-cost-ico">🎟</div>
+                <div class="es-cost-main">
+                    <div class="es-lbl">Стоимость</div>
+                    <div class="gacha-t-val-large"><span id="summonCostText">8 попыток</span></div>
+                </div>
+                <div class="es-cost-side">
+                    <div class="es-lbl">Останется</div>
+                    <div class="es-after" id="esAfter">—</div>
+                </div>
+            </div>
+
+            <!-- Режим открытия (summon-fx.js) -->
+            <div class="sx-modes" id="sxModes" data-mode="auto" role="group" aria-label="Режим открытия">
+                <span class="sx-modes-glider" aria-hidden="true"></span>
+                <button class="sx-mode active" type="button" data-mode="auto" onclick="setSummonMode('auto')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4l14 8-14 8z"/></svg>
+                    Авто<small>сами открываются</small>
+                </button>
+                <button class="sx-mode" type="button" data-mode="manual" onclick="setSummonMode('manual')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 10.5V9a2 2 0 0 1 4 0v4a7 7 0 0 1-7 7h-.5A6.5 6.5 0 0 1 4 14.5V13a2 2 0 0 1 4 0"/><path d="M9 11.5V13"/></svg>
+                    Вручную<small>тапай по картам</small>
+                </button>
+                <button class="sx-mode" type="button" data-mode="fast" onclick="setSummonMode('fast')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+                    Быстро<small>сразу итог</small>
+                </button>
+            </div>
+
+            <div class="gacha-actions es-actions">
+                <button class="gacha-btn-main" id="btnFullSummon" onclick="executeSummon()">Открыть 8</button>
+            </div>
+        </div>
+
+        <!-- ================= КОЛЕСО ================= -->
+        <div id="shopWheelContent" class="es-pane" style="display: none;">
+            <div class="wheel-wrap es-wheel">
+                <div class="es-wheel-img"></div>
+                <div class="es-wheel-shade"></div>
+
+                <div class="wheel-head">
+                    <div class="wheel-kicker">Luck Protocol</div>
+                    <div class="wheel-title">Спин удачи</div>
+                    <div class="es-wheel-sub">Раз в 7 дней — один спин бесплатно</div>
+                </div>
+
+                <div class="wheel-stage">
+                    <div class="es-wheel-rays" aria-hidden="true"></div>
+                    <div class="es-wheel-halo" aria-hidden="true"></div>
+
+                    <svg class="wheel-pointer" viewBox="0 0 30 38">
+                        <defs>
+                            <linearGradient id="esPtrGold" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#fff4cf"/>
+                                <stop offset="45%" stop-color="#f3c969"/>
+                                <stop offset="100%" stop-color="#a86a12"/>
+                            </linearGradient>
+                            <radialGradient id="esPtrGem" cx="40%" cy="35%" r="70%">
+                                <stop offset="0%" stop-color="#f5f3ff"/>
+                                <stop offset="45%" stop-color="#a78bfa"/>
+                                <stop offset="100%" stop-color="#4c1d95"/>
+                            </radialGradient>
+                        </defs>
+                        <path d="M15 37 L3.2 9 A12.6 12.6 0 0 1 26.8 9 Z" fill="url(#esPtrGold)" stroke="#5c3a07" stroke-width="0.8"/>
+                        <path d="M15 33 L7 11" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round"/>
+                        <circle cx="15" cy="11" r="5.2" fill="url(#esPtrGem)" stroke="#2a1405" stroke-width="0.8"/>
+                        <circle cx="13.4" cy="9.4" r="1.4" fill="#fff" opacity="0.85"/>
+                    </svg>
+
+                    <svg class="wheel-svg" viewBox="0 0 300 300">
+                        <defs>
+                            <linearGradient id="esRim" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#fff1c2"/>
+                                <stop offset="30%" stop-color="#d9a650"/>
+                                <stop offset="55%" stop-color="#7a4a10"/>
+                                <stop offset="80%" stop-color="#f3d38b"/>
+                                <stop offset="100%" stop-color="#8a5a16"/>
+                            </linearGradient>
+                            <radialGradient id="esGloss" cx="35%" cy="25%" r="75%">
+                                <stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>
+                                <stop offset="40%" stop-color="rgba(255,255,255,0.04)"/>
+                                <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
+                            </radialGradient>
+                        </defs>
+                        <circle cx="150" cy="150" r="149.5" fill="url(#esRim)"/>
+                        <circle cx="150" cy="150" r="143.5" fill="#0b0912"/>
+                        <g id="wheelRotor"></g>
+                        <circle cx="150" cy="150" r="142" fill="url(#esGloss)" pointer-events="none"/>
+                        <circle cx="150" cy="150" r="142.5" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1.5"/>
+                        <g id="esBulbs"></g>
+                    </svg>
+
+                    <div class="wheel-hub">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.3 6.2 6.7.3-5.2 4.2 1.8 6.5L12 16l-5.6 3.7 1.8-6.5L3 9l6.7-.3z"/></svg>
+                    </div>
+                </div>
+
+                <div class="wheel-bal">
+                    <div class="es-wbal-ico">Ⓑ</div>
+                    <div class="gacha-t-info">
+                        <div class="gacha-t-lbl">Ваш BattleCoin</div>
+                        <div class="wheel-bal-val" id="wheelBalVal">0</div>
+                    </div>
+                    <div class="es-wbal-note">Награда<br>сразу на баланс</div>
+                </div>
+
+                <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">Крутить за 300 🪙</button>
+                <div class="wheel-hint" id="wheelHint">Награда начисляется сразу после остановки</div>
+            </div>
+        </div>
+
+        <div class="wheel-prize-overlay" id="wheelPrizeOverlay">
+            <div class="wheel-prize-card" id="wheelPrizeCard">
+                <div class="wheel-prize-icon" id="wheelPrizeIcon">🪙</div>
+                <div class="wheel-prize-kicker" id="wheelPrizeKicker">Награда получена</div>
+                <div class="wheel-prize-amount" id="wheelPrizeAmount">+0</div>
+                <button class="wheel-prize-btn" onclick="closeWheelPrize()">Забрать</button>
+            </div>
+        </div>
+
+        <!-- ================= РАМКИ ================= -->
+        <div id="shopFramesContent" class="es-pane" style="display: none;">
+            <section class="es-atelier">
+                <div class="es-atelier-img"></div>
+                <div class="es-atelier-shade"></div>
+                <div class="es-atelier-inner">
+                    <div class="es-eyebrow">Atelier · Collection</div>
+                    <h2 class="es-atelier-title">Рамки<br><span>профиля</span></h2>
+                    <p class="es-atelier-desc">Эксклюзивные рамки для аватара. Нажми на рамку, чтобы примерить её перед покупкой.</p>
+                </div>
+                <div class="es-atelier-art" aria-hidden="true">
+                    <span class="es-art-ring"></span>
+                    <span class="es-art-ring b"></span>
+                    <span class="es-art-ava"></span>
+                </div>
+            </section>
+
+            <div class="es-section-label"><span>Витрина</span><i></i></div>
+            <div class="frame-grid" id="shopFramesGrid" style="max-height: none; overflow: visible;">
+                <!-- Сюда JS загрузит рамки магазина -->
+            </div>
+        </div>
+
+    </div>
+
+    <div class="summon-overlay" id="summonOverlay">
+        <div class="summon-portal" id="summonPortal"></div>
+        <div class="summon-rays" id="summonRays"></div>
+        <div class="summon-grid" id="summonGrid"></div>
+        <button class="summon-claim-btn" id="summonClaimBtn" onclick="closeSummonScene()">Забрать карты</button>
+    </div>
+
+    <div class="modal-overlay" id="dailyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎁 Ежедневные награды</h2>
+                <button class="close-btn" onclick="closeDailyModal()">✖</button>
+            </div>
+            <div class="daily-grid" id="dailyGrid"></div>
+            <div id="dailyFooterContainer" style="display:flex; flex-direction:column; padding: 0 15px 15px;"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="cardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalNameTop">ManhwCard</h2>
+                <button class="close-btn" onclick="closeModal()">✖</button>
+            </div>
+            <div class="modal-img-wrapper">
+                <img src="" id="modalImg" class="modal-img">
+            </div>
+            <div class="modal-info">
+                <h2 class="modal-title" id="modalName">Имя персонажа</h2>
+                
+                <div class="stat-row">
+                    <span class="stat-label">🔮 Редкость:</span>
+                    <span class="stat-val" id="modalRarity">Мифическая 🔴</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">👊 Стиль:</span>
+                    <span class="stat-val" id="modalStyle">Тхэквондо</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🪐 Вселенная:</span>
+                    <span class="stat-val" id="modalSeries">Борьба</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="stat-row">
+                    <span class="stat-label">⚡ Скорость:</span>
+                    <span class="stat-val mythic" id="modalSpeed">99</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">💪 Сила:</span>
+                    <span class="stat-val mythic" id="modalStrength">99</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🧠 Интеллект:</span>
+                    <span class="stat-val mythic" id="modalIntellect">98</span>
+                </div>
+
+                <div class="bot-count-box">
+                    <span style="color: var(--text-muted); font-size: 13px;">📚 В боте:</span>
+                    <span style="font-size:16px; font-weight:700; color:#fff;" id="modalCount">...</span>
+                </div>
+
+                <button class="sheet-btn ghost" style="margin-top: 15px;" onclick="openOwnersScreen()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 18px; height: 18px; margin-right: 4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Владельцы карты
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-screen" id="publicProfileScreen">
+        <div class="profile-bg-container">
+            <div id="pubBgMedia"></div>
+            <div class="profile-bg-overlay"></div>
+        </div>
+
+        <div class="ps-head">
+            <button class="ps-back" onclick="closePublicProfile()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                Назад
+            </button>
+            <div style="width: 24px;"></div> 
+        </div>
+
+        <div class="ps-user-info">
+            <div class="ps-avatar-wrap">
+                <img src="" id="pubAvatar" class="ps-avatar">
+                <img id="pubAvatarFrame" class="avatar-frame" src="" style="display: none;">
+            </div>
+            <div class="ps-user-texts">
+            <div class="ps-name" id="pubName">Игрок <span id="pubStatusEmoji" style="font-size: 20px;">🧩</span></div>
+            <div class="ps-title-text" id="pubTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            <a href="#" class="ps-username" id="pubUsername" style="display: none;">@username</a>
+        </div>
+    </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">ЛЮБИМЫЕ КАРТЫ</div>
+            <div class="ps-fav-grid" id="pubFavGrid">
+                </div>
+        </div>
+
+        <div class="ps-box ps-ach-box" id="pubAchBox" onclick="openPublicAchievements()">
+            <div class="ps-box-title ps-ach-title">ДОСТИЖЕНИЯ <span class="ps-ach-count" id="pubAchCount">—</span></div>
+            <div class="ps-ach-bar"><div class="ps-ach-fill" id="pubAchFill"></div></div>
+            <div class="ps-ach-badges" id="pubAchBadges"></div>
+        </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">СТАТИСТИКА БОЁВ</div>
+            <div class="ps-stats-grid">
+                <div class="ps-stat-card win"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg></div><div class="stat-info"><div class="stat-lbl">Победы</div><div class="stat-val" id="pubWins">0</div></div></div>
+                <div class="ps-stat-card loss"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="M12.5 17h-1"/><path d="M12 2a7 7 0 0 0-7 7v4.5a2.5 2.5 0 0 0 2.5 2.5h9a2.5 2.5 0 0 0 2.5-2.5V9a7 7 0 0 0-7-7z"/></svg></div><div class="stat-info"><div class="stat-lbl">Поражения</div><div class="stat-val" id="pubLosses">0</div></div></div>
+                <div class="ps-stat-card wr"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="stat-info"><div class="stat-lbl">Винрейт</div><div class="stat-val" id="pubWinrate">0%</div></div></div>
+                <div class="ps-stat-card streak"><div class="bg-glow"></div><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg></div><div class="stat-info"><div class="stat-lbl">Стрик</div><div class="stat-val" id="pubMaxStreak">0</div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-screen" id="fullProfileScreen">
+        <div class="profile-bg-container">
+            <div id="profileBgMedia"></div>
+            <div class="profile-bg-overlay"></div>
+        </div>
+
+        <div class="ps-head">
+            <button class="ps-back" onclick="closeProfileModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                Назад
+            </button>
+            <div style="width: 24px;"></div> 
+        </div>
+
+        <div class="ps-user-info">
+            <div class="ps-avatar-wrap" onclick="openFrameSystem()">
+                <img src="" id="psAvatar" class="ps-avatar">
+                <img id="psAvatarFrame" class="avatar-frame" src="" style="display: none;">
+            </div>
+            <div class="ps-user-texts">
+            <div class="ps-name" id="psName">Ярик <span id="psStatusEmoji" style="font-size: 20px;">🧩</span></div>
+            <div class="ps-title-text" id="psTitle">ТИТУЛ: НЕ ВЫБРАН</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <div class="ps-username" id="psUsername">@username</div>
+                <button class="hide-user-btn" id="psHideUserBtn" onclick="toggleUsernameVisibility()">Скрыть 👁️</button>
+            </div>
+        </div>
+    </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">ЛЮБИМЫЕ КАРТЫ</div>
+            <div class="ps-fav-grid" id="myFavGrid">
+                <div class="ps-fav-slot" onclick="openFavSystem(0)">+</div>
+                <div class="ps-fav-slot" onclick="openFavSystem(1)">+</div>
+                <div class="ps-fav-slot" onclick="openFavSystem(2)">+</div>
+            </div>
+        </div>
+<div class="ps-box ps-ach-box" onclick="openAchievements()">
+            <div class="ps-box-title ps-ach-title">ДОСТИЖЕНИЯ <span class="ps-ach-count" id="psAchCount">—</span></div>
+            <div class="ps-ach-bar"><div class="ps-ach-fill" id="psAchFill"></div></div>
+            <div class="ps-ach-badges" id="psAchBadges"></div>
+        </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">СТАТИСТИКА БОЁВ</div>
+            <div class="ps-stats-grid">
+                
+                <div class="ps-stat-card win">
+                    <div class="bg-glow"></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-lbl">Победы</div>
+                        <div class="stat-val" id="psWins">0</div>
+                    </div>
+                </div>
+
+                <div class="ps-stat-card loss">
+                    <div class="bg-glow"></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="M12.5 17h-1"/><path d="M12 2a7 7 0 0 0-7 7v4.5a2.5 2.5 0 0 0 2.5 2.5h9a2.5 2.5 0 0 0 2.5-2.5V9a7 7 0 0 0-7-7z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-lbl">Поражения</div>
+                        <div class="stat-val" id="psLosses">0</div>
+                    </div>
+                </div>
+
+                <div class="ps-stat-card wr">
+                    <div class="bg-glow"></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-lbl">Винрейт</div>
+                        <div class="stat-val" id="psWinrate">0%</div>
+                    </div>
+                </div>
+
+                <div class="ps-stat-card streak">
+                    <div class="bg-glow"></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-lbl">Стрик</div>
+                        <div class="stat-val" id="psMaxStreak">0</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ps-box">
+            <div class="ps-box-title">НАСТРОЙКИ ОБЛИКА</div>
+            <div class="ps-settings-grid">
+     <button class="ps-setting-btn" onclick="openFrameSystem()">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+         <span class="ps-setting-lbl">ВЫБРАТЬ<br>РАМКУ</span>
+            </button>
+                <button class="ps-setting-btn" onclick="openTitleSystem()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <span class="ps-setting-lbl">ВЫБРАТЬ<br>ТИТУЛ</span>
+                </button>
+                <button class="ps-setting-btn" onclick="openBgSystem()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span class="ps-setting-lbl">ФОН<br>ПРОФИЛЯ</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ЭКРАН «ЗАРАБОТОК» ================= -->
+    <div class="earn-screen" id="earnScreen">
+        <div class="earn-head">
+            <button class="earn-back" onclick="closeEarnModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="earn-screen-title">Заработок</div>
+        </div>
+
+        <div class="earn-tabs">
+            <button class="earn-tab active" id="earnTabRef" onclick="switchEarnTab('ref')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Рефералы
+            </button>
+            <button class="earn-tab" id="earnTabTasks" onclick="switchEarnTab('tasks')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+                Задания
+            </button>
+            <button class="earn-tab" id="earnTabDuel" onclick="switchEarnTab('duel')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
+                Дуэли
+            </button>
+        </div>
+
+        <!-- Пейн: Рефералы -->
+        <div class="earn-pane active" id="earnRef">
+            <div class="ref-card">
+                <div class="ref-top">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <div class="ref-top-title">Пригласить друзей</div>
+                    <div class="ref-count-badge" id="refCount">0</div>
+                </div>
+                <div class="ref-pills">
+                    <span class="ref-pill"><span class="b-ico">₩</span><span id="refEarnedKrw">0</span></span>
+                    <span class="ref-pill">
+                        <svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                        <span id="refEarnedAtt">0</span> круток
+                    </span>
+                </div>
+                <div class="ref-note" id="refNote">Бонус за 1 друга: <b>₩ 30 000–55 000</b> + <b>3 крутки</b>. Награду получаете и вы, и друг.</div>
+            </div>
+
+            <button class="ref-invite-btn" onclick="inviteFriend()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Пригласить друга
+            </button>
+        </div>
+
+        <!-- Пейн: Задания -->
+        <div class="earn-pane" id="earnTasks">
+            <div class="task-section-label">
+                <span class="lbl">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                    Соцсети
+                </span>
+                <span class="hint">Большие награды · для авторов</span>
+            </div>
+
+            <div class="task-card" onclick="openTaskSheet('tiktok')">
+                <div class="task-ico" id="ico-tiktok"></div>
+                <div class="task-body">
+                    <div class="task-title">TikTok видео про ManhwCard</div>
+                    <div class="task-sub">TikTok видео</div>
+                    <div class="task-reward">
+                        <span class="rw"><span class="b-ico">₩</span> 400 000</span>
+                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 10</span>
+                        <span class="rw rw-note">· за 1k просмотров</span>
+                    </div>
+                </div>
+                <div class="task-chev">›</div>
+            </div>
+
+            <div class="task-card" onclick="openTaskSheet('story')">
+                <div class="task-ico" id="ico-story"></div>
+                <div class="task-body">
+                    <div class="task-title">Сторис в Telegram</div>
+                    <div class="task-sub">Сторис в Telegram</div>
+                    <div class="task-reward">
+                        <span class="rw"><span class="b-ico">₩</span> 300 000</span>
+                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 5</span>
+                    </div>
+                </div>
+                <div class="task-chev">›</div>
+            </div>
+
+            <div class="task-card" onclick="openTaskSheet('boost')">
+                <div class="task-ico" id="ico-boost"></div>
+                <div class="task-body">
+                    <div class="task-title">Буст нашего Telegram-канала</div>
+                    <div class="task-sub">Буст канала</div>
+                    <div class="task-reward">
+                        <span class="rw"><span class="b-ico">₩</span> 200 000</span>
+                        <span class="rw"><svg class="b-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg> 10</span>
+                        <span class="rw rw-note">· за буст</span>
+                    </div>
+                </div>
+                <div class="task-chev">›</div>
+            </div>
+
+            <div class="task-section-label" style="margin-top:22px;">
+                <span class="lbl" style="color:var(--text-muted)">Партнёры</span>
+            </div>
+
+            <div class="partner-row">
+                <div class="partner-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
+                </div>
+                <div class="partner-title">Подпишись на канал</div>
+                <button class="partner-do-btn" id="subDoBtn" onclick="checkSubscription()">Выполнить</button>
+            </div>
+
+            <!-- Чат игроков: награда за вступление -->
+            <div class="partner-row">
+                <div class="partner-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>
+                </div>
+                <div class="partner-title">Вступи в чат игроков</div>
+                <button class="partner-do-btn" id="chatDoBtn" onclick="checkChatSub()">Выполнить</button>
+            </div>
+        </div>
+
+        <!-- Пейн: Дуэли -->
+        <div class="earn-pane" id="earnDuel">
+            <div id="duelLobby"></div>
+        </div>
+    </div>
+
+    <!-- Нижний лист задания -->
+    <div class="sheet-overlay" id="taskSheet">
+        <div class="sheet">
+            <div class="sheet-grabber"></div>
+            <div id="sheetContent"></div>
+        </div>
+    </div>
+
+    <!-- Тост-уведомление -->
+    <div class="toast" id="toast">
+        <div class="toast-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="toast-body">
+            <div class="toast-title" id="toastTitle">Готово!</div>
+            <div class="toast-text" id="toastText"></div>
+        </div>
+    </div>
+    <div class="system-overlay" id="titleSystemSheet">
+        <div class="system-window">
+            <div class="sys-head">
+                <button class="sys-close" onclick="closeTitleSystem()">✖</button>
+                <div class="sys-kicker">SYSTEM NOTIFICATION</div>
+                <div class="sys-title">ВЫБОР ТИТУЛА</div>
+            </div>
+            <div class="title-list" id="titleListContainer">
+                </div>
+        </div>
+    </div>
+
+    <div class="system-overlay-center" id="favSystemSheet">
+        <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh; padding-bottom: 0;">
+            
+            <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
+                <button class="sys-close" onclick="closeFavSystem()">✖</button>
+                <div class="sys-kicker">SYSTEM NOTIFICATION</div>
+                <div class="sys-title">ВЫБОР КАРТЫ</div>
+            </div>
+            
+            <div class="filters-grid" style="margin-bottom: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="favSearchInput" class="filter-full" placeholder="🔍 Поиск по названию..." oninput="renderFavSelector()">
+                
+                <div id="favRarityFilters" style="display: flex; justify-content: flex-start; overflow-x: auto; gap: 8px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; user-select: none;">
+                    </div>
+                
+                <select id="favSortSelect" onchange="renderFavSelector()" class="filter-full">
+                    <option value="rarity_desc">✨ От Божественных к Обычным</option>
+                    <option value="rarity_asc">✨ От Обычных к Божественным</option>
+                    <option value="newest">📅 По дате получения (новые выше)</option>
+                    <option value="oldest">📅 По дате получения (старые выше)</option>
+                </select>
+                
+                <div id="favCardCount" style="font-size: 12px; color: var(--text-muted); text-align: center; font-weight: 500;"></div>
+            </div>
+
+            <div class="fav-cards-grid" id="favListContainer" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: max-content; gap: 8px; flex: 1 1 auto; min-height: 0; padding-bottom: 20px; user-select: none;">
+                </div>
+            
+            <div style="flex-shrink: 0; padding-top: 12px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05);">
+                <button onclick="selectFavCard('none')" style="width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s;">
+                    Снять карту со слота ❌
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="system-overlay-center" id="bgSystemSheet">
+        <div class="system-window-center" style="display: flex; flex-direction: column; max-height: 85vh;">
+            
+            <div class="sys-head" style="flex-shrink: 0; margin-bottom: 16px;">
+                <button class="sys-close" onclick="closeBgSystem()">✖</button>
+                <div class="sys-kicker">SYSTEM NOTIFICATION</div>
+                <div class="sys-title">ФОН ПРОФИЛЯ</div>
+            </div>
+            
+            <div class="bg-slider-container" id="bgListContainer" style="margin-bottom: 16px;">
+                </div>
+
+            <div class="pagination-bar">
+                <button class="page-btn" id="bgPrevBtn" onclick="changeBgPage(-1)">◀ Назад</button>
+                <div class="page-indicator" id="bgPageIndicator">1 / 1</div>
+                <button class="page-btn" id="bgNextBtn" onclick="changeBgPage(1)">Вперед ▶</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= ДОСТИЖЕНИЯ ================= -->
+    <div id="achievementsModal" class="achiev-modal-overlay" style="display: none;">
+        <div class="achiev-sheet ach2">
+            <div class="sheet-grabber"></div>
+            <div class="ach-head">
+                <div class="ach-ring" id="achRing">
+                    <svg viewBox="0 0 64 64"><circle class="ach-ring-track" cx="32" cy="32" r="27"/><circle class="ach-ring-fill" id="achRingFill" cx="32" cy="32" r="27"/></svg>
+                    <div class="ach-ring-txt" id="achRingTxt">0%</div>
+                </div>
+                <div class="ach-head-info">
+                    <div class="ach-kicker" id="achKicker">ЗАЛ СЛАВЫ</div>
+                    <div class="ach-title" id="achTitle">Достижения</div>
+                    <div class="ach-sub" id="achSub">Загрузка…</div>
+                </div>
+                <button class="sheet-close-btn" onclick="closeAchievements()">✕</button>
+            </div>
+            <div class="ach-filters" id="achFilters"></div>
+            <div id="achievementsContainer" class="achiev-list"></div>
+        </div>
+    </div>
+
+    <!-- ================= ПОЛНОЭКРАННЫЙ ПРОСМОТР (скины / карты) ================= -->
+    <div class="mv-overlay" id="mediaViewer" aria-hidden="true">
+        <div class="mv-backdrop" id="mvBackdrop"></div>
+        <div class="mv-top">
+            <div class="mv-titles">
+                <div class="mv-title" id="mvTitle"></div>
+                <div class="mv-sub" id="mvSub"></div>
+            </div>
+            <button class="mv-close" onclick="mcCloseViewer()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="mv-stage" id="mvStage"></div>
+        <div class="mv-controls" id="mvControls"></div>
+        <div class="mv-hint">Смахни вниз, чтобы закрыть</div>
+    </div>
+
+    <!-- ================= ПОДДЕРЖКА ================= -->
+    <div class="sheet-overlay es-support" id="supportSheet" onclick="if (event.target === this) closeSupport()">
+        <div class="sheet es-sup-sheet">
+            <div class="sheet-grabber"></div>
+
+            <div class="es-sup-head">
+                <div class="es-sup-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                </div>
+                <div class="es-sup-titles">
+                    <div class="sheet-kicker">Поддержка ManhwCard</div>
+                    <div class="sheet-title">Чем помочь?</div>
+                </div>
+                <button class="sheet-close" onclick="closeSupport()">✕</button>
+            </div>
+
+            <div class="es-sup-note"><i></i>Пишите в Telegram — ответит команда игры. Мы скопируем шаблон с вашим ID, чтобы вам не пришлось его искать.</div>
+
+            <button class="es-sup-main" onclick="contactSupport()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Написать в поддержку
+            </button>
+
+            <div class="es-sup-grid">
+                <button class="es-sup-topic" onclick="contactSupport('Покупка')"><span>💳</span>Проблема с покупкой</button>
+                <button class="es-sup-topic" onclick="contactSupport('Баг')"><span>🐞</span>Сообщить о баге</button>
+                <button class="es-sup-topic" onclick="contactSupport('Идея')"><span>💡</span>Предложить идею</button>
+                <button class="es-sup-topic" onclick="contactSupport('Аккаунт')"><span>👤</span>Вопрос по аккаунту</button>
+            </div>
+
+            <div class="es-sup-faq">
+                <div class="es-sup-faq-title">Частые вопросы</div>
+                <details>
+                    <summary>Как получить крутки?</summary>
+                    <p>Купить в магазине — кнопка «+» рядом с балансом попыток. Ещё крутки дают ежедневный бонус и приглашение друзей в разделе «Заработок».</p>
+                </details>
+                <details>
+                    <summary>Как работает колесо удачи?</summary>
+                    <p>Спин стоит 300 BattleCoin, а раз в 7 дней один спин бесплатный. Результат определяет сервер, награда сразу зачисляется на баланс.</p>
+                </details>
+                <details>
+                    <summary>Где найти купленные рамки?</summary>
+                    <p>Откройте профиль и нажмите на аватар или «Выбрать рамку» — все ваши рамки будут там.</p>
+                </details>
+                <details>
+                    <summary>Где взять BattleCoin?</summary>
+                    <p>BattleCoin выпадают за повышение уровня Pass, их можно выиграть в дуэлях и на колесе удачи.</p>
+                </details>
+            </div>
+
+            <div class="es-sup-id">
+                <span>Ваш ID: <b id="esSupId">—</b></span>
+                <button onclick="esCopySupportId()">Копировать</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-flip-shade" id="pageFlipShade"></div>
+
+    <nav class="bottom-nav" id="bottomNav">
+        <div class="nav-indicator" id="navIndicator" aria-hidden="true"><span class="nav-indicator-glow"></span></div>
+        <button class="nav-btn" data-tab="catalog" onclick="switchTab('catalog', this)" data-label="Каталог" aria-label="Каталог">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5"/><path d="M2 16l10 5 10-5"/></svg>
+        </button>
+        <button class="nav-btn nav-btn-shop" id="navShopBtn" data-tab="shop" onclick="switchTab('shop', this)" data-label="Магазин" aria-label="Магазин">
+            <span class="free-dot" aria-hidden="true"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        </button>
+        <button class="nav-btn nav-center active" data-tab="profile" onclick="switchTab('profile', this)" data-label="Главная" aria-label="Главная">
+            <svg viewBox="0 0 32 24" fill="currentColor"><path d="M3 22 7 2l9 12 9-12 4 20h-5L21 11l-5 8-5-8-2 11z"/></svg>
+        </button>
+        <button class="nav-btn" data-tab="tops" onclick="switchTab('tops', this)" data-label="Топы" aria-label="Топы">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg>
+        </button>
+        <button class="nav-btn" data-tab="collection" onclick="switchTab('collection', this)" data-label="Коллекция" aria-label="Коллекция">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+            </svg>
+        </button>
+    </nav> <div class="pass-screen" id="passScreen">
+        <div class="ps-head" style="position: absolute; top: 10px; left: 10px; z-index: 10; margin: 0;">
+            <button class="ps-back" onclick="closePassModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+        </div>
+
+        <div class="pass-top-banner">
+            <div class="pass-top-content">
+                <div class="pass-main-title">ManhwCard <span>Pass</span></div>
+                <div class="pass-main-desc">Повышай уровень за активность<br>и получай <span>награды</span></div>
+            </div>
+        </div>
+
+        <div class="pass-section">
+            <div class="pass-prog-header">
+                <div class="pass-hex-wrap">
+                    <div class="pass-hex-inner">
+                        <div class="pass-hex-num" id="passHexLvl">37</div>
+                        <div class="pass-hex-lbl">УРОВЕНЬ</div>
+                    </div>
+                </div>
+                <div class="pass-prog-info">
+                    <div class="pass-prog-top-row">
+                        <span>Текущий прогресс (i)</span>
+                        <span>До следующего уровня</span>
+                    </div>
+                    <div class="pass-prog-xp-row">
+                        <div class="current" id="passXpText">2 450 <span>/ 3 000 XP</span></div>
+                        <div class="left" id="passLeftTextTop">550 XP</div>
+                    </div>
+                    <div class="pass-bar-bg"><div class="pass-bar-fill" id="passProgressBar"></div></div>
+                </div>
+            </div>
+
+            <div class="pass-activities">Уровень повышается за любую активность в игре:</div>
+<div class="pass-icons-row">
+    <div class="pass-ico-item">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+            <path d="m2.75 9.25 1.5 2.5 2 1.5m-4.5 0 1 1m1.5-2.5-1.5 1.5m3-1 8.5-8.5v-2h-2l-8.5 8.5"></path>
+            <path d="m10.25 12.25-2.25-2.25m2-2 2.25 2.25m1-1-1.5 2.5-2 1.5m4.5 0-1 1m-1.5-2.5 1.5 1.5m-7.25-5.25-4.25-4.25v-2h2l4.25 4.25"></path>
+        </svg> Бои
+    </div>
+    <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Крутки</div>
+    <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H5a2 2 0 0 0 0 4h2M17 6h2a2 2 0 0 1 0 4h-2"/></svg> Победы</div>
+    <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Инвайты</div>
+    <div class="pass-ico-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg> Прочее</div>
+</div>
+
+            <button class="pass-btn waiting" id="passMainBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 
+                Следующая награда через <span id="passLeftTextBtn">550 XP</span>
+            </button>
+        </div>
+
+        <div class="pass-section">
+            <div class="pass-sec-title">
+                <div class="pass-sec-title-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+                    ЕЖЕНЕДЕЛЬНЫЕ ЗАДАНИЯ
+                </div>
+                <div class="pass-sec-title-right" id="passQuestTimer">↻ Обновление через<br>...</div>
+            </div>
+
+            <div id="passQuestsContainer">
+                <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">Загрузка заданий...</div>
+            </div>
+
+            <div class="pass-task-foot">Выполняй задания и получай опыт для повышения уровня!</div>
+        </div>
+
+        <div class="pass-section">
+            <div class="pass-sec-title" style="margin-bottom: 0;">
+                <div class="pass-sec-title-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 2 7.5 4 12 7 12 7zM12 7s1.5-5 4.5-3S12 7 12 7z"/></svg>
+                    <div id="passRewTitleLevel">НАГРАДА ЗА ПОВЫШЕНИЕ<div class="pass-sec-sub">Получай случайную награду при аппе уровня</div></div>
+                </div>
+            </div>
+
+            <div class="rew-grid">
+                <div class="rew-card">
+                    <div class="rew-ico rew-krw">₩</div>
+                    <div class="rew-name">KRW</div>
+                    <div class="rew-rarity common">Обычная</div>
+                    <div class="rew-amount" id="passRewKrw">15 000 – 25 000</div>
+                    <div class="rew-chance">70% <span>ШАНС</span></div>
+                </div>
+                <div class="rew-card">
+                    <div class="rew-ico rew-dia">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" style="width: 32px; height: 32px; display: block; margin: 0 auto; color: #06b6d4;"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
+                    </div>
+                    <div class="rew-name">Алмазы</div>
+                    <div class="rew-rarity epic">Эпическая</div>
+                    <div class="rew-amount" id="passRewDia">2 – 6</div>
+                    <div class="rew-chance">5% <span>ШАНС</span></div>
+                </div>
+                <div class="rew-card">
+                    <div class="rew-ico rew-bc">Ⓑ</div>
+                    <div class="rew-name">BattleCoin</div>
+                    <div class="rew-rarity rare">Редкая</div>
+                    <div class="rew-amount" id="passRewBc">50 – 100</div>
+                    <div class="rew-chance">25% <span>ШАНС</span></div>
+                </div>
+            </div>
+            
+            <div class="pass-task-foot" style="margin-top:12px;">Награда определяется случайным образом</div>
+        </div>
+    </div>
+
+    <div class="pack-overlay" id="packOverlay">
+        <div class="sys-flash" id="sysFlash"></div>
+        
+        <div class="pack-box-container" id="packBoxContainer" onclick="openSystemPack()">
+            <div class="sys-alert-box">[ СИСТЕМА ]<br><span style="font-size:12px; font-weight:400; color:#fff;">Награда готова к получению. Нажмите.</span></div>
+            <div class="pack-cube" id="packCube"></div>
+        </div>
+
+        <div class="pack-result-container" id="packResultContainer">
+            <div class="sys-click-hint" id="sysClickHint">[ КОСНИТЕСЬ КАРТЫ ДЛЯ ИДЕНТИФИКАЦИИ ]</div>
+
+            <div class="card-3d-wrapper" onclick="clickToFlipCard()" style="cursor: pointer;" id="packCardWrapper">
+                <!-- Контейнер для электро-взрыва -->
+                <div id="electroExplosionContainer"></div>
+                
+                <div class="card-3d-inner" id="packCardInner">
+                    <div class="card-3d-front">SYSTEM</div>
+                    <div class="card-3d-back" id="packCardBack">
+                        <img src="" id="packCardImg">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pack-card-info" id="packCardInfo">
+                <div class="pack-card-title" id="packCardTitle">ИМЯ КАРТЫ</div>
+                <div class="pack-card-rarity" id="packCardRarity">Редкость</div>
+                <div class="pack-dup-msg" id="packDupMsg" style="display:none;"></div>
+                <br>
+                <button class="sys-btn" id="packCloseBtn" onclick="closeSystemPack()">ПОДТВЕРДИТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="gacha-buy-overlay" id="buyAttemptsModal" onclick="if (event.target === this) closeBuyAttemptsModal()">
+
+        <div class="gacha-buy-window bx2">
+            <div class="bx-glow"></div>
+            <button class="gacha-buy-close" onclick="closeBuyAttemptsModal()">✕</button>
+            <div class="bx-head">
+                <div class="bx-ticket"><span>🎟</span></div>
+                <div class="gacha-buy-subtitle">PORTAL STORE</div>
+                <div class="gacha-buy-title">Покупка круток</div>
+                <div class="bx-have">Сейчас у вас <b id="bxHave">0</b> 🎟</div>
+            </div>
+
+            <div class="bx-tabs" id="bxTabs" data-cur="krw">
+                <div class="bx-tabs-glider"></div>
+                <button class="bx-tab active" id="tabBuyKrw" onclick="switchBuyCurrency('krw')">
+                    <span class="mc-cur mc-krw">₩</span>
+                    <span class="bx-tab-txt">KRW<small id="bxBalKrw">0</small></span>
+                </button>
+                <button class="bx-tab" id="tabBuyDia" onclick="switchBuyCurrency('dia')">
+                    <svg class="mc-cur mc-dia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 9l3-5h12l3 5-9 12z"/><path d="M3 9h18M9 4l-2 5 5 12 5-12-2-5"/></svg>
+                    <span class="bx-tab-txt">Алмазы<small id="bxBalDia">0</small></span>
+                </button>
+            </div>
+
+            <div class="bx-grid" id="buyPacksGrid"></div>
+
+            <button class="bx-cta" id="bxCta" onclick="confirmBuyAttempts()" disabled>Выберите набор</button>
+        </div>
+    </div>
+
+   <div class="sheet-overlay" id="frameSystemSheet">
+        <div class="sheet frame-sheet">
+            <div class="sheet-grabber"></div>
+
+            <div class="sheet-header-clean">
+                <div class="sheet-title-clean">Выбрать рамку аватара</div>
+                <button class="sheet-close-btn" onclick="closeFrameSystem()">✕</button>
+            </div>
+
+            <div class="frame-preview-clean">
+                <div class="avatar-wrapper-clean">
+                    <img src="" id="framePreviewAvatar" class="preview-avatar-img">
+                    <img src="" id="framePreviewImg" class="preview-frame-img" style="display: none;">
+                    <div class="preview-check-badge" id="previewCheckBadge" style="display: none;">✓</div>
+                </div>
+                <div class="preview-frame-name" id="framePreviewTitle">Нет</div>
+            </div>
+
+            <div class="frame-card-box">
+                <div class="frame-grid-clean" id="frameListContainer">
+                    </div>
+            </div>
+
+            <button class="btn-primary-clean" id="btnApplyFrame" onclick="applySelectedFrame()">
+                ПРИМЕНИТЬ
+            </button>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="frameShopPreviewSheet">
+        <div class="sheet frame-sheet">
+            <div class="sheet-grabber"></div>
+
+            <div class="sheet-header-clean">
+                <div class="sheet-title-clean">Предпросмотр</div>
+                <button class="sheet-close-btn" onclick="closeFrameShopPreview()">✕</button>
+            </div>
+
+            <div class="frame-preview-clean">
+                <div class="avatar-wrapper-clean">
+                    <img src="" id="shopPreviewAvatar" class="preview-avatar-img">
+                    <img src="" id="shopPreviewFrame" class="preview-frame-img">
+                </div>
+                <div class="preview-frame-name" id="shopPreviewTitle">Название рамки</div>
+            </div>
+
+            <div id="shopPreviewPriceBox">
+                </div>
+
+            <button class="btn-primary-clean" id="btnBuyFrame" onclick="executeBuyFrame()">
+                КУПИТЬ
+            </button>
+        </div>
+    </div>
+
+<!-- ================= ЭКРАН ВЛАДЕЛЬЦЕВ ================= -->
+    <div class="owners-screen" id="ownersScreen">
+        <div class="os-backdrop" id="osBackdrop"></div>
+        <div class="os-header">
+            <button class="os-back" onclick="closeOwnersScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="os-title-wrap">
+                <div class="os-title">Владельцы карты</div>
+                <div class="os-sub" id="osCardName">Имя карты</div>
+            </div>
+            <div class="os-rarity-pill" id="osRarityPill">Редкость</div>
+        </div>
+
+        <div class="os-hero">
+            <div class="os-card-wrap" id="osCardWrap" onclick="openOwnersCardFullscreen()">
+                <img src="" id="osCardImg" alt="">
+                <div class="os-card-holo"></div>
+                <div class="os-card-stats-strip" id="osCardStrip">Имя</div>
+                <div class="os-card-zoom">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                </div>
+            </div>
+
+            <div class="os-stats-box">
+                <div class="os-owners-big">
+                    <div class="os-owners-num" id="osTotalOwners">…</div>
+                    <div class="os-owners-lbl">владельцев<br><span id="osTotalCopies">— копий</span></div>
+                </div>
+                <div class="os-rarity-line">Редкость <b id="osStatRarity">…</b></div>
+                <div class="os-bar-row">
+                    <span class="os-bar-lbl">⚡</span>
+                    <div class="os-bar"><div class="os-bar-fill spd" id="osBarSpd"></div></div>
+                    <span class="os-bar-val" id="osStatSpd">0</span>
+                </div>
+                <div class="os-bar-row">
+                    <span class="os-bar-lbl">💪</span>
+                    <div class="os-bar"><div class="os-bar-fill str" id="osBarStr"></div></div>
+                    <span class="os-bar-val" id="osStatStr">0</span>
+                </div>
+                <div class="os-bar-row">
+                    <span class="os-bar-lbl">🧠</span>
+                    <div class="os-bar"><div class="os-bar-fill int" id="osBarInt"></div></div>
+                    <span class="os-bar-val" id="osStatInt">0</span>
+                </div>
+                <div class="os-power">Мощь <b id="osPower">0</b></div>
+            </div>
+        </div>
+
+        <div class="os-skins" id="osSkinsBlock" style="display:none;">
+            <div class="os-section-title">
+                <span>Скины</span>
+                <span class="os-section-count" id="osSkinsCount">0</span>
+            </div>
+            <div class="os-skins-list" id="osSkinsList"></div>
+        </div>
+
+        <div class="os-section-title">
+            <span>Владельцы</span>
+            <span class="os-section-hint">по количеству копий</span>
+        </div>
+        <div class="os-list-container">
+            <div id="osListContent"></div>
+            <div class="pagination-bar" id="osPagination" style="padding: 15px 0; display: none; border: none;"></div>
+        </div>
+    </div>
+
+    <div class="duel-arena" id="duelArena">
+        <div class="duel-top">
+            <button class="duel-close" onclick="closeDuelArena()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <div class="duel-top-mid">
+                <div class="duel-round" id="duelRoundLbl">Раунд 1 из 5</div>
+                <div class="duel-pot" id="duelPot">0 🪙</div>
+            </div>
+            <div class="duel-timer" id="duelTimer">
+                <svg viewBox="0 0 40 40">
+                    <circle class="duel-timer-track" cx="20" cy="20" r="16" fill="none" stroke-width="3"/>
+                    <circle class="duel-timer-fill" id="duelTimerFill" cx="20" cy="20" r="16" fill="none" stroke-width="3" stroke-dasharray="100.5" stroke-dashoffset="0"/>
+                </svg>
+                <div class="duel-timer-num" id="duelTimerNum">45</div>
+            </div>
+        </div>
+
+        <div class="duel-side foe">
+            <div class="duel-ava"><img id="duelFoeAva" src="" alt=""></div>
+            <div class="duel-info">
+                <div class="duel-name" id="duelFoeName">Соперник</div>
+                <div class="duel-mana" id="duelFoeMana"></div>
+                <div class="duel-wins" id="duelFoeWins"></div>
+                <span class="duel-ready" id="duelFoeReady" style="display:none">готов</span>
+            </div>
+        </div>
+
+        <div class="duel-rift">
+            <div class="duel-bid foe" id="duelBidFoe">?</div>
+            <div class="duel-bid mine" id="duelBidMine">?</div>
+            <div class="duel-verdict" id="duelVerdict"></div>
+        </div>
+
+        <div class="duel-log" id="duelLog"></div>
+
+        <div class="duel-side me">
+            <div class="duel-ava"><img id="duelMyAva" src="" alt=""></div>
+            <div class="duel-info">
+                <div class="duel-name">Вы</div>
+                <div class="duel-mana" id="duelMyMana"></div>
+                <div class="duel-wins" id="duelMyWins"></div>
+            </div>
+        </div>
+
+        <div class="duel-controls">
+            <div class="duel-waiting" id="duelWaiting" style="display:none"></div>
+            <div id="duelInputs">
+                <div class="duel-ctrl-head">
+                    <div class="duel-ctrl-lbl">Вложить маны</div>
+                    <div class="duel-ctrl-val" id="duelBidVal">0</div>
+                </div>
+                <input type="range" id="duelBidSlider" min="0" max="10" value="0" step="1" oninput="syncBid(this.value)">
+                <div class="duel-quick">
+                    <button class="duel-quick-btn" onclick="quickBid('zero')">Пусто</button>
+                    <button class="duel-quick-btn" onclick="quickBid('half')">Половина</button>
+                    <button class="duel-quick-btn" onclick="quickBid('all')">Всё</button>
+                    <button class="duel-quick-btn" onclick="forfeitDuel()">Сдаться</button>
+                </div>
+                <button class="duel-submit" id="duelSubmit" onclick="submitDuelBid()">Вложить</button>
+            </div>
+        </div>
+
+        <div class="duel-result" id="duelResult">
+            <div class="duel-result-icon" id="duelResultIcon">🏆</div>
+            <div class="duel-result-title" id="duelResultTitle">Победа</div>
+            <div class="duel-result-sum" id="duelResultSum">+0 🪙</div>
+            <button class="duel-main-btn" onclick="closeDuelResult()">Выйти с арены</button>
+        </div>
+    </div>
+
+    <div class="tier-screen" id="tierScreen">
+        <div class="tier-head">
+            <button class="tier-back" id="tierBackBtn" onclick="closeTierScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div>
+                <div class="tier-title" id="tierTitle">Тирлисты</div>
+                <div class="tier-sub" id="tierSub">Ценность карт по версии сообщества</div>
+            </div>
+        </div>
+        <div class="tier-body" id="tierPickBody"></div>
+    </div>
+
+    <div class="tier-analytic" id="tierAnalytic">
+        <div class="tier-head">
+            <button class="tier-back" onclick="closeTierCard()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div>
+                <div class="tier-title" style="font-size:20px">Аналитика</div>
+                <div class="tier-sub">Цена, история и оценки</div>
+            </div>
+        </div>
+        <div class="ta-body" id="taBody"></div>
+    </div>
+
+    <script src="script.js?v=9"></script>
+
+    <script src="custom-select.js"></script>
+    <script src="wheel.js"></script>
+    <script src="shop-elite.js?v=2"></script>
+    <script src="summon-fx.js?v=1"></script>
+    <script src="duel-ui.js?v=2"></script>
+
+    <script>
+      CustomSelect.init('#rarityFilter, #seriesFilter, #sortFilter, #styleFilter, #favSortSelect');
+
+      // Переходы из бота: открываем сразу нужный экран
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var fromUrl = params.get('tab');
+        var fromTg = (tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
+
+        if (fromUrl === 'spin' || fromTg === 'spin') {
+          switchTab('shop', document.querySelectorAll('.nav-btn')[1]);
+          switchShopSubTab('wheel');
+        }
+
+        if (fromUrl === 'tier' || fromTg === 'tier') {
+          switchTab('profile', document.querySelectorAll('.nav-btn')[2]);
+          setTimeout(openTierScreen, 300);
+        }
+
+        if (fromUrl === 'duel' || fromTg === 'duel') {
+          openEarnModal();
+          switchEarnTab('duel');
+          // Арену открываем только по ссылке из бота после принятия вызова —
+          // там есть &id=. Из меню ставок попадаем просто в лобби.
+          if (params.get('id')) {
+            setTimeout(openDuelArena, 400);
+          }
+        }
+      })();
+    </script>
+    <script src="tier.js"></script>
+
+    <!-- МАСТЕРСКАЯ -->
+    <div class="ws-screen" id="wsScreen"></div>
+    <script src="workshop.js?v=12"></script>
+
+</body>
+</html>

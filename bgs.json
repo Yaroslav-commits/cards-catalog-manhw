@@ -10,13 +10,13 @@
         "file": "admin.mp4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "admin"
     },
     {
         "name": "Sabbath Crew",
         "file": "veliki.jpeg",
-        "price": 500,
+        "price": 50000,
         "id": "veliki"
     },
     {
@@ -24,7 +24,7 @@
         "file": "yamzaki_clan.mp4",
         "width": 1280,
         "height": 720,
-        "price": 8500,
+        "price": 850000,
         "id": "yamzaki_clan"
     },
     {
@@ -32,13 +32,13 @@
         "file": "jae_hwan.mp4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "jaehwan"
     },
     {
         "name": "ORV Street Trio",
         "file": "yoo_han_kim.jpeg",
-        "price": 1500,
+        "price": 150000,
         "id": "yoo_han_kim"
     },
     {
@@ -46,7 +46,7 @@
         "file": "king_grey.mp4",
         "width": 1280,
         "height": 720,
-        "price": 12999,
+        "price": 1299900,
         "id": "king_grey"
     },
     {
@@ -54,19 +54,19 @@
         "file": "shadow_slave.mp4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "shadow_slave"
     },
     {
         "name": "Санни",
         "file": "sanny.jpeg",
-        "price": 99999,
+        "price": 9999900,
         "id": "sanny"
     },
     {
         "name": "Golden Hours",
         "file": "golden_hours.jpeg",
-        "price": 99999,
+        "price": 9999900,
         "id": "golden_hours"
     },
     {
@@ -74,7 +74,7 @@
         "file": "lookism_summer.mp4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "lookism_summer"
     },
     {
@@ -82,19 +82,19 @@
         "file": "jin_woo_antares.mp4",
         "width": 1280,
         "height": 720,
-        "price": 8999,
+        "price": 899900,
         "id": "jin_woo_antares"
     },
     {
         "name": "The Evil Ring",
         "file": "evil_ring.jpeg",
-        "price": 1500,
+        "price": 150000,
         "id": "evil_ring"
     },
     {
         "name": "Yu",
         "file": "yu_bg.jpeg",
-        "price": 99999,
+        "price": 9999900,
         "id": "yu_bg"
     },
     {
@@ -102,7 +102,7 @@
         "file": "boxer.mp4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "boxer"
     },
     {
@@ -110,13 +110,13 @@
         "file": "hakhyun.MP4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "hakhyun"
     },
     {
         "name": "Lee Hakhyun",
         "file": "hakhyun_bg.jpeg",
-        "price": 99999,
+        "price": 9999900,
         "id": "hakhyun_bg"
     },
     {
@@ -124,13 +124,13 @@
         "file": "bayonetta_vbg.mp4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "bayonetta_vbg"
     },
     {
         "name": "Bayonetta",
         "file": "bayonetta_bg.jpeg",
-        "price": 99999,
+        "price": 9999900,
         "id": "bayonetta_bg"
     },
     {
@@ -138,13 +138,35 @@
         "file": "hw_video_bg.mp4",
         "width": 1280,
         "height": 720,
-        "price": 99999,
+        "price": 9999900,
         "id": "hw_video_bg"
     },
     {
         "name": "Random Chat Halloween",
         "file": "hw_art_bg.jpeg",
-        "price": 99999,
+        "price": 9999900,
         "id": "hw_art_bg"
+    },
+    {
+        "name": "Санни и Нефис",
+        "file": "sanny_nefis.mp4",
+        "width": 1280,
+        "height": 720,
+        "price": 9999900,
+        "id": "sanny_nefis"
+    },
+    {
+        "name": "Нефис",
+        "file": "nefis.jpeg",
+        "price": 9999900,
+        "id": "nefis"
+    },
+    {
+        "name": "GTA 6",
+        "file": "gta6.mp4",
+        "width": 1280,
+        "height": 720,
+        "price": 9999900,
+        "id": "gta6"
     }
 ]

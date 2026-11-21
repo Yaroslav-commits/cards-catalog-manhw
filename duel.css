@@ -505,6 +505,7 @@
     display: flex;
     justify-content: center;
     gap: 6px;
+    flex-wrap: wrap;
     padding: 6px 16px 10px;
     flex-shrink: 0;
 }
@@ -707,3 +708,163 @@
 /* Три вкладки вместо двух — ужимаем подписи */
 .earn-tabs .earn-tab { font-size: 13px; gap: 6px; padding: 12px 4px; }
 .earn-tabs .earn-tab svg { width: 15px; height: 15px; }
+
+/* =====================================================================
+   НЕСКОЛЬКО ИГР: переключатель в лобби и кнопки хода на арене
+   ===================================================================== */
+
+/* ---------- Переключатель игр ---------- */
+.duel-games {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.duel-game-tab {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 11px 4px 10px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.6);
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.14s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.duel-game-tab:active { transform: scale(0.95); }
+
+.duel-game-tab.active {
+    border-color: rgba(139, 92, 246, 0.7);
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.28), rgba(6, 182, 212, 0.1));
+    color: #fff;
+    box-shadow: 0 0 22px rgba(139, 92, 246, 0.3);
+}
+
+.duel-game-tab:disabled { opacity: 0.4; pointer-events: none; }
+.duel-game-tab.active:disabled { opacity: 1; }
+
+.duel-game-tab-ico { font-size: 22px; line-height: 1; }
+
+.duel-game-tab-name {
+    max-width: 100%;
+    font-size: 11.5px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.duel-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.duel-meta span {
+    padding: 5px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.duel-afk {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: rgba(252, 165, 165, 0.85);
+}
+
+/* Шесть ставок ровной сеткой 3×2: в один ряд четырёхзначные суммы не помещались */
+.duel-stake-row { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+/* ---------- Арена: подписи ---------- */
+.duel-note {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.62);
+    font-variant-numeric: tabular-nums;
+}
+
+.duel-my-note {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--accent-light);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Жизни в «Ауре»: тот же ряд, что и звёзды побед, но красные круги */
+.duel-star.hp { border-radius: 50%; transform: none; }
+
+.duel-star.hp.on {
+    background: #f43f5e;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.85);
+}
+
+/* ---------- Арена: кнопки хода ---------- */
+.duel-choices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 4px 0 10px;
+}
+
+.duel-choices.n4,
+.duel-choices.n2 { grid-template-columns: repeat(2, 1fr); }
+
+.duel-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+    padding: 13px 6px 11px;
+    border-radius: 16px;
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.07));
+    color: #fff;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.14s, opacity 0.2s;
+}
+
+.duel-choice:active { transform: scale(0.94); }
+
+.duel-choice:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    filter: grayscale(0.9);
+}
+
+.duel-choice.busy { pointer-events: none; opacity: 0.55; }
+
+.duel-choice-ico { font-size: 26px; line-height: 1.1; }
+
+.duel-choice-name { font-size: 13px; font-weight: 900; }
+
+.duel-choice-hint {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+}
+
+.duel-forfeit-line {
+    display: block;
+    width: 100%;
+    flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .duel-choice, .duel-game-tab { transition: none; }
+}

@@ -1,5 +1,29 @@
 [
     {
+        "name": "Люсия и Джейсон",
+        "rarity": "Легендарная 🔵",
+        "style": "Криминальный дуэт [🌪 Уклонение]",
+        "series": "Grand Theft Auto Ⅵ",
+        "speed": 89,
+        "strength": 90,
+        "intellect": 89,
+        "file": "lusia_jason.webp",
+        "exclusive": true,
+        "id": "lusia_jason"
+    },
+    {
+        "name": "Нефис",
+        "rarity": "Легендарная 🔵",
+        "style": "Белое пламя [🩸 Берсерк]",
+        "series": "Теневой раб",
+        "speed": 86,
+        "strength": 90,
+        "intellect": 88,
+        "file": "nefis.webp",
+        "exclusive": true,
+        "id": "nefis"
+    },
+    {
         "name": "Ким Доюль",
         "rarity": "Мифическая 🔴",
         "style": "Универсал [⚔️ Пробивание]",
@@ -206,7 +230,7 @@
     {
         "name": "Чжу Хай Ён",
         "rarity": "Легендарная 🔵",
-        "style": "14 техник разрыва меридианов [\uD83E\uDE78 Берсерк]",
+        "style": "14 техник разрыва меридианов [🩸 Берсерк]",
         "series": "Завоевание старшей школы: война с хулиганами",
         "speed": 88,
         "strength": 87,
