@@ -22,7 +22,7 @@
     var STAGE_NAMES = { scout: 'Разведка', entry: 'Заход', event: 'Событие', vault: 'Хранилище', greed: 'Добыча', safe: 'Сейф', escape: 'Отход' };
     var TAG_ICON = { quiet: '🤫', loud: '💥', smart: '🧠' };
     var DAY_NAMES = { 1: 'Новенький в городе', 2: 'Блеск', 3: 'Подготовка', 4: 'Большое дело' };
-    var CARD_IMG = 'images/lucia_jason.webp';          // арт карты (кладёшь сам)
+    var CARD_IMG = 'images/lusia_jason.webp';          // арт карты (кладёшь сам)
     var BG_VIDEO = 'images/backgrounds/gta6.mp4';      // видео-фон (кладёшь сам)
     STAGE_NAMES.wires = 'Щиток';
     var PALM = '<svg viewBox="0 0 200 400" preserveAspectRatio="xMinYMax meet"><path d="M96 400C100 320 92 250 112 170l8 2c-16 78-8 148-10 228z"/>' +
