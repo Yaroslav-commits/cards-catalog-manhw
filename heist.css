@@ -592,3 +592,21 @@ body.hz-lock { overflow: hidden; }
 .hz-cine-bar span { font: 600 11px/1 var(--hz-head); color: var(--hz-dim); min-width: 62px; text-align: right; font-variant-numeric: tabular-nums; }
 .hz-cine-hint { position: relative; text-align: center; font-size: 12px; color: var(--hz-dim); }
 .hz-prize[data-a="card-zoom"] { cursor: zoom-in; }
+
+/* Сейф: подсветка цифр по позициям */
+.hz-tiles { display: flex; gap: 6px; }
+.hz-tiles span {
+    width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center;
+    font: 700 18px/1 var(--hz-head); background: rgba(255, 255, 255, .08); color: rgba(255, 255, 255, .55);
+}
+.hz-tiles span.x { background: #1f9e6e; color: #fff; box-shadow: 0 0 10px rgba(70, 245, 176, .55); }
+.hz-tiles span.n { background: #b8891a; color: #fff; box-shadow: 0 0 10px rgba(255, 211, 77, .45); }
+.hz-guess small { font-size: 11px; color: var(--hz-dim); }
+
+/* Щиток: блокировка на нуле и во время проверки */
+.hz-wire-wait {
+    position: absolute; inset: 0; z-index: 3; display: none; align-items: center; justify-content: center; border-radius: 14px;
+    background: rgba(8, 3, 14, .55); font: 700 14px/1 var(--hz-head); letter-spacing: .08em; text-transform: uppercase; color: #fff;
+}
+.hz-wires.busy .hz-wire-wait { display: flex; }
+.hz-wires.busy .hz-plug, .hz-wires.busy .hz-sock { pointer-events: none; }

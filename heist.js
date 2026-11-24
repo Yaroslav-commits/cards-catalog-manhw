@@ -717,7 +717,7 @@
                 (g.can_jam ? '<button class="hz-btn cool" style="margin-top:8px" data-a="jam">📡 Включить глушилку</button>' : '');
         } else if (r.safe) {
             var s = r.safe, rev = s.revealed || {}, code = safeCode(rev);
-            h += '<div class="hz-s" style="margin-bottom:6px">Код из 4 цифр (1–6), цифры могут повторяться. 🟢 — цифра на своём месте, 🟡 — цифра есть, но не там. Ошибка = +1 к тревоге. Награда ' + short(s.reward[0]) + '–' + short(s.reward[1]) + ' 💵.</div>';
+            h += '<div class="hz-s" style="margin-bottom:6px">Код из 4 цифр (1–6), цифры могут повторяться. После попытки каждая цифра подсветится: <b style="color:#46f5b0">зелёная</b> — стоит на своём месте, <b style="color:#ffd34d">жёлтая</b> — есть в коде, но в другом месте, серая — такой нет. Ошибка = +1 к тревоге. Награда ' + short(s.reward[0]) + '–' + short(s.reward[1]) + ' 💵.</div>';
             if (Object.keys(rev).length) h += '<div class="hz-chip sun" style="margin-bottom:6px">🔑 Подсказка: ' + Object.keys(rev).map(function (k) { return (Number(k) + 1) + '-я цифра — ' + rev[k]; }).join(', ') + '</div>';
             h += '<div class="hz-safe-slots">';
             for (var j = 0; j < 4; j++) {
@@ -728,6 +728,11 @@
             h += '<button data-a="pad-del">⌫</button><button data-a="pad-clr">C</button><button class="go" data-a="pad-go">Вскрыть · ' + s.left + '</button></div>';
             if (s.guesses.length) {
                 h += '<div class="hz-guesses">' + s.guesses.slice().reverse().map(function (g) {
+                    if (g.m) {   // подсветка по позициям: видно, какая именно цифра на месте
+                        var tiles = '';
+                        for (var q = 0; q < 4; q++) tiles += '<span class="' + (g.m[q] === 'x' ? 'x' : g.m[q] === 'n' ? 'n' : '') + '">' + esc(g.g[q]) + '</span>';
+                        return '<div class="hz-guess"><div class="hz-tiles">' + tiles + '</div><small>' + g.exact + ' на месте · ' + g.near + ' не там</small></div>';
+                    }
                     var pegs = '';
                     for (var k = 0; k < 4; k++) pegs += '<i class="' + (k < g.exact ? 'x' : k < g.exact + g.near ? 'n' : '') + '"></i>';
                     return '<div class="hz-guess"><b>' + esc(g.g) + '</b><div class="hz-pegs">' + pegs + '</div></div>';
@@ -752,7 +757,8 @@
     function wiresHtml(wz) {
         if (!S.wires || S.wires.deadline !== wz.deadline) S.wires = { deadline: wz.deadline, map: {}, sel: null, tries: 0, sending: false };
         var W = S.wires;
-        if (wz.left !== undefined && W.seen !== wz) { W.end = Date.now() / 1000 + wz.left; W.seen = wz; }
+        // Остаток с сервера минус время, пока ответ летел до телефона, — чтобы экран не обещал лишнего
+        if (wz.left !== undefined && W.seen !== wz) { W.end = Date.now() / 1000 + wz.left - Math.min(2, (S.rtt || 0) / 2); W.seen = wz; }
         if (wz.tries !== W.tries) {          // после неверной попытки снимаем только неверные провода
             (wz.wrong || []).forEach(function (i) { delete W.map[i]; });
             W.tries = wz.tries;
@@ -763,7 +769,8 @@
         var left = Math.max(0, W.end - Date.now() / 1000);
         var h = '<div class="hz-wire-rule">📋 ' + esc(wz.rule_text) + '</div>' +
             '<div class="hz-wire-timer"><i id="hzWireBar" style="width:' + Math.min(100, left / wz.time * 100) + '%"></i><span id="hzWireLeft">' + Math.ceil(left) + ' с</span></div>' +
-            '<div class="hz-wires" id="hzWires"><svg class="hz-wire-svg" id="hzWireSvg"></svg><div class="hz-wire-col">';
+            '<div class="hz-wires' + (left <= 0 || W.sending ? ' busy' : '') + '" id="hzWires"><svg class="hz-wire-svg" id="hzWireSvg"></svg>' +
+            '<div class="hz-wire-wait">' + (left <= 0 ? '⏱ Время! Проверяем схему…' : 'Проверяем схему…') + '</div><div class="hz-wire-col">';
         wz.plugs.forEach(function (pl, i) {
             var on = W.map[i] !== undefined;
             h += '<button class="hz-plug' + (W.sel === i ? ' sel' : '') + (on ? ' on' : '') + ((W.flash || []).indexOf(i) >= 0 ? ' spark' : '') + '" data-a="plug" data-v="' + i + '" style="--c:' + pl.hex + '"><i></i></button>';
@@ -800,10 +807,13 @@
         var full = arr.every(function (x) { return x !== undefined; });
         if (!full && !force) return;
         W.sending = true;
+        var box = $('hzWires'); if (box) box.classList.add('busy');
         var arg = full ? arr.join(',') : '';
+        var t0 = Date.now();
         api('act', { action: 'wires', arg: arg }).then(function (d) {
             W.sending = false;
-            if (!d.success) { if (!force) toast(d.error, true); return; }
+            S.rtt = (Date.now() - t0) / 1000;
+            if (!d.success) { if (!force) toast(d.error, true); var bx = $('hzWires'); if (bx) bx.classList.remove('busy'); return; }
             haptic(d.ok ? 'ok' : 'bad');
             if (d.player && S.state) Object.assign(S.state.player, d.player);
             S.sheetData = d.run;
@@ -811,7 +821,13 @@
             if (!d.run.wires) S.wires = null;
             renderHud();
             renderSheet();
-        }, function () { W.sending = false; });
+        }, function () {
+            // Сеть моргнула — отправляем ту же схему ещё раз
+            W.sending = false;
+            W.retries = (W.retries || 0) + 1;
+            if (W.retries <= 3) setTimeout(function () { wiresSubmit(true); }, 800);
+            else toast('Нет связи с сервером. Проверь интернет.', true);
+        });
     }
 
     /* ---------- мини-игра «Терминал» ---------- */
@@ -971,7 +987,9 @@
 
     function act(action, arg) {
         busy(function () {
+            var t0 = Date.now();
             return api('act', { action: action, arg: arg == null ? null : String(arg) }).then(function (d) {
+                S.rtt = (Date.now() - t0) / 1000;
                 if (!d.success) return toast(d.error, true);
                 if (d.ok === true) haptic('ok'); else if (d.ok === false) haptic('bad'); else haptic('light');
                 if (d.player && S.state) Object.assign(S.state.player, d.player);
@@ -1017,14 +1035,15 @@
             case 'run-open': return openRun();
             case 'wires-start': return act('wires_start');
             case 'plug':
-                var W = S.wires; if (!W) return;
+                var W = S.wires; if (!W || W.sending || W.end - Date.now() / 1000 <= 0) return;
                 var pi = Number(v);
                 if (W.map[pi] !== undefined) { delete W.map[pi]; W.sel = pi; }      // перекинуть провод: снять и сразу взять в руку
                 else W.sel = W.sel === pi ? null : pi;
                 haptic('light'); renderSheet();
                 return;
             case 'sock':
-                var W2 = S.wires; if (!W2 || W2.sel === null) return toast('Сначала выбери провод слева', true);
+                var W2 = S.wires; if (!W2 || W2.sending || W2.end - Date.now() / 1000 <= 0) return;
+                if (W2.sel === null) return toast('Сначала выбери провод слева', true);
                 var sj = Number(v);
                 Object.keys(W2.map).forEach(function (k) { if (W2.map[k] === sj) delete W2.map[k]; });
                 W2.map[W2.sel] = sj; W2.sel = null;
@@ -1197,8 +1216,10 @@
         var bar = $('hzWireBar'), lab = $('hzWireLeft');
         if (bar) bar.style.width = Math.max(0, Math.min(100, left / r.wires.time * 100)) + '%';
         if (lab) lab.textContent = Math.max(0, Math.ceil(left)) + ' с';
-        if (left <= -0.3 && !S.wires.sending && !S.wires.timedOut) {
+        if (left <= 0 && !S.wires.sending && !S.wires.timedOut) {
             S.wires.timedOut = true;
+            var bx = $('hzWires');
+            if (bx) { bx.classList.add('busy'); var wt = bx.querySelector('.hz-wire-wait'); if (wt) wt.textContent = '⏱ Время! Проверяем схему…'; }
             wiresSubmit(true);
             setTimeout(function () { if (S.wires) S.wires.timedOut = false; }, 2000);   // если сеть подвела — повторим
         }
