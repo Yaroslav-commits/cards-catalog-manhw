@@ -1711,7 +1711,6 @@ function closeProfileModal() {
 
             var html = '<div class="' + classNames + '" onclick="' + (isUnlocked ? 'setBg(\'' + bg.id + '\')' : 'tg.showAlert(\'Этот фон еще не разблокирован в боте!\')') + '">' +
                 mediaHtml +
-                ((ext === 'mp4' || ext === 'webm') ? '<button class="bg-watch" onclick="event.stopPropagation(); mcWatchBg(\'' + bg.id + '\')">▶ Смотреть со звуком</button>' : '') +
                 '<div class="bg-item-overlay">' +
                     '<div class="bg-name">' + bg.name + '</div>' +
                 '</div>' +
@@ -1719,13 +1718,6 @@ function closeProfileModal() {
             '</div>';
 
             container.innerHTML = html;
-        }
-
-        // Видео-фон на весь экран со звуком (тот же просмотрщик, что у скинов)
-        function mcWatchBg(bgId) {
-            var bg = allBgs.find(function (b) { return b.id === bgId; });
-            if (!bg || typeof mcOpenViewer !== 'function') return;
-            mcOpenViewer({ kind: 'video', videoSrc: 'images/backgrounds/' + bg.file, title: bg.name, sub: 'Видео-фон', color: '#8b5cf6', sound: true });
         }
 
         async function setBg(bgId) {
@@ -3579,10 +3571,7 @@ function mcOpenViewer(o) {
     mcViewer.onClose = o.onClose || null;
 
     if (o.kind === 'video') {
-        var vidHtml = o.videoSrc
-            ? '<video class="mv-media" src="' + o.videoSrc + '" autoplay loop muted playsinline webkit-playsinline preload="metadata"></video>'
-            : mcSkinVideo(o.file, 'mv-media', '');
-        stage.innerHTML = '<div class="mv-media-wrap">' + vidHtml + '<div class="mv-play-flash" id="mvPlayFlash"></div></div>';
+        stage.innerHTML = '<div class="mv-media-wrap">' + mcSkinVideo(o.file, 'mv-media', '') + '<div class="mv-play-flash" id="mvPlayFlash"></div></div>';
         bd.style.backgroundImage = '';
         var v = stage.querySelector('video');
         mcViewer.video = v;
